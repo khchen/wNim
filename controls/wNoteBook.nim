@@ -263,7 +263,7 @@ proc wNoteBookNotifyHandler(self: wNoteBook, code: INT, id: UINT_PTR, lparam: LP
 
 proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
-  wControlInit(self, className=WC_TABCONTROL, parent=parent, id=id, label=label, pos=pos, size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or TCS_FIXEDWIDTH or WS_TABSTOP)
+  self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, label=label, pos=pos, size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or TCS_FIXEDWIDTH or WS_TABSTOP)
 
   mPages = newSeq[wWindow]()
   mSelection = -1

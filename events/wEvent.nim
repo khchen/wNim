@@ -20,10 +20,11 @@ const
   wEvent_NcPaint* = WM_NCPAINT
 
   wEvent_First = WM_APP + 100
-  wEvent_ScrollFirst = WM_APP + 200
-  wEvent_ListFirst = WM_APP + 300
-  wEvent_TreeFirst = WM_APP + 400
-  wEvent_Last = WM_APP + 500
+  wEvent_StatusBarFirst = WM_APP + 200
+  wEvent_ScrollFirst = WM_APP + 300
+  wEvent_ListFirst = WM_APP + 400
+  wEvent_TreeFirst = WM_APP + 500
+  wEvent_Last = WM_APP + 600
   wEvent_UserFirst* = wEvent_Last + 1
 
 
@@ -45,6 +46,7 @@ proc isCommandEvent(msg: UINT): bool {.inline.}
 proc isScrollEvent(msg: UINT): bool {.inline.}
 proc isListEvent(msg: UINT): bool {.inline.}
 proc isTreeEvent(msg: UINT): bool {.inline.}
+proc isStatusBarEvent(msg: UINT): bool {.inline.}
 
 proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LPARAM = 0,
     userData: int = 0, propagationLevel = 0): wEvent =
@@ -77,6 +79,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isTreeEvent():
     result = CreateEvent(wTreeEvent)
+
+  elif msg.isStatusBarEvent():
+    result = CreateEvent(wStatusBarEvent)
 
   elif msg.isCommandEvent(): # must last check
     result = CreateEvent(wCommandEvent)
@@ -250,6 +255,8 @@ proc winDown*(self: wEvent): bool {.validate, inline.} =
 method getX*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getY*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getIndex*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getPosition*(self: wEvent): wPoint {.base, property.} = discard
   ## Method needs to be overridden.

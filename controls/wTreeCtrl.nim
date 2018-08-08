@@ -859,7 +859,7 @@ proc wTreeCtrlInit*(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos =
   if (style and wTrTwistButtons) != 0 or (style and TVS_HASBUTTONS) != 0:
     style = style or TVS_LINESATROOT or TVS_HASBUTTONS
 
-  wControlInit(className=WC_TREEVIEW, parent=parent, id=id, label="", pos=pos, size=size,
+  self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   wTreeCtrl.setNotifyHandler(wTreeCtrlNotifyHandler)

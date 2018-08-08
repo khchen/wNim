@@ -140,6 +140,9 @@ when not defined(wnimdoc):
     wCommandEvent* = ref wCommandEventObj
     wCommandEventObj = object of wEventObj
 
+    wStatusBarEvent* = ref wStatusBarEventObj
+    wStatusBarEventObj = object of wCommandEventObj
+
     wListEvent* = ref wListEventObj
     wListEventObj = object of wCommandEventObj
 

@@ -28,7 +28,7 @@ proc wStaticLineInit*(self: wStaticLine, parent: wWindow, id: wCommandID = -1, p
     else:
       size.height = 2
 
-  wControlInit(className=WC_STATIC, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_SUNKEN)
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_SUNKEN)
   mFocusable = false
 
 proc StaticLine*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticLine =

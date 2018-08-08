@@ -109,7 +109,7 @@ proc clearTicks*(self: wSlider, ) =
 proc wSliderInit*(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
-  wControlInit(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
   setValue(value)
   setRange(range)
 

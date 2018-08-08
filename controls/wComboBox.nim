@@ -180,7 +180,7 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
     for text in choices:
       SendMessage(mHwnd, CB_ADDSTRING, 0, &(L(text)))
 
-  wControlInit(self, className=WC_COMBOBOX, parent=parent, id=id, pos=pos, size=size,
+  self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id, pos=pos, size=size,
     style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD, callback=callback)
 
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}

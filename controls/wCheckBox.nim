@@ -36,7 +36,7 @@ proc wCheckBoxInit(self: wCheckBox, parent: wWindow, id: wCommandID = -1, label:
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = (style and (not 0xF)) or checkType
 
-  wControlInit(self, className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(event.mWparam.int32) == BN_CLICKED:

@@ -266,7 +266,6 @@ proc wControlNotifyHandler(self: wControl, code: INT, id: UINT_PTR, lparam: LPAR
   of NM_KILLFOCUS: eventType = wEvent_CommandKillFocus
   of NM_RETURN: eventType = wEvent_CommandEnter
   else: return
-
   result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
 
 proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -1, label: string = "",
@@ -299,7 +298,3 @@ proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -
   mSubclassedOldProc = cast[WNDPROC](SetWindowLongPtr(mHwnd, GWL_WNDPROC, cast[LONG_PTR](wWndProc)))
   mFocusable = true # by default, all control can has focus, modify this by subclass
   mKeyUsed = {} # by default, a control don't use anykey, modify this by subclass
-
-proc wControlInit(self: wControl, className: string, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0, callback: proc(self: wWindow) = nil) =
-  init(className, parent, id, label, pos, size, style, callback)

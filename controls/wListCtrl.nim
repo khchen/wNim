@@ -573,7 +573,7 @@ proc wListCtrlNotifyHandler(self: wListCtrl, code: INT, id: UINT_PTR, lparam: LP
 proc wListCtrlInit*(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
-  wControlInit(className=WC_LISTVIEW, parent=parent, id=id, label="", pos=pos, size=size,
+  self.wControl.init(className=WC_LISTVIEW, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or LVS_SHAREIMAGELISTS or LVS_SHOWSELALWAYS)
 
   SendMessage(mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)

@@ -36,13 +36,11 @@ proc isBetween(n, L, H: int): bool {.inline.} =
 
 template setMessageHandler(wType, wHandler: untyped): untyped =
   mMessageHandler = proc (self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT =
-    assert(self of wType)
-    wHandler(cast[wType](self), msg, wParam, lParam, processed)
+    wHandler(wType(self), msg, wParam, lParam, processed)
 
 template setNotifyHandler(wType, wHandler: untyped): untyped =
   mNotifyHandler = proc (self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-    assert(self of wType)
-    wHandler(cast[wType](self), code, id, lParam, processed)
+    wHandler(wType(self), code, id, lParam, processed)
 
 proc toRect(r: wRect): RECT =
   result.left = r.x

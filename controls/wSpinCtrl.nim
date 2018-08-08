@@ -109,7 +109,7 @@ proc wSpinCtrlInit(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label:
     msStyle = DWORD(style and (not (UDS_WRAP or ES_READONLY))) or (if isWarp: UDS_WRAP else: 0) or UDS_ALIGNRIGHT or UDS_SETBUDDYINT or UDS_HOTTRACK
     exStyle = DWORD(style shr 32)
 
-  wControlInit(className=WC_EDIT, parent=parent, id=id, label=label, pos=pos, size=size, style=textStyle or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_EDIT, parent=parent, id=id, label=label, pos=pos, size=size, style=textStyle or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   mUpdownHwnd = CreateWindowEx(exStyle, UPDOWN_CLASS, nil, msStyle or WS_CHILD or WS_VISIBLE, 0, 0, 0, 0, parent.mHwnd, 0, wAppGetInstance(), nil)
   setRange(0, 100) # the default value is 100~0 ?

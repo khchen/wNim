@@ -295,7 +295,7 @@ proc wTextCtrlInit*(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label
     style = style and (not wTeRich)
     className = if mRich: MSFTEDIT_CLASS else: WC_EDIT
 
-  wControlInit(className=className, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=className, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if (style and wTeReadOnly) != 0:
     mKeyUsed = {}

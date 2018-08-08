@@ -91,7 +91,7 @@ proc wHyperlinkCtrlNotifyHandler(self: wHyperlinkCtrl, code: INT, id: UINT_PTR, 
 proc wHyperlinkCtrlInit*(self: wHyperlinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
-  wControlInit(className=WC_LINK, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if url != nil and url.len != 0:
     setUrl(url, 0)

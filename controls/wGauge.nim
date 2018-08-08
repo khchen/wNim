@@ -68,7 +68,7 @@ proc wGaugeInit(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
     taskBarProgress = ((style and wGaProgress) != 0)
     style = style and (not wGaProgress)
 
-  wControlInit(self, className=PROGRESS_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE)
+  self.wControl.init(className=PROGRESS_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE)
   mFocusable = false
 
   setRange(range)

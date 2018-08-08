@@ -197,7 +197,7 @@ proc wToolBarInit(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: i
   mMenuTable = newTable[wCommandID, wMenu]()
   mToolList = @[]
 
-  wControlInit(className=TOOLBARCLASSNAME, parent=parent, id=id, style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TRANSPARENT or TBSTYLE_TOOLTIPS)
+  self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id, style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TRANSPARENT or TBSTYLE_TOOLTIPS)
   SendMessage(mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
   SendMessage(mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 

@@ -2,7 +2,6 @@
 ##
 ## :Superclass:
 ##    wWindow
-##
 ## :Styles:
 ##    ==============================  =============================================================
 ##    Styles                          Description
@@ -52,7 +51,7 @@ proc setTopMost*(self: wFrame, top = true) {.validate, property.} =
   SetWindowPos(mHwnd, flag, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE)
 
 proc createStatusBar*(self: wFrame, number: int = 1, style: wStyle = 0,
-    id: wCommandID = 0): wStatusBar {.validate, property.} =
+    id: wCommandID = 0): wStatusBar {.validate, property, discardable.} =
   ## Creates a status bar at the bottom of the frame.
   result = StatusBar(parent=self)
   if number != 1:
@@ -287,9 +286,11 @@ when defined(useWinXP):
         event.mResult = TRUE
         processed = true
 
-proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize, style: wStyle = wDefaultFrameStyle, className = "wFrame") =
+proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize,
+    style: wStyle = wDefaultFrameStyle, className = "wFrame") =
 
-  self.wWindow.init(title=title, pos=pos, size=size, style=style, owner=owner, className=className, bgColor=GetSysColor(COLOR_APPWORKSPACE))
+  self.wWindow.init(title=title, pos=pos, size=size, style=style, owner=owner,
+    className=className, bgColor=GetSysColor(COLOR_APPWORKSPACE))
 
   systemConnect(wEvent_Size, wFrame_OnSize)
   hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
@@ -300,7 +301,8 @@ proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSi
     hardConnect(WM_MEASUREITEM, wFrame_OnMeasureItem)
     hardConnect(WM_DRAWITEM, wFrame_OndrawItem)
 
-proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wDefaultFrameStyle, className = "wFrame"): wFrame =
+proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wDefaultFrameStyle, className = "wFrame"): wFrame =
   ## Constructor, creating the frame. A frame is the top-level window so it cannot have a parent.
   ## However, it can has an owner. The frame will be minimized when its owner is minimized and
   ## restored when it is restored.

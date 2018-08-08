@@ -11,7 +11,7 @@ method getDefaultSize*(self: wStaticText): wSize =
 proc wStaticTextInit(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
-  wControlInit(className=WC_STATIC, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
   mFocusable = false
 
   systemConnect(WM_SIZE) do (event: wEvent):

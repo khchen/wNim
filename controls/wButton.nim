@@ -106,7 +106,7 @@ proc wButtonInit(self: wButton, parent: wWindow, id: wCommandID = -1, label: str
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = style and (not 0xF)
 
-  wControlInit(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or BS_PUSHBUTTON)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or BS_PUSHBUTTON)
 
   # default value of bitmap direction
   mImgData.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT

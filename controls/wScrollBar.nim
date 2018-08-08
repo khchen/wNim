@@ -62,7 +62,7 @@ proc getThumbPosition*(self: wScrollBar): int =
 proc wScrollBarInit*(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
-  wControlInit(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
   setScrollbar(0, 1, 2, 1)
 
   if isVertical():

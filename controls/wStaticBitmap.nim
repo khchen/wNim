@@ -18,7 +18,7 @@ proc wStaticBitmapInit*(self: wStaticBitmap, parent: wWindow, id: wCommandID = -
   assert parent != nil
 
   mBitmap = bitmap
-  wControlInit(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
   mFocusable = false
 
   setBitmap(bitmap)

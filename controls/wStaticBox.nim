@@ -23,7 +23,7 @@ method getClientSize*(self: wStaticBox): wSize =
 
 proc wStaticBoxInit(self: wStaticBox, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   # staticbox need WS_CLIPSIBLINGS
-  wControlInit(self, className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or WS_CLIPSIBLINGS)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or WS_CLIPSIBLINGS)
   mFocusable = false
   mMarginX = 12
   mMarginY = 12

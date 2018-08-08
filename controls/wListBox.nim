@@ -178,7 +178,7 @@ proc wListBoxInit*(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = w
     for text in choices:
       SendMessage(mHwnd, LB_ADDSTRING, 0, &(T(text)))
 
-  wControlInit(className=WC_LISTBOX, parent=parent, id=id, label="", pos=pos, size=size,
+  self.wControl.init(className=WC_LISTBOX, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or LBS_NOTIFY or LBS_NOINTEGRALHEIGHT, callback=callback)
 
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
