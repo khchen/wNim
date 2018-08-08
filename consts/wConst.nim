@@ -2,19 +2,13 @@
 const
   wNotFound* = -1
 
-  # ToolBar styles
-  wTbFlat* = TBSTYLE_FLAT
-  wTbNoDivider* = CCS_NODIVIDER
-  wTbVertical* = CCS_VERT
-  wTbBottom* = CCS_BOTTOM
-  wTbRight* = CCS_RIGHT
-  wTbDefaultStyle* = wTbFlat
+
 
   # ToolBar or Menuitem kind
-  wItemNormal* = BTNS_BUTTON
-  wItemSeparator* = BTNS_SEP
-  wItemCheck* = BTNS_CHECK
-  wItemRadio* = BTNS_CHECKGROUP
+  wItemNormal* = TBSTYLE_BUTTON
+  wItemSeparator* = TBSTYLE_SEP
+  wItemCheck* = TBSTYLE_CHECK
+  wItemRadio* = TBSTYLE_CHECKGROUP
   wItemDropDown* = BTNS_WHOLEDROPDOWN
   wItemSubMenu* = wItemDropDown
 

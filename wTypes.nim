@@ -217,16 +217,15 @@ when not defined(wnimdoc):
       mFiledNumbers: int
       mWidths: array[256, int32]
 
-    wToolBarTool* = ref wToolBarToolObj
-    wToolBarToolObj = object of RootObj
+    wToolBarTool* = ref object of RootObj
       mBitmap: wBitmap
+      mShortHelp: string
+      mLongHelp: string
+      mMenu: wMenu
 
     wToolBar* = ref wToolBarObj
     wToolBarObj = object of wControl
-      mShortHelpTable: TableRef[wCommandID, string]
-      mLongHelpTable: TableRef[wCommandID, string]
-      mMenuTable: TableRef[wCommandID, wMenu]
-      mToolList: seq[wToolBarTool]
+      mTools: seq[wToolBarTool]
 
     wButton* = ref wButtonObj
     wButtonObj = object of wControlObj

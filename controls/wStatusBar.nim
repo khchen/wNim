@@ -14,11 +14,11 @@
 ##    ================================  =============================================================
 
 # statusbar's best size and default size are current size
-method getBestSize*(self: wStatusBar): wSize =
+method getBestSize*(self: wStatusBar): wSize {.validate, property, inline.} =
   ## Returns the best size for the status bar.
   result = getSize()
 
-method getDefaultSize*(self: wStatusBar): wSize =
+method getDefaultSize*(self: wStatusBar): wSize {.validate, property, inline.} =
   ## Returns the default size for the status bar.
   result = getSize()
 
@@ -80,9 +80,8 @@ proc getStatusWidth*(self: wStatusBar, index: int): int {.validate, property, in
   ## Returns the width of the specified field.
   result = mWidths[index]
 
-proc setStatusText*(self: wStatusBar, text: string, index = 0) {.validate, property, inline.} =
+proc setStatusText*(self: wStatusBar, text: string = nil, index = 0) {.validate, property, inline.} =
   ## Sets the status text for the specified field.
-  wValidate(text)
   SendMessage(mHwnd, SB_SETTEXT, index, &T(text))
 
 proc getStatusText*(self: wStatusBar, index: int): string {.validate, property.} =

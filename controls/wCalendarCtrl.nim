@@ -2,8 +2,10 @@
 ##
 ## :Superclass:
 ##    wControl
+##
 ## :Appearance:
 ##    .. image:: images/wCalendarCtrl.png
+##
 ## :Styles:
 ##    ==============================  =============================================================
 ##    Styles                          Description
