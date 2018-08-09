@@ -41,7 +41,7 @@ method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
   result.width = max(rect.right.int, SendMessage(mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
   result.height = rect.bottom + 2
 
-method getDefaultSize*(self: wCalendarCtrl): wSize {.property.} =
+method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline.} =
   ## Returns the default size for the control.
   result = getBestSize()
 

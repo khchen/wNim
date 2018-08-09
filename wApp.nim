@@ -14,6 +14,11 @@ proc App*(): wApp =
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES)
   InitCommonControlsEx(ctrl)
 
+  when compileOption("threads"):
+    discard CoInitializeEx(nil, COINIT_MULTITHREADED)
+  else:
+    discard CoInitialize(nil)
+
   new(result)
   result.mInstance = GetModuleHandle(nil)
   result.mExitCode = 0

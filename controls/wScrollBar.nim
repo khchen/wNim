@@ -6,11 +6,11 @@ method getDefaultSize*(self: wScrollBar): wSize =
   result = getAverageASCIILetterSize(mFont.mHandle)
 
   if isVertical():
-    result.width = GetSystemMetrics(SM_CXVSCROLL).int
-    result.height = MulDiv(result.height.int32, 107, 8).int
+    result.width = GetSystemMetrics(SM_CXVSCROLL)
+    result.height = MulDiv(result.height.int32, 107, 8)
   else:
-    result.height = GetSystemMetrics(SM_CXHSCROLL).int
-    result.width = MulDiv(result.width.int32, 107, 4).int
+    result.height = GetSystemMetrics(SM_CXHSCROLL)
+    result.width = MulDiv(result.width.int32, 107, 4)
 
 method getBestSize*(self: wScrollBar): wSize =
   result = getDefaultSize()

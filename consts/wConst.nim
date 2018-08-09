@@ -56,11 +56,6 @@ const
   wSbHorizontal* = SBS_HORZ
   wSbVertical* = SBS_VERT
 
-  # Gauge styles
-  wGaHorizontal* = 0
-  wGaVertical* = PBS_VERTICAL
-  wGaSmooth* = PBS_SMOOTH
-  wGaProgress* = 0x10000000 shl 32
 
 
 

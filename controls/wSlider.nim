@@ -13,8 +13,8 @@ method getDefaultSize*(self: wSlider): wSize =
     x = 107
     y = 15
 
-  result.width = MulDiv(result.width.int32, x, 4).int
-  result.height = MulDiv(result.height.int32, y, 8).int
+  result.width = MulDiv(result.width.int32, x, 4)
+  result.height = MulDiv(result.height.int32, y, 8)
 
 method getBestSize*(self: wSlider): wSize =
   result = getDefaultSize()

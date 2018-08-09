@@ -286,8 +286,7 @@ when not defined(wnimdoc):
 
     wGauge* = ref wGaugeObj
     wGaugeObj = object of wControlObj
-      taskbar: ptr ITaskbarList3
-      coInit: bool
+      mTaskBar: ptr ITaskbarList3
 
     wCalendarCtrl* = ref wCalendarCtrlObj
     wCalendarCtrlObj = object of wControlObj
