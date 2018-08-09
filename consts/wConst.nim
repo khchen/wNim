@@ -13,14 +13,6 @@ const
   wItemSubMenu* = wItemDropDown
 
 
-  # CheckBox styles and state
-  wChk2State* = 0
-  wChk3State* = BS_AUTO3STATE
-  wChkAlignRight* = BS_LEFTTEXT or BS_RIGHT
-
-  wChkUnchecked* = BST_UNCHECKED
-  wChkChecked* = BST_CHECKED
-  wChkUndetermined* = BST_INDETERMINATE
 
   # RadioButton styles
   wRbGroup* = WS_GROUP

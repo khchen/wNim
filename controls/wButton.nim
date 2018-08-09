@@ -160,15 +160,10 @@ proc setDropdownMenu*(self: wButton, menu: wMenu = nil) {.validate, property.} =
     clearWindowStyle(BS_SPLITBUTTON)
     mMenu = nil
 
-method delete*(self: wButton) {.validate.} =
-  ## Destroys the button.
-  procCall wWindow(self).delete()
+method release(self: wButton) =
   if mImgData.himl != 0:
     ImageList_Destroy(mImgData.himl)
     mImgData.himl = 0
-
-proc final(self: wButton) =
-  delete()
 
 proc wButtonNotifyHandler(self: wButton, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
   case code
@@ -219,5 +214,5 @@ proc Button*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDe
     size = wDefaultSize, style: wStyle = 0): wButton {.discardable.} =
   ## Constructor, creating and showing a button.
   wValidate(parent)
-  new(result, final)
+  new(result)
   result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)

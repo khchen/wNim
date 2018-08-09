@@ -147,13 +147,19 @@ proc close*(self: wWindow) {.validate, inline.} =
   ## This function simply generates a wEvent_Close whose handler usually tries to close the window.
   SendMessage(mHwnd, WM_CLOSE, 0, 0)
 
-method delete*(self: wWindow) {.base, inline.} =
+proc delete*(self: wWindow) {.inline.} =
   ## Destroys the window.
   DestroyWindow(mHwnd)
 
 proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete.
   delete()
+
+method release(self: wWindow) {.base, inline.} =
+  # override this if a window need extra code to release the resource
+  # delete only destroy the window
+  # really resoruce clear is in WM_NCDESTROY
+  discard
 
 proc move*(self: wWindow, x: int, y: int) {.validate.} =
   ## Moves the window to the given position.
@@ -852,6 +858,7 @@ proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPA
         DestroyWindow(mDummyParent)
         mDummyParent = 0
 
+      self.release()
       wAppWindowDelete(self)
       if mParent != nil:
         let index = mParent.mChildren.find(self)
