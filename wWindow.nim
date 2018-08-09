@@ -83,7 +83,7 @@ method getClientSize*(self: wWindow): wSize {.base, property.} =
     let rect = mStatusBar.getWindowRect(sizeOnly=true)
     result.height -= rect.height
 
-method getClientAreaOrigin*(self: wWindow): wPoint {.base.} =
+method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
   ## Get the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
   ## scrollbars, other decorations...)
