@@ -56,7 +56,7 @@ proc init(self: wStaticBitmap, parent: wWindow, id: wCommandID = -1, bitmap: wBi
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
-      let cmdEvent = case HIWORD(event.mWparam.int32)
+      let cmdEvent = case HIWORD(int32 event.mWparam)
         of STN_CLICKED: wEvent_CommandLeftClick
         of STN_DBLCLK: wEvent_CommandLeftDoubleClick
         else: 0

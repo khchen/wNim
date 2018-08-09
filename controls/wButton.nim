@@ -203,7 +203,7 @@ proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "
   wButton.setNotifyHandler(wButtonNotifyHandler)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd and HIWORD(event.mWparam.int32) == BN_CLICKED:
+    if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       var processed: bool
       event.mResult = self.mMessageHandler(self, wEvent_Button, event.mWparam, event.mLparam, processed)
 

@@ -14,11 +14,6 @@ const
 
 
 
-  # RadioButton styles
-  wRbGroup* = WS_GROUP
-
-
-
 
   # ComboBox styles
   wCbSimple* = CBS_SIMPLE

@@ -197,7 +197,7 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
-      let cmdEvent = case HIWORD(event.mWparam.int32)
+      let cmdEvent = case HIWORD(int32 event.mWparam)
         of CBN_SELENDOK:
           # the system set the edit control value AFTER this event
           # however, we need let getValue() return a correct value

@@ -1,35 +1,62 @@
-method getBestSize*(self: wRadioButton): wSize =
+## A radio button item is a button which usually denotes one of several mutually exclusive options.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wRbGroup                        Marks the beginning of a new group of radio buttons.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wCommandEvent                   Description
+##    ==============================  =============================================================
+##    wEvent_RadioButton              The radiobutton  is clicked.
+##    ==============================  =============================================================
+
+const
+  # RadioButton styles
+  wRbGroup* = WS_GROUP
+
+method getBestSize*(self: wRadioButton): wSize {.property.} =
+  ## Returns the best acceptable minimal size for the control.
   result = getTextFontSizeWithCheckMark(getLabel(), mFont.mHandle)
   result.height += 2
 
-method getDefaultSize*(self: wRadioButton): wSize =
+method getDefaultSize*(self: wRadioButton): wSize {.property.} =
+  ## Returns the default size for the control.
   result = getBestSize()
   result.height = getLineControlDefaultHeight(mFont.mHandle)
 
-proc getValue*(self: wRadioButton): bool =
+proc getValue*(self: wRadioButton): bool {.validate, property, inline.} =
+  ## Returns true if the radio button is checked, false otherwise.
   result = SendMessage(mHwnd, BM_GETCHECK, 0, 0) == BST_CHECKED
 
-proc setValue*(self: wRadioButton, state: bool) =
+proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
+  ## Sets the radio button to checked or unchecked status.
   SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
-proc wRadioButtonInit(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
-  assert parent != nil
+proc init(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = (style and (not 0xF)) or BS_AUTORADIOBUTTON
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos,
+    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd and HIWORD(event.mWparam.int32) == BN_CLICKED:
+    if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       var processed: bool
       event.mResult = self.mMessageHandler(self, wEvent_RadioButton, event.mWparam, event.mLparam, processed)
 
-proc RadioButton*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wRadioButton {.discardable.} =
+proc RadioButton*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wRadioButton {.discardable.} =
+  ## Constructor, creating and showing a radio button.
+  wValidate(parent)
   new(result)
-  result.wRadioButtonInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 
-# nim style getter/setter
-
-proc value*(self: wRadioButton): bool = getValue()
-proc `value=`*(self: wRadioButton, state: bool) = setValue(state)
