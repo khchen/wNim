@@ -21,7 +21,7 @@
 ##    Events                          Description
 ##    ==============================  =============================================================
 ##    wEvent_Tool                     Click left mouse button on the tool bar. Same as wEvent_Menu.
-##    wEvent_ToolRightClicked         Click right mouse button on the tool bar.
+##    wEvent_ToolRightClick           Click right mouse button on the tool bar.
 ##    wEvent_ToolDropDown             Drop down menu selected. If unhandled, displays the default dropdown menu.
 ##    wEvent_ToolEnter                The mouse cursor has moved into or moved off a tool.
 ##    ==============================  =============================================================
@@ -37,11 +37,11 @@ const
   wTbDefaultStyle* = wTbFlat or wTbhorizontal
 
 # toolbar's best size and default size are current size
-method getBestSize*(self: wToolBar): wSize {.validate, property, inline.} =
+method getBestSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the best size for the tool bar.
   result = getSize()
 
-method getDefaultSize*(self: wToolBar): wSize {.validate, property, inline.} =
+method getDefaultSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the default size for the tool bar.
   result = getSize()
 
@@ -266,10 +266,12 @@ proc wToolBarNotifyHandler(self: wToolBar, code: INT, id: UINT_PTR, lparam: LPAR
     return self.mMessageHandler(self, wEvent_ToolDropDown, cast[WPARAM](pNMTOOLBAR.iItem), lparam, processed)
 
   of NM_RCLICK:
-    # translate to wEvent_ToolRightClicked
-    let pNMMOUSE = cast[LPNMMOUSE](lparam)
-    if getToolPos(pNMMOUSE.dwItemSpec.wCommandID) >= 0:
-      return self.mMessageHandler(self, wEvent_ToolRightClicked, cast[WPARAM](pNMMOUSE.dwItemSpec), lparam, processed)
+    # Translate to wEvent_ToolRightClick but don't eat it, so that wEvent_CommandRightClick stil can work
+    # If the mouse was clicked on a separator or white space in the toolbar, the dwItemSpec member will contain -1
+    let lpnm = cast[LPNMMOUSE](lparam)
+    if lpnm.dwItemSpec != DWORD_PTR(-1):
+      var dummy: bool
+      discard self.mMessageHandler(self, wEvent_ToolRightClick, cast[WPARAM](lpnm.dwItemSpec), lparam, dummy)
 
   else: discard
 
@@ -311,6 +313,7 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
 
   parent.mToolBar = self
   mFocusable = false
+  # todo: handle key navigation by TB_SETHOTITEM?
 
   wToolBar.setNotifyHandler(wToolBarNotifyHandler)
 

@@ -14,11 +14,11 @@
 ##    ================================  =============================================================
 
 # statusbar's best size and default size are current size
-method getBestSize*(self: wStatusBar): wSize {.validate, property, inline.} =
+method getBestSize*(self: wStatusBar): wSize {.property, inline.} =
   ## Returns the best size for the status bar.
   result = getSize()
 
-method getDefaultSize*(self: wStatusBar): wSize {.validate, property, inline.} =
+method getDefaultSize*(self: wStatusBar): wSize {.property, inline.} =
   ## Returns the default size for the status bar.
   result = getSize()
 

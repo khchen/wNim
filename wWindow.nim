@@ -58,7 +58,7 @@ proc setWindowSize(self: wWindow, width, height: int) {.inline.} =
 proc setWindowPos(self: wWindow, x, y: int) {.inline.} =
   setWindowRect(x, y, 0, 0, SWP_NOSIZE)
 
-method getClientSize*(self: wWindow): wSize {.base, validate, property.} =
+method getClientSize*(self: wWindow): wSize {.base, property.} =
   ## Returns the size of the window 'client area' in pixels.
   var r: RECT
   GetClientRect(mHwnd, r)
@@ -83,7 +83,7 @@ method getClientSize*(self: wWindow): wSize {.base, validate, property.} =
     let rect = mStatusBar.getWindowRect(sizeOnly=true)
     result.height -= rect.height
 
-method getClientAreaOrigin*(self: wWindow): wPoint {.base, validate.} =
+method getClientAreaOrigin*(self: wWindow): wPoint {.base.} =
   ## Get the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
   ## scrollbars, other decorations...)
@@ -147,7 +147,7 @@ proc close*(self: wWindow) {.validate, inline.} =
   ## This function simply generates a wEvent_Close whose handler usually tries to close the window.
   SendMessage(mHwnd, WM_CLOSE, 0, 0)
 
-method delete*(self: wWindow) {.base, validate, inline.} =
+method delete*(self: wWindow) {.base, inline.} =
   ## Destroys the window.
   DestroyWindow(mHwnd)
 
@@ -248,7 +248,7 @@ proc getPosition*(self: wWindow): wPoint {.validate, property.} =
   result.y = rect.y
   adjustForParentClientOriginSub(result.x, result.y)
 
-method getDefaultSize*(self: wWindow): wSize {.base, validate, property, inline.} =
+method getDefaultSize*(self: wWindow): wSize {.base, property, inline.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
   # window's default size is it's parent's clientSize, or 0, 0 by default
   if mParent != nil:
@@ -292,7 +292,7 @@ proc clientToWindow(self: wWindow, size: wSize): wSize {.validate.} =
   if size.height != wDefault:
     result.height += windowSize.height - clientSize.height
 
-method getBestSize*(self: wWindow): wSize {.base, validate, property.} =
+method getBestSize*(self: wWindow): wSize {.base, property.} =
   ## Returns the best acceptable minimal size for the window (usually used for GUI controls).
   if mChildren.len == 0:
     result = getSize()
@@ -445,7 +445,7 @@ proc refresh*(self: wWindow, eraseBackground = true, rect: wRect) {.validate.} =
   var r = rect.toRECT()
   InvalidateRect(mHwnd, r, eraseBackground)
 
-method show*(self: wWindow, flag = true) {.base, validate, inline.} =
+method show*(self: wWindow, flag = true) {.base, inline.} =
   ## Shows or hides the window.
   ShowWindow(mHwnd, if flag: SW_SHOWNORMAL else: SW_HIDE)
 
@@ -603,11 +603,11 @@ proc reparent*(self: wWindow, parent: wWindow): bool {.validate, inline, discard
   wValidate(parent)
   setParent(parent)
 
-method setForegroundColor*(self: wWindow, color: wColor) {.base, validate, property, inline.} =
+method setForegroundColor*(self: wWindow, color: wColor) {.base, property, inline.} =
   ## Sets the foreground color of the window.
   mForegroundColor = color
 
-method setBackgroundColor*(self: wWindow, color: wColor) {.base, validate, property.} =
+method setBackgroundColor*(self: wWindow, color: wColor) {.base, property.} =
   ## Sets the background color of the window.
   mBackgroundColor = color
   mBackgroundBrush = Brush(color)

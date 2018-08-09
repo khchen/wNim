@@ -35,14 +35,14 @@ const
   wCalMultiSelect* = MCS_MULTISELECT
 
 method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
-  ## Returns the best acceptable minimal size for the window.
+  ## Returns the best acceptable minimal size for the control.
   var rect: RECT
   SendMessage(mHwnd, MCM_GETMINREQRECT, 0, addr rect)
   result.width = max(rect.right.int, SendMessage(mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
   result.height = rect.bottom + 2
 
 method getDefaultSize*(self: wCalendarCtrl): wSize {.property.} =
-  ## Returns the default size for the window.
+  ## Returns the default size for the control.
   result = getBestSize()
 
 proc getDate*(self: wCalendarCtrl): wTime {.validate, property.} =

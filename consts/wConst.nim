@@ -42,9 +42,6 @@ const
   wSbFill* = SS_REALSIZECONTROL
   wSbNone* = SS_REALSIZECONTROL or SS_CENTERIMAGE
 
-  # StaticLine styles
-  wLiHorizontal* = SS_LEFT
-  wLiVertical* = SS_RIGHT
 
   # ComboBox styles
   wCbSimple* = CBS_SIMPLE

@@ -10,7 +10,7 @@ DefineIncrement(wEvent_First):
   wEvent_RadioBox
   wEvent_RadioButton
   wEvent_ComboBox
-  wEvent_ToolRightClicked
+  wEvent_ToolRightClick
   wEvent_ToolDropDown
   wEvent_ToolEnter
   wEvent_ComboBoxDropDown
