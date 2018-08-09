@@ -127,7 +127,7 @@ proc wSpinCtrlInit(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label:
     DestroyWindow(mUpdownHwnd)
     mUpdownHwnd = 0
 
-proc SpinCtrl*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl =
+proc SpinCtrl*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl {.discardable.} =
   new(result)
   result.wSpinCtrlInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

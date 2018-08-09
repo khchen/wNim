@@ -332,7 +332,7 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBarOnToolDropDown)
 
-proc ToolBar*(parent: wWindow, id: wCommandID = -1, style: wStyle = wTbDefaultStyle): wToolBar =
+proc ToolBar*(parent: wWindow, id: wCommandID = -1, style: wStyle = wTbDefaultStyle): wToolBar {.discardable.} =
   ## Constructs a toolbar.
   wValidate(parent)
   new(result)

@@ -623,7 +623,7 @@ proc wListCtrlInit*(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos =
       SendMessage(mHwnd, LVM_SETTEXTBKCOLOR, 0, mBackgroundColor)
       SendMessage(mHwnd, LVM_SETBKCOLOR, 0, mBackgroundColor)
 
-proc ListCtrl*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wListCtrl =
+proc ListCtrl*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wListCtrl {.discardable.} =
   new(result)
   result.wListCtrlInit(parent=parent, id=id, pos=pos, size=size, style=style)
 

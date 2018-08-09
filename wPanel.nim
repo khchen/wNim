@@ -11,7 +11,7 @@ proc init(self: wPanel, parent: wWindow = nil, pos = wDefaultPoint, size = wDefa
     bgColor=GetSysColor(COLOR_BTNFACE))
 
 proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wPanel"): wPanel =
+    style: wStyle = 0, className = "wPanel"): wPanel {.discardable.} =
   ## Constructor.
   wValidate(parent)
   new(result)

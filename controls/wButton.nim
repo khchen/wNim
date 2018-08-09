@@ -116,7 +116,7 @@ proc wButtonInit(self: wButton, parent: wWindow, id: wCommandID = -1, label: str
       var processed: bool
       event.mResult = self.mMessageHandler(self, wEvent_Button, event.mWparam, event.mLparam, processed)
 
-proc Button*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wButton =
+proc Button*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wButton {.discardable.} =
   new(result, wButtonFinal)
   result.wButtonInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

@@ -34,7 +34,7 @@ proc wStaticBitmapInit*(self: wStaticBitmap, parent: wWindow, id: wCommandID = -
         var processed: bool
         event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
-proc StaticBitmap*(parent: wWindow, id: wCommandID = -1, bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticBitmap =
+proc StaticBitmap*(parent: wWindow, id: wCommandID = -1, bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticBitmap {.discardable.} =
   new(result)
   result.wStaticBitmapInit(parent=parent, id=id, bitmap=bitmap, pos=pos, size=size, style=style)
 

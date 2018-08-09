@@ -302,7 +302,7 @@ proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSi
     hardConnect(WM_DRAWITEM, wFrame_OndrawItem)
 
 proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wDefaultFrameStyle, className = "wFrame"): wFrame =
+    style: wStyle = wDefaultFrameStyle, className = "wFrame"): wFrame {.discardable.} =
   ## Constructor, creating the frame. A frame is the top-level window so it cannot have a parent.
   ## However, it can has an owner. The frame will be minimized when its owner is minimized and
   ## restored when it is restored.

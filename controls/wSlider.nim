@@ -150,7 +150,7 @@ proc wSliderInit*(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
 
-proc Slider*(parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSlider =
+proc Slider*(parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSlider {.discardable.} =
   new(result)
   result.wSliderInit(parent=parent, value=value, range=range, id=id, pos=pos, size=size, style=style)
 

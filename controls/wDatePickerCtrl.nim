@@ -99,7 +99,7 @@ proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
 proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = wDpDefault): wDatePickerCtrl =
+    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = wDpDefault): wDatePickerCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

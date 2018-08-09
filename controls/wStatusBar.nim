@@ -136,7 +136,7 @@ proc init(self: wStatusBar, parent: wWindow, style: wStyle = 0, id: wCommandID =
 
   wStatusBar.setNotifyHandler(wStatusBarNotifyHandler)
 
-proc StatusBar*(parent: wWindow, style: wStyle = 0, id: wCommandID = -1): wStatusBar =
+proc StatusBar*(parent: wWindow, style: wStyle = 0, id: wCommandID = -1): wStatusBar {.discardable.} =
   ## Constructor.
   wValidate(parent)
   new(result)

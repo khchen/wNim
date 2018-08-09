@@ -43,7 +43,7 @@ proc wCheckBoxInit(self: wCheckBox, parent: wWindow, id: wCommandID = -1, label:
       var processed: bool
       event.mResult = self.mMessageHandler(self, wEvent_CheckBox, event.mWparam, event.mLparam, processed)
 
-proc CheckBox*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wCheckBox =
+proc CheckBox*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wCheckBox {.discardable.} =
   new(result)
   result.wCheckBoxInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

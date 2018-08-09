@@ -28,6 +28,6 @@ proc wStaticBoxInit(self: wStaticBox, parent: wWindow, id: wCommandID = -1, labe
   mMarginX = 12
   mMarginY = 12
 
-proc StaticBox*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticBox =
+proc StaticBox*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticBox {.discardable.} =
   new(result)
   result.wStaticBoxInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)

@@ -436,6 +436,14 @@ proc setWindowStyle*(self: wWindow, style: wStyle) {.validate, property.} =
   SetWindowLongPtr(mHwnd, GWL_STYLE, msStyle)
   SetWindowLongPtr(mHwnd, GWL_EXSTYLE, exStyle)
 
+proc addWindowStyle*(self: wWindow, style: wStyle) {.validate, inline.} =
+  ## Add the specified style but don't change other styles.
+  setWindowStyle(getWindowStyle() or style)
+
+proc clearWindowStyle*(self: wWindow, style: wStyle) {.validate, inline.} =
+  ## Clear the specified style but don't change other styles.
+  setWindowStyle(getWindowStyle() and (not style))
+
 proc refresh*(self: wWindow, eraseBackground = true) {.validate.} =
   ## Redraws the contents of the window.
   InvalidateRect(mHwnd, nil, eraseBackground)
@@ -1067,7 +1075,9 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   UpdateWindow(mHwnd)
 
 proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wWindow"): wWindow =
+    style: wStyle = 0, className = "wWindow"): wWindow {.discardable.} =
   ## Constructs a window.
+  # make all wWindow and subclass as discardable, because sometimes we just want a window
+  # there and don't do anything about it. Especially for controls.
   new(result)
   result.init(parent=parent, pos=pos, size=size, style=style, className=className, id=id)

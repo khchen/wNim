@@ -328,7 +328,7 @@ proc wTextCtrlInit*(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label
       else: 0
       if msg != 0: event.mResult = self.mMessageHandler(self, msg, event.mWparam, event.mLparam, processed)
 
-proc TextCtrl*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl =
+proc TextCtrl*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl {.discardable.} =
   new(result)
   result.wTextCtrlInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

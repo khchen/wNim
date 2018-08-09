@@ -160,7 +160,7 @@ proc init(self: wCalendarCtrl, parent: wWindow, id: wCommandID = wDefaultID, dat
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
 proc CalendarCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wCalendarCtrl =
+    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wCalendarCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

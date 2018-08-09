@@ -31,11 +31,6 @@ const
   # RadioButton styles
   wRbGroup* = WS_GROUP
 
-  # StaticText styles
-  wAlignLeft* = SS_LEFT
-  wAlignRight* = SS_RIGHT
-  wAlignCentre* = SS_CENTER
-  wAlignMiddle* = SS_CENTERIMAGE
 
   # StaticBitmap styles
   wSbAuto* = 0

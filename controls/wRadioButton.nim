@@ -25,7 +25,7 @@ proc wRadioButtonInit(self: wRadioButton, parent: wWindow, id: wCommandID = -1, 
       var processed: bool
       event.mResult = self.mMessageHandler(self, wEvent_RadioButton, event.mWparam, event.mLparam, processed)
 
-proc RadioButton*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wRadioButton =
+proc RadioButton*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wRadioButton {.discardable.} =
   new(result)
   result.wRadioButtonInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

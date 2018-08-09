@@ -90,7 +90,7 @@ proc wGaugeInit(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
           taskbar.Release()
         CoUninitialize()
 
-proc Gauge*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wGauge =
+proc Gauge*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wGauge {.discardable.} =
   new(result)
   result.wGaugeInit(parent=parent, id=id, pos=pos, size=size, style=style)
 

@@ -44,7 +44,7 @@ proc setValue*(self: wTimePickerCtrl, time: wTime) {.validate, property.} =
   SendMessage(mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
 
 proc TimePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID, time: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wTimePickerCtrl =
+    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wTimePickerCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

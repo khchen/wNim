@@ -127,7 +127,7 @@ proc wScrollBarInit*(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
-proc ScrollBar*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wScrollBar =
+proc ScrollBar*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wScrollBar {.discardable.} =
   new(result)
   result.wScrollBarInit(parent=parent, id=id, pos=pos, size=size, style=style)
 

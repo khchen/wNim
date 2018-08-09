@@ -218,7 +218,7 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
         event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
 proc ComboBox*(parent: wWindow, id: wCommandID = -1, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0): wComboBox =
+    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0): wComboBox {.discardable.} =
 
   new(result)
   result.wComboBoxInit(parent=parent, id=id, value=value, pos=pos, size=size, choices=choices, style=style)
