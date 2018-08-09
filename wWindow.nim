@@ -498,7 +498,8 @@ proc setFocus*(self: wWindow) {.validate.} =
 
 proc isFocusable*(self: wWindow): bool {.validate, inline.} =
   ## Can this window itself have focus?
-  result = mFocusable
+  if IsWindowVisible(mHwnd) != 0 and IsWindowEnabled(mHwnd) != 0 and mFocusable:
+    result = true
 
 proc captureMouse*(self: wWindow) {.validate, inline.} =
   ## Directs all mouse input to this window.

@@ -19,9 +19,16 @@ proc useKey*(self: wControl, keys: set[wUSE_KEY]) =
 proc unuseKey*(self: wControl, keys: set[wUSE_KEY]) =
   mKeyUsed = mKeyUsed - keys
 
-proc focusable(self: wControl): bool =
-  if IsWindowVisible(mHwnd) != 0 and IsWindowEnabled(mHwnd) != 0 and mFocusable:
-    result = true
+proc wControlOnMenuCommand(event: wEvent) =
+  # relay control's WM_MENUCOMMAND to any wFrame (for example, wToolBar or wButton's submenu)
+  let self = event.mWindow
+  var win = self.mParent
+  while win != nil:
+    if win of wFrame:
+      var processed: bool
+      event.mResult = win.mMessageHandler(win, WM_MENUCOMMAND, event.mWparam, event.mLparam, processed)
+      break
+    win = win.mParent
 
 proc tabStop(self: wControl, forward = true): wControl =
 
@@ -29,7 +36,7 @@ proc tabStop(self: wControl, forward = true): wControl =
     # syslink control has some unexceptable weird behavior to change it's own WS_TABSTOP
     # so we always assume that wHyperlinkCtrl control has WS_TABSTOP flag
 
-    if focusable() and ((GetWindowLongPtr(mHwnd, GWL_STYLE).DWORD and WS_TABSTOP) != 0 or self of wHyperlinkCtrl):
+    if isFocusable() and ((GetWindowLongPtr(mHwnd, GWL_STYLE).DWORD and WS_TABSTOP) != 0 or self of wHyperlinkCtrl):
       result = true
 
   if mParent == nil or mParent.mChildren == nil: return
@@ -78,7 +85,7 @@ proc groupStop(self: wControl, forward = true): wControl =
       if forward and (GetWindowLongPtr(control.mHwnd, GWL_STYLE).DWORD and WS_GROUP) != 0:
         break
 
-      if control.focusable():
+      if control.isFocusable():
         result = control
         break
 
@@ -88,12 +95,14 @@ proc groupStop(self: wControl, forward = true): wControl =
     while parent != nil:
       if parent of wControl:
         let control = cast[wControl](parent)
-        if control.focusable():
+        if control.isFocusable():
           result = control
           break
 
       parent = parent.mParent
 
+# return control with specified letter,
+# however, click only there is one control with this letter
 proc mnemonicStop(self: wControl, letter: char, click: var bool): wControl =
   if mParent == nil or mParent.mChildren == nil: return
 
@@ -107,18 +116,10 @@ proc mnemonicStop(self: wControl, letter: char, click: var bool): wControl =
     if index >= siblings.len: index = 0
 
     if siblings[index] of wControl:
-      let control = cast[wControl](siblings[index])
-      if control.focusable():
-        var
-          maxLen = GetWindowTextLength(control.mHwnd) + 1
-          title = T(maxLen + 2)
-        #   ptitle = allocWString(maxLen.int)
-        #   title = cast[wstring](ptitle)
-        # defer: dealloc(ptitle)
-
-        title.setLen(GetWindowText(control.mHwnd, &title, maxLen))
-        let text = $title
-        if text.find('&' & letter) >= 0 or text.find('&' & char(letter.int + 'a'.int - 'A'.int)) >= 0:
+      let control = wControl(siblings[index])
+      if control.isFocusable():
+        let text = toUpperAscii(control.getTitle())
+        if text.find('&' & toUpperAscii(letter)) >= 0:
           if result == nil:
             result = control
             click = true
@@ -168,12 +169,27 @@ proc eatKey(self: wControl, keyCode: WPARAM, processed: var bool): wUSE_KEY =
       processed = true
       result = wUSE_RIGHT
 
+proc drawDefaultButton(hwnd: HWND, flag = true) =
+  let style = GetWindowLongPtr(hwnd, GWL_STYLE)
+  if flag and (style and BS_DEFPUSHBUTTON) == 0:
+    SetWindowLongPtr(hwnd, GWL_STYLE, style or BS_DEFPUSHBUTTON)
+    InvalidateRect(hwnd, nil, false)
+
+  elif not flag and (style and BS_DEFPUSHBUTTON) != 0:
+    SetWindowLongPtr(hwnd, GWL_STYLE, style and (not BS_DEFPUSHBUTTON))
+    InvalidateRect(hwnd, nil, false)
+
 proc drawSiblingButtons(self: wControl, fun: proc(win: wWindow): bool) =
   for win in self.mParent.mChildren:
     if win of wButton:
       drawDefaultButton(win.mHwnd, fun(win))
 
 proc wControlMessageHandler(self: wControl, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT =
+  # if msg == WM_SYSCHAR:
+  #   echo "here"
+  #   processed = true
+  #   return 1
+
   if msg == WM_KILLFOCUS:
     # always save current focus to top level window
     # if top level window get focus after window switch, the control can get focus again
@@ -191,11 +207,11 @@ proc wControlMessageHandler(self: wControl, msg: UINT, wparam: WPARAM, lparam: L
 
     # some other control get focus => set by button's setting
     else:
-      drawSiblingButtons() do (win: wWindow) -> bool: cast[wButton](win).mDefault
+      drawSiblingButtons() do (win: wWindow) -> bool: wButton(win).mDefault
 
   result = wWindowMessageHandler(self, msg, wparam, lparam, processed)
 
-  if not processed and msg in {WM_CHAR, WM_KEYDOWN, WM_SYSKEYDOWN}:
+  if not processed and msg in {WM_CHAR, WM_KEYDOWN, WM_SYSKEYDOWN, WM_SYSCHAR}:
     let keyCode = wparam
 
     case msg
@@ -242,16 +258,24 @@ proc wControlMessageHandler(self: wControl, msg: UINT, wparam: WPARAM, lparam: L
 
       else: discard
 
-    of WM_SYSKEYDOWN:
-      if ((keyCode >= 'A'.WPARAM and keyCode <= 'Z'.WPARAM) or
-          (keyCode >= '0'.WPARAM and keyCode <= '9'.WPARAM)):
+    of WM_SYSCHAR:
+      # handle WM_SYSCHAR instead of WM_SYSKEYDOWN, there won't a beep sound.
+      # WM_SYSKEYDOWN -> TranslateMessage -> WM_SYSCHAR
+      # and system handle WM_SYSCHAR for menu select
+      # now, we only hand the control that has mnemonic leter
+      # try to handle focus across control and menu?
 
+      var ch = char keyCode
+      case ch:
+      of 'A'..'Z', 'a'..'z', '0'..'9':
         var click: bool
-        let control = mnemonicStop(keyCode.char, click)
+        let control = mnemonicStop(ch, click)
+
         if control != nil:
           control.setFocus()
           if click: SendMessage(control.mHwnd, BM_CLICK, 0, 0)
           processed = true
+      else: discard
 
     else: discard
 

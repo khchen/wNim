@@ -1,5 +1,7 @@
 DefineIncrement(wEvent_First):
   wEvent_Button
+  wEvent_ButtonEnter
+  wEvent_ButtonLeave
   wEvent_CheckBox
   wEvent_Choice
   wEvent_ListBox

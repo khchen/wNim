@@ -24,13 +24,13 @@ proc App*(): wApp =
   result.mMessageCountTable = initCountTable[UINT]()
   wTheApp = result
 
-proc wAppGetInstance(): HANDLE =
+proc wAppGetInstance(): HANDLE {.inline.} =
   result = wTheApp.mInstance
 
-proc wAppHasTopLevelWindow(): bool =
+proc wAppHasTopLevelWindow(): bool {.inline.} =
   result = (wTheApp.mTopLevelWindowList.len != 0)
 
-proc wAppWindowAdd(win: wWindow) =
+proc wAppWindowAdd(win: wWindow) {.inline.} =
   wTheApp.mWindowTable[win.mHwnd] = win
 
 proc wAppWindowChange(win: wWindow) =
@@ -41,13 +41,13 @@ proc wAppWindowChange(win: wWindow) =
 
   wAppWindowAdd(win)
 
-proc wAppWindowFindByHwnd(hwnd: HWND): wWindow =
+proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline.} =
   result = wTheApp.mWindowTable.getOrDefault(hwnd)
 
-proc wAppTopLevelWindowAdd(win: wWindow) =
+proc wAppTopLevelWindowAdd(win: wWindow) {.inline.} =
   wTheApp.mTopLevelWindowList.add(win)
 
-iterator wAppTopLevelWindows(): wWindow =
+iterator wAppTopLevelWindows(): wWindow {.inline.} =
   for win in wTheApp.mTopLevelWindowList:
     yield win
 
@@ -58,16 +58,16 @@ proc wAppWindowDelete(win: wWindow) =
     if w == win:
       wTheApp.mTopLevelWindowList.del(index)
 
-proc wAppIsMessagePropagation(msg: UINT): bool =
+proc wAppIsMessagePropagation(msg: UINT): bool {.inline.} =
   result = msg in wTheApp.mPropagationSet
 
-proc wAppIncMessage(msg: UINT) =
+proc wAppIncMessage(msg: UINT) {.inline.} =
   wTheApp.mMessageCountTable.inc(msg, 1)
 
-proc wAppDecMessage(msg: UINT) =
+proc wAppDecMessage(msg: UINT) {.inline.} =
   wTheApp.mMessageCountTable.inc(msg, -1)
 
-proc wAppHasMessage(msg: UINT): bool =
+proc wAppHasMessage(msg: UINT): bool {.inline.} =
   msg in wTheApp.mMessageCountTable
 
 template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
@@ -79,7 +79,7 @@ template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
 
   typ(wTheApp.mGDIStockSeq[sn])
 
-iterator wAppWindows(): wWindow =
+iterator wAppWindows(): wWindow {.inline.} =
   for hwnd, win in wTheApp.mWindowTable:
     yield win
 

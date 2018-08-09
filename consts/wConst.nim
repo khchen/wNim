@@ -12,12 +12,6 @@ const
   wItemDropDown* = BTNS_WHOLEDROPDOWN
   wItemSubMenu* = wItemDropDown
 
-  # Button styles
-  wBuLeft* = BS_LEFT
-  wBuTop* = BS_TOP
-  wBuRight* = BS_RIGHT
-  wBuBottom* = BS_BOTTOM
-  wBuNoBorder* = BS_FLAT
 
   # CheckBox styles and state
   wChk2State* = 0

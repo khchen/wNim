@@ -158,7 +158,7 @@ proc wFrame_OnSize(event: wEvent) =
 
 proc findFocusableChild(self: wWindow): wWindow =
   for win in mChildren:
-    if win.mFocusable and IsWindowEnabled(win.mHwnd).bool:
+    if win.isFocusable():
       return win
     elif win.mChildren.len > 0:
       result = win.findFocusableChild()

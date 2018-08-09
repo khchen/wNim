@@ -288,14 +288,14 @@ proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label:
       case self.eatKey(keyCode, processed)
       of wUSE_DOWN:
         for win in mPages[mSelection].mChildren:
-          if win of wControl and cast[wControl](win).focusable():
+          if win of wControl and win.isFocusable():
             win.setFocus()
             break
 
       of wUSE_UP:
         for i in countdown(mPages[mSelection].mChildren.len-1, 0):
           let win = mPages[mSelection].mChildren[i]
-          if win of wControl and cast[wControl](win).focusable():
+          if win of wControl and win.isFocusable():
             win.setFocus()
             break
 

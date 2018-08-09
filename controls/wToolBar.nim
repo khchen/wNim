@@ -293,17 +293,6 @@ proc wToolBarOnToolDropDown(event: wEvent) =
     self.popupMenu(menu, rect.left, rect.bottom)
     processed = true
 
-proc wToolBarOnMenuCommand(event: wEvent) =
-  # send WM_MENUCOMMAND to wFrame (if there has one)
-  let self = wToolBar event.mWindow
-  var win = self.mParent
-  while win != nil:
-    if win of wFrame:
-      var processed: bool
-      event.mResult = win.mMessageHandler(win, WM_MENUCOMMAND, event.mWparam, event.mLparam, processed)
-      break
-    win = win.mParent
-
 proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = wTbDefaultStyle) =
   mTools = @[]
 
@@ -327,7 +316,7 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
       event.mResult = self.mMessageHandler(self, wEventTool, event.mWparam, event.mLparam, processed)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
-  systemConnect(WM_MENUCOMMAND, wToolBarOnMenuCommand)
+  systemConnect(WM_MENUCOMMAND, wControlOnMenuCommand)
 
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBarOnToolDropDown)

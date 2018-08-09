@@ -135,16 +135,6 @@ proc getTextFontSizeWithCheckMark(text: string, hFont: HANDLE): wSize =
   result.width += checkWidth + textOffset.int div 2
   if result.width < checkHeight: result.width = checkHeight
 
-proc drawDefaultButton(hwnd: HWND, flag = true) =
-  let style = GetWindowLongPtr(hwnd, GWL_STYLE)
-  if flag and (style and BS_DEFPUSHBUTTON) == 0:
-    SetWindowLongPtr(hwnd, GWL_STYLE, style or BS_DEFPUSHBUTTON)
-    InvalidateRect(hwnd, nil, false)
-
-  elif not flag and (style and BS_DEFPUSHBUTTON) != 0:
-    SetWindowLongPtr(hwnd, GWL_STYLE, style and (not BS_DEFPUSHBUTTON))
-    InvalidateRect(hwnd, nil, false)
-
 proc toDateTime(st: SYSTEMTIME): DateTime =
   initDateTime(st.wDay, Month st.wMonth, st.wYear.int, st.wHour, st.wMinute, st.wSecond)
 

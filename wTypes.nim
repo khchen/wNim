@@ -231,6 +231,7 @@ when not defined(wnimdoc):
     wButtonObj = object of wControlObj
       mImgData: BUTTON_IMAGELIST
       mDefault: bool
+      mMenu: wMenu
 
     wStaticText* = ref wStaticTextObj
     wStaticTextObj = object of wControlObj
