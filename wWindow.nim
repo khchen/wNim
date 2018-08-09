@@ -660,31 +660,58 @@ proc getTransparent*(self: wWindow): int {.validate, property.} =
   if GetLayeredWindowAttributes(mHwnd, nil, &alpha, nil) == 0: return -1
   result = int alpha
 
-# todo:
-# SetScrollbar
-# SetScrollPos
-
-proc getScrollInfo(self: wWindow, orientation: int): SCROLLINFO {.validate, property.} =
+proc toBar(orientation: int): int {.inline.} =
   assert orientation in {wHorizontal, wVertical}
+  result = if orientation == wHorizontal: SB_HORZ else: SB_VERT
 
-  result = SCROLLINFO(cbSize: sizeof(SCROLLINFO))
-  result.fMask = SIF_ALL
-  GetScrollInfo(mHwnd, if orientation == wHorizontal: SB_HORZ else: SB_VERT, addr result)
+proc getScrollInfo(self: wWindow, orientation: int): SCROLLINFO =
+  result = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_ALL)
+  GetScrollInfo(mHwnd, orientation.toBar, &result)
 
-proc getScrollRange*(self: wWindow, orientation: int): int {.validate, property.} =
+proc setScrollbar*(self: wWindow, orientation: int, position: Natural,
+    pageSize: Positive, range: Positive) {.validate, property.} =
+  ## Sets the scrollbar properties of a built-in scrollbar .
+  ## Orientation should be wHorizontal or wVertical
+  var info = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_POS or SIF_PAGE or SIF_RANGE,
+    nPos: int32 position,
+    nPage: int32 pageSize,
+    nMin: 0,
+    nMax: int32 range)
+  SetScrollInfo(mHwnd, orientation.toBar, &info, true) # true for redraw
+
+proc showScrollBar*(self: wWindow, orientation: int, flag = true) {.validate, inline.} =
+  ## Shows the built-in scrollbar.
+  ShowScrollBar(mHwnd, orientation.toBar, if flag: 1 else: 0)
+
+proc enableScrollBar*(self: wWindow, orientation: int, flag = true) {.validate, inline.} =
+  ## Enable or disable the built-in scrollbar.
+  EnableScrollBar(mHwnd, orientation.toBar, if flag: ESB_ENABLE_BOTH else: ESB_DISABLE_BOTH)
+
+proc setScrollPos*(self: wWindow, orientation: int, position: Natural)  {.validate.} =
+  ## Sets the position of the scrollbar.
+  var info = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_POS,
+    nPos: int32 position)
+  SetScrollInfo(mHwnd, orientation.toBar, &info, true)
+
+proc getScrollRange*(self: wWindow, orientation: int): int {.validate, property, inline.} =
   ## Returns the built-in scrollbar range.
   let info = getScrollInfo(orientation)
   result = int info.nMax
 
-proc getScrollThumb*(self: wWindow, orientation: int): int {.validate, property.} =
-  ## Returns the built-in scrollbar thumb size.
+proc getPageSize*(self: wWindow, orientation: int): int {.validate, property, inline.} =
+  ## Returns the built-in scrollbar page size.
   let info = getScrollInfo(orientation)
   result = int info.nPage
 
-proc getScrollPos*(self: wWindow, orientation: int): int {.validate, property.} =
+proc getScrollPos*(self: wWindow, orientation: int): int {.validate, property, inline.} =
   ## Returns the built-in scrollbar position.
   let info = getScrollInfo(orientation)
-  echo info.repr
   result = int info.nPos
 
 proc center*(self: wWindow, direction = wBoth) {.validate.} =
@@ -737,6 +764,15 @@ proc queueEvent*(self: wWindow, event: wEvent) {.validate.} =
   wValidate(event)
   PostMessage(mHwnd, event.mMsg, event.mWparam, event.mLparam)
 
+proc startTimer*(self: wWindow, seconds: float, id = 1) {.validate, inline.} =
+  ## Start a timer. It generates wEvent_Timer event to the window.
+  ## In the event handler, use event.timerId to get the timer id.
+  SetTimer(mHwnd, UINT_PTR id, UINT(seconds * 1000), nil)
+
+proc stopTimer*(self: wWindow, id = 1) {.validate, inline.} =
+  ## Stop the timer.
+  KillTimer(mHwnd, UINT_PTR id)
+
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterate the window's children.
   for child in mChildren:
@@ -748,6 +784,73 @@ iterator siblings*(self: wWindow): wWindow {.validate.} =
     for child in mParent.mChildren:
       if child != self:
         yield child
+
+proc scrollEventRelay(wParam: WPARAM, info: SCROLLINFO, position: var INT): UINT {.inline.} =
+  result = case LOWORD(wparam)
+    of SB_TOP:
+      position = 0
+      wEvent_ScrollTop
+    of SB_BOTTOM:
+      position = info.nMax
+      wEvent_ScrollBottom
+    of SB_LINEUP:
+      position.dec
+      wEvent_ScrollLineUp
+    of SB_LINEDOWN:
+      position.inc
+      wEvent_ScrollLineDown
+    of SB_PAGEUP:
+      position.dec info.nPage
+      wEvent_ScrollPageUp
+    of SB_PAGEDOWN:
+      position.inc info.nPage
+      wEvent_ScrollPageDown
+    of SB_THUMBPOSITION:
+      position = info.nTrackPos
+      wEvent_ScrollThumbRelease
+    of SB_THUMBTRACK:
+      position = info.nTrackPos
+      wEvent_ScrollThumbTrack
+    of SB_ENDSCROLL:
+      wEvent_ScrollChanged
+    else: 0
+
+  if position < 0: position = 0
+  if position > info.nMax: position = info.nMax
+
+proc getScrollInfo(self: wScrollBar): SCROLLINFO
+proc setScrollPos*(self: wScrollBar, position: Natural)
+
+# handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll bar control
+proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM, isControl: bool): LRESULT =
+  var
+    info =
+      if isControl:
+        wScrollBar(self).getScrollInfo()
+      else:
+        self.getScrollInfo(orientation)
+
+    position = info.nPos
+    eventType = scrollEventRelay(wParam, info, position)
+    isRelay = false
+
+  if position != info.nPos:
+    if isControl:
+      wScrollBar(self).setScrollPos(position)
+    else:
+      self.setScrollPos(orientation, position)
+    isRelay = true
+
+  var
+    scrollData = wScrollData(orientation: orientation, scrollPos: position)
+    dataPtr = cast[LPARAM](&scrollData)
+
+  if eventType == wEvent_ScrollThumbRelease or eventType == wEvent_ScrollChanged:
+    isRelay = true
+
+  if eventType != 0 and isRelay:
+    var processed: bool
+    return self.mMessageHandler(self, eventType, wParam, dataPtr, processed)
 
 # assign to WNDCLASSEX.lpfnWndProc for invoke wWindow's message handler
 proc wWndProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LRESULT {.stdcall.} =
@@ -768,8 +871,7 @@ proc wWndProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LRESULT {.
 # a default window message handler to every wWindow, handle wEvent here
 proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT =
   if not processed and wAppHasMessage(msg):
-    var propagationLevel = msg.defaultPropagationLevel()
-    var event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam, propagationLevel=propagationLevel)
+    var event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
     var id = event.mId
     event.mKeyStatus = getKeyStatus()
 
@@ -784,10 +886,13 @@ proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPA
           processed = true
 
     mSystemConnectionTable.withValue(msg, list):
+      # system event always skip to next
+      # so we don't break even the event is processed
       for connection in list: # FIFO
         connection.callHandler()
-        # system event always skip to next
-        # so we don't break even the event is processed
+
+    # after system event done, processed show be false
+    processed = false
 
     var this = self
     while true:
@@ -817,6 +922,11 @@ proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPA
         if mMaxSize.width != wDefault: pInfo.ptMaxTrackSize.x = mMaxSize.width
         if mMaxSize.height != wDefault: pInfo.ptMaxTrackSize.y = mMaxSize.height
         processed = true
+
+    of WM_VSCROLL, WM_HSCROLL:
+      if lparam == 0: # means the standard scroll bar
+        let orientation = if msg == WM_VSCROLL: wVertical else: wHorizontal
+        return self.scrollEventHandlerImpl(orientation, wParam, isControl=false)
 
     of WM_NOTIFY:
       var

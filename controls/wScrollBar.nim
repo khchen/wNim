@@ -1,69 +1,103 @@
+## A wScrollBar is a control that represents a horizontal or vertical scrollbar.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wSbHorizontal                   Specifies a horizontal scrollbar.
+##    wSbVertical                     Specifies a vertical scrollbar.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wScrollEvent                    Description
+##    ==============================  =============================================================
+##    wEvent_ScrollTop                Scroll to top or leftmost.
+##    wEvent_ScrollBottom             Scroll to bottom or rightmost.
+##    wEvent_ScrollLineUp             Scroll line up or left
+##    wEvent_ScrollLineDown           Scroll line down or right.
+##    wEvent_ScrollPageUp             Scroll page up or left.
+##    wEvent_ScrollPageDown           Scroll page down or right.
+##    wEvent_ScrollThumbTrack         Frequent events sent as the user drags the thumbtrack.
+##    wEvent_ScrollThumbRelease       Thumb release events.
+##    wEvent_ScrollChanged            End of scrolling events
+##    ==============================  =============================================================
 
-proc isVertical*(self: wScrollBar): bool =
+const
+  # ScrollBar styles
+  wSbHorizontal* = SBS_HORZ
+  wSbVertical* = SBS_VERT
+
+proc isVertical*(self: wScrollBar): bool {.validate, inline.} =
+  ## Returns true for scrollbars that have the vertical style set.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and SBS_VERT) != 0
 
-method getDefaultSize*(self: wScrollBar): wSize =
+method getDefaultSize*(self: wScrollBar): wSize {.property.} =
+  ## Returns the default size for the control.
   result = getAverageASCIILetterSize(mFont.mHandle)
 
   if isVertical():
     result.width = GetSystemMetrics(SM_CXVSCROLL)
-    result.height = MulDiv(result.height.int32, 107, 8)
+    result.height = MulDiv(result.height, 107, 8)
   else:
     result.height = GetSystemMetrics(SM_CXHSCROLL)
-    result.width = MulDiv(result.width.int32, 107, 4)
+    result.width = MulDiv(result.width, 107, 4)
 
-method getBestSize*(self: wScrollBar): wSize =
+method getBestSize*(self: wScrollBar): wSize {.property.} =
+  ## Returns the best acceptable minimal size for the control.
   result = getDefaultSize()
 
-proc setScrollbar*(self: wScrollBar, position = 0, thumbSize = 1, range = 2, pageSize = 1) =
-  assert position >= 0 and thumbSize >= 1 and pageSize >= 1 and range >= 0
-  assert range - pageSize >= 0
+proc setScrollbar*(self: wScrollBar, position: Natural, pageSize: Positive,
+    range: Positive) {.validate, property.} =
+  ## Sets the scrollbar properties.
+  var info = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_POS or SIF_PAGE or SIF_RANGE,
+    nPos: int32 position,
+    nPage: int32 pageSize,
+    nMin: 0,
+    nMax: int32 range)
+  SetScrollInfo(mHwnd, SB_CTL, &info, true) # true for redraw
 
-  mPageSize = pageSize
-  mRange = range
+proc setScrollPos*(self: wScrollBar, position: Natural) {.validate, property.} =
+  ## Sets the position of the scrollbar.
+  var info = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_POS,
+    nPos: int32 position)
+  SetScrollInfo(mHwnd, SB_CTL, &info, true)
 
-  var max = max(range - pageSize, 0)
-  if pageSize > 1:
-    max += pageSize - 1
+proc getScrollInfo(self: wScrollBar): SCROLLINFO {.validate, property.} =
+  result = SCROLLINFO(
+    cbSize: sizeof(SCROLLINFO),
+    fMask: SIF_ALL)
+  GetScrollInfo(mHwnd, SB_CTL, &result)
 
-  var info = SCROLLINFO(cbSize: sizeof(SCROLLINFO).int32)
-  info.fMask = SIF_POS or SIF_PAGE or SIF_RANGE
-  info.nPos = position.int32
-  info.nPage = thumbSize.int32
-  info.nMin = 0
-  info.nMax = max.int32
-  SetScrollInfo(mHwnd, SB_CTL, addr info, true)
-
-proc setThumbPosition*(self: wScrollBar, position: int) =
-  var info = SCROLLINFO(cbSize: sizeof(SCROLLINFO).int32)
-  info.fMask = SIF_POS
-  info.nPos = position.int32
-  SetScrollInfo(mHwnd, SB_CTL, addr info, true)
-
-proc getScrollInfo(self: wScrollBar): SCROLLINFO =
-  result = SCROLLINFO(cbSize: sizeof(SCROLLINFO).int32)
-  result.fMask = SIF_ALL
-  GetScrollInfo(mHwnd, SB_CTL, addr result)
-
-proc getPageSize*(self: wScrollBar): int =
-  result = mPageSize
-
-proc getRange*(self: wScrollBar): int =
-  result = mRange
-
-proc getThumbSize*(self: wScrollBar): int =
+proc getPageSize*(self: wScrollBar): int {.validate, property, inline.} =
+  ## Returns the page size.
   let info = getScrollInfo()
-  result = info.nPage.int
+  result = info.nPage
 
-proc getThumbPosition*(self: wScrollBar): int =
+proc getRange*(self: wScrollBar): int {.validate, property, inline.} =
+  ## Returns the length of the scrollbar.
   let info = getScrollInfo()
-  result = info.nPos.int
+  result = info.nMax
 
-proc wScrollBarInit(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
-  assert parent != nil
+proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
+  ## Returns the current position of the scrollbar.
+  let info = getScrollInfo()
+  result = info.nPos
 
-  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
-  setScrollbar(0, 1, 2, 1)
+proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0) =
+
+  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size,
+    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+
+  setScrollbar(0, 1, 2)
 
   if isVertical():
     mKeyUsed = {wUSE_UP, wUSE_DOWN}
@@ -71,86 +105,16 @@ proc wScrollBarInit(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos 
     mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
   proc scrollEventHandler(event: wEvent) =
-    let info = self.getScrollInfo()
-    var
-      position = info.nPos.int
-      maxPos = info.nMax.int
-
-    if mPageSize > 1:
-      maxPos -= mPageSize - 1
-
-    var processed: bool
-    let eventType = case LOWORD(event.mWparam)
-      of SB_TOP:
-        position = 0
-        wEvent_ScrollTop
-      of SB_BOTTOM:
-        position = maxPos
-        wEvent_ScrollBottom
-      of SB_LINEUP:
-        position.dec
-        wEvent_ScrollLineUp
-      of SB_LINEDOWN:
-        position.inc
-        wEvent_ScrollLineDown
-      of SB_PAGEUP:
-        position.dec(mPageSize)
-        wEvent_ScrollPageUp
-      of SB_PAGEDOWN:
-        position.inc(mPageSize)
-        wEvent_ScrollPageDown
-      of SB_THUMBPOSITION:
-        position = info.nTrackPos
-        wEvent_ScrollThumbRelease
-      of SB_THUMBTRACK:
-        position = info.nTrackPos
-        wEvent_ScrollThumbTrack
-      of SB_ENDSCROLL:
-        wEvent_ScrollChanged
-      else: 0
-
-    if position != info.nPos.int:
-      if position < 0: position = 0
-      if position > maxPos: position = maxPos
-
-      self.setThumbPosition(position)
-
-    elif eventType != wEvent_ScrollThumbRelease and eventType != wEvent_ScrollChanged:
-      return
-
-    if eventType != 0:
-      discard self.mMessageHandler(self, eventType, event.mWparam, event.mLparam, processed)
-
-      processed = false
-      event.mResult = self.mMessageHandler(self, wEvent_ScrollBar, event.mWparam, event.mLparam, processed)
+    if event.mLparam == self.mHwnd:
+      let orientation = if self.isVertical(): wVertical else: wHorizontal
+      event.mResult = self.scrollEventHandlerImpl(orientation, event.mWparam, isControl=true)
 
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
-proc ScrollBar*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wScrollBar {.discardable.} =
+proc ScrollBar*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0): wScrollBar {.discardable.} =
+  ## Constructor, creating and showing a scrollbar.
+  wValidate(parent)
   new(result)
-  result.wScrollBarInit(parent=parent, id=id, pos=pos, size=size, style=style)
-
-# for wScrollEvent
-
-proc getPosition*(self: wScrollEvent): int =
-  if mWindow of wScrollBar:
-    let scrollbar = cast[wScrollBar](mWindow)
-    result = scrollbar.getThumbPosition()
-  elif mWindow of wSlider:
-    let slider = cast[wSlider](mWindow)
-    result = slider.getValue()
-
-proc getOrientation*(self: wScrollEvent): int =
-  if self.mMsg == WM_HSCROLL:
-    result = wHorizontal
-  elif self.mMsg == WM_VSCROLL:
-    result = wVertical
-
-# nim style getter/setter
-
-proc pageSize*(self: wScrollBar): int = getPageSize()
-proc range*(self: wScrollBar): int = getRange()
-proc thumbSize*(self: wScrollBar): int = getThumbSize()
-proc thumbPosition*(self: wScrollBar): int = getThumbPosition()
-proc `thumbPosition=`*(self: wScrollBar, position: int) = setThumbPosition(position)
+  result.init(parent=parent, pos=pos, size=size, style=style)

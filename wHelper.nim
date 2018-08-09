@@ -2,6 +2,7 @@
 converter DWORDToInt(x: DWORD): int = int x
 converter IntToDWORD(x: int): DWORD = DWORD x
 
+
 template GET_X_LPARAM*(x: untyped): int = int cast[int16](LOWORD(x))
 template GET_Y_LPARAM*(x: untyped): int = int cast[int16](HIWORD(x))
 

@@ -49,12 +49,12 @@ proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
 
 proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LPARAM = 0,
-    userData: int = 0, propagationLevel = 0): wEvent =
+    userData: int = 0): wEvent =
   ## Constructor.
 
   template CreateEvent(Constructor: untyped): untyped =
     Constructor(mWindow: window, mMsg: msg, mWparam: wParam, mLparam: lParam,
-      mUserData: userData, mPropagationLevel: propagationLevel)
+      mUserData: userData)
 
   if msg.isMouseEvent():
     result = CreateEvent(wMouseEvent)
@@ -92,14 +92,17 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
   if result of wCommandEvent:
     result.mId = wCommandID LOWORD(wParam)
 
+  result.mPropagationLevel = msg.defaultPropagationLevel()
+
 proc clone*(self: wEvent): wEvent {.validate.} =
   ## Returns a copy of the event.
   result = Event(window=mWindow, msg=mMsg, wparam=mWparam, lparam=mLparam,
-    userData=mUserData, propagationLevel=mPropagationLevel)
+    userData=mUserData)
 
   result.mKeyStatus = mKeyStatus
   result.mSkip = mSkip
   result.mResult = mResult
+  result.mPropagationLevel = mPropagationLevel
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the object (usually a window) associated with the event
@@ -125,11 +128,15 @@ proc getIntId*(self: wEvent): int {.validate, property, inline.} =
   ## Returns the ID associated with this event, aka command ID or menu ID.
   result = int mID
 
-proc getLParam*(self: wEvent): LPARAM {.validate, property, inline.} =
+proc getTimerId*(self: wEvent): int {.validate, property, inline.} =
+  ## Return the timer ID. Only for wEvent_Timer event.
+  result = int mWparam
+
+proc getlParam*(self: wEvent): LPARAM {.validate, property, inline.} =
   ## Returns the low-level LPARAM data of the associated windows message.
   result = mLparam
 
-proc getWParam*(self: wEvent): WPARAM {.validate, property, inline.} =
+proc getwParam*(self: wEvent): WPARAM {.validate, property, inline.} =
   ## Returns the low-level WPARAM data of the associated windows message.
   result = mWparam
 
@@ -277,4 +284,8 @@ method getSize*(self: wEvent): wSize {.base, property.} = discard
 method setPosition*(self: wEvent, x: int, y: int) {.base, property.} = discard
   ## Method needs to be overridden.
 method setPosition*(self: wEvent, pos: wPoint) {.base, property.} = discard
+  ## Method needs to be overridden.
+method getOrientation*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getScrollPos*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.

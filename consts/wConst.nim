@@ -52,9 +52,6 @@ const
   wSlNoTicks* = TBS_NOTICKS
   wSlNoThumb* = TBS_NOTHUMB
 
-  # ScrollBar styles
-  wSbHorizontal* = SBS_HORZ
-  wSbVertical* = SBS_VERT
 
 
 

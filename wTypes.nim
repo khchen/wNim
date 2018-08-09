@@ -152,6 +152,10 @@ when not defined(wnimdoc):
     wScrollEvent* = ref wScrollEventObj
     wScrollEventObj = object of wCommandEventObj
 
+    wScrollData = object
+      orientation: int
+      scrollPos: int
+
     wMessageHandler = proc (self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT
     wNotifyHandler = proc (self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT
 
