@@ -106,7 +106,7 @@ proc clearTicks*(self: wSlider, ) =
   SendMessage(mHwnd, TBM_CLEARTICS, TRUE, 0)
 
 
-proc wSliderInit*(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc wSliderInit(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)

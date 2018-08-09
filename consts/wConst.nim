@@ -32,10 +32,6 @@ const
   wRbGroup* = WS_GROUP
 
 
-  # StaticBitmap styles
-  wSbAuto* = 0
-  wSbFill* = SS_REALSIZECONTROL
-  wSbNone* = SS_REALSIZECONTROL or SS_CENTERIMAGE
 
 
   # ComboBox styles

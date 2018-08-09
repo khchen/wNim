@@ -59,7 +59,7 @@ proc getThumbPosition*(self: wScrollBar): int =
   let info = getScrollInfo()
   result = info.nPos.int
 
-proc wScrollBarInit*(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc wScrollBarInit(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)

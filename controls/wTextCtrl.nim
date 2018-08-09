@@ -281,7 +281,7 @@ proc wTextCtrlNotifyHandler(self: wTextCtrl, code: INT, id: UINT_PTR, lparam: LP
 
 var richDllLoaded {.threadvar.}: bool
 
-proc wTextCtrlInit*(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc wTextCtrlInit(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   mRich = ((style and wTeRich) != 0)

@@ -1,27 +1,58 @@
+## A static bitmap control displays a bitmap.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wSbAuto                         Automatically sizes the control to accommodate the bitmap.
+##    wSbFit                          Stretch or shrink the bitmap to fit the size.
+##    wSbCenter                       Center the bitmap and clip if needed.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wCommandEvent                   Description
+##    ==============================  =============================================================
+##    wEvent_CommandLeftClick         Clicked the left mouse button within the control.
+##    wEvent_CommandLeftDoubleClick   Double-clicked the left mouse button within the control.
+##    ==============================  =============================================================
 
-method getBestSize*(self: wStaticBitmap): wSize =
+const
+  # StaticBitmap styles
+  wSbAuto* = 0
+  wSbFit* = SS_REALSIZECONTROL
+  wSbCenter* = SS_CENTERIMAGE
+
+method getBestSize*(self: wStaticBitmap): wSize {.property, inline.} =
+  ## Returns the best acceptable minimal size for the control.
   if mBitmap != nil:
     result = mBitmap.getSize()
 
-method getDefaultSize*(self: wStaticBitmap): wSize =
+method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline.} =
+  ## Returns the default size for the control.
   if mBitmap != nil:
     result = mBitmap.getSize()
 
-proc setBitmap*(self: wStaticBitmap, bitmap: wBitmap) =
+proc setBitmap*(self: wStaticBitmap, bitmap: wBitmap) {.validate, property.} =
+  ## Sets the bitmap label.
   mBitmap = bitmap
   SendMessage(mHwnd, STM_SETIMAGE, IMAGE_BITMAP, if bitmap != nil: bitmap.mHandle else: 0)
 
-proc getBitmap*(self: wStaticBitmap): wBitmap =
+proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
+  ## Returns the bitmap currently used in the control.
   result = mBitmap
 
-proc wStaticBitmapInit*(self: wStaticBitmap, parent: wWindow, id: wCommandID = -1, bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
-  assert parent != nil
+proc init(self: wStaticBitmap, parent: wWindow, id: wCommandID = -1, bitmap: wBitmap = nil,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
-  mBitmap = bitmap
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
-  mFocusable = false
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size,
+    style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
 
   setBitmap(bitmap)
+  mFocusable = false
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
@@ -34,11 +65,10 @@ proc wStaticBitmapInit*(self: wStaticBitmap, parent: wWindow, id: wCommandID = -
         var processed: bool
         event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
-proc StaticBitmap*(parent: wWindow, id: wCommandID = -1, bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wStaticBitmap {.discardable.} =
+proc StaticBitmap*(parent: wWindow, bitmap: wBitmap = nil, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wSbAuto): wStaticBitmap {.discardable.} =
+  ## Constructor, creating and showing a static bitmap control.
+  # Acceptable nil bitmap for later assign.
+  wValidate(parent)
   new(result)
-  result.wStaticBitmapInit(parent=parent, id=id, bitmap=bitmap, pos=pos, size=size, style=style)
-
-# nim style getter/setter
-
-proc `bitmap=`*(self: wStaticBitmap, bitmap: wBitmap) = setBitmap(bitmap)
-proc bitmap*(self: wStaticBitmap): wBitmap = getBitmap()
+  result.init(parent=parent, bitmap=bitmap, pos=pos, size=size, style=style)

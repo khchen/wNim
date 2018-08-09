@@ -168,7 +168,7 @@ method getDefaultSize*(self: wListBox): wSize =
 method getBestSize*(self: wListBox): wSize =
   result = countSize(1, 1.0)
 
-proc wListBoxInit*(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
+proc wListBoxInit(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
     choices: openarray[string] = [], style: int64 = 0) =
 
   assert parent != nil

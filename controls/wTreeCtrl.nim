@@ -851,7 +851,7 @@ proc wTreeCtrlNotifyHandler(self: wTreeCtrl, code: INT, id: UINT_PTR, lparam: LP
     result = self.wControlNotifyHandler(code, id, lparam, processed)
 
 
-proc wTreeCtrlInit*(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   # for TVS_HASBUTTONS, TVS_LINESATROOT must also be specified.

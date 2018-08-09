@@ -570,7 +570,7 @@ proc wListCtrlNotifyHandler(self: wListCtrl, code: INT, id: UINT_PTR, lparam: LP
   else:
     result = self.wControlNotifyHandler(code, id, lparam, processed)
 
-proc wListCtrlInit*(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc wListCtrlInit(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   self.wControl.init(className=WC_LISTVIEW, parent=parent, id=id, label="", pos=pos, size=size,
