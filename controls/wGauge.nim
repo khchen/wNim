@@ -123,8 +123,8 @@ proc init(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
       if mTaskBar != nil:
         mTaskBar.Release()
 
-proc Gauge*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wGaHorizontal): wGauge {.discardable.} =
+proc Gauge*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wGaHorizontal): wGauge {.discardable.} =
   ## Constructor, creating and showing a gauge.
   wValidate(parent)
   new(result)

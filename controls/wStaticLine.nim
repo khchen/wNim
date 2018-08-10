@@ -56,8 +56,8 @@ proc init(self: wStaticLine, parent: wWindow, id: wCommandID = -1,
 
   mFocusable = false
 
-proc StaticLine*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wStaticLine {.discardable.} =
+proc StaticLine*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wStaticLine {.discardable.} =
   ## Constructor, creating and showing a static line.
   wValidate(parent)
   new(result)

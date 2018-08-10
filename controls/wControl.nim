@@ -26,7 +26,7 @@ proc wControlOnMenuCommand(event: wEvent) =
   while win != nil:
     if win of wFrame:
       var processed: bool
-      event.mResult = win.mMessageHandler(win, WM_MENUCOMMAND, event.mWparam, event.mLparam, processed)
+      discard win.mMessageHandler(win, WM_MENUCOMMAND, event.mWparam, event.mLparam, processed)
       break
     win = win.mParent
 

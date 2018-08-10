@@ -51,10 +51,10 @@ proc init(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: strin
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       var processed: bool
-      event.mResult = self.mMessageHandler(self, wEvent_RadioButton, event.mWparam, event.mLparam, processed)
+      discard self.mMessageHandler(self, wEvent_RadioButton, event.mWparam, event.mLparam, processed)
 
-proc RadioButton*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wRadioButton {.discardable.} =
+proc RadioButton*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wRadioButton {.discardable.} =
   ## Constructor, creating and showing a radio button.
   wValidate(parent)
   new(result)

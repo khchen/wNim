@@ -41,8 +41,8 @@ proc init(self: wStaticBox, parent: wWindow, id: wCommandID = -1, label: string 
   mMarginX = 12
   mMarginY = 12
 
-proc StaticBox*(parent: wWindow, label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wStaticBox {.discardable.} =
+proc StaticBox*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wStaticBox {.discardable.} =
   ## Constructor, creating and showing a static box.
   wValidate(parent, label)
   new(result)

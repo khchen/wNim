@@ -215,9 +215,9 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
 
       if cmdEvent != 0:
         var processed: bool
-        event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
+        discard self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
-proc ComboBox*(parent: wWindow, id: wCommandID = -1, value: string = "",
+proc ComboBox*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
     pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0): wComboBox {.discardable.} =
 
   new(result)

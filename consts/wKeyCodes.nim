@@ -33,7 +33,9 @@ const
   wKeyModeChange* = VK_MODECHANGE
   wKeySpace* = VK_SPACE
   wKeyPrior* = VK_PRIOR
+  wKeyPgUp* = VK_PRIOR
   wKeyNext* = VK_NEXT
+  wKeyPgDn* = VK_NEXT
   wKeyEnd* = VK_END
   wKeyHome* = VK_HOME
   wKeyLeft* = VK_LEFT

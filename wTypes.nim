@@ -131,6 +131,9 @@ when not defined(wnimdoc):
     wMoveEvent* = ref wMoveEventObj
     wMoveEventObj = object of wEventObj
 
+    wScrollWinEvent* = ref wScrollWinEventObj
+    wScrollWinEventObj = object of wEventObj
+
     wOtherEvent* = ref wOtherEventObj
     wOtherEventObj = object of wEventObj
 
@@ -153,8 +156,8 @@ when not defined(wnimdoc):
     wScrollEventObj = object of wCommandEventObj
 
     wScrollData = object
+      kind: int
       orientation: int
-      scrollPos: int
 
     wMessageHandler = proc (self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT
     wNotifyHandler = proc (self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT

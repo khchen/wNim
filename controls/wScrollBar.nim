@@ -15,6 +15,7 @@
 ##    ==============================  =============================================================
 ##    wScrollEvent                    Description
 ##    ==============================  =============================================================
+##    wEvent_ScrollBar                Sent before all of following event. Use event.getKind to know what kind of type it is.
 ##    wEvent_ScrollTop                Scroll to top or leftmost.
 ##    wEvent_ScrollBottom             Scroll to bottom or rightmost.
 ##    wEvent_ScrollLineUp             Scroll line up or left
@@ -62,7 +63,7 @@ proc setScrollbar*(self: wScrollBar, position: Natural, pageSize: Positive,
     nMax: int32 range)
   SetScrollInfo(mHwnd, SB_CTL, &info, true) # true for redraw
 
-proc setScrollPos*(self: wScrollBar, position: Natural) {.validate, property.} =
+proc setScrollPos*(self: wScrollBar, position: int) {.validate, property.} =
   ## Sets the position of the scrollbar.
   var info = SCROLLINFO(
     cbSize: sizeof(SCROLLINFO),
@@ -105,15 +106,16 @@ proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefault
     mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
   proc scrollEventHandler(event: wEvent) =
+    var processed = false
     if event.mLparam == self.mHwnd:
       let orientation = if self.isVertical(): wVertical else: wHorizontal
-      event.mResult = self.scrollEventHandlerImpl(orientation, event.mWparam, isControl=true)
+      discard self.scrollEventHandlerImpl(orientation, event.mWparam, isControl=true, processed)
 
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
-proc ScrollBar*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wScrollBar {.discardable.} =
+proc ScrollBar*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wScrollBar {.discardable.} =
   ## Constructor, creating and showing a scrollbar.
   wValidate(parent)
   new(result)

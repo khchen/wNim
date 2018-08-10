@@ -183,7 +183,7 @@ proc wListBoxInit(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wD
 
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
-proc ListBox*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
+proc ListBox*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize,
     choices: openarray[string] = [], style: int64 = 0): wListBox {.discardable.} =
 
   new(result)

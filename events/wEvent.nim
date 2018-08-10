@@ -15,38 +15,37 @@ const
   wEvent_Timer* = WM_TIMER
   wEvent_InitDialog* = WM_INITDIALOG
   wEvent_MenuHighlight* = WM_MENUSELECT
-
   wEvent_Paint* = WM_PAINT
   wEvent_NcPaint* = WM_NCPAINT
 
-  wEvent_First = WM_APP + 100
+  wEvent_ScrollWinFirst = WM_APP + 100
+  #
+
+  wEvent_CommandFirst = WM_APP + 150
   wEvent_StatusBarFirst = WM_APP + 200
-  wEvent_ScrollFirst = WM_APP + 300
-  wEvent_ListFirst = WM_APP + 400
-  wEvent_TreeFirst = WM_APP + 500
-  wEvent_Last = WM_APP + 600
-  wEvent_UserFirst* = wEvent_Last + 1
-
-
-proc isCommandMessage(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_First, wEvent_Last)
-
-proc defaultPropagationLevel(msg: UINT): int =
-  if msg.isCommandMessage() or wAppIsMessagePropagation(msg):
-    result = wEvent_PropagateMax
-  else:
-    result = 0
+  wEvent_ScrollFirst = WM_APP + 250
+  wEvent_ListFirst = WM_APP + 300
+  wEvent_TreeFirst = WM_APP + 350
+  wEvent_CommandLast = WM_APP + 400
+  wEvent_UserFirst* = wEvent_CommandLast + 1
 
 proc isMouseEvent(msg: UINT): bool {.inline.}
 proc isKeyEvent(msg: UINT): bool {.inline.}
 proc isSizeEvent(msg: UINT): bool {.inline.}
 proc isMoveEvent(msg: UINT): bool {.inline.}
 proc isContextMenuEvent(msg: UINT): bool {.inline.}
+proc isScrollWinEvent(msg: UINT): bool {.inline.}
 proc isCommandEvent(msg: UINT): bool {.inline.}
 proc isScrollEvent(msg: UINT): bool {.inline.}
 proc isListEvent(msg: UINT): bool {.inline.}
 proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
+
+proc defaultPropagationLevel(msg: UINT): int =
+  if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
+    result = wEvent_PropagateMax
+  else:
+    result = 0
 
 proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LPARAM = 0,
     userData: int = 0): wEvent =
@@ -70,6 +69,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isContextMenuEvent():
     result = CreateEvent(wContextMenuEvent)
+
+  elif msg.isScrollWinEvent():
+    result = CreateEvent(wScrollWinEvent)
 
   elif msg.isScrollEvent():
     result = CreateEvent(wScrollEvent)
@@ -288,4 +290,6 @@ method setPosition*(self: wEvent, pos: wPoint) {.base, property.} = discard
 method getOrientation*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getScrollPos*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getKind*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.

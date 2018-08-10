@@ -142,7 +142,7 @@ proc wHyperlinkCtrlInit(self: wHyperlinkCtrl, parent: wWindow, id: wCommandID = 
 
     else: discard
 
-proc HyperlinkCtrl*(parent: wWindow, id: wCommandID = -1, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wHyperlinkCtrl {.discardable.} =
+proc HyperlinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wHyperlinkCtrl {.discardable.} =
   new(result)
   result.wHyperlinkCtrlInit(parent=parent, id=id, label=label, url=url, pos=pos, size=size, style=style)
 

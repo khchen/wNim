@@ -62,10 +62,10 @@ proc init(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string
 
       if cmdEvent != 0:
         var processed: bool
-        event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
+        discard self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
-proc StaticText*(parent: wWindow, label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wAlignLeft): wStaticText {.discardable.} =
+proc StaticText*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wAlignLeft): wStaticText {.discardable.} =
   ## Constructor, creating and showing a text control.
   wValidate(parent, label)
   new(result)

@@ -1,11 +1,61 @@
+## A slider is a control with a handle which can be pulled back and forth to change the value.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wSlHorizontal                   Displays the slider horizontally (this is the default).
+##    wSlVertical                     Displays the slider vertically.
+##    wSlAutoTicks                    Displays tick marks.
+##    wSlLeft                         Displays ticks on the left and forces the slider to be vertical.
+##    wSlRight                        Displays ticks on the right and forces the slider to be vertical.
+##    wSlTop                          Displays ticks on the top.
+##    wSlBottom                       Displays ticks on the bottom
+##    wSlSelRange                     Allows the user to select a range on the slider.
+##    wSlNoTicks                      Does not display any tick marks.
+##    wSlNoThumb                      Does not display a thumb.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wScrollEvent                    Description
+##    ==============================  =============================================================
+##    wEvent_Slider                   Sent before all of following event. Use event.getKind to know what kind of type it is.
+##    wEvent_ScrollTop                Scroll to top or leftmost.
+##    wEvent_ScrollBottom             Scroll to bottom or rightmost.
+##    wEvent_ScrollLineUp             Scroll line up or left
+##    wEvent_ScrollLineDown           Scroll line down or right.
+##    wEvent_ScrollPageUp             Scroll page up or left.
+##    wEvent_ScrollPageDown           Scroll page down or right.
+##    wEvent_ScrollThumbTrack         Frequent events sent as the user drags the thumbtrack.
+##    wEvent_ScrollThumbRelease       Thumb release events.
+##    wEvent_ScrollChanged            End of scrolling events
+##    ==============================  =============================================================
 
-proc isVertical*(self: wSlider): bool =
+const
+  # Slider styles
+  wSlHorizontal* = TBS_HORZ
+  wSlVertical* = TBS_VERT
+  wSlAutoTicks* = TBS_AUTOTICKS
+  wSlLeft* = TBS_LEFT or TBS_VERT
+  wSlRight* = TBS_RIGHT or TBS_VERT
+  wSlTop* = TBS_TOP or TBS_HORZ
+  wSlBottom* = TBS_BOTTOM or TBS_HORZ
+  wSlSelRange* = TBS_ENABLESELRANGE
+  wSlNoTicks* = TBS_NOTICKS
+  wSlNoThumb* = TBS_NOTHUMB
+
+proc isVertical*(self: wSlider): bool {.validate, inline.} =
+  ## Returns true for slider that have the vertical style set.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and TBS_VERT) != 0
 
-method getDefaultSize*(self: wSlider): wSize =
+method getDefaultSize*(self: wSlider): wSize {.property.} =
+  ## Returns the default size for the control.
   result = getAverageASCIILetterSize(mFont.mHandle)
   var x, y: int32
-
   if isVertical():
     x = 15
     y = 107
@@ -13,10 +63,11 @@ method getDefaultSize*(self: wSlider): wSize =
     x = 107
     y = 15
 
-  result.width = MulDiv(result.width.int32, x, 4)
-  result.height = MulDiv(result.height.int32, y, 8)
+  result.width = MulDiv(result.width, x, 4)
+  result.height = MulDiv(result.height, y, 8)
 
-method getBestSize*(self: wSlider): wSize =
+method getBestSize*(self: wSlider): wSize {.property, inline.} =
+  ## Returns the best acceptable minimal size for the control.
   result = getDefaultSize()
 
 proc valueInvert(self: wSlider, value: int): int =
@@ -25,13 +76,16 @@ proc valueInvert(self: wSlider, value: int): int =
   else:
     result = value
 
-proc getValue*(self: wSlider): int =
+proc getValue*(self: wSlider): int {.validate, property, inline.} =
+  ## Gets the current slider value.
   result = SendMessage(mHwnd, TBM_GETPOS, 0, 0).int.valueInvert
 
-proc setValue*(self: wSlider, value: int) =
+proc setValue*(self: wSlider, value: int) {.validate, property, inline.} =
+  ## Sets the slider position.
   SendMessage(mHwnd, TBM_SETPOS, TRUE, value.valueInvert)
 
-proc setRange*(self: wSlider, range: Slice[int]) =
+proc setRange*(self: wSlider, range: Slice[int]) {.validate, property.} =
+  ## Sets the minimum and maximum slider values.
   var range = range
   if range.a > range.b:
     mReversed = true
@@ -44,72 +98,97 @@ proc setRange*(self: wSlider, range: Slice[int]) =
   SendMessage(mHwnd, TBM_SETRANGEMIN, TRUE, range.a)
   SendMessage(mHwnd, TBM_SETRANGEMAX, TRUE, range.b)
 
-proc setMin*(self: wSlider, min: int) =
+proc setMin*(self: wSlider, min: int) {.validate, property, inline.} =
+  ## Sets the minimum slider value.
   setRange(min..mMax)
 
-proc setMax*(self: wSlider, max: int) =
+proc setMax*(self: wSlider, max: int) {.validate, property, inline.} =
+  ## Sets the maximum slider value.
   setRange(mMin..max)
 
-proc setRange*(self: wSlider, min, max: int) =
+proc setRange*(self: wSlider, min: int, max: int) {.validate, property, inline.} =
   setRange(min..max)
 
-proc getMax*(self: wSlider): int =
+proc getMax*(self: wSlider): int {.validate, property, inline.} =
+  ## Gets the maximum slider value.
   result = mMax
 
-proc getMin*(self: wSlider): int =
+proc getMin*(self: wSlider): int {.validate, property, inline.} =
+  ## Gets the minimum slider value.
   result = mMin
 
-proc getPageSize*(self: wSlider): int =
-  result = SendMessage(mHwnd, TBM_GETPAGESIZE, 0, 0).int
+proc getPageSize*(self: wSlider): int {.validate, property, inline.} =
+  ## Returns the page size.
+  result = int SendMessage(mHwnd, TBM_GETPAGESIZE, 0, 0)
 
-proc setPageSize*(self: wSlider, pageSize: int) =
+proc setPageSize*(self: wSlider, pageSize: int) {.validate, property, inline.} =
+  ## Sets the page size for the slider.
   SendMessage(mHwnd, TBM_SETPAGESIZE, 0, pageSize)
 
-proc getLineSize*(self: wSlider): int =
-  result = SendMessage(mHwnd, TBM_GETLINESIZE, 0, 0).int
+proc getLineSize*(self: wSlider): int {.validate, property, inline.} =
+  ## Returns the line size.
+  result = int SendMessage(mHwnd, TBM_GETLINESIZE, 0, 0)
 
-proc setLineSize*(self: wSlider, lineSize: int) =
+proc setLineSize*(self: wSlider, lineSize: int) {.validate, property, inline.} =
+  ## Sets the line size for the slider.
   SendMessage(mHwnd, TBM_SETLINESIZE, 0, lineSize)
 
-proc getThumbLength*(self: wSlider): int =
-  result = SendMessage(mHwnd, TBM_GETTHUMBLENGTH, 0, 0).int
+proc getThumbLength*(self: wSlider): int {.validate, property, inline.} =
+  ## Sets the slider thumb length.
+  result = int SendMessage(mHwnd, TBM_GETTHUMBLENGTH, 0, 0)
 
-proc setThumbLength*(self: wSlider, length: int) =
+proc setThumbLength*(self: wSlider, length: int) {.validate, property, inline.} =
+  ## Sets the slider thumb length.
   SendMessage(mHwnd, TBM_SETTHUMBLENGTH, length, 0)
 
-proc getSelEnd*(self: wSlider): int =
-  result = SendMessage(mHwnd, TBM_GETSELEND, 0, 0).int
+proc getSelEnd*(self: wSlider): int {.validate, property, inline.} =
+  ## Returns the selection end point.
+  result = int SendMessage(mHwnd, TBM_GETSELEND, 0, 0)
 
-proc getSelStart*(self: wSlider): int =
-  result = SendMessage(mHwnd, TBM_GETSELSTART, 0, 0).int
+proc getSelStart*(self: wSlider): int {.validate, property, inline.} =
+  ## Returns the selection start point.
+  result = int SendMessage(mHwnd, TBM_GETSELSTART, 0, 0)
 
-proc getSelection*(self: wSlider): Slice[int] =
+proc getSelection*(self: wSlider): Slice[int] {.validate, property, inline.} =
+  ## Returns the selection start and end point.
   result.a = getSelStart()
   result.b = getSelEnd()
 
-proc setSelection*(self: wSlider, min, max: int) =
+proc setSelection*(self: wSlider, min: int, max: int) {.validate, property, inline.} =
+  ## Sets the selection.
   SendMessage(mHwnd, TBM_SETSEL, TRUE, MAKELONG(min, max))
 
-proc setSelection*(self: wSlider, range: Slice[int]) =
+proc setSelection*(self: wSlider, range: Slice[int]) {.validate, property, inline.} =
+  ## Sets the selection.
   setSelection(range.a, range.b)
 
-proc setTickFreq*(self: wSlider, n: int) =
+proc setTickFreq*(self: wSlider, n: int) {.validate, property, inline.} =
+  ## Sets the tick mark frequency and position, for a slider with the wSlAutoTicks style.
   SendMessage(mHwnd, TBM_SETTICFREQ, n, 0)
 
-proc setTick*(self: wSlider, tick: int) =
+proc setTick*(self: wSlider, tick: int) {.validate, property, inline.} =
+  ## Sets a tick position.
   SendMessage(mHwnd, TBM_SETTIC, 0, tick)
 
-proc clearSel*(self: wSlider) =
+proc setTicks*(self: wSlider, ticks: openarray[int]) {.validate, property, inline.} =
+  ## Sets mulpitle ticks at the same time.
+  for tick in ticks: setTick(tick)
+
+proc clearSel*(self: wSlider) {.validate, property, inline.} =
+  ## Clears the selection, for a slider with the wSlSelRange style.
   SendMessage(mHwnd, TBM_CLEARSEL, TRUE, 0)
 
-proc clearTicks*(self: wSlider, ) =
+proc clearTicks*(self: wSlider, ) {.validate, property, inline.} =
+  ## Clears the ticks.
   SendMessage(mHwnd, TBM_CLEARTICS, TRUE, 0)
 
+proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
+    range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
-proc wSliderInit(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
-  assert parent != nil
+  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size,
+    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or TBS_FIXEDLENGTH)
+  # TBS_FIXEDLENGTH is need so that TBM_SETTHUMBLENGTH works
 
-  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
   setValue(value)
   setRange(range)
 
@@ -119,8 +198,8 @@ proc wSliderInit(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
     mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
   proc scrollEventHandler(event: wEvent) =
-    var processed: bool
-    let eventType = case LOWORD(event.mWparam)
+    if event.mLparam != self.mHwnd: return
+    let eventKind = case LOWORD(event.mWparam)
       of SB_TOP: wEvent_ScrollTop
       of SB_BOTTOM: wEvent_ScrollBottom
       of SB_LINEUP: wEvent_ScrollLineUp
@@ -131,47 +210,37 @@ proc wSliderInit(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
         mDragging = true
         wEvent_ScrollThumbTrack
       of SB_THUMBPOSITION:
+        # this hack is because when mosue wheel is used, there won't
+        # be a SB_ENDSCROLL but only SB_THUMBPOSITION.
+        # However, we always want a wEvent_ScrollChanged if the value was changed.
+        # So, in non-dragging situation, we sent a wEvent_ScrollChanged
+        # instead of wEvent_ScrollThumbRelease.
         if mDragging:
           mDragging = false
           wEvent_ScrollThumbRelease
         else:
           wEvent_ScrollChanged
-      of SB_ENDSCROLL:
-        wEvent_ScrollChanged
+      of SB_ENDSCROLL: wEvent_ScrollChanged
       else: 0
 
-    if eventType != 0:
-      discard self.mMessageHandler(self, eventType, event.mWparam, event.mLparam, processed)
+    if eventKind != 0:
+      var
+        processed = false
+        orientation = if self.isVertical(): wVertical else: wHorizontal
+        scrollData = wScrollData(kind: eventKind, orientation: orientation)
+        dataPtr = cast[LPARAM](&scrollData)
 
-      processed = false
-      event.mResult = self.mMessageHandler(self, wEvent_Slider, event.mWparam, event.mLparam, processed)
+      # sent wEvent_Slider first, if this is processed, skip other event
+      discard self.mMessageHandler(self, wEvent_Slider, event.mWparam, dataPtr, processed)
+      if not processed:
+        discard self.mMessageHandler(self, eventKind, event.mWparam, dataPtr, processed)
 
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
-
-proc Slider*(parent: wWindow, id: wCommandID = -1, value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSlider {.discardable.} =
+proc Slider*(parent: wWindow, id: wCommandID = wDefaultID, value = 0, range: Slice[int] = 0..100,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSlHorizontal): wSlider {.discardable.} =
+  ## Constructor, creating and showing a slider.
+  wValidate(parent)
   new(result)
-  result.wSliderInit(parent=parent, value=value, range=range, id=id, pos=pos, size=size, style=style)
-
-# nim style getter/setter
-
-proc value*(self: wSlider): int = getValue()
-proc max*(self: wSlider): int = getMax()
-proc min*(self: wSlider): int = getMin()
-proc pageSize*(self: wSlider): int = getPageSize()
-proc lineSize*(self: wSlider): int = getLineSize()
-proc thumbLength*(self: wSlider): int = getThumbLength()
-proc selEnd*(self: wSlider): int = getSelEnd()
-proc selStart*(self: wSlider): int = getSelStart()
-proc selection*(self: wSlider): Slice[int] = getSelection()
-proc `value=`*(self: wSlider, value: int) = setValue(value)
-proc `range=`*(self: wSlider, range: Slice[int]) = setRange(range)
-proc `min=`*(self: wSlider, min: int) = setMin(min)
-proc `max=`*(self: wSlider, max: int) = setMax(max)
-proc `pageSize=`*(self: wSlider, pageSize: int) = setPageSize(pageSize)
-proc `lineSize=`*(self: wSlider, lineSize: int) = setLineSize(lineSize)
-proc `thumbLength=`*(self: wSlider, length: int) = setThumbLength(length)
-proc `selection=`*(self: wSlider, range: Slice[int]) = setSelection(range)
-proc `tickFreq=`*(self: wSlider, n: int) = setTickFreq(n)
-proc `tick=`*(self: wSlider, tick: int) = setTick(tick)
+  result.init(parent=parent, value=value, range=range, id=id, pos=pos, size=size, style=style)

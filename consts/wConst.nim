@@ -40,18 +40,6 @@ const
   wSpWrap* = UDS_ALIGNRIGHT # ** a hack value, see wSpinCtrl.nil
   wSpReadOnly* = wTeReadOnly
 
-  # Slider styles
-  wSlHorizontal* = TBS_HORZ
-  wSlVertical* = TBS_VERT
-  wSlAutoTicks* = TBS_AUTOTICKS
-  wSlLeft* = TBS_LEFT
-  wSlRight* = TBS_RIGHT
-  wSlTop* = TBS_TOP
-  wSlBottom* = TBS_BOTTOM
-  wSlSelRange* = TBS_ENABLESELRANGE
-  wSlNoTicks* = TBS_NOTICKS
-  wSlNoThumb* = TBS_NOTHUMB
-
 
 
 

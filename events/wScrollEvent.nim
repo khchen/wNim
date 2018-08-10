@@ -1,4 +1,6 @@
 DefineIncrement(wEvent_ScrollFirst):
+  wEvent_Slider
+  wEvent_ScrollBar
   wEvent_ScrollTop
   wEvent_ScrollBottom
   wEvent_ScrollLineUp
@@ -8,24 +10,29 @@ DefineIncrement(wEvent_ScrollFirst):
   wEvent_ScrollThumbTrack
   wEvent_ScrollThumbRelease
   wEvent_ScrollChanged
-  wEvent_Slider
   wEvent_ScrollLast
 
 proc isScrollEvent(msg: UINT): bool {.inline.} =
   msg.isBetween(wEvent_ScrollFirst, wEvent_ScrollLast)
 
-method getOrientation*(self: wScrollEvent): int {.property.} =
+method getKind*(self: wScrollEvent): int {.property, inline.} =
+  ## Returns what kind of event type this is. Basically used in wEvent_ScrollBar
+  ## or wEvent_Slider.
+  let dataPtr = cast[ptr wScrollData](mLparam)
+  result = dataPtr.kind
+
+method getOrientation*(self: wScrollEvent): int {.property, inline.} =
   ## Returns wHORIZONTAL or wVERTICAL
   let dataPtr = cast[ptr wScrollData](mLparam)
   result = dataPtr.orientation
 
+proc getScrollPos*(self: wScrollBar): int {.inline.}
+proc getValue*(self: wSlider): int {.inline.}
+
 method getScrollPos*(self: wScrollEvent): int {.property.} =
   ## Returns the position of the scrollbar.
   let dataPtr = cast[ptr wScrollData](mLparam)
-  result = dataPtr.scrollPos
-
-#   ## Returns the position of the scrollbar
-#   if mWindow of wScrollBar:
-#     result = mWindow.getPosition
-#   elif mLparam == 0: # means the standard scroll bar
-#     mWindow.getScrollPos(orientation)
+  if self.mWindow of wScrollBar:
+    result = wScrollBar(self.mWindow).getScrollPos()
+  elif self.mWindow of wSlider:
+    result = wSlider(self.mWindow).getValue()

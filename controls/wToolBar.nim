@@ -313,7 +313,7 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
     # translate WM_COMMAND to wEventTool
     if event.mLparam == mHwnd and HIWORD(event.mWparam.int32) == 0:
       var processed: bool
-      event.mResult = self.mMessageHandler(self, wEventTool, event.mWparam, event.mLparam, processed)
+      discard self.mMessageHandler(self, wEventTool, event.mWparam, event.mLparam, processed)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
   systemConnect(WM_MENUCOMMAND, wControlOnMenuCommand)
@@ -321,7 +321,8 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBarOnToolDropDown)
 
-proc ToolBar*(parent: wWindow, id: wCommandID = -1, style: wStyle = wTbDefaultStyle): wToolBar {.discardable.} =
+proc ToolBar*(parent: wWindow, id: wCommandID = wDefaultID,
+    style: wStyle = wTbDefaultStyle): wToolBar {.discardable.} =
   ## Constructs a toolbar.
   wValidate(parent)
   new(result)

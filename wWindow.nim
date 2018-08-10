@@ -691,7 +691,7 @@ proc enableScrollBar*(self: wWindow, orientation: int, flag = true) {.validate, 
   ## Enable or disable the built-in scrollbar.
   EnableScrollBar(mHwnd, orientation.toBar, if flag: ESB_ENABLE_BOTH else: ESB_DISABLE_BOTH)
 
-proc setScrollPos*(self: wWindow, orientation: int, position: Natural)  {.validate.} =
+proc setScrollPos*(self: wWindow, orientation: int, position: int)  {.validate.} =
   ## Sets the position of the scrollbar.
   var info = SCROLLINFO(
     cbSize: sizeof(SCROLLINFO),
@@ -785,44 +785,44 @@ iterator siblings*(self: wWindow): wWindow {.validate.} =
       if child != self:
         yield child
 
-proc scrollEventRelay(wParam: WPARAM, info: SCROLLINFO, position: var INT): UINT {.inline.} =
+proc scrollEventTranslate(wParam: WPARAM, info: SCROLLINFO, position: var INT, isControl: bool): UINT {.inline.} =
   result = case LOWORD(wparam)
     of SB_TOP:
       position = 0
-      wEvent_ScrollTop
+      if isControl: wEvent_ScrollTop else: wEvent_ScrollWinTop
     of SB_BOTTOM:
       position = info.nMax
-      wEvent_ScrollBottom
+      if isControl: wEvent_ScrollBottom else: wEvent_ScrollWinBottom
     of SB_LINEUP:
       position.dec
-      wEvent_ScrollLineUp
+      if isControl: wEvent_ScrollLineUp else: wEvent_ScrollWinLineUp
     of SB_LINEDOWN:
       position.inc
-      wEvent_ScrollLineDown
+      if isControl: wEvent_ScrollLineDown else: wEvent_ScrollWinLineDown
     of SB_PAGEUP:
       position.dec info.nPage
-      wEvent_ScrollPageUp
+      if isControl: wEvent_ScrollPageUp else: wEvent_ScrollWinPageUp
     of SB_PAGEDOWN:
       position.inc info.nPage
-      wEvent_ScrollPageDown
+      if isControl: wEvent_ScrollPageDown else: wEvent_ScrollWinPageDown
     of SB_THUMBPOSITION:
       position = info.nTrackPos
-      wEvent_ScrollThumbRelease
+      if isControl: wEvent_ScrollThumbRelease else: wEvent_ScrollWinThumbRelease
     of SB_THUMBTRACK:
       position = info.nTrackPos
-      wEvent_ScrollThumbTrack
+      if isControl: wEvent_ScrollThumbTrack else: wEvent_ScrollWinThumbTrack
     of SB_ENDSCROLL:
-      wEvent_ScrollChanged
+      if isControl: wEvent_ScrollChanged else: wEvent_ScrollWinChanged
     else: 0
 
-  if position < 0: position = 0
-  if position > info.nMax: position = info.nMax
 
 proc getScrollInfo(self: wScrollBar): SCROLLINFO
-proc setScrollPos*(self: wScrollBar, position: Natural)
+proc setScrollPos*(self: wScrollBar, position: int)
 
 # handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll bar control
-proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM, isControl: bool): LRESULT =
+proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM,
+    isControl: bool, processed: var bool): LRESULT =
+
   var
     info =
       if isControl:
@@ -831,26 +831,33 @@ proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM, isC
         self.getScrollInfo(orientation)
 
     position = info.nPos
-    eventType = scrollEventRelay(wParam, info, position)
-    isRelay = false
+    eventKind = scrollEventTranslate(wParam, info, position, isControl)
+
+  # The really max position is nMax - nPage + 1
+  let maxPos = info.nMax - info.nPage + 1
+  if position < 0: position = 0
+  if position > maxPos: position = maxPos
 
   if position != info.nPos:
     if isControl:
       wScrollBar(self).setScrollPos(position)
     else:
       self.setScrollPos(orientation, position)
-    isRelay = true
 
-  var
-    scrollData = wScrollData(orientation: orientation, scrollPos: position)
-    dataPtr = cast[LPARAM](&scrollData)
+  # No more check the position to decide sending event or not.
+  # It means: the behavior is more like wSlider, and simpler code.
+  # Whatever we get from system, we send to the user.
 
-  if eventType == wEvent_ScrollThumbRelease or eventType == wEvent_ScrollChanged:
-    isRelay = true
+  if eventKind != 0:
+    var
+      scrollData = wScrollData(kind: eventKind, orientation: orientation)
+      dataPtr = cast[LPARAM](&scrollData)
 
-  if eventType != 0 and isRelay:
-    var processed: bool
-    return self.mMessageHandler(self, eventType, wParam, dataPtr, processed)
+    # sent wEvent_ScrollWin/wEvent_ScrollBar first, if this is processed, skip other event
+    let defaultType = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
+    result = self.mMessageHandler(self, defaultType, wParam, dataPtr, processed)
+    if not processed:
+      result = self.mMessageHandler(self, eventKind, wParam, dataPtr, processed)
 
 # assign to WNDCLASSEX.lpfnWndProc for invoke wWindow's message handler
 proc wWndProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LRESULT {.stdcall.} =
@@ -891,8 +898,10 @@ proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPA
       for connection in list: # FIFO
         connection.callHandler()
 
-    # after system event done, processed show be false
+    # system event never block following event
+    # and system event should not modify the skip status
     processed = false
+    event.mSkip = false
 
     var this = self
     while true:
@@ -926,7 +935,7 @@ proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPA
     of WM_VSCROLL, WM_HSCROLL:
       if lparam == 0: # means the standard scroll bar
         let orientation = if msg == WM_VSCROLL: wVertical else: wHorizontal
-        return self.scrollEventHandlerImpl(orientation, wParam, isControl=false)
+        result = self.scrollEventHandlerImpl(orientation, wParam, isControl=false, processed)
 
     of WM_NOTIFY:
       var

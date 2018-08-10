@@ -65,8 +65,8 @@ proc init(self: wStaticBitmap, parent: wWindow, id: wCommandID = -1, bitmap: wBi
         var processed: bool
         event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
-proc StaticBitmap*(parent: wWindow, bitmap: wBitmap = nil, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wSbAuto): wStaticBitmap {.discardable.} =
+proc StaticBitmap*(parent: wWindow, id: wCommandID = wDefaultID, bitmap: wBitmap = nil,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSbAuto): wStaticBitmap {.discardable.} =
   ## Constructor, creating and showing a static bitmap control.
   # Acceptable nil bitmap for later assign.
   wValidate(parent)

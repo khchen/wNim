@@ -301,7 +301,7 @@ proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label:
 
       else: discard
 
-proc NoteBook*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wNoteBook {.discardable.} =
+proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wNoteBook {.discardable.} =
   new(result)
   result.wNoteBookInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

@@ -877,7 +877,7 @@ proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = 
     mImageListNormal = nil
     mImageListState = nil
 
-proc TreeCtrl*(parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTreeCtrl {.discardable.} =
+proc TreeCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTreeCtrl {.discardable.} =
   new(result)
   result.wTreeCtrlInit(parent=parent, id=id, pos=pos, size=size, style=style)
 

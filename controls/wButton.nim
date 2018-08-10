@@ -205,12 +205,12 @@ proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       var processed: bool
-      event.mResult = self.mMessageHandler(self, wEvent_Button, event.mWparam, event.mLparam, processed)
+      discard self.mMessageHandler(self, wEvent_Button, event.mWparam, event.mLparam, processed)
 
   # send WM_MENUCOMMAND to wFrame
   systemConnect(WM_MENUCOMMAND, wControlOnMenuCommand)
 
-proc Button*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
+proc Button*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = 0): wButton {.discardable.} =
   ## Constructor, creating and showing a button.
   wValidate(parent)

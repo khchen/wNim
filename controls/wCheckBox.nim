@@ -82,9 +82,9 @@ proc init(self: wCheckBox, parent: wWindow, id: wCommandID = -1, label: string =
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       var processed: bool
-      event.mResult = self.mMessageHandler(self, wEvent_CheckBox, event.mWparam, event.mLparam, processed)
+      discard self.mMessageHandler(self, wEvent_CheckBox, event.mWparam, event.mLparam, processed)
 
-proc CheckBox*(parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
+proc CheckBox*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wChk2State): wCheckBox {.discardable.} =
   ## Constructor, creating and showing a checkbox
   wValidate(parent)
