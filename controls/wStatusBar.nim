@@ -109,15 +109,15 @@ proc `[]`*(self: wStatusBar, index: int): string {.validate, inline.} =
   ## Returns the string associated with a status bar of the specified field.
   result = getStatusText(index)
 
-proc wStatusBarNotifyHandler(self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT {.inline.} =
-  var eventType: UINT
+method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+  var eventKind: UINT
   case code
-  of NM_CLICK: eventType = wEvent_StatusBarLeftClick
-  of NM_DBLCLK: eventType = wEvent_StatusBarLeftDoubleClick
-  of NM_RCLICK: eventType = wEvent_StatusBarRightClick
-  of NM_RDBLCLK: eventType = wEvent_StatusBarRightDoubleClick
-  else: return
-  result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+  of NM_CLICK: eventKind = wEvent_StatusBarLeftClick
+  of NM_DBLCLK: eventKind = wEvent_StatusBarLeftDoubleClick
+  of NM_RCLICK: eventKind = wEvent_StatusBarRightClick
+  of NM_RDBLCLK: eventKind = wEvent_StatusBarRightDoubleClick
+  else: return false
+  return self.processMessage(eventKind, cast[WPARAM](id), lparam)
 
 proc init(self: wStatusBar, parent: wWindow, style: wStyle = 0, id: wCommandID = -1) =
   self.wControl.init(className=STATUSCLASSNAME, parent=parent, id=id, pos=(0, 0),
@@ -133,8 +133,6 @@ proc init(self: wStatusBar, parent: wWindow, style: wStyle = 0, id: wCommandID =
     SendMessage(self.mHwnd, WM_SIZE, 0, 0)
     # then recount the width of fields
     self.resize()
-
-  wStatusBar.setNotifyHandler(wStatusBarNotifyHandler)
 
 proc StatusBar*(parent: wWindow, id: wCommandID = wDefaultID,
     style: wStyle = 0): wStatusBar {.discardable.} =

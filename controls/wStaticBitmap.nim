@@ -54,16 +54,8 @@ proc init(self: wStaticBitmap, parent: wWindow, id: wCommandID = -1, bitmap: wBi
   setBitmap(bitmap)
   mFocusable = false
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd:
-      let cmdEvent = case HIWORD(int32 event.mWparam)
-        of STN_CLICKED: wEvent_CommandLeftClick
-        of STN_DBLCLK: wEvent_CommandLeftDoubleClick
-        else: 0
-
-      if cmdEvent != 0:
-        var processed: bool
-        event.mResult = self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
+  # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
+  parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
 
 proc StaticBitmap*(parent: wWindow, id: wCommandID = wDefaultID, bitmap: wBitmap = nil,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSbAuto): wStaticBitmap {.discardable.} =

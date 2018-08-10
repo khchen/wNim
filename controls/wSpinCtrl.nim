@@ -127,19 +127,8 @@ proc wSpinCtrlInit(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label:
     DestroyWindow(mUpdownHwnd)
     mUpdownHwnd = 0
 
-proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl {.discardable.} =
+proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl {.discardable.} =
   new(result)
   result.wSpinCtrlInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 
-# nim style getter/setter
-
-proc base*(self: wSpinCtrl): int = getBase()
-proc max*(self: wSpinCtrl): int = getMax()
-proc min*(self: wSpinCtrl): int = getMin()
-proc value*(self: wSpinCtrl): int = getValue()
-proc updownHandle*(self: wSpinCtrl): HANDLE = getUpdownHandle()
-proc `base=`*(self: wSpinCtrl, base: int) = setBase(base)
-proc `range=`*(self: wSpinCtrl, range: Slice[int]) = setRange(range)
-proc `selection=`*(self: wSpinCtrl, range: Slice[int]) = setSelection(range)
-proc `value=`*(self: wSpinCtrl, text: string) = setValue(text)
-proc `value=`*(self: wSpinCtrl, value: int) = setValue(value)

@@ -49,9 +49,8 @@ proc init(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: strin
     size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
-      var processed: bool
-      discard self.mMessageHandler(self, wEvent_RadioButton, event.mWparam, event.mLparam, processed)
+    if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
+      self.processMessage(wEvent_RadioButton, event.mWparam, event.mLparam)
 
 proc RadioButton*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wRadioButton {.discardable.} =

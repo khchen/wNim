@@ -165,28 +165,25 @@ method release(self: wButton) =
     ImageList_Destroy(mImgData.himl)
     mImgData.himl = 0
 
-proc wButtonNotifyHandler(self: wButton, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
+method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   case code
   of BCN_DROPDOWN:
     if self.mMenu != nil:
       let pnmdropdown = cast[LPNMBCDROPDOWN](lParam)
       let rect = pnmdropdown.rcButton
       self.popupMenu(self.mMenu, rect.left, rect.bottom)
-      processed = true
+      return true
 
   of BCN_HOTITEMCHANGE:
     let pnmbchotitem = cast[LPNMBCHOTITEM](lParam)
-    let eventType =
-      if (pnmbchotitem.dwFlags and HICF_ENTERING) != 0:
-        wEvent_ButtonEnter
-      elif (pnmbchotitem.dwFlags and HICF_LEAVING) != 0:
-        wEvent_ButtonLeave
-      else: 0
-    if eventType != 0:
-      return self.mMessageHandler(self, eventType, id, lparam, processed)
+    if (pnmbchotitem.dwFlags and HICF_ENTERING) != 0:
+      return self.processMessage(wEvent_ButtonEnter, id, lparam, ret)
 
-  else: discard
-  return self.wControlNotifyHandler(code, id, lparam, processed)
+    elif (pnmbchotitem.dwFlags and HICF_LEAVING) != 0:
+      return self.processMessage(wEvent_ButtonLeave, id, lparam, ret)
+
+  else:
+    return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
@@ -200,15 +197,12 @@ proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "
   # default value of bitmap direction
   mImgData.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT
 
-  wButton.setNotifyHandler(wButtonNotifyHandler)
-
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
-      var processed: bool
-      discard self.mMessageHandler(self, wEvent_Button, event.mWparam, event.mLparam, processed)
+      self.processMessage(wEvent_Button, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame
-  systemConnect(WM_MENUCOMMAND, wControlOnMenuCommand)
+  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
 
 proc Button*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = 0): wButton {.discardable.} =

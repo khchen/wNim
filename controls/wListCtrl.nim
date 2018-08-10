@@ -473,102 +473,102 @@ method getBestSize*(self: wListCtrl): wSize =
   if width > result.width: result.width = width
   if height > result.height: result.height = height
 
-proc wListCtrlNotifyHandler(self: wListCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  let isHeaderNotify = (cast[LPNMHDR](lparam).hwndFrom != mHwnd)
-  var isEditNotify = false
-  var eventType: UINT = 0
+# proc wListCtrlNotifyHandler(self: wListCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
+#   let isHeaderNotify = (cast[LPNMHDR](lparam).hwndFrom != mHwnd)
+#   var isEditNotify = false
+#   var eventType: UINT = 0
 
-  case code
-  of HDN_BEGINDRAG: eventType = wEvent_ListColBeginMove
-  of HDN_ENDDRAG: eventType = wEvent_ListColEndMove
-  of HDN_BEGINTRACK: eventType = wEvent_ListColBeginDrag
-  of HDN_ENDTRACK: eventType = wEvent_ListColEndDrag
-  of HDN_ITEMCHANGING: eventType = wEvent_ListColDragging
-  of LVN_COLUMNCLICK: eventType = wEvent_ListColClick
+#   case code
+#   of HDN_BEGINDRAG: eventType = wEvent_ListColBeginMove
+#   of HDN_ENDDRAG: eventType = wEvent_ListColEndMove
+#   of HDN_BEGINTRACK: eventType = wEvent_ListColBeginDrag
+#   of HDN_ENDTRACK: eventType = wEvent_ListColEndDrag
+#   of HDN_ITEMCHANGING: eventType = wEvent_ListColDragging
+#   of LVN_COLUMNCLICK: eventType = wEvent_ListColClick
 
-  of LVN_BEGINDRAG: eventType = wEvent_ListBeginDrag
-  of LVN_BEGINRDRAG: eventType = wEvent_ListBeginRightDrag
-  of LVN_DELETEITEM: eventType = wEvent_ListDeleteItem
-  of LVN_DELETEALLITEMS: eventType = wEvent_ListDeleteAllItems
-  of LVN_INSERTITEM: eventType = wEvent_ListInsertItem
-  of LVN_KEYDOWN: eventType = wEvent_ListKeyDown
-  of LVN_ITEMACTIVATE: eventType = wEvent_ListItemActivated
+#   of LVN_BEGINDRAG: eventType = wEvent_ListBeginDrag
+#   of LVN_BEGINRDRAG: eventType = wEvent_ListBeginRightDrag
+#   of LVN_DELETEITEM: eventType = wEvent_ListDeleteItem
+#   of LVN_DELETEALLITEMS: eventType = wEvent_ListDeleteAllItems
+#   of LVN_INSERTITEM: eventType = wEvent_ListInsertItem
+#   of LVN_KEYDOWN: eventType = wEvent_ListKeyDown
+#   of LVN_ITEMACTIVATE: eventType = wEvent_ListItemActivated
 
-  of LVN_BEGINLABELEDIT:
-    isEditNotify = true
-    eventType = wEvent_ListBeginLabelEdit
-    mTextCtrl = subclassEdit(SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0).HWND)
+#   of LVN_BEGINLABELEDIT:
+#     isEditNotify = true
+#     eventType = wEvent_ListBeginLabelEdit
+#     mTextCtrl = subclassEdit(SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0).HWND)
 
-  of LVN_ENDLABELEDIT:
-    isEditNotify = true
-    eventType = wEvent_ListEndLabelEdit
+#   of LVN_ENDLABELEDIT:
+#     isEditNotify = true
+#     eventType = wEvent_ListEndLabelEdit
 
-  of NM_RCLICK:
-    eventType = if isHeaderNotify: wEvent_ListColRightClick else: wEvent_ListItemRightClick
+#   of NM_RCLICK:
+#     eventType = if isHeaderNotify: wEvent_ListColRightClick else: wEvent_ListItemRightClick
 
-  of LVN_ITEMCHANGED:
-    let pnmv = cast[LPNMLISTVIEW](lparam)
-    if (pnmv.uChanged and LVIF_STATE) != 0 and pnmv.iItem != -1:
-      const
-        LVIS_CHECKED = 0x2000
-        LVIS_UNCHECKED = 0x1000
-      let
-        oldSt = pnmv.uOldState
-        newSt = pnmv.uNewState
+#   of LVN_ITEMCHANGED:
+#     let pnmv = cast[LPNMLISTVIEW](lparam)
+#     if (pnmv.uChanged and LVIF_STATE) != 0 and pnmv.iItem != -1:
+#       const
+#         LVIS_CHECKED = 0x2000
+#         LVIS_UNCHECKED = 0x1000
+#       let
+#         oldSt = pnmv.uOldState
+#         newSt = pnmv.uNewState
 
-      # focus changed ?
-      if (oldSt and LVIS_FOCUSED) == 0 and (newSt and LVIS_FOCUSED) != 0:
-        eventType = wEvent_ListItemFocused
+#       # focus changed ?
+#       if (oldSt and LVIS_FOCUSED) == 0 and (newSt and LVIS_FOCUSED) != 0:
+#         eventType = wEvent_ListItemFocused
 
-      if (oldSt and LVIS_SELECTED) != (newSt and LVIS_SELECTED):
-        if eventType == wEvent_ListItemFocused:
-          # focus and selection have both changed, invoke focus event first
-          discard self.mMessageHandler(self, wEvent_ListItemFocused, cast[WPARAM](id), lparam, processed)
-          processed = false
+#       if (oldSt and LVIS_SELECTED) != (newSt and LVIS_SELECTED):
+#         if eventType == wEvent_ListItemFocused:
+#           # focus and selection have both changed, invoke focus event first
+#           discard self.mMessageHandler(self, wEvent_ListItemFocused, cast[WPARAM](id), lparam, processed)
+#           processed = false
 
-        eventType = if (newSt and LVIS_SELECTED) != 0: wEvent_ListItemSelected else: wEvent_ListItemDeselected
+#         eventType = if (newSt and LVIS_SELECTED) != 0: wEvent_ListItemSelected else: wEvent_ListItemDeselected
 
-      if (newSt and LVIS_STATEIMAGEMASK) != (oldSt and LVIS_STATEIMAGEMASK):
-        if oldSt != INDEXTOSTATEIMAGEMASK(0):
-          if newSt == INDEXTOSTATEIMAGEMASK(1):
-            eventType = wEvent_ListitemUnchecked
-          elif newSt == INDEXTOSTATEIMAGEMASK(2):
-            eventType = wEvent_ListitemChecked
+#       if (newSt and LVIS_STATEIMAGEMASK) != (oldSt and LVIS_STATEIMAGEMASK):
+#         if oldSt != INDEXTOSTATEIMAGEMASK(0):
+#           if newSt == INDEXTOSTATEIMAGEMASK(1):
+#             eventType = wEvent_ListitemUnchecked
+#           elif newSt == INDEXTOSTATEIMAGEMASK(2):
+#             eventType = wEvent_ListitemChecked
 
-  else: discard
+#   else: discard
 
-  if eventType != 0:
-    var
-      lparam = lparam
-      pnmh = cast[LPNMHDR](lparam)
-      nmv: NMLISTVIEW
+#   if eventType != 0:
+#     var
+#       lparam = lparam
+#       pnmh = cast[LPNMHDR](lparam)
+#       nmv: NMLISTVIEW
 
-    if isHeaderNotify:
-      # try to create a fake NMLISTVIEW object
-      var info: HDHITTESTINFO
-      GetCursorPos(info.pt)
-      ScreenToClient(pnmh.hwndFrom, info.pt)
-      SendMessage(pnmh.hwndFrom, HDM_HITTEST, 0, addr info)
+#     if isHeaderNotify:
+#       # try to create a fake NMLISTVIEW object
+#       var info: HDHITTESTINFO
+#       GetCursorPos(info.pt)
+#       ScreenToClient(pnmh.hwndFrom, info.pt)
+#       SendMessage(pnmh.hwndFrom, HDM_HITTEST, 0, addr info)
 
-      nmv.hdr = pnmh[]
-      nmv.iItem = -1
-      nmv.iSubItem = info.iItem
-      nmv.ptAction = info.pt
-      lparam = cast[LPARAM](addr nmv)
+#       nmv.hdr = pnmh[]
+#       nmv.iItem = -1
+#       nmv.iSubItem = info.iItem
+#       nmv.ptAction = info.pt
+#       lparam = cast[LPARAM](addr nmv)
 
-    elif isEditNotify:
-      let nmdisp = cast[LPNMLVDISPINFO](lparam)
-      nmv.hdr = pnmh[]
-      nmv.iItem = nmdisp.item.iItem
-      nmv.iSubItem = nmdisp.item.iSubItem
-      lparam = cast[LPARAM](addr nmv)
+#     elif isEditNotify:
+#       let nmdisp = cast[LPNMLVDISPINFO](lparam)
+#       nmv.hdr = pnmh[]
+#       nmv.iItem = nmdisp.item.iItem
+#       nmv.iSubItem = nmdisp.item.iSubItem
+#       lparam = cast[LPARAM](addr nmv)
 
-    result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
-    if eventType == wEvent_ListEndLabelEdit:
-      #logic here is inverted
-      result = if result == 0: 1 else: 0
-  else:
-    result = self.wControlNotifyHandler(code, id, lparam, processed)
+#     result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+#     if eventType == wEvent_ListEndLabelEdit:
+#       #logic here is inverted
+#       result = if result == 0: 1 else: 0
+#   else:
+#     result = self.wControlNotifyHandler(code, id, lparam, processed)
 
 proc wListCtrlInit(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
@@ -578,7 +578,6 @@ proc wListCtrlInit(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = 
 
   SendMessage(mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)
 
-  wListCtrl.setNotifyHandler(wListCtrlNotifyHandler)
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}
 
   # set default background color

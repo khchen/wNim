@@ -194,8 +194,6 @@ when not defined(wnimdoc):
       mBackgroundColor: wColor
       mForegroundColor: wColor
       mBackgroundBrush: wBrush
-      mMessageHandler: wMessageHandler
-      mNotifyHandler: wNotifyHandler
       mSubclassedOldProc: WNDPROC
       mConnectionTable: Table[UINT, seq[wEventConnection]]
       mSystemConnectionTable: Table[UINT, seq[wEventConnection]]
@@ -204,6 +202,7 @@ when not defined(wnimdoc):
       mMaxSize: wSize
       mMinSize: wSize
       mDummyParent: HWND
+      mMouseInWindow: bool
       # acceleratorTable =
 
     wFrame* = ref wFrameObj
@@ -333,8 +332,8 @@ when not defined(wnimdoc):
       mOwnsImageListNormal: bool
       mOwnsImageListState: bool
 
-    wHyperlinkCtrl* = ref wHyperlinkCtrlObj
-    wHyperlinkCtrlObj = object of wControlObj
+    wHyperLinkCtrl* = ref wHyperLinkCtrlObj
+    wHyperLinkCtrlObj = object of wControlObj
       mFocused: int
 
     # wToolTip* = ref wToolTipObj

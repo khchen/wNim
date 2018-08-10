@@ -40,6 +40,17 @@ method getDefaultSize*(self: wStaticText): wSize {.property.} =
   result = getBestSize()
   result.height = getLineControlDefaultHeight(mFont.mHandle)
 
+proc wStaticText_DoCommand(event: wEvent) =
+  # also used in wStaticBitmap
+  let self = wAppWindowFindByHwnd(HWND event.mLparam)
+  if self != nil:
+    case HIWORD(event.mWparam)
+    of STN_CLICKED:
+      self.processMessage(wEvent_CommandLeftClick, event.mWparam, event.mLparam)
+    of STN_DBLCLK:
+      self.processMessage(wEvent_CommandLeftDoubleClick, event.mWparam, event.mLparam)
+    else: discard
+
 proc init(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
@@ -48,21 +59,10 @@ proc init(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string
 
   mFocusable = false
 
+  parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
   systemConnect(WM_SIZE) do (event: wEvent):
     # when size change, StaticText should refresh itself, but windows system don't do it
     self.refresh()
-
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    # translate to wEvent_Command event
-    if event.mLparam == mHwnd:
-      let cmdEvent = case HIWORD(event.mWparam)
-        of STN_CLICKED: wEvent_CommandLeftClick
-        of STN_DBLCLK: wEvent_CommandLeftDoubleClick
-        else: 0
-
-      if cmdEvent != 0:
-        var processed: bool
-        discard self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
 
 proc StaticText*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wAlignLeft): wStaticText {.discardable.} =

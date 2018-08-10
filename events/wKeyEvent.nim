@@ -23,7 +23,7 @@ const
   wEvent_KeyLast = WM_KEYLAST
 
 proc isKeyEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_KeyFirst, wEvent_KeyLast)
+  msg in wEvent_KeyFirst..wEvent_KeyLast
 
 method getKeyCode*(self: wKeyEvent): int {.property.} = result = int mWparam
   ## Returns the key code of the key that generated this event.

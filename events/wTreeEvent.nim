@@ -23,4 +23,4 @@ DefineIncrement(wEvent_TreeFirst):
   wEvent_TreeLast
 
 proc isTreeEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_TreeFirst, wEvent_TreeLast)
+  msg in wEvent_TreeFirst..wEvent_TreeLast

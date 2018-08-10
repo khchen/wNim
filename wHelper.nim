@@ -29,20 +29,6 @@ else:
   proc wValidateToPointer*[T](x: T): pointer = nil
   template wValidate(vargs: varargs[pointer, wValidateToPointer]): untyped = discard
 
-proc isBetween(n, L, H: int): bool {.inline.} =
-  if n >= L and n <= H:
-    true
-  else:
-    false
-
-template setMessageHandler(wType, wHandler: untyped): untyped =
-  mMessageHandler = proc (self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT =
-    wHandler(wType(self), msg, wParam, lParam, processed)
-
-template setNotifyHandler(wType, wHandler: untyped): untyped =
-  mNotifyHandler = proc (self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-    wHandler(wType(self), code, id, lParam, processed)
-
 proc toRect(r: wRect): RECT =
   result.left = r.x
   result.top = r.y
@@ -201,6 +187,15 @@ proc wCheckMenuItem(hmenu: HMENU, pos: int, flag: bool) =
     menuItemInfo.fState = menuItemInfo.fState and (not MFS_CHECKED)
   SetMenuItemInfo(hmenu, pos, true, menuItemInfo)
 
+proc isMouseInWindow(mHwnd: HWND): bool =
+  var mousePos: POINT
+  GetCursorPos(mousePos)
+
+  var hwnd = WindowFromPoint(mousePos)
+  while hwnd != 0 and hwnd != mHwnd:
+    hwnd = GetParent(hwnd)
+
+  result = hwnd != 0
 
 
 # todo

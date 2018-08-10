@@ -54,10 +54,6 @@ const
   wLbSort* = LBS_SORT
   wLbNoSel* = LBS_NOSEL
 
-  # HyperlinkCtrl styles and consts
-  wHlAlignLeft* = 0
-  wHlAlignRight* = LWS_RIGHT
-
   # Imagelist styles and consts
   wImageListNormal* = LVSIL_NORMAL
   wImageListSmall* = LVSIL_SMALL

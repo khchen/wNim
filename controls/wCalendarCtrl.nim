@@ -131,14 +131,16 @@ proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   ## Retrieves the maximum date range that can be selected
   result = int SendMessage(mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
-proc wCalendarCtrlNotifyHandler(self: wCalendarCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  var eventType: UINT
+method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   case code
-  of MCN_SELCHANGE: eventType = wEvent_CalendarSelChanged
-  of MCN_VIEWCHANGE: eventType = wEvent_CalendarViewChanged
-  else: return self.wControlNotifyHandler(code, id, lparam, processed)
+  of MCN_SELCHANGE:
+    return self.processMessage(wEvent_CalendarSelChanged, id, lparam, ret)
 
-  result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+  of MCN_VIEWCHANGE:
+    return self.processMessage(wEvent_CalendarViewChanged, id, lparam, ret)
+
+  else:
+    return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc init(self: wCalendarCtrl, parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
     pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0) =
@@ -156,7 +158,6 @@ proc init(self: wCalendarCtrl, parent: wWindow, id: wCommandID = wDefaultID, dat
   if date != wDefaultTime:
     setDate(date)
 
-  wCalendarCtrl.setNotifyHandler(wCalendarCtrlNotifyHandler)
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
 proc CalendarCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,

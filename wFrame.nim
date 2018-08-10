@@ -145,7 +145,7 @@ proc endModal*(self: wFrame, retCode: int = 0) =
   PostMessage(0, wEvent_AppQuit, WPARAM retCode, 0)
   hide()
 
-proc wFrame_OnSize(event: wEvent) =
+proc wFrame_DoSize(event: wEvent) =
   # If the frame has exactly one child window, not counting the status and toolbar,
   # this child is resized to take the entire frame client area.
   # If two or more windows are present, they should be laid out explicitly by manually.
@@ -236,7 +236,7 @@ proc wFrame_OnMenuCommand(event: wEvent) =
       menu.check(pos)
 
     # convet to wEvent_Menu message.
-    event.mResult = self.mMessageHandler(self, wEvent_Menu, cast[WPARAM](item.mId), 0, processed)
+    processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId), 0, event.mResult)
 
 when defined(useWinXP):
   # under Windows XP, menu icon must draw by outself
@@ -289,10 +289,11 @@ when defined(useWinXP):
 proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize,
     style: wStyle = wDefaultFrameStyle, className = "wFrame") =
 
-  self.wWindow.init(title=title, pos=pos, size=size, style=style, owner=owner,
+  self.wWindow.init(title=title, pos=pos, size=size, style=style or WS_CLIPCHILDREN, owner=owner,
     className=className, bgColor=GetSysColor(COLOR_APPWORKSPACE))
 
-  systemConnect(wEvent_Size, wFrame_OnSize)
+  systemConnect(wEvent_Size, wFrame_DoSize)
+
   hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
   hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)
   hardConnect(WM_MENUCOMMAND, wFrame_OnMenuCommand)
@@ -307,4 +308,4 @@ proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint, size = wDefau
   ## However, it can has an owner. The frame will be minimized when its owner is minimized and
   ## restored when it is restored.
   new(result)
-  result.init(owner=owner, title=title, pos=pos, size=size, style=style or WS_CLIPCHILDREN, className=className)
+  result.init(owner=owner, title=title, pos=pos, size=size, style=style, className=className)

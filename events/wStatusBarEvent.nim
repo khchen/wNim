@@ -8,7 +8,7 @@ DefineIncrement(wEvent_StatusBarFirst):
   wEvent_StatusBarLast
 
 proc isStatusBarEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_StatusBarFirst, wEvent_StatusBarLast)
+  msg in wEvent_StatusBarFirst..wEvent_StatusBarLast
 
 method getIndex*(self: wStatusBarEvent): int {.property.} =
   ## Return the index of the field that was clicked.

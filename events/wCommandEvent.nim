@@ -44,7 +44,7 @@ const
   wEventTimeChanged* = wEvent_DateChanged
 
 proc isCommandEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_CommandFirst, wEvent_CommandLast)
+  msg in wEvent_CommandFirst..wEvent_CommandLast
 
 proc getCommandEvent(window: wWindow): UINT =
   if window of wFrame:

@@ -228,7 +228,7 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string) {.validate
     SendMessage(mHwnd, TB_INSERTBUTTON, pos, &button)
     SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
 
-proc wToolBarNotifyHandler(self: wToolBar, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
+method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   case code
   of TTN_GETDISPINFO:
     # show the tip (short help)
@@ -236,6 +236,7 @@ proc wToolBarNotifyHandler(self: wToolBar, code: INT, id: UINT_PTR, lparam: LPAR
     let tool = getToolById(wCommandID id)
     if tool != nil:
       pNMTTDISPINFO.lpszText = T(tool.mShortHelp)
+    return true
 
   of TBN_HOTITEMCHANGE:
     # show the long help at statusbar, and translate to wEvent_ToolEnter
@@ -258,26 +259,28 @@ proc wToolBarNotifyHandler(self: wToolBar, code: INT, id: UINT_PTR, lparam: LPAR
           text = tool.mLongHelp
       statusBar.setStatusText(text)
 
-    return self.mMessageHandler(self, wEvent_ToolEnter, cast[WPARAM](pNMTBHOTITEM.idNew), lparam, processed)
+    self.processMessage(wEvent_ToolEnter, cast[WPARAM](pNMTBHOTITEM.idNew), lparam)
+    return true
 
   of TBN_DROPDOWN:
     # translate to wEvent_ToolDropDown
     let pNMTOOLBAR = cast[LPNMTOOLBAR](lparam)
-    return self.mMessageHandler(self, wEvent_ToolDropDown, cast[WPARAM](pNMTOOLBAR.iItem), lparam, processed)
+    self.processMessage(wEvent_ToolDropDown, cast[WPARAM](pNMTOOLBAR.iItem), lparam)
+    return true
 
   of NM_RCLICK:
     # Translate to wEvent_ToolRightClick but don't eat it, so that wEvent_CommandRightClick stil can work
     # If the mouse was clicked on a separator or white space in the toolbar, the dwItemSpec member will contain -1
     let lpnm = cast[LPNMMOUSE](lparam)
     if lpnm.dwItemSpec != DWORD_PTR(-1):
-      var dummy: bool
-      discard self.mMessageHandler(self, wEvent_ToolRightClick, cast[WPARAM](lpnm.dwItemSpec), lparam, dummy)
+      return self.processMessage(wEvent_ToolRightClick, cast[WPARAM](lpnm.dwItemSpec), lparam)
+    # fall to wControl's processNotify
 
   else: discard
 
-  return self.wControlNotifyHandler(code, id, lparam, processed)
+  return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc wToolBarOnToolDropDown(event: wEvent) =
+proc wToolBar_OnToolDropDown(event: wEvent) =
   # show the popupmenu is a default behavior, but can be overridden.
   let self = wToolBar event.mWindow
   var processed = false
@@ -304,22 +307,19 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
   mFocusable = false
   # todo: handle key navigation by TB_SETHOTITEM?
 
-  wToolBar.setNotifyHandler(wToolBarNotifyHandler)
-
   parent.systemConnect(WM_SIZE) do (event: wEvent):
     SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     # translate WM_COMMAND to wEventTool
-    if event.mLparam == mHwnd and HIWORD(event.mWparam.int32) == 0:
-      var processed: bool
-      discard self.mMessageHandler(self, wEventTool, event.mWparam, event.mLparam, processed)
+    if event.mLparam == mHwnd and HIWORD(event.mWparam) == 0:
+      self.processMessage(wEventTool, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
-  systemConnect(WM_MENUCOMMAND, wControlOnMenuCommand)
+  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
 
   # show the popupmenu is a default behavior, but can be overridden.
-  hardConnect(wEvent_ToolDropDown, wToolBarOnToolDropDown)
+  hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
 
 proc ToolBar*(parent: wWindow, id: wCommandID = wDefaultID,
     style: wStyle = wTbDefaultStyle): wToolBar {.discardable.} =

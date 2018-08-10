@@ -231,9 +231,8 @@ proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
         dataPtr = cast[LPARAM](&scrollData)
 
       # sent wEvent_Slider first, if this is processed, skip other event
-      discard self.mMessageHandler(self, wEvent_Slider, event.mWparam, dataPtr, processed)
-      if not processed:
-        discard self.mMessageHandler(self, eventKind, event.mWparam, dataPtr, processed)
+      if not self.processMessage(wEvent_Slider, event.mWparam, dataPtr):
+        self.processMessage(eventKind, event.mWparam, dataPtr)
 
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)

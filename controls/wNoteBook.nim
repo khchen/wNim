@@ -103,14 +103,14 @@ proc setSelection*(self: wNoteBook, n: int) =
 
   if mSelection == -1 or mSelection != n:
     let id = getId()
-    var processed = false
-    let ret = self.mMessageHandler(self, wEvent_NoteBookPageChanging, cast[WPARAM](id), 0, processed)
+    var ret: LRESULT
+    var processed = self.processMessage(wEvent_NoteBookPageChanging, cast[WPARAM](id), 0, ret)
 
     # FALSE to allow the selection to change
     if not processed or ret == 0:
       SendMessage(mHwnd, TCM_SETCURSEL, n, 0)
       updateSelection(n)
-      discard self.mMessageHandler(self, wEvent_NoteBookPageChanged, cast[WPARAM](id), 0, processed)
+      self.processMessage(wEvent_NoteBookPageChanged, cast[WPARAM](id), 0)
 
 # no evnet generated
 proc changeSelection*(self: wNoteBook, n: int) =
@@ -249,17 +249,18 @@ proc getThemeBackgroundColor*(self: wNoteBook): wColor =
     gResult = mBackgroundColor
     return gResult
 
-proc wNoteBookNotifyHandler(self: wNoteBook, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  var eventType: UINT
+method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+  var eventKind: UINT
   case code
-  of TCN_SELCHANGE: eventType = wEvent_NoteBookPageChanged
-  of TCN_SELCHANGING: eventType = wEvent_NoteBookPageChanging
-  else: return self.wControlNotifyHandler(code, id, lparam, processed)
-
-  if code == TCN_SELCHANGE:
+  of TCN_SELCHANGE:
     updateSelection(getSelection())
+    return self.processMessage(wEvent_NoteBookPageChanged, cast[WPARAM](id), lparam)
 
-  result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+  of TCN_SELCHANGING:
+    return self.processMessage(wEvent_NoteBookPageChanging, cast[WPARAM](id), lparam)
+
+  else:
+    return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
@@ -272,7 +273,6 @@ proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label:
   if bkColor != mBackgroundColor:
     self.setBackgroundColor(bkColor)
 
-  wNoteBook.setNotifyHandler(wNoteBookNotifyHandler)
   mKeyUsed = {wUSE_LEFT, wUSE_RIGHT} # left and right to navigate between tabs
 
   systemConnect(WM_SIZE) do (event: wEvent):

@@ -78,28 +78,29 @@ proc setRange*(self: wDatePickerCtrl, time: (wTime, wTime)) {.validate, property
   ## Sets the valid range for the date selection.
   setRange(time[0], time[1])
 
-proc wDatePickerCtrlNotifyHandler(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  var eventType: UINT
-  case code
-  of DTN_DATETIMECHANGE: eventType = wEvent_DateChanged
-  else: return self.wControlNotifyHandler(code, id, lparam, processed)
+method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool =
 
-  result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+  if code == DTN_DATETIMECHANGE:
+    return self.processMessage(wEvent_DateChanged, id, lparam, ret)
+
+  return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
-    date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = wDpDefault) =
-  assert parent != nil
+    date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
+    style: wStyle = wDpDefault) =
 
-  self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="", pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if date != wDefaultTime:
     setValue(date)
 
-  wDatePickerCtrl.setNotifyHandler(wDatePickerCtrlNotifyHandler)
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
-proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = wDpDefault): wDatePickerCtrl {.discardable.} =
+proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID,
+    date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
+    style: wStyle = wDpDefault): wDatePickerCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

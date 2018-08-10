@@ -820,36 +820,34 @@ method getBestSize*(self: wTreeCtrl): wSize =
       result.width = max(result.width, rect.x + rect.width + 5)
       result.height = max(result.height, rect.y + rect.height + scrollY + 5)
 
-proc wTreeCtrlNotifyHandler(self: wTreeCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  var eventType: UINT = 0
-
+method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+  var eventKind: UINT = 0
   case code
   of TVN_ITEMEXPANDED:
     let pnmtv = cast[LPNMTREEVIEW](lparam)
     if pnmtv.action == TVE_EXPAND:
-      eventType = wEvent_TreeItemExpanded
+      eventKind = wEvent_TreeItemExpanded
     elif pnmtv.action == TVE_COLLAPSE:
-      eventType = wEvent_TreeItemCollapsed
+      eventKind = wEvent_TreeItemCollapsed
 
   of TVN_ITEMEXPANDING:
     let pnmtv = cast[LPNMTREEVIEW](lparam)
     if pnmtv.action == TVE_EXPAND:
-      eventType = wEvent_TreeItemExpanding
+      eventKind = wEvent_TreeItemExpanding
     elif pnmtv.action == TVE_COLLAPSE:
-      eventType = wEvent_TreeItemCollapsing
+      eventKind = wEvent_TreeItemCollapsing
 
   of TVN_ITEMCHANGED:
     let pnmtc = cast[ptr NMTVITEMCHANGE](lparam)
     if (pnmtc.uStateNew and TVIS_SELECTED) != (pnmtc.uStateOld and TVIS_SELECTED):
-      eventType = wEvent_TreeSelChanged
+      eventKind = wEvent_TreeSelChanged
 
   else: discard
 
-  if eventType != 0:
-    result = self.mMessageHandler(self, eventType, cast[WPARAM](id), lparam, processed)
+  if eventKind != 0:
+    return self.processMessage(eventKind, cast[WPARAM](id), lparam)
   else:
-    result = self.wControlNotifyHandler(code, id, lparam, processed)
-
+    return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
@@ -862,7 +860,6 @@ proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = 
   self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  wTreeCtrl.setNotifyHandler(wTreeCtrlNotifyHandler)
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}
 
   if (style and wTrTwistButtons) != 0:

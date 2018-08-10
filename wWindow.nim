@@ -754,16 +754,6 @@ proc popupMenu*(self: wWindow, menu: wMenu, x, y: int) {.validate, inline.} =
   ## Pops up the given menu at the specified coordinates.
   popupMenu(menu, (x, y))
 
-proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.} =
-  ## Call the window's message handler to process the specified event.
-  wValidate(event)
-  event.mResult = self.mMessageHandler(self, event.mMsg, event.mWparam, event.mLparam, result)
-
-proc queueEvent*(self: wWindow, event: wEvent) {.validate.} =
-  ## Queue event for a later processing.
-  wValidate(event)
-  PostMessage(mHwnd, event.mMsg, event.mWparam, event.mLparam)
-
 proc startTimer*(self: wWindow, seconds: float, id = 1) {.validate, inline.} =
   ## Start a timer. It generates wEvent_Timer event to the window.
   ## In the event handler, use event.timerId to get the timer id.
@@ -784,6 +774,76 @@ iterator siblings*(self: wWindow): wWindow {.validate.} =
     for child in mParent.mChildren:
       if child != self:
         yield child
+
+proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.} =
+  ## Processes an event, searching event tables and calling event handler.
+  ## Returned true if a suitable event handler function was found and executed
+  ## and the function did not call wEvent.skip.
+  let id = event.mId
+  let msg = event.mMsg
+  var processed = false
+  defer: result = processed
+
+  template callHandler(connection: untyped): untyped =
+    if connection.id == 0 or connection.id == id:
+      if not connection.handler.isNil:
+        connection.handler(event)
+        processed = not event.mSkip
+
+      elif not connection.neatHandler.isNil:
+        connection.neatHandler()
+        processed = true
+
+  mSystemConnectionTable.withValue(msg, list):
+    # always invoke every system event handler
+    # so we don't break even the event is processed
+    for connection in list: # FIFO
+      connection.callHandler()
+
+  # system event never block following event
+  # and system event should not modify the skip status
+  processed = false
+  event.mSkip = false
+
+  var this = self
+  while true:
+    this.mConnectionTable.withValue(msg, list):
+      for i in countdown(list.high, 0): # FILO
+        let connection = list[i]
+        connection.callHandler()
+        # pass event to next handler only if not processed
+        if processed: break
+
+    this = this.mParent
+    if this == nil or processed or event.shouldPropagate() == false:
+      break
+    else:
+      event.mPropagationLevel.dec
+
+proc queueEvent*(self: wWindow, event: wEvent) {.validate.} =
+  ## Queue event for a later processing.
+  wValidate(event)
+  PostMessage(mHwnd, event.mMsg, event.mWparam, event.mLparam)
+
+proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
+    ret: var LRESULT): bool {.discardable.} =
+  # Use internally, generate the event object and process it.
+  if wAppHasMessage(msg):
+    var event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
+    event.mKeyStatus = getKeyStatus()
+    result = processEvent(event)
+    ret = event.mResult
+
+proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM,
+    lParam: LPARAM): bool {.validate, inline, discardable.} =
+  # use internally, the same but ignore the return value.
+  var dummy: LRESULT
+  result = processMessage(msg, wParam, lParam, dummy)
+
+method processNotify(self: wWindow, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool {.base.} =
+  # subclass can override this to process the nofity message
+  discard
 
 proc scrollEventTranslate(wParam: WPARAM, info: SCROLLINFO, position: var INT, isControl: bool): UINT {.inline.} =
   result = case LOWORD(wparam)
@@ -815,14 +875,12 @@ proc scrollEventTranslate(wParam: WPARAM, info: SCROLLINFO, position: var INT, i
       if isControl: wEvent_ScrollChanged else: wEvent_ScrollWinChanged
     else: 0
 
-
 proc getScrollInfo(self: wScrollBar): SCROLLINFO
 proc setScrollPos*(self: wScrollBar, position: int)
 
-# handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll bar control
-proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM,
-    isControl: bool, processed: var bool): LRESULT =
-
+proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
+    isControl: bool, processed: var bool) =
+  # handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll bar control
   var
     info =
       if isControl:
@@ -854,138 +912,21 @@ proc scrollEventHandlerImpl(self: wWindow, orientation: int, wParam: WPARAM,
       dataPtr = cast[LPARAM](&scrollData)
 
     # sent wEvent_ScrollWin/wEvent_ScrollBar first, if this is processed, skip other event
-    let defaultType = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
-    result = self.mMessageHandler(self, defaultType, wParam, dataPtr, processed)
-    if not processed:
-      result = self.mMessageHandler(self, eventKind, wParam, dataPtr, processed)
+    let defaultKind = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
+    if not self.processMessage(defaultKind, wParam, dataPtr):
+      self.processMessage(eventKind, wParam, dataPtr)
 
-# assign to WNDCLASSEX.lpfnWndProc for invoke wWindow's message handler
-proc wWndProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LRESULT {.stdcall.} =
-  var self = wAppWindowFindByHwnd(hwnd)
+proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} =
+  # assign to WNDCLASSEX.lpfnWndProc to invoke event handler
+  let self = wAppWindowFindByHwnd(hwnd)
   if self != nil:
-    if self.mMessageHandler != nil:
-      var processed: bool
-      result = self.mMessageHandler(self, msg, wparam, lparam, processed)
+    if self.processMessage(msg, wParam, lParam, result):
+      return result
 
-      if processed:
-        return result
-
-      elif self.mSubclassedOldProc != nil:
-        return CallWindowProc(self.mSubclassedOldProc, hwnd, msg, wParam, lParam)
+    elif self.mSubclassedOldProc != nil:
+      return CallWindowProc(self.mSubclassedOldProc, hwnd, msg, wParam, lParam)
 
   return DefWindowProc(hwnd, msg, wParam, lParam)
-
-# a default window message handler to every wWindow, handle wEvent here
-proc wWindowMessageHandler(self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT =
-  if not processed and wAppHasMessage(msg):
-    var event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
-    var id = event.mId
-    event.mKeyStatus = getKeyStatus()
-
-    template callHandler(connection: untyped): untyped =
-      if connection.id == 0 or connection.id == id:
-        if not connection.handler.isNil:
-          connection.handler(event)
-          processed = not event.mSkip
-
-        elif not connection.neatHandler.isNil:
-          connection.neatHandler()
-          processed = true
-
-    mSystemConnectionTable.withValue(msg, list):
-      # system event always skip to next
-      # so we don't break even the event is processed
-      for connection in list: # FIFO
-        connection.callHandler()
-
-    # system event never block following event
-    # and system event should not modify the skip status
-    processed = false
-    event.mSkip = false
-
-    var this = self
-    while true:
-      this.mConnectionTable.withValue(msg, list):
-        for i in countdown(list.high, 0): # FILO
-          let connection = list[i]
-          connection.callHandler()
-          # pass event to next handler only if not processed
-          if processed: break
-
-      this = this.mParent
-      if this == nil or processed or event.shouldPropagate() == false:
-        break
-      else:
-        event.mPropagationLevel.dec
-
-    if not event.isNil:
-      result = event.mResult
-
-  if not processed:
-    case msg
-    of WM_GETMINMAXINFO:
-      if mMinSize != wDefaultSize or mMaxSize != wDefaultSize:
-        var pInfo: PMINMAXINFO = cast[PMINMAXINFO](lparam)
-        if mMinSize.width != wDefault: pInfo.ptMinTrackSize.x = mMinSize.width
-        if mMinSize.height != wDefault: pInfo.ptMinTrackSize.y = mMinSize.height
-        if mMaxSize.width != wDefault: pInfo.ptMaxTrackSize.x = mMaxSize.width
-        if mMaxSize.height != wDefault: pInfo.ptMaxTrackSize.y = mMaxSize.height
-        processed = true
-
-    of WM_VSCROLL, WM_HSCROLL:
-      if lparam == 0: # means the standard scroll bar
-        let orientation = if msg == WM_VSCROLL: wVertical else: wHorizontal
-        result = self.scrollEventHandlerImpl(orientation, wParam, isControl=false, processed)
-
-    of WM_NOTIFY:
-      var
-        pNMHDR = cast[LPNMHDR](lparam)
-        win = wAppWindowFindByHwnd(pNMHDR.hwndFrom)
-
-      if win == nil: win = self # by default, handle it ourselves
-      if win != nil and win.mNotifyHandler != nil:
-        result = win.mNotifyHandler(win, cast[INT](pNMHDR.code), pNMHDR.idFrom, lparam, processed)
-
-    of WM_CTLCOLORBTN, WM_CTLCOLOREDIT, WM_CTLCOLORSTATIC, WM_CTLCOLORLISTBOX:
-      # here lparam.HANDLE maybe a subwindow of our wWindow
-      # so need to find our wWindow to get the color setting
-
-      let hdc = wparam.HDC
-      var hwnd = lparam.HANDLE
-      while hwnd != 0:
-        let win = wAppWindowFindByHwnd(hwnd)
-        if win != nil:
-          SetBkColor(hdc, win.mBackgroundColor)
-          SetTextColor(hdc, win.mForegroundColor)
-          processed = true
-          return win.mBackgroundBrush.mHandle.LRESULT
-
-        hwnd = GetParent(hwnd)
-
-    of WM_DESTROY:
-      # always post a WM_QUIT message to mainloop
-      # GetMessage won't end because it check wAppHasTopLevelWindow()
-      # PostQuitMessage(0)
-
-      # use our own wEvent_AppQuit here, because PostQuitMessage indicates system the thread
-      # wishes to terminate. It disables the further creation of windows (MessageBox).
-      PostMessage(0, wEvent_AppQuit, 0, 0)
-      processed = true
-
-    of WM_NCDESTROY:
-      if mDummyParent != 0:
-        DestroyWindow(mDummyParent)
-        mDummyParent = 0
-
-      self.release()
-      wAppWindowDelete(self)
-      if mParent != nil:
-        let index = mParent.mChildren.find(self)
-        if index != -1:
-          mParent.mChildren.delete(index)
-      processed = true
-
-    else: discard
 
 proc EventConnection(id: wCommandID = 0, handler: wEventHandler = nil, neatHandler: wEventNeatHandler = nil,
     userData = 0, undeletable = false): wEventConnection {.inline.} =
@@ -1097,6 +1038,99 @@ proc unusedClassName(base: string): string =
     count.inc
     if GetClassInfoEx(wAppGetInstance(), result, wc) == 0: break
 
+proc wWindow_DoMouseMove(event: wEvent) =
+  let self = event.mWindow
+  if not self.mMouseInWindow:
+    # it would be wrong to assume that just because we get a mouse move
+    # event that the mouse is inside the window: although this is usually
+    # true, it is not if we had captured the mouse, so we need to check
+    # the mouse coordinates here
+    if not self.hasCapture() or isMouseInWindow(self.mHwnd):
+      self.mMouseInWindow = true
+      self.processMessage(wEvent_MouseEnter, event.mWparam, event.mLparam)
+
+      var lpEventTrack = TTRACKMOUSEEVENT(
+        cbSize: sizeof(TTRACKMOUSEEVENT),
+        dwFlags: TME_LEAVE,
+        hwndTrack: self.mHwnd)
+      TrackMouseEvent(&lpEventTrack)
+
+  else:
+    # Windows doesn't send WM_MOUSELEAVE if the mouse has been captured so
+    #  send it here if we are using native mouse leave tracking
+    if self.hasCapture() and not isMouseInWindow(self.mHwnd):
+      self.processMessage(wEvent_MouseLeave, event.mWparam, event.mLparam)
+
+proc wWindow_DoMouseLeave(event: wEvent) =
+  event.mWindow.mMouseInWindow = false
+
+proc wWindow_DoGetMinMaxInfo(event: wEvent) =
+  let self = event.mWindow
+  if self.mMinSize != wDefaultSize or self.mMaxSize != wDefaultSize:
+    var pInfo: PMINMAXINFO = cast[PMINMAXINFO](event.mLparam)
+    if self.mMinSize.width != wDefault: pInfo.ptMinTrackSize.x = self.mMinSize.width
+    if self.mMinSize.height != wDefault: pInfo.ptMinTrackSize.y = self.mMinSize.height
+    if self.mMaxSize.width != wDefault: pInfo.ptMaxTrackSize.x = self.mMaxSize.width
+    if self.mMaxSize.height != wDefault: pInfo.ptMaxTrackSize.y = self.mMaxSize.height
+
+proc wWindow_DoScroll(event: wEvent) =
+  var processed = false
+  if event.mLparam == 0: # means the standard scroll bar
+    let orientation = if event.mMsg == WM_VSCROLL: wVertical else: wHorizontal
+    event.mWindow.wScroll_DoScrollImpl(orientation, event.wParam, isControl=false, processed)
+
+proc wWindow_DoDestroy(event: wEvent) =
+  # always post a WM_QUIT message to mainloop
+  # GetMessage won't end because it check wAppHasTopLevelWindow()
+  # PostQuitMessage(0)
+
+  # use our own wEvent_AppQuit here, because PostQuitMessage indicates system the thread
+  # wishes to terminate. It disables the further creation of windows (MessageBox).
+  PostMessage(0, wEvent_AppQuit, 0, 0)
+
+proc wWindow_DoNcDestroy(event: wEvent) =
+  let self = event.mWindow
+  if self.mDummyParent != 0:
+    DestroyWindow(self.mDummyParent)
+    self.mDummyParent = 0
+
+  self.release()
+  wAppWindowDelete(self)
+  if self.mParent != nil:
+    let index = self.mParent.mChildren.find(self)
+    if index != -1:
+      self.mParent.mChildren.delete(index)
+
+proc wWindow_OnNotify(event: wEvent) =
+  let self = event.mWindow
+  var processed = false
+  defer: event.mSkip = not processed
+
+  let pNMHDR = cast[LPNMHDR](event.mLparam)
+  var win = wAppWindowFindByHwnd(pNMHDR.hwndFrom)
+  if win == nil: win = self # by default, handle it ourselves
+
+  processed = win.processNotify(cast[INT](pNMHDR.code), pNMHDR.idFrom, event.mLparam, event.mResult)
+
+proc wWindow_OnCtlColor(event: wEvent) =
+  var processed = false
+  defer: event.mSkip = not processed
+
+  # here lparam.HANDLE maybe a subwindow of our wWindow
+  # so need to find our wWindow to get the color setting
+  let hdc = HDC event.mWparam
+  var hwnd = HANDLE event.mLparam
+  while hwnd != 0:
+    let win = wAppWindowFindByHwnd(hwnd)
+    if win != nil:
+      SetBkColor(hdc, win.mBackgroundColor)
+      SetTextColor(hdc, win.mForegroundColor)
+      processed = true
+      event.mResult = win.mBackgroundBrush.mHandle.LRESULT
+      break
+
+    hwnd = GetParent(hwnd)
+
 proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, owner: wWindow = nil, className = "wWindow", title = "",
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
@@ -1108,7 +1142,6 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   mChildren = @[]
   mMaxSize = wDefaultSize
   mMinSize = wDefaultSize
-  mMessageHandler = wWindowMessageHandler
   mParent = parent
 
   var
@@ -1200,6 +1233,23 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
 
   setSize(size)
   UpdateWindow(mHwnd)
+
+  # use Do for system event handle, On for default behavior handle
+  # the different is: system event handle shouldn't modify the event object
+  systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
+  systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+  systemConnect(WM_GETMINMAXINFO, wWindow_DoGetMinMaxInfo)
+  systemConnect(WM_VSCROLL, wWindow_DoScroll)
+  systemConnect(WM_HSCROLL, wWindow_DoScroll)
+  systemConnect(WM_DESTROY, wWindow_DoDestroy)
+  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+
+  hardConnect(WM_NOTIFY, wWindow_OnNotify)
+  hardConnect(WM_CTLCOLORBTN, wWindow_OnCtlColor)
+  hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)
+  hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
+  hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
+
 
 proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className = "wWindow"): wWindow {.discardable.} =

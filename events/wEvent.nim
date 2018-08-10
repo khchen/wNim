@@ -19,8 +19,6 @@ const
   wEvent_NcPaint* = WM_NCPAINT
 
   wEvent_ScrollWinFirst = WM_APP + 100
-  #
-
   wEvent_CommandFirst = WM_APP + 150
   wEvent_StatusBarFirst = WM_APP + 200
   wEvent_ScrollFirst = WM_APP + 250

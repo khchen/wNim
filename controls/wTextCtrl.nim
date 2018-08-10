@@ -269,15 +269,24 @@ method getDefaultSize*(self: wTextCtrl): wSize =
   if isMultiLine():
     result.height *= 3
 
-proc wTextCtrlNotifyHandler(self: wTextCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-  case code
-  of EN_REQUESTRESIZE:
+method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+  if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
     mBestSize.width = int(requestSize.rc.right - requestSize.rc.left)
     mBestSize.height = int(requestSize.rc.bottom  - requestSize.rc.top)
+    return true
 
-  else:
-    return self.wControlNotifyHandler(code, id, lparam, processed)
+  return procCall wControl(self).processNotify(code, id, lParam, ret)
+
+# proc wTextCtrlNotifyHandler(self: wTextCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
+#   case code
+#   of EN_REQUESTRESIZE:
+#     let requestSize  = cast[ptr REQRESIZE](lparam)
+#     mBestSize.width = int(requestSize.rc.right - requestSize.rc.left)
+#     mBestSize.height = int(requestSize.rc.bottom  - requestSize.rc.top)
+
+#   else:
+#     return self.wControlNotifyHandler(code, id, lparam, processed)
 
 var richDllLoaded {.threadvar.}: bool
 
@@ -307,8 +316,6 @@ proc wTextCtrlInit(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label:
     mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
   if mRich:
-    wTextCtrl.setNotifyHandler(wTextCtrlNotifyHandler)
-
     SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, parent.mBackgroundColor)
     SendMessage(mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or ENM_REQUESTRESIZE)
 
@@ -320,13 +327,13 @@ proc wTextCtrlInit(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label:
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
-      var processed: bool
       let msg = case HIWORD(event.mWparam.int32)
       of EN_CHANGE:
         if mDisableTextEvent: 0.UINT else: wEvent_Text
       of EN_MAXTEXT: wEvent_TextMaxlen
       else: 0
-      if msg != 0: discard self.mMessageHandler(self, msg, event.mWparam, event.mLparam, processed)
+      if msg != 0:
+        self.processMessage(msg, event.mWparam, event.mLparam)
 
 proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl {.discardable.} =
   new(result)

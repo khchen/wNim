@@ -98,8 +98,7 @@ proc setValue*(self: wComboBox, text: string) =
   changeValue(text)
 
   let id = getId()
-  var processed = false
-  discard self.mMessageHandler(self, wEvent_Text, cast[WPARAM](id), 0, processed)
+  self.processMessage(wEvent_Text, cast[WPARAM](id), 0)
 
 proc getValue*(self: wComboBox): string =
   result = getLabel()
@@ -161,7 +160,7 @@ proc comboBoxEditProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LR
       let self = cast[wComboBox](win)
 
       if msg == WM_CHAR and (wparam == VK_TAB or wparam == VK_RETURN):
-        result = self.mMessageHandler(self, msg, wparam, lparam, processed)
+        processed = self.processMessage(msg, wparam, lparam, result)
 
       if not processed:
         result = CallWindowProc(self.mOldEditProc, hwnd, msg, wParam, lParam)
@@ -214,8 +213,7 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
         else: 0
 
       if cmdEvent != 0:
-        var processed: bool
-        discard self.mMessageHandler(self, cmdEvent, event.mWparam, event.mLparam, processed)
+        self.processMessage(cmdEvent, event.mWparam, event.mLparam)
 
 proc ComboBox*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
     pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0): wComboBox {.discardable.} =

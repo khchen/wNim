@@ -13,7 +13,7 @@ DefineIncrement(wEvent_ScrollFirst):
   wEvent_ScrollLast
 
 proc isScrollEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_ScrollFirst, wEvent_ScrollLast)
+  msg in wEvent_ScrollFirst..wEvent_ScrollLast
 
 method getKind*(self: wScrollEvent): int {.property, inline.} =
   ## Returns what kind of event type this is. Basically used in wEvent_ScrollBar

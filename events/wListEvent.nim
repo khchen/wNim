@@ -25,4 +25,4 @@ DefineIncrement(wEvent_ListFirst):
   wEvent_ListLast
 
 proc isListEvent(msg: UINT): bool {.inline.} =
-  msg.isBetween(wEvent_ListFirst, wEvent_ListLast)
+  msg in wEvent_ListFirst..wEvent_ListLast

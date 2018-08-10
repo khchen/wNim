@@ -105,14 +105,14 @@ proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefault
   else:
     mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
-  proc scrollEventHandler(event: wEvent) =
+  proc wScroll_DoScroll(event: wEvent) =
     var processed = false
     if event.mLparam == self.mHwnd:
       let orientation = if self.isVertical(): wVertical else: wHorizontal
-      discard self.scrollEventHandlerImpl(orientation, event.mWparam, isControl=true, processed)
+      self.wScroll_DoScrollImpl(orientation, event.mWparam, isControl=true, processed)
 
-  parent.systemConnect(WM_HSCROLL, scrollEventHandler)
-  parent.systemConnect(WM_VSCROLL, scrollEventHandler)
+  parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
+  parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
 
 proc ScrollBar*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = 0): wScrollBar {.discardable.} =
