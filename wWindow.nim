@@ -840,8 +840,7 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret: var LRESULT): bool {.discardable.} =
   # Use internally, generate the event object and process it.
   if wAppHasMessage(msg):
-    var event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
-    event.mKeyStatus = getKeyStatus()
+    let event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
     result = processEvent(event)
     ret = event.mResult
 

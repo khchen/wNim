@@ -140,19 +140,6 @@ proc toSystemTime(time: wTime): SYSTEMTIME =
   result = time.inZone(local()).toSystemTime()
 
 
-proc getKeyStatus(): wKeyStatus =
-  var buffer: array[256, byte]
-  GetKeyboardState(addr buffer[0])
-
-  if (buffer[VK_LCONTROL] and 128) != 0: result.incl LCtrl
-  if (buffer[VK_RCONTROL] and 128) != 0: result.incl RCtrl
-  if (buffer[VK_LSHIFT] and 128) != 0: result.incl LShift
-  if (buffer[VK_RSHIFT] and 128) != 0: result.incl RShift
-  if (buffer[VK_LMENU] and 128) != 0: result.incl LAlt
-  if (buffer[VK_RMENU] and 128) != 0: result.incl RAlt
-  if (buffer[VK_LWIN] and 128) != 0: result.incl LWin
-  if (buffer[VK_RWIN] and 128) != 0: result.incl RWin
-
 proc wGetMenuItemInfo(hmenu: HMENU, pos: int, fMask = MIIM_STATE): MENUITEMINFO =
   result = MENUITEMINFO(cbSize: sizeof(MENUITEMINFO), fMask: fMask)
   GetMenuItemInfo(hmenu, pos, true, result)

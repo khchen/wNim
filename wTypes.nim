@@ -103,9 +103,6 @@ when not defined(wnimdoc):
       mMessageCountTable: CountTable[UINT]
       mExitCode: uint
 
-    wKeyModifier* = enum LCtrl, RCtrl, LShift, RShift, LAlt, RAlt, LWin, RWin
-    wKeyStatus* = set[wKeyModifier]
-
     wEvent* = ref wEventObj
     wEventObj = object of RootObj
       mWindow: wWindow
@@ -117,7 +114,9 @@ when not defined(wnimdoc):
       mSkip: bool
       mPropagationLevel: int
       mResult: LRESULT
-      mKeyStatus: wKeyStatus
+      mKeyStatus: array[256, byte]
+      mMousePos: wPoint
+      mClientPos: wPoint
 
     wMouseEvent* = ref wMouseEventObj
     wMouseEventObj = object of wEventObj
@@ -158,9 +157,6 @@ when not defined(wnimdoc):
     wScrollData = object
       kind: int
       orientation: int
-
-    wMessageHandler = proc (self: wWindow, msg: UINT, wparam: WPARAM, lparam: LPARAM, processed: var bool): LRESULT
-    wNotifyHandler = proc (self: wWindow, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT
 
     wView* = ref wViewObj
     wViewObj = object of RootObj

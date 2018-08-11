@@ -25,5 +25,6 @@ const
 proc isKeyEvent(msg: UINT): bool {.inline.} =
   msg in wEvent_KeyFirst..wEvent_KeyLast
 
-method getKeyCode*(self: wKeyEvent): int {.property.} = result = int mWparam
+method getKeyCode*(self: wKeyEvent): int {.property.} =
   ## Returns the key code of the key that generated this event.
+  result = int mWparam

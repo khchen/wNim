@@ -32,6 +32,9 @@
 ##    wEvent_NcRightDoubleClick       wEvent_RightDoubleClick within the nonclient area
 ##    ==============================  =============================================================
 
+# todo: we can get all the information about mouse position and modifier
+# from wEvent procs. is this class necessary?
+
 const
   # WM_MOUSEFIRST
   wEvent_Motion* = WM_MOUSEMOVE
@@ -45,9 +48,9 @@ const
   wEvent_MiddleDown* = WM_MBUTTONDOWN
   wEvent_MiddleUp* = WM_MBUTTONUP
   wEvent_MiddleDoubleClick* = WM_MBUTTONDBLCLK
+  wEvent_MouseWheel* = WM_MOUSEWHEEL
   #WM_MOUSELAST
 
-  # following not is 0xA0..0xAD
   wEvent_NcMouseMove* = WM_NCMOUSEMOVE # 0xA0
   wEvent_NcMotion* = WM_NCMOUSEMOVE
   wEvent_NcLeftDown* = WM_NCLBUTTONDOWN
@@ -58,46 +61,18 @@ const
   wEvent_NcRightDoubleClick* = WM_NCRBUTTONDBLCLK
   wEvent_NcMiddleDown* = WM_NCMBUTTONDOWN
   wEvent_NcMiddleUp* = WM_NCMBUTTONUP
-  wEvent_NcMiddleDoubleClick* = WM_NCMBUTTONDBLCLK # 0xA9
+  wEvent_NcMiddleDoubleClick* = WM_NCMBUTTONDBLCLK
+  # WM_NCXBUTTONDBLCLK == 0xAD
 
   wEvent_MouseLeave* = WM_MOUSELEAVE # 0x02A3
   wEvent_MouseHover* = WM_MOUSEHOVER # 0x02A1
   wEvent_MouseEnter* = WM_APP + 51
 
-# todo: methods for non-mouve event?
-
 proc isMouseEvent(msg: UINT): bool {.inline.} =
   (msg in WM_MOUSEFIRST..WM_MOUSELAST) or (msg in 0xA0..0xAD) or
     msg in {wEvent_MouseLeave, wEvent_MouseHover, wEvent_MouseEnter}
 
-method getX*(self: wMouseEvent): int {.property.} =
-  ## Get x-coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
-  result = GET_X_LPARAM(mLparam)
-
-method getY*(self: wMouseEvent): int {.property.} =
-  ## Get y-coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
-  result = GET_Y_LPARAM(mLparam)
-
-method getPosition*(self: wMouseEvent): wPoint {.property.} =
-  ## Get coordinate of the cursor. The coordinate is relative to the upper-left corner of the client area.
-  result = (getX(), getY())
-
-method leftIsDown*(self: wMouseEvent): bool =
-  ## Returns true if the left mouse button is IsDown.
-  result = ((mWparam and MK_LBUTTON) != 0)
-
-method rightIsDown*(self: wMouseEvent): bool =
-  ## Returns true if the right mouse button is IsDown.
-  result = ((mWparam and MK_RBUTTON) != 0)
-
-method middleIsDown*(self: wMouseEvent): bool =
-  ## Returns true if the middle mouse button is IsDown.
-  result = ((mWparam and MK_MBUTTON) != 0)
-
-method ctrlIsDown*(self: wMouseEvent): bool =
-  ## Returns true if the CTRL key is IsDown.
-  result = ((mWparam and MK_CONTROL) != 0)
-
-method shiftIsDown*(self: wMouseEvent): bool =
-  ## Returns true if the Shift key is IsDown.
-  result = ((mWparam and MK_SHIFT) != 0)
+method getWheelRotation*(self: wMouseEvent): int {.property.} =
+  ## Get wheel rotation, positive or negative indicates direction of rotation.
+  if mMsg == wEvent_MouseWheel:
+    result = int GET_WHEEL_DELTA_WPARAM(mWparam)

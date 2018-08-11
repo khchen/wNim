@@ -94,15 +94,16 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   result.mPropagationLevel = msg.defaultPropagationLevel()
 
+  # save the status for the last message occured
+  GetKeyboardState(addr result.mKeyStatus[0])
+  var val = GetMessagePos()
+  result.mMousePos.x = GET_X_LPARAM(val)
+  result.mMousePos.y = GET_Y_LPARAM(val)
+  result.mClientPos = wDefaultPoint
+
 proc clone*(self: wEvent): wEvent {.validate.} =
   ## Returns a copy of the event.
-  result = Event(window=mWindow, msg=mMsg, wparam=mWparam, lparam=mLparam,
-    userData=mUserData)
-
-  result.mKeyStatus = mKeyStatus
-  result.mSkip = mSkip
-  result.mResult = mResult
-  result.mPropagationLevel = mPropagationLevel
+  deepCopy(result, self)
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the object (usually a window) associated with the event
@@ -202,80 +203,101 @@ proc setPropagationLevel*(self: wEvent, propagationLevel: int) {.validate, prope
   ## Set how many levels the event can propagate.
   mPropagationLevel = propagationLevel
 
-proc getModifiers*(self: wEvent): wKeyStatus {.validate, property, inline.} =
-  ## Return the set of all pressed modifier keys.
-  result = mKeyStatus
+proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
-proc getKeyStatus*(self: wEvent): wKeyStatus {.validate, property, inline.} =
-  ## Return the set of all pressed modifier keys.
-  result = mKeyStatus
+proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
+  ## Get coordinate of the cursor.
+  ## The coordinate is relative to the screen.
+  result = mMousePos
+
+proc getMousePos*(self: wEvent): wPoint {.validate, property.} =
+  ## Get coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  if mClientPos == wDefaultPoint:
+    mClientPos = mWindow.screenToClient(mMousePos)
+
+  result = mClientPos
+
+proc getX*(self: wEvent): int {.validate, property, inline.} =
+  ## Get x-coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  result = getMousePos().x
+
+proc getY*(self: wEvent): int {.validate, property, inline.} =
+  ## Get y-coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  result = getMousePos().y
 
 proc lCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left ctrl key is pressed.
-  result = LCtrl in mKeyStatus
+  result = (mKeyStatus[wKeyLCtrl] and 128) != 0
 
 proc lShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left shift key is pressed.
-  result = LShift in mKeyStatus
+  result = (mKeyStatus[wKeyLShift] and 128) != 0
 
 proc lAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left alt key is pressed.
-  result = LAlt in mKeyStatus
+  result = (mKeyStatus[wKeyLAlt] and 128) != 0
 
 proc lWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left win key is pressed.
-  result = LWin in mKeyStatus
+  result = (mKeyStatus[wKeyLWin] and 128) != 0
 
 proc rCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right ctrl key is pressed.
-  result = RCtrl in mKeyStatus
+  result = (mKeyStatus[wKeyRCtrl] and 128) != 0
 
 proc rShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right shift key is pressed.
-  result = RShift in mKeyStatus
+  result = (mKeyStatus[wKeyRShift] and 128) != 0
 
 proc rAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right alt key is pressed.
-  result = RAlt in mKeyStatus
+  result = (mKeyStatus[wKeyRAlt] and 128) != 0
 
 proc rWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right win key is pressed.
-  result = RWin in mKeyStatus
+  result = (mKeyStatus[wKeyRWin] and 128) != 0
 
 proc ctrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any ctrl key is pressed.
-  result = LCtrl in mKeyStatus or RCtrl in mKeyStatus
+  result = lCtrlDown() or rCtrlDown()
 
 proc shiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any shift key is pressed.
-  result = LShift in mKeyStatus or RShift in mKeyStatus
+  result = lShiftDown() or rShiftDown()
 
 proc altDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any alt key is pressed.
-  result = LAlt in mKeyStatus or RAlt in mKeyStatus
+  result = lAltDown() or rAltDown()
 
 proc winDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any win key is pressed.
-  result = LWin in mKeyStatus or RWin in mKeyStatus
+  result = lWinDown() or rWinDown()
 
+proc leftDown*(self: wEvent): bool {.validate, inline.} =
+  ## Returns true if the left mouse button is currently down.
+  result = (mKeyStatus[wKeyLButton] and 128) != 0
 
-method getX*(self: wEvent): int {.base, property.} = discard
-  ## Method needs to be overridden.
-method getY*(self: wEvent): int {.base, property.} = discard
-  ## Method needs to be overridden.
+proc rightDown*(self: wEvent): bool {.validate, inline.} =
+  ## Returns true if the right mouse button is currently down.
+  result = (mKeyStatus[wKeyRButton] and 128) != 0
+
+proc middleDown*(self: wEvent): bool {.validate, inline.} =
+  ##  Returns true if the middle mouse button is currently down.
+  result = (mKeyStatus[wKeyMButton] and 128) != 0
+
+proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.} =
+  ## Return an bool array with all the pressed keys.
+  ## Using const defined in wKeyCodes.nim as the index.
+  ## For exampel, echo event.keyStauts[wKeyCtrl]
+  for key, val in mKeyStatus:
+    result[key] = (val and 128) != 0
+
 method getIndex*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getPosition*(self: wEvent): wPoint {.base, property.} = discard
-  ## Method needs to be overridden.
-method leftIsDown*(self: wEvent): bool {.base.} = discard
-  ## Method needs to be overridden.
-method rightIsDown*(self: wEvent): bool {.base.} = discard
-  ## Method needs to be overridden.
-method middleIsDown*(self: wEvent): bool {.base.} = discard
-  ## Method needs to be overridden.
-method ctrlIsDown*(self: wEvent): bool {.base.} = discard
-  ## Method needs to be overridden.
-method shiftIsDown*(self: wEvent): bool {.base.} = discard
   ## Method needs to be overridden.
 method getKeyCode*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
@@ -290,4 +312,6 @@ method getOrientation*(self: wEvent): int {.base, property.} = discard
 method getScrollPos*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getKind*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getWheelRotation*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
