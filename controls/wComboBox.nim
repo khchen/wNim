@@ -1,3 +1,5 @@
+## A combobox is like a combination of an edit control and a listbox.
+
 proc len*(self: wComboBox): int =
   result = SendMessage(mHwnd, CB_GETCOUNT, 0, 0).int
 

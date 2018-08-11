@@ -161,6 +161,11 @@ method release(self: wWindow) {.base, inline.} =
   # really resoruce clear is in WM_NCDESTROY
   discard
 
+method prepare(self: wWindow) {.base, inline.} =
+  # override this if a window need extra init after window create.
+  # similar to WM_CREATE.
+  discard
+
 proc move*(self: wWindow, x: int, y: int) {.validate.} =
   ## Moves the window to the given position.
   ## wDefault to indicate not to change.
@@ -313,6 +318,10 @@ method getBestSize*(self: wWindow): wSize {.base, property.} =
 proc fit*(self: wWindow) {.validate, inline.} =
   ## Sizes the window to fit its best size.
   setSize(getBestSize())
+
+proc suit*(self: wWindow) {.validate, inline.} =
+  ## Sizes the window to suit its default size.
+  setSize(getDefaultSize())
 
 proc setClientSize*(self: wWindow, size: wSize) {.validate, property.} =
   ## This sets the size of the window client area in pixels.
@@ -518,6 +527,8 @@ proc releaseMouse*(self: wWindow) {.validate, inline.} =
 proc hasCapture*(self: wWindow): bool {.validate, inline.} =
   ## Returns true if this window has the current mouse capture.
   result = (mHwnd == GetCapture())
+
+#todo: setCursor
 
 proc getHandle*(self: wWindow): HANDLE {.validate, property, inline.} =
   ## Returns the system HWND of this window.
@@ -764,12 +775,12 @@ proc stopTimer*(self: wWindow, id = 1) {.validate, inline.} =
   KillTimer(mHwnd, UINT_PTR id)
 
 iterator children*(self: wWindow): wWindow {.validate.} =
-  ## Iterate the window's children.
+  ## Iterates over each window's child.
   for child in mChildren:
     yield child
 
 iterator siblings*(self: wWindow): wWindow {.validate.} =
-  ## Iterate the window's siblings.
+  ## Iterates over each window's sibling.
   if mParent != nil:
     for child in mParent.mChildren:
       if child != self:
@@ -1212,7 +1223,13 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   if mHwnd == 0:
     raise newException(wError, className & " window creation failure")
 
+  # a callback is need if something need do after window create
+  # todo: use prepare instead, delete this after code clear
   if callback != nil: callback(self)
+
+  # preapre something after window creating but before set size.
+  # aka WM_CREATE for wnim window.
+  prepare()
 
   wAppWindowAdd(self)
   if parent.isNil:

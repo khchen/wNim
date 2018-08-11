@@ -236,10 +236,15 @@ proc Font*(pointSize: float = NaN, family = wFontFamilyDefault, weight = wFontWe
 
 proc Font*(hFont: HANDLE): wFont =
   ## Construct wFont object from a system font handle.
-  if hFont < 1000: # maybe it means pointSize?
+  if hFont in 0..1000: # maybe it means pointSize?
     return Font(float hFont)
 
   new(result, final)
   var lf: LOGFONT
   GetObject(hFont, sizeof(LOGFONT), cast[pointer](addr lf))
   result.initFromNative(lf)
+
+proc Font*(font: wFont): wFont {.inline.} =
+  ## Copy constructor
+  wValidate(font)
+  result = Font(font.mHandle)

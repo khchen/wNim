@@ -94,7 +94,7 @@ method processNotify(self: wHyperLinkCtrl, code: INT, id: UINT_PTR, lParam: LPAR
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc wHyperLinkCtrlInit(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
@@ -149,4 +149,4 @@ proc wHyperLinkCtrlInit(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = 
 
 proc HyperLinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wHyperLinkCtrl {.discardable.} =
   new(result)
-  result.wHyperLinkCtrlInit(parent=parent, id=id, label=label, url=url, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, label=label, url=url, pos=pos, size=size, style=style)

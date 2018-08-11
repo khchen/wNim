@@ -42,18 +42,6 @@ const
 
 
 
-
-
-  # ListBox styles
-  wLbSingle* = 0
-  wLbMultiple* = LBS_MULTIPLESEL
-  wLbExtended* = LBS_EXTENDEDSEL
-  wLbHScroll* = WS_HSCROLL
-  wLbVScroll* = WS_VSCROLL
-  wLbHasScrollBar* = LBS_DISABLENOSCROLL
-  wLbSort* = LBS_SORT
-  wLbNoSel* = LBS_NOSEL
-
   # Imagelist styles and consts
   wImageListNormal* = LVSIL_NORMAL
   wImageListSmall* = LVSIL_SMALL

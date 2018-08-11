@@ -68,7 +68,7 @@ proc rearrange*(self: wViewSolver) {.validate.} =
       view.wWindow.setSize(x, y, width, height)
 
 iterator items*(self: wViewSolver): wView {.validate.} =
-  ## Iterate the associated views.
+  ## Iterates over each associated view.
   for view in mViews:
     yield view
 

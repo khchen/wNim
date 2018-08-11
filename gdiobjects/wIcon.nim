@@ -74,3 +74,5 @@ proc Icon*(data: ptr byte|ptr char|cstring, length: int): wIcon =
   wValidate(data)
   new(result, final)
   result.init(cast[ptr byte](data), length)
+
+#todo: Copy constructor

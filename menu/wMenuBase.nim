@@ -2,7 +2,7 @@
 ## It means the functions here work for menubar and menu.
 
 proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int] {.validate.} =
-  ## Return the tuple (menu, pos) indicate a item with the given id, (nil, wNotFound) if not found.
+  ## Return the tuple (menu, pos) indicate a item with the given id, (nil, wNotFound(-1)) if not found.
   if self of wMenuBar:
     let menuBar = wMenuBar(self)
     for topMenu in menuBar.mMenuList:

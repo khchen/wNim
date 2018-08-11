@@ -88,21 +88,21 @@ proc isEnabled*(self: wMenuBar, pos: int): bool {.validate.} =
     result = wIsMenuEnabled(mHmenu, pos)
 
 iterator find*(self: wMenuBar, menu: wMenu): int {.validate.} =
-  ## Iterate all the index of menu in menubar.
+  ## Iterates over each index of menu in menubar.
   wValidate(menu)
   for i, m in mMenuList:
     if m == menu:
       yield i
 
 proc find*(self: wMenuBar, menu: wMenu): int {.validate.} =
-  ## Find the first index of menu or wNotFound if not found.
+  ## Find the first index of menu or wNotFound(-1) if not found.
   wValidate(menu)
   for i in find(menu):
     return i
   result = wNotFound
 
 iterator find*(self: wMenuBar, text: string): int {.validate.} =
-  ## Iterate all the index with the given title.
+  ## Iterates over each index with the given title.
   # don's use mTitle here, because a menu may be attach a frame twice, or different frame?
   wValidate(text)
   var buffer = T(65536)
@@ -112,14 +112,14 @@ iterator find*(self: wMenuBar, text: string): int {.validate.} =
       yield i
 
 proc find*(self: wMenuBar, text: string): int {.validate.} =
-  ## Find the first index with the given title or wNotFound if not found.
+  ## Find the first index with the given title or wNotFound(-1) if not found.
   wValidate(text)
   for i in find(text):
     return i
   result = wNotFound
 
 iterator findMenu*(self: wMenuBar, text: string): wMenu {.validate.} =
-  ## Iterate all the wMenu object with the given title.
+  ## Iterates over each wMenu object with the given title.
   wValidate(text)
   for i in find(text):
     yield mMenuList[i]
@@ -131,7 +131,7 @@ proc findMenu*(self: wMenuBar, text: string): wMenu {.validate.} =
     return menu
 
 iterator findText*(self: wMenuBar, text: string): int {.validate.} =
-  ## Iterate all the index with the given title (not include any accelerator characters).
+  ## Iterates over each index with the given title (not include any accelerator characters).
   wValidate(text)
   var buffer = T(65536)
   for i in 0..<GetMenuItemCount(mHmenu):
@@ -141,14 +141,14 @@ iterator findText*(self: wMenuBar, text: string): int {.validate.} =
 
 proc findText*(self: wMenuBar, text: string): int {.validate.} =
   ## Find the first index with the given title (not include any accelerator characters),
-  ## wNotFound if not found.
+  ## wNotFound(-1) if not found.
   wValidate(text)
   for i in findText(text):
     return i
   result = wNotFound
 
 iterator findMenuText*(self: wMenuBar, text: string): wMenu {.validate.} =
-  ## Iterate all the wMenu object with the given title (not include any accelerator characters).
+  ## Iterates over each wMenu object with the given title (not include any accelerator characters).
   wValidate(text)
   for i in findText(text):
     yield mMenuList[i]

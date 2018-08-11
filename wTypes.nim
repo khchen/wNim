@@ -305,6 +305,8 @@ when not defined(wnimdoc):
 
     wListBox* = ref wListBoxObj
     wListBoxObj = object of wControlObj
+      mInitData: ptr UncheckedArray[string]
+      mInitCount: int
 
     wListCtrl* = ref wListCtrlObj
     wListCtrlObj = object of wControlObj

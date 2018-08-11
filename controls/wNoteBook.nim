@@ -262,7 +262,7 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM, r
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
   self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, label=label, pos=pos, size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or TCS_FIXEDWIDTH or WS_TABSTOP)
 
@@ -303,7 +303,7 @@ proc wNoteBookInit(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label:
 
 proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wNoteBook {.discardable.} =
   new(result)
-  result.wNoteBookInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 
 # nim style getter/setter
 

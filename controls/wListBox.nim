@@ -1,145 +1,237 @@
+## A listbox is used to select one or more of a list of strings.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wLbSingle                       Single-selection list.
+##    wLbMultiple                     Multiple-selection list.
+##    wLbExtended                     Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse.
+##    wLbHScroll                      Create horizontal scrollbar if contents are too wide.
+##    wLbVScroll                      Create vertical scrollbar if contents are too long.
+##    wLbSort                         The listbox contents are sorted in alphabetical order.
+##    wLbNoSel                        Specifies that the list box contains items that can be viewed but not selected.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wCommandEvent                   Description
+##    ==============================  =============================================================
+##    wEvent_ListBox                  When an item on the list is selected or the selection changes.
+##    wEvent_ListBoxDoubleClick       When the listbox is double-clicked.
+##    ==============================  =============================================================
 
-proc len*(self: wListBox): int =
-  result = SendMessage(mHwnd, LB_GETCOUNT, 0, 0).int
+const
+  # ListBox styles
+  wLbSingle* = 0
+  wLbMultiple* = LBS_MULTIPLESEL
+  wLbExtended* = LBS_EXTENDEDSEL
+  wLbHScroll* = WS_HSCROLL or LBS_DISABLENOSCROLL
+  wLbVScroll* = WS_VSCROLL or LBS_DISABLENOSCROLL
+  wLbSort* = LBS_SORT
+  wLbNoSel* = LBS_NOSEL
 
-proc getCount*(self: wListBox): int =
+proc len*(self: wListBox): int {.validate, inline.} =
+  ## Returns the number of items in the control.
+  result = int SendMessage(mHwnd, LB_GETCOUNT, 0, 0)
+
+proc getCount*(self: wListBox): int {.validate, property, inline.} =
+  ## Returns the number of items in the control.
   result = len()
 
-proc getString*(self: wListBox, n: int): string =
-  let maxLen = SendMessage(mHwnd, LB_GETTEXTLEN, n, 0).int + 1
-  if maxLen <= 0:
+proc getText*(self: wListBox, i: int): string {.validate, property.} =
+  ## Returns the label of the item with the given index.
+  # use getText instead of getString, otherwise property become "string" keyword.
+  let maxLen = int SendMessage(mHwnd, LB_GETTEXTLEN, i, 0)
+  if maxLen == LB_ERR:
     raise newException(IndexError, "index out of bounds")
 
-  var
-    ptext = allocWString(maxLen)
-    text = cast[wstring](ptext)
-  defer: dealloc(ptext)
+  var buffer = T(maxLen + 2)
+  buffer.setLen(SendMessage(mHwnd, LB_GETTEXT, i, &buffer))
+  result = $buffer
 
-  text.setLen(SendMessage(mHwnd, LB_GETTEXT, n, &text))
-  result = $text
+proc `[]`*(self: wListBox, i: int): string {.validate, inline.} =
+  getText(i)
 
-iterator items*(self: wListBox): string =
-  let count = len()
+iterator items*(self: wListBox): string {.validate, inline.} =
+  ## Iterate each item in this list box.
+  for i in 0..<len():
+    yield getText(i)
+
+iterator pairs*(self: wListBox): tuple[key: int, val: string] {.validate, inline.} =
+  ## Iterates over each item of listbox. Yields ``(index, [index])`` pairs.
   var i = 0
-  while i < count:
-    yield getString(i)
-    i.inc
+  for item in self:
+    yield (i, item)
+    inc i
 
-proc insert*(self: wListBox, n: int, text: string) =
-  # Unlike the LB_ADDSTRING message, the LB_INSERTSTRING message does not cause a list with the LBS_SORT style to be sorted.
-  SendMessage(mHwnd, LB_INSERTSTRING, n, &(T(text)))
+proc insert*(self: wListBox, pos: int, text: string) {.validate, inline.} =
+  ## Inserts the given string before the specified position.
+  ## Note that the inserted item won't be sorted even the list box has wLbSort style.
+  ## If pos is -1, the string is added to the end of the list.
+  SendMessage(mHwnd, LB_INSERTSTRING, pos, &T(text))
 
-proc insert*(self: wListBox, n: int, list: openarray[string]) =
+proc insert*(self: wListBox, pos: int, list: openarray[string]) {.validate, inline.} =
+  ## Inserts multiple strings in the same time.
   for i, text in list:
-    insert(if n < 0: n else: i + n, text)
+    insert(if pos < 0: pos else: i + pos, text)
 
-proc append*(self: wListBox, text: string) =
-  SendMessage(mHwnd, LB_ADDSTRING, 0, &(T(text)))
+proc append*(self: wListBox, text: string) {.validate, inline.} =
+  ## Appends the given string to the end. If the list box has the wLbSort style,
+  ## the string is inserted into the list and the list is sorted.
+  SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
 
-proc append*(self: wListBox, list: openarray[string]) =
+proc append*(self: wListBox, list: openarray[string]) {.validate, inline.} =
+  ## Appends multiple strings in the same time.
   for text in list:
     append(text)
 
-proc delete*(self: wListBox, n: int) =
-  if n >= 0:
-    SendMessage(mHwnd, LB_DELETESTRING, n, 0)
+proc delete*(self: wListBox, index: int) {.validate, inline.} =
+  ## Delete a string in the list box.
+  if index >= 0: SendMessage(mHwnd, LB_DELETESTRING, index, 0)
 
-proc delete*(self: wListBox, text: string) =
+proc delete*(self: wListBox, text: string) {.validate, inline.} =
+  ## Search and delete the specified string in the list box
   delete(find(text))
 
-proc clear*(self: wListBox) =
+proc clear*(self: wListBox) {.validate, inline.} =
+  ## Remove all items from a list box.
   SendMessage(mHwnd, LB_RESETCONTENT, 0, 0)
 
-proc findString*(self: wListBox, text: string): int =
+proc findText*(self: wListBox, text: string): int {.validate, inline.} =
+  ## Finds an item whose label matches the given text.
   result = find(text)
 
-proc getSelection*(self: wListBox): int =
-  # don't use in multiple-selection list box
-  result = SendMessage(mHwnd, LB_GETCURSEL, 0, 0).int
+proc getSelection*(self: wListBox): int {.validate, property, inline.} =
+  ## Returns the index of the selected item or wNotFound(-1) if no item is selected.
+  ## Don't use in multiple-selection list box.
+  result = int SendMessage(mHwnd, LB_GETCURSEL, 0, 0)
 
-proc getSelections*(self: wListBox): seq[int] =
-  let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
-  if (style and LBS_MULTIPLESEL) != 0:
-    let count = len()
-    if count > 0:
-      var buffer = newSeq[int32](count)
-      let selCount = SendMessage(mHwnd, LB_GETSELITEMS, count, addr buffer[0]).int
-      newSeq(result, selCount)
-      for i in 0..<selCount:
-        result[i] = buffer[i]
+iterator getSelections*(self: wListBox): int {.validate.} =
+  ## Iterates over each index of the selected items.
+  if (GetWindowLongPtr(mHwnd, GWL_STYLE) and LBS_MULTIPLESEL) != 0:
+    let L = len()
+    let buffer = cast[ptr UncheckedArray[int32]](alloc(sizeof(int32) * L))
+    defer: dealloc(buffer)
 
-    else:
-      result = @[]
-
+    let selCount = SendMessage(mHwnd, LB_GETSELITEMS, L, buffer)
+    for i in 0..<selCount:
+      yield int buffer[i]
   else:
-    newSeq(result, 1)
-    result[0] = getSelection()
+    yield getSelection()
 
-proc select*(self: wListBox, n: int) =
-  let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
-  if (style and LBS_MULTIPLESEL) != 0:
-    # select(wNotFound) means deselect all
-    SendMessage(mHwnd, LB_SETSEL, if n == wNotFound: false else: true, n)
+iterator selections*(self: wListBox): int {.validate, inline.} =
+  ## Iterates over each index of the selected items.
+  for i in getSelections():
+    yield i
+
+proc getSelections*(self: wListBox): seq[int] {.validate, property.} =
+  ## Get the currently selected items.
+  result = newSeqOfCap[int](len())
+  for i in getSelections():
+    result.add i
+
+proc select*(self: wListBox, index: int = -1) {.validate.} =
+  ## Selects an item in the list box.
+  ## For multiple-selection list box, -1 means select all.
+  if (GetWindowLongPtr(mHwnd, GWL_STYLE) and LBS_MULTIPLESEL) != 0:
+    SendMessage(mHwnd, LB_SETSEL, true, index)
   else:
-    SendMessage(mHwnd, LB_SETCURSEL, n, 0)
+    SendMessage(mHwnd, LB_SETCURSEL, index, 0)
 
-proc deselect*(self: wListBox, n: int) =
-  # for multiple-selection list box only
-  let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
-  if (style and LBS_MULTIPLESEL) != 0:
-    # deselect(wNotFound) means select all
-    SendMessage(mHwnd, LB_SETSEL, if n == wNotFound: true else: false, n)
+proc deselect*(self: wListBox, index: int = -1) {.validate.} =
+  ## Deselects an item in the list box.
+  ## For multiple-selection list box, -1 means deselect all.
+  if (GetWindowLongPtr(mHwnd, GWL_STYLE) and LBS_MULTIPLESEL) != 0:
+    SendMessage(mHwnd, LB_SETSEL, false, index)
+  else:
+    SendMessage(mHwnd, LB_SETCURSEL, -1, 0)
 
-proc setSelection*(self: wListBox, n: int) =
-  select(n)
+proc select*(self: wListBox, text: string) =
+  ## Searches and selects an item in the list box.
+  let i = find(text)
+  if i >= 0: select(i)
 
-proc isSelected*(self: wListBox, n: int): bool =
+proc deselect*(self: wListBox, text: string) =
+  ## Searches and deselects an item in the list box.
+  let i = find(text)
+  if i >= 0: deselect(i)
+
+proc setSelection*(self: wListBox, index: int) {.validate, property, inline.} =
+  ## Sets the selection to the given index. The same as select.
+  select(index)
+
+proc setSelections*(self: wListBox, text: string) {.validate, property, inline.} =
+  ## Searches and sets the selection to the given text. The same as select.
+  select(text)
+
+proc setSelections*(self: wListBox, list: openarray[int]) {.validate, property, inline.} =
+  ## Sets the selections.
+  for i in list:
+    if i >= 0: select(i)
+
+proc setSelections*(self: wListBox, list: openarray[string]) {.validate, property, inline.} =
+  ## Searches and sets the selections.
+  for i in list: select(i)
+
+proc isSelected*(self: wListBox, n: int): bool {.validate, inline.} =
+  ## Determines whether an item is selected.
   result = if SendMessage(mHwnd, LB_GETSEL, n, 0) == 0: false else: true
 
-proc setStringSelection*(self: wListBox, text: string, flag = true) =
-  let n = find(text)
-  if n != -1:
-    if flag:
-      select(n)
-    else:
-      deselect(n)
-
-proc setString*(self: wListBox, n: int, text: string) =
-  if n >= 0:
-    let reselect = isSelected(n)
-    delete(n)
-    insert(n, text)
+proc setText*(self: wListBox, index: int, text: string) {.validate, property.} =
+  ## Sets the label for the given item.
+  if index >= 0:
+    let reselect = isSelected(index)
+    delete(index)
+    insert(index, text)
     if reselect:
-      select(n)
+      select(index)
 
-proc setFirstItem*(self: wListBox, n: int) =
-  SendMessage(mHwnd, LB_SETTOPINDEX, n, 0)
+proc setFirstItem*(self: wListBox, index: int) {.validate, property, inline.} =
+  ## Set the specified item to be the first visible item.
+  SendMessage(mHwnd, LB_SETTOPINDEX, index, 0)
 
-proc getTopItem*(self: wListBox): int =
-  result = SendMessage(mHwnd, LB_GETTOPINDEX, 0, 0).int
+proc getTopItem*(self: wListBox): int {.validate, property, inline.} =
+  ## Return the index of the topmost visible item.
+  result = int SendMessage(mHwnd, LB_GETTOPINDEX, 0, 0)
 
-proc hitTest*(self: wListBox, x, y: int): int =
+proc hitTest*(self: wListBox, x, y: int): int {.validate, inline.} =
+  ## Returns the item located at point, or wNOT_FOUND(-1) if there is no item located at point.
+
+  # The return value contains the index of the nearest item in the LOWORD.
+  # The HIWORD is zero if the specified point is in the client area of the list box,
+  # or one if it is outside the client area.
   let ret = SendMessage(mHwnd, LB_ITEMFROMPOINT, 0, MAKELPARAM(x, y))
-  result = if HIWORD(ret) != 0: -1 else: LOWORD(ret).int
+  result = if HIWORD(ret) != 0: -1 else: int LOWORD(ret)
 
-proc hitTest*(self: wListBox, pos: wPoint): int =
+proc hitTest*(self: wListBox, pos: wPoint): int {.validate, inline.} =
+  ## Returns the item located at point, or wNOT_FOUND(-1) if there is no item located at point.
   result = hitTest(pos.x, pos.y)
 
-proc getCountPerPage*(self: wListBox): int =
+proc getCountPerPage*(self: wListBox): int {.validate, property.} =
+  ## Return the number of items that can fit vertically in the visible area of the listbox.
   let size = getSize()
-  let itemHeight = SendMessage(mHwnd, LB_GETITEMHEIGHT, 0, 0).int
+  let itemHeight = int SendMessage(mHwnd, LB_GETITEMHEIGHT, 0, 0)
   result = size.height div itemHeight
 
-proc ensureVisible*(self: wListBox, n: int) =
-  if n >= 0:
+proc ensureVisible*(self: wListBox, index: int) {.validate, property.} =
+  ## Ensure that the item with the given index is currently shown.
+  if index >= 0:
     var rect: RECT
-    if LB_ERR == SendMessage(mHwnd, LB_GETITEMRECT, n, addr rect): return
+    if LB_ERR == SendMessage(mHwnd, LB_GETITEMRECT, index, &rect): return
 
     if rect.top < 0:
-      setFirstItem(n)
+      setFirstItem(index)
 
     if rect.bottom.int > getSize().height:
-      setFirstItem(n - getCountPerPage() + 1)
+      setFirstItem(index - getCountPerPage() + 1)
+
+proc isSorted*(self: wListBox): bool {.validate, inline.} =
+  ## Return true if the listbox has wLbSort style.
+  result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and LBS_SORT) != 0
 
 proc countSize(self: wListBox, minItem: int, rate: float): wSize =
   const maxItem = 10
@@ -154,47 +246,50 @@ proc countSize(self: wListBox, minItem: int, rate: float): wSize =
       let size = getTextFontSize(text, mFont.mHandle)
       result = max(result, int(size.width.float * rate) + 8)
 
-  let itemHeight = SendMessage(mHwnd, LB_GETITEMHEIGHT, 0, 0).int
+  let itemHeight = int SendMessage(mHwnd, LB_GETITEMHEIGHT, 0, 0)
   result.width = countWidth(rate)
   result.height = min(max(count, minItem), maxItem) * itemHeight + 2 # not too tall, not too small
 
   if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or count > maxItem):
-    result.width += GetSystemMetrics(SM_CXVSCROLL).int
+    result.width += GetSystemMetrics(SM_CXVSCROLL)
 
 method getDefaultSize*(self: wListBox): wSize =
+  ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = countSize(3, 1.3)
 
 method getBestSize*(self: wListBox): wSize =
+  ## Returns the best acceptable minimal size for the control.
   result = countSize(1, 1.0)
 
-proc wListBoxInit(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
-    choices: openarray[string] = [], style: int64 = 0) =
+method prepare(self: wListBox) =
+  for i in 0..<mInitCount:
+    let text = mInitData[i]
+    SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
 
-  assert parent != nil
+proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
+    choices: openarray[string] = [], style: wStyle = 0) =
 
-  var choices = @choices # so that callback can catch choices
-  proc callback(self: wWindow) =
-    for text in choices:
-      SendMessage(mHwnd, LB_ADDSTRING, 0, &(T(text)))
+  mInitData = cast[ptr UncheckedArray[string]](choices)
+  mInitCount = choices.len
 
   self.wControl.init(className=WC_LISTBOX, parent=parent, id=id, label="", pos=pos, size=size,
-    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or LBS_NOTIFY or LBS_NOINTEGRALHEIGHT, callback=callback)
+    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or LBS_NOTIFY or LBS_NOINTEGRALHEIGHT)
 
   mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
 
+  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    if event.mLparam == mHwnd:
+      case HIWORD(event.mWparam):
+      of LBN_SELCHANGE:
+        self.processMessage(wEvent_ListBox, event.mWparam, event.mLparam)
+      of LBN_DBLCLK:
+        self.processMessage(wEvent_ListBoxDoubleClick, event.mWparam, event.mLparam)
+      else: discard
+
 proc ListBox*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize,
-    choices: openarray[string] = [], style: int64 = 0): wListBox {.discardable.} =
-
+    choices: openarray[string] = [], style: wStyle = wLbSingle): wListBox {.discardable.} =
+  ## Constructor, creating and showing a list box.
+  wValidate(parent)
   new(result)
-  result.wListBoxInit(parent=parent, id=id, pos=pos, size=size, choices=choices, style=style)
-
-# nim style getter/setter
-
-proc count*(self: wListBox): int = getCount()
-proc selection*(self: wListBox): int = getSelection()
-proc selections*(self: wListBox): seq[int] = getSelections()
-proc topItem*(self: wListBox): int = getTopItem()
-proc countPerPage*(self: wListBox): int = getCountPerPage()
-proc `selection=`*(self: wListBox, n: int) = setSelection(n)
-proc `sirstItem=`*(self: wListBox, n: int) = setFirstItem(n)
+  result.init(parent=parent, id=id, pos=pos, size=size, choices=choices, style=style)

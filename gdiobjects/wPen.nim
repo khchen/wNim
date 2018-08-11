@@ -132,3 +132,8 @@ proc Pen*(hPen: HANDLE): wPen =
   var elp: EXTLOGPEN
   GetObject(hPen, sizeof(elp), addr elp)
   result.initFromNative(elp)
+
+proc Pen*(pen: wPen): wPen {.inline.} =
+  ## Copy constructor
+  wValidate(pen)
+  result = Pen(pen.mHandle)

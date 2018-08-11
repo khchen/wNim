@@ -1,6 +1,7 @@
 ## A wImageList contains a list of images.
 ## It is used principally in conjunction with wTreeCtrl and wListCtrl.
 
+
 proc add*(self: wImageList, icon: wIcon): int {.validate, discardable.} =
   ## Adds a new image using an icon.
   ## Return the new zero-based image index.

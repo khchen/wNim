@@ -444,7 +444,7 @@ proc copy*(self: wImage): wImage {.validate.} =
     raise newException(wImageError, "wImage copy failure")
 
 iterator getEncoders*(self: wImage): string {.validate.} =
-  ## Iterate all available image encoders on system.
+  ## Iterates over each available image encoder on system.
   # also use validate pragma to ensure wGdipInit() was called.
   try:
     for tup in wGdipEncoderExtClsids():
@@ -453,7 +453,7 @@ iterator getEncoders*(self: wImage): string {.validate.} =
     raise newException(wImageError, "wImage getEncoders failure")
 
 iterator getDecoders*(self: wImage): string {.validate.} =
-  ## Iterate all available image decoders on system.
+  ## Iterates over each available image decoder on system.
   # also use validate pragma to ensure wGdipInit() was called.
   try:
     for ext in wGdipDecoderExt():

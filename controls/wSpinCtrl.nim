@@ -94,7 +94,7 @@ proc setValue*(self: wSpinCtrl, text: string) =
 proc setValue*(self: wSpinCtrl, value: int) =
   SendMessage(mUpdownHwnd, UDM_SETPOS32, 0, value)
 
-proc wSpinCtrlInit(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   # wAlignCentre = SS_CENTER = ES_CENTER = UDS_WRAP = 1
   # wAlignRight = SS_RIGHT = ES_RIGHT = UDS_SETBUDDYINT = 2
   # wSpReadOnly = wTeReadOnly = ES_READONLY = 0x800
@@ -130,5 +130,5 @@ proc wSpinCtrlInit(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label:
 proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl {.discardable.} =
   new(result)
-  result.wSpinCtrlInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 

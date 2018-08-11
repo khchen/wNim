@@ -147,7 +147,7 @@ proc appendRadioItem*(self: wMenu, id: wCommandID = 0, text: string,
   result = insert(id=id, text=text, help=help, bitmap=bitmap, kind=wItemRadio)
 
 proc find*(self: wMenu, item: wMenuItem): int {.validate.} =
-  ## Find the index of the item or wNotFound if not found.
+  ## Find the index of the item or wNotFound(-1) if not found.
   # every item in mItemList should be unique, don't need iterator here.
   wValidate(item)
   for i, it in mItemList:
@@ -156,35 +156,35 @@ proc find*(self: wMenu, item: wMenuItem): int {.validate.} =
   result = wNotFound
 
 iterator find*(self: wMenu, submenu: wMenu): int {.validate.} =
-  ## Iterate all the index of submenu in menu.
+  ## Iterates over each index of submenu in menu.
   wValidate(submenu)
   for i, item in mItemList:
     if item.mSubmenu == submenu:
       yield i
 
 proc find*(self: wMenu, submenu: wMenu): int {.validate.} =
-  ## Find the first index of submenu or wNotFound if not found.
+  ## Find the first index of submenu or wNotFound(-1) if not found.
   wValidate(submenu)
   for i in find(submenu):
     return i
   result = wNotFound
 
 iterator find*(self: wMenu, text: string): int {.validate.} =
-  ## Iterate all the index with the given text.
+  ## Iterates over each index with the given text.
   wValidate(text)
   for i, item in mItemList:
     if item.mText == text:
       yield i
 
 proc find*(self: wMenu, text: string): int {.validate.} =
-  ## Find the first index with the given text or wNotFound if not found.
+  ## Find the first index with the given text or wNotFound(-1) if not found.
   wValidate(text)
   for i in find(text):
     return i
   result = wNotFound
 
 iterator findItem*(self: wMenu, text: string): wMenuItem {.validate.} =
-  ## Iterate all the wMenuItem object with the given text.
+  ## Iterates over each wMenuItem object with the given text.
   wValidate(text)
   for i in find(text):
     yield mItemList[i]
@@ -196,7 +196,7 @@ proc findItem*(self: wMenu, text: string): wMenuItem {.validate.} =
     return item
 
 iterator findText*(self: wMenu, text: string): int {.validate.} =
-  ## Iterate all the index with the given text (not include any accelerator characters),
+  ## Iterates over each index with the given text (not include any accelerator characters),
   wValidate(text)
   for i, item in mItemList:
     if item.mText != nil and item.mText.replace("&", "") == text:
@@ -204,14 +204,14 @@ iterator findText*(self: wMenu, text: string): int {.validate.} =
 
 proc findText*(self: wMenu, text: string): int {.validate.} =
   ## Find the first index with the given text (not include any accelerator characters),
-  ## wNotFound if not found.
+  ## wNotFound(-1) if not found.
   wValidate(text)
   for i in findText(text):
     return i
   result = wNotFound
 
 iterator findItemText*(self: wMenu, text: string): wMenuItem {.validate.} =
-  ## Iterate all the wMenuItem object with the given text (not include any accelerator characters).
+  ## Iterates over each wMenuItem object with the given text (not include any accelerator characters).
   wValidate(text)
   for i in findText(text):
     yield mItemList[i]

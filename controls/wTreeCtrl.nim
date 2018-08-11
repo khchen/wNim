@@ -849,7 +849,7 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   # for TVS_HASBUTTONS, TVS_LINESATROOT must also be specified.
@@ -876,7 +876,7 @@ proc wTreeCtrlInit(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = 
 
 proc TreeCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTreeCtrl {.discardable.} =
   new(result)
-  result.wTreeCtrlInit(parent=parent, id=id, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
 
 # for wTreeEvent
 

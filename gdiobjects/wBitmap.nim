@@ -138,3 +138,8 @@ proc Bmp*(data: ptr byte|ptr char|cstring, length: int): wBitmap =
   wValidate(data)
   new(result, final)
   result.init(cast[ptr byte](data), length)
+
+proc Bmp*(bmp: wBitmap): wBitmap {.inline.} =
+  ## Copy constructor
+  wValidate(bmp)
+  result = Bmp(bmp.mHandle, copy=true)

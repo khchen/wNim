@@ -91,3 +91,8 @@ proc Brush*(hBrush: HANDLE): wBrush =
   var lb: LOGBRUSH
   GetObject(hBrush, sizeof(lb), addr lb)
   result.initFromNative(lb)
+
+proc Brush*(brush: wBrush): wBrush {.inline.} =
+  ## Copy constructor
+  wValidate(brush)
+  result = Brush(brush.mHandle)

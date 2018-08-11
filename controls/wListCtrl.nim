@@ -570,7 +570,7 @@ method getBestSize*(self: wListCtrl): wSize =
 #   else:
 #     result = self.wControlNotifyHandler(code, id, lparam, processed)
 
-proc wListCtrlInit(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   self.wControl.init(className=WC_LISTVIEW, parent=parent, id=id, label="", pos=pos, size=size,
@@ -624,7 +624,7 @@ proc wListCtrlInit(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = 
 
 proc ListCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wListCtrl {.discardable.} =
   new(result)
-  result.wListCtrlInit(parent=parent, id=id, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
 
 # for wListEvent
 

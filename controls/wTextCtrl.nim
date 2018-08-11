@@ -290,7 +290,7 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
 
 var richDllLoaded {.threadvar.}: bool
 
-proc wTextCtrlInit(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
   assert parent != nil
 
   mRich = ((style and wTeRich) != 0)
@@ -337,7 +337,7 @@ proc wTextCtrlInit(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label:
 
 proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl {.discardable.} =
   new(result)
-  result.wTextCtrlInit(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
 
 # nim style getter/setter
 proc editable*(self: wTextCtrl): bool = isEditable()
