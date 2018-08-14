@@ -15,22 +15,10 @@ const
 
 
 
-
-  # TextCtrl styles
-  wTeMultiLine* = ES_MULTILINE
-  wTeReadOnly* = ES_READONLY
-  wTePassword* = ES_PASSWORD
-  wTeNoHideSel* = ES_NOHIDESEL
-  wTeLeft* = ES_LEFT
-  wTeCentre* = ES_CENTER
-  wTeRight* = ES_RIGHT
-  # wTE_DONTWRAP* = wHScroll
-  wTeRich* = 0x10000000 shl 32
-
   # SpinCtrl styles
   wSpArrowKeys* = UDS_ARROWKEYS
   wSpWrap* = UDS_ALIGNRIGHT # ** a hack value, see wSpinCtrl.nil
-  wSpReadOnly* = wTeReadOnly
+  # wSpReadOnly* = wTeReadOnly
 
 
 

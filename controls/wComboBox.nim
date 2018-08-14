@@ -115,35 +115,9 @@ proc findText*(self: wComboBox, text: string): int {.validate, inline.} =
   ## Finds an item whose label matches the given text.
   result = find(text)
 
-proc getCurrentSelection*(self: wComboBox): int {.validate, property, inline.} =
+proc getSelection*(self: wComboBox): int {.validate, property, inline.} =
   ## Returns the index of the selected item or wNOT_FOUND(-1) if no item is selected.
   result = int SendMessage(mHwnd, CB_GETCURSEL, 0, 0)
-
-proc getSelection*(self: wComboBox): Slice[int] {.validate, property, inline.} =
-  ## Gets the current selection range. If result.b < result.a, there was no selection.
-  SendMessage(mHwnd, CB_GETEDITSEL, &result.a, &result.b)
-  dec result.b # system return a==b if no selection, so -1.
-
-proc getInsertionPoint*(self: wComboBox): int {.validate, property, inline.} =
-  ## Returns the insertion point, or cursor.
-  # must discard here so that return the result directly.
-  discard SendMessage(mHwnd, CB_GETEDITSEL, &result, 0)
-
-proc getTextSelection*(self: wComboBox): string {.validate, property.} =
-  ## Gets the text currently selected in the control or empty string if there is no selection.
-  let
-    text = +$(getLabel()) # convert to wstring so that we can count in chars
-    sel = getSelection()
-  result = $(text[sel.a..<sel.b])
-
-proc setSelection*(self: wComboBox, start: int, last: int) {.validate, property, inline.} =
-  ## Selects the text starting at the first position up to
-  ## (but not including) the character at the last position.
-  SendMessage(mHwnd, CB_SETEDITSEL, 0, MAKELONG(start, last))
-
-proc setSelection*(self: wComboBox, range: Slice[int]) {.validate, property, inline.} =
-  ## Selects the in range (including).
-  setSelection(range.a, range.b + 1)
 
 proc select*(self: wComboBox, index: int) {.validate, inline.} =
   ## Sets the selection to the given index or removes the selection entirely if index == wNOT_FOUND(-1).
@@ -157,20 +131,26 @@ proc setText*(self: wComboBox, index: int, text: string) {.validate, property.} 
   ## Changes the text of the specified combobox item.
   # use setText instead of setString, otherwise property become "string" keyword.
   if index >= 0:
-    let reselect = (getCurrentSelection() == index)
+    let reselect = (getSelection() == index)
     delete(index)
     insert(index, text)
     if reselect:
       select(index)
 
-proc setValue*(self: wComboBox, text: string) {.validate, property.} =
+proc changeValue*(self: wComboBox, text: string) {.validate, property.} =
   ## Sets the text for the combobox text field.
-  ## Notice that this proc won't generate wEVT_TEXT event.
+  ## Notice that this proc won't generate wEvent_Text event.
   let kind = GetWindowLongPtr(mHwnd, GWL_STYLE) and wCbStyleMask
   if kind == wCbReadOnly:
     select(find(text)) # if result is -1, selection is removed
   else:
     setLabel(text)
+
+proc setValue*(self: wComboBox, text: string) {.validate, property, inline.} =
+  ## Sets the text for the combobox text field.
+  ## Notice that this proc will generate wEvent_Text event.
+  changeValue(text)
+  self.processMessage(wEvent_Text, 0, 0)
 
 proc getValue*(self: wComboBox): string {.validate, property, inline.} =
   ## Gets the text for the combobox text field.
@@ -192,10 +172,14 @@ proc dismiss*(self: wComboBox) {.validate,  inline.} =
   ## Hides the list box portion of the combo box.
   SendMessage(mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
 
-proc getEditControl*(self: wComboBox): wWindow {.validate, property, inline.} =
+proc getEditControl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
+  ## Returns the edit control part of this combobox, or nil if no such control.
+  ## Notice that the result is wWindow for event handler only, not a wTextCtrl.
   result = mEdit
 
 proc getListControl*(self: wComboBox): wWindow {.validate, property, inline.} =
+  ## Returns the list control part of this combobox, or nil if no such control.
+  ## Notice that the result is wWindow for event handler only, not a wListBox.
   result = mList
 
 proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
@@ -266,7 +250,7 @@ proc init(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string =
   GetComboBoxInfo(mHwnd, cbi)
 
   if cbi.hwndItem != mHwnd:
-    mEdit = Window(cbi.hwndItem)
+    mEdit = TextCtrl(cbi.hwndItem)
     # we need send the navigation events to this wComboBox
     # so that navigation key can works under subclassed window
     mEdit.hardConnect(WM_CHAR) do (event: wEvent):
@@ -300,7 +284,7 @@ proc init(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string =
         of CBN_SELENDOK:
           # the system set the edit control value AFTER this event
           # however, we need let getValue() return a correct value.
-          let n = self.getCurrentSelection()
+          let n = self.getSelection()
           if n >= 0:
             self.setLabel(self.getText(n))
           wEvent_ComboBox

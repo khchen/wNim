@@ -97,7 +97,6 @@ when not defined(wnimdoc):
       mInstance: HANDLE
       mTopLevelWindowList: seq[wWindow]
       mWindowTable: Table[HWND, wWindow]
-      mDialogTable: Table[HWND, wWindow]
       mGDIStockSeq: seq[wGdiObject]
       mPropagationSet: HashSet[UINT]
       mMessageCountTable: CountTable[UINT]
@@ -256,7 +255,7 @@ when not defined(wnimdoc):
 
     wComboBox* = ref wComboBoxObj
     wComboBoxObj = object of wControlObj
-      mEdit: wWindow
+      mEdit: wTextCtrl
       mList: wWindow
       mOldEditProc: WNDPROC
       mInitData: ptr UncheckedArray[string]

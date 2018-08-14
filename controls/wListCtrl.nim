@@ -657,20 +657,3 @@ proc ListCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint
 #   let pnmv = cast[LPNMLVKEYDOWN](mLparam)
 #   result = pnmv.wVKey.int
 
-# nim style getter/setter
-
-proc columnCount*(self: wListCtrl): int = getColumnCount()
-proc itemCount*(self: wListCtrl): int = getItemCount()
-proc itemSpacing*(self: wListCtrl): wSize = getItemSpacing()
-proc topItem*(self: wListCtrl): int = getTopItem()
-proc countPerPage*(self: wListCtrl): int = getCountPerPage()
-proc viewRect*(self: wListCtrl): wRect = getViewRect()
-proc textColor*(self: wListCtrl): wColor = getTextColor()
-proc alternateRowColor*(self: wListCtrl): wColor = getAlternateRowColor()
-proc selectedItemCount*(self: wListCtrl): int = getSelectedItemCount()
-proc columnsOrder*(self: wListCtrl): seq[int] = getColumnsOrder()
-proc editControl*(self: wListCtrl): wTextCtrl = getEditControl()
-proc `textColor=`*(self: wListCtrl, color: wColor) = setTextColor(color)
-proc `backgroundColor=`*(self: wListCtrl, color: wColor) = setBackgroundColor(color)
-proc `alternateRowColor=`*(self: wListCtrl, color: wColor) = setAlternateRowColor(color)
-proc `columnsOrder=`*(self: wListCtrl, orders: openarray[int]) = setColumnsOrder(orders)

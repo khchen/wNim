@@ -126,7 +126,7 @@ proc getMarginY*(self: wWindow): int {.validate, property, inline.} =
   ## Margin is the extra space around the client area..
   result = mMarginY
 
-proc getMargin*(self: wWindow): (int, int) {.validate, property, inline.} =
+proc getMargin*(self: wWindow): tuple[x: int, y: int] {.validate, property, inline.} =
   ## Get the margin setting of the window as a tuple.
   ## Margin is the extra space around the client area..
   result = (mMarginX, mMarginY)
@@ -818,15 +818,15 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
       connection.callHandler()
 
   # system event never block following event
-  # and system event should not modify the skip status
   processed = false
-  event.mSkip = false
 
   var this = self
   while true:
     this.mConnectionTable.withValue(msg, list):
       for i in countdown(list.high, 0): # FILO
         let connection = list[i]
+        # make sure we clear the skip state before every callHandler
+        event.mSkip = false
         connection.callHandler()
         # pass event to next handler only if not processed
         if processed: break

@@ -21,6 +21,29 @@ proc wControl_DoMenuCommand(event: wEvent) =
       break
     win = win.mParent
 
+proc getNextGroup(self: wControl, previous: bool): wControl =
+  var hWnd = mHwnd
+  while true:
+    hWnd = GetNextDlgGroupItem(mParent.mHwnd, hWnd, previous)
+    if hWnd == 0 or hWnd == mHwnd:
+      break
+
+    let win = wAppWindowFindByHwnd(hWnd)
+    if win != nil and win of wControl and win.isFocusable():
+      return wControl(win)
+
+proc getNextTab(self: wControl, previous: bool): wControl =
+  var hWnd = mHwnd
+  while true:
+    hWnd = GetNextDlgTabItem(mParent.mHwnd, hWnd, previous)
+    if hWnd == 0 or hWnd == mHwnd:
+      break
+
+    let win = wAppWindowFindByHwnd(hWnd)
+    if win != nil and win of wControl and win.isFocusable():
+      return wControl(win)
+
+
 proc tabStop(self: wControl, forward = true): wControl =
 
   proc isTabStop(self: wControl): bool =
@@ -175,10 +198,13 @@ proc wControl_OnNavigation(event: wEvent) =
   var processed = false
   defer: event.skip(if processed: false else: true)
 
-  # let the control have a change to deny the navigation action
-  let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.wParam, lParam=event.lParam)
-  if self.processEvent(naviEvent) and not naviEvent.isAllowed:
-    return
+  proc isAllowed(): bool =
+    # let the control have a change to deny the navigation action
+    let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.wParam, lParam=event.lParam)
+    if self.processEvent(naviEvent) and not naviEvent.isAllowed:
+      return false
+    else:
+      return true
 
   proc trySetFocus(control: wControl): bool {.discardable.} =
     if control != nil:
@@ -191,35 +217,46 @@ proc wControl_OnNavigation(event: wEvent) =
   of WM_CHAR:
     if keyCode == VK_TAB:
       # tab, shift+tab
-      trySetFocus(self.tabStop(forward=if event.shiftDown: false else: true))
+      if isAllowed():
+        trySetFocus(self.getNextTab(previous=if event.shiftDown: true else: false))
 
     elif keyCode == VK_RETURN and not event.shiftDown:
       # enter
       # the behavior of the default button: click the default button when press enter,
       # except the focused control itself is a button
-      if self of wButton:
-        wButton(self).click
-        processed = true
+      if isAllowed():
+        if self of wButton:
+          wButton(self).click
+          processed = true
 
-      else:
-        for win in self.siblings:
-          if win of wButton and wButton(win).mDefault:
-            wButton(win).click
-            processed = true
-            break
+        else:
+          for win in self.siblings:
+            if win of wButton and wButton(win).mDefault:
+              wButton(win).click
+              processed = true
+              break
+
+          if not processed:
+            # not button, no default button, so let enter as click on checkbox and radiobox?
+            if self of wCheckBox or self of wRadioButton:
+              SendMessage(self.mHwnd, BM_CLICK, 0, 0)
+              processed = true
 
   of WM_KEYDOWN:
     if keyCode == VK_TAB and event.ctrlDown:
-      # ctrl+tab
-      trySetFocus(self.tabStop(forward=true))
+      # ctrl+tab, ctrl+shift+tab
+      if isAllowed():
+        trySetFocus(self.getNextTab(previous=if event.shiftDown: true else: false))
 
     elif keyCode in {VK_LEFT, VK_UP}:
       # left, up
-      trySetFocus(self.groupStop(forward=false))
+      if isAllowed():
+        trySetFocus(self.getNextGroup(previous=true))
 
     elif keyCode in {VK_RIGHT, VK_DOWN}:
       # right, down
-      trySetFocus(self.groupStop(forward=true))
+      if isAllowed():
+        trySetFocus(self.getNextGroup(previous=false))
 
   of WM_SYSCHAR:
     # handle WM_SYSCHAR instead of WM_SYSKEYDOWN, there won't a beep sound.
@@ -227,13 +264,14 @@ proc wControl_OnNavigation(event: wEvent) =
     # and then windows system handle WM_SYSCHAR for menu select
     # now, we only handle the control that has mnemonic leter
     # try to handle focus across control and menu?
-    var ch = char keyCode
-    if ch in 'A'..'Z' or ch in 'a'..'z' or ch in '0'..'9':
-      var onlyone: bool
-      let control = self.mnemonicStop(ch, onlyone)
-      if trySetFocus(control) and onlyone:
-        if control of wButton or control of wCheckBox or control of wRadioButton:
-          SendMessage(control.mHwnd, BM_CLICK, 0, 0)
+    if isAllowed():
+      var ch = char keyCode
+      if ch in 'A'..'Z' or ch in 'a'..'z' or ch in '0'..'9':
+        var onlyone: bool
+        let control = self.mnemonicStop(ch, onlyone)
+        if trySetFocus(control) and onlyone:
+          if control of wButton or control of wCheckBox or control of wRadioButton:
+            SendMessage(control.mHwnd, BM_CLICK, 0, 0)
 
   else: discard
 

@@ -22,7 +22,7 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_TextCopy
   wEvent_TextCut
   wEvent_TextPaste
-  wEvent_TextUpdated
+  wEvent_TextUpdate
   wEvent_TextEnter
   wEvent_TextMaxlen
   wEvent_CommandLeftClick

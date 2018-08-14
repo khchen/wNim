@@ -24,7 +24,6 @@ proc App*(): wApp =
   result.mExitCode = 0
   result.mTopLevelWindowList = @[]
   result.mWindowTable = initTable[HWND, wWindow]()
-  result.mDialogTable = initTable[HWND, wWindow]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mPropagationSet = initSet[UINT]()
   result.mMessageCountTable = initCountTable[UINT]()
@@ -38,9 +37,6 @@ proc wAppHasTopLevelWindow(): bool {.inline.} =
 
 proc wAppWindowAdd(win: wWindow) {.inline.} =
   wTheApp.mWindowTable[win.mHwnd] = win
-
-proc wAppDialogAdd(win: wWindow) {.inline.} =
-  wTheApp.mDialogTable[win.mHwnd] = win
 
 proc wAppWindowChange(win: wWindow) =
   for key, value in wTheApp.mWindowTable:
@@ -99,14 +95,12 @@ proc MessageLoop(isMainLoop: bool = true): int =
       if isMainLoop == false or wAppHasTopLevelWindow() == false:
         break
 
-    var isDialogMsg = false
-    for hwnd in wTheApp.mDialogTable.keys:
-      isDialogMsg = bool IsDialogMessage(hwnd, msg)
-      if isDialogMsg: break
+    # we can use IsDialogMessage here to handle key navigation
+    # however, it is not flexible enouth
+    # so we handle all the navigation by outself in wControl
 
-    if not isDialogMsg:
-      TranslateMessage(msg)
-      DispatchMessage(msg)
+    TranslateMessage(msg)
+    DispatchMessage(msg)
 
   result = int msg.wParam
 

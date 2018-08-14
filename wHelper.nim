@@ -184,6 +184,12 @@ proc isMouseInWindow(mHwnd: HWND): bool =
 
   result = hwnd != 0
 
+proc loadRichDll(): bool =
+  var richDllLoaded {.global, threadvar.}: bool
+  if not richDllLoaded:
+    if LoadLibrary("msftedit.dll") != 0:
+      richDllLoaded = true
+  result = richDllLoaded
 
 # todo
 # try to fix windows 10 SetWindowPos problem

@@ -1,83 +1,151 @@
+## A text control allows text to be displayed and edited.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wTeMultiLine                    The text control allows multiple lines.
+##    wTePassword                     The text will be echoed as asterisks.
+##    wTeReadOnly                     The text will not be user-editable.
+##    wTeNoHideSel                    Show the selection event when it doesn't have focus.
+##    wTeLeft                         The text in the control will be left-justified (default).
+##    wTeCentre                       The text in the control will be centered.
+##    wTeRight                        The text in the control will be right-justified.
+##    wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
+##    wTeRich                         Use rich text control under, this allows to have more than 64KB of text in the control.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wScrollEvent                    Description
+##    ==============================  =============================================================
+##    wEvent_Text                     When the text changes.
+##    wEvent_TextUpdate               When the control is about to redraw itself.
+##    wEvent_TextEnter                When pressing Enter key.
+##    wEvent_TextMaxlen               When the user tries to enter more text into the control than the limit.
+##    ==============================  =============================================================
 
-proc isMultiLine*(self: wTextCtrl): bool =
+const
+  # TextCtrl styles
+  wTeMultiLine* = ES_MULTILINE
+  wTeReadOnly* = ES_READONLY
+  wTePassword* = ES_PASSWORD
+  wTeNoHideSel* = ES_NOHIDESEL
+  wTeLeft* = ES_LEFT
+  wTeCentre* = ES_CENTER
+  wTeRight* = ES_RIGHT
+  wTeDontWrap* = WS_HSCROLL or ES_AUTOHSCROLL
+  wTeRich* = 0x10000000 shl 32
+
+proc isMultiLine*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if this is a multi line edit control and false otherwise.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and ES_MULTILINE) != 0
 
-proc isEditable*(self: wTextCtrl): bool =
+proc isEditable*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if the controls contents may be edited by user.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and ES_READONLY) == 0
 
-proc isSingleLine*(self: wTextCtrl): bool =
+proc isSingleLine*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if this is a single line edit control and false otherwise.
   result = not isMultiLine()
 
-proc discardEdits*(self: wTextCtrl) =
-  SendMessage(mHwnd, EM_SETMODIFY, 0, 0)
-
-proc markDirty*(self: wTextCtrl) =
-  SendMessage(mHwnd, EM_SETMODIFY, 1, 0)
-
-proc setModified*(self: wTextCtrl, modified: bool) =
+proc setModified*(self: wTextCtrl, modified: bool) {.validate, property, inline.} =
+  ## Marks the control as being modified by the user or not.
   SendMessage(mHwnd, EM_SETMODIFY, modified, 0)
 
-proc isModified*(self: wTextCtrl): bool =
+proc discardEdits*(self: wTextCtrl) {.validate, inline.} =
+  ## Resets the internal modified flag as if the current changes had been saved.
+  setModified(false)
+
+proc markDirty*(self: wTextCtrl) {.validate, inline.} =
+  ## Mark text as modified (dirty).
+  setModified(true)
+
+proc isModified*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if the text has been modified by user.
   SendMessage(mHwnd, EM_GETMODIFY, 0, 0) != 0
 
-proc setEditable*(self: wTextCtrl, flag: bool) =
+proc setEditable*(self: wTextCtrl, flag: bool) {.validate, property, inline.} =
+  ## Makes the text item editable or read-only.
   SendMessage(mHwnd, EM_SETREADONLY, not flag, 0)
 
-proc setMargins*(self: wTextCtrl, left: int, right: int = wDefault) =
-  var right = right
-  if right == wDefault: right = left
+proc setMargin*(self: wTextCtrl, left: int, right: int) {.validate, property, inline.} =
+  ## Set the left and right margins.
   SendMessage(mHwnd, EM_SETMARGINS, EC_LEFTMARGIN or EC_RIGHTMARGIN, MAKELONG(left, right))
 
-proc getMargins*(self: wTextCtrl): tuple[left, right: int] =
+proc setMargin*(self: wTextCtrl, margin: (int, int)) {.validate, property, inline.} =
+  ## Set the left and right margins.
+  setMargin(margin[0], margin[1])
+
+proc setMargin*(self: wTextCtrl, margin: int) {.validate, property, inline.} =
+  ## Set the left and right margins to the same value.
+  setMargin(margin, margin)
+
+proc getMargin*(self: wTextCtrl): tuple[left: int, right: int] {.validate, property, inline.} =
+  ## Returns the margins.
   let ret = SendMessage(mHwnd, EM_GETMARGINS, 0, 0)
-  result.left = LOWORD(ret).int
-  result.right = HIWORD(ret).int
+  result.left = int LOWORD(ret)
+  result.right = int HIWORD(ret)
 
-proc xyToPosition*(self: wTextCtrl, x, y: int): int =
-  result = SendMessage(mHwnd, EM_LINEINDEX, y, 0).int + x
+proc xyToPosition*(self: wTextCtrl, x: int, y: int): int {.validate, inline.} =
+  ## Converts the given zero based column and line number to a position.
+  result = int SendMessage(mHwnd, EM_LINEINDEX, y, 0) + x
 
-proc xyToPosition*(self: wTextCtrl, pos: wPoint): int =
+proc xyToPosition*(self: wTextCtrl, pos: wPoint): int {.validate, inline.} =
+  ## Converts the given zero based column and line number to a position.
   result = xyToPosition(pos.x, pos.y)
 
-proc getNumberOfLines*(self: wTextCtrl): int =
-  SendMessage(mHwnd, EM_GETLINECOUNT, 0, 0).int
+proc getLineCount*(self: wTextCtrl): int {.validate, property, inline.} =
+  ## Gets the number of lines in the control.
+  result = int SendMessage(mHwnd, EM_GETLINECOUNT, 0, 0)
 
-proc getLengthOfLineContainingPos(self: wTextCtrl, pos: int): int =
-  result = SendMessage(mHwnd, EM_LINELENGTH, pos, 0).int
+proc getNumberOfLines*(self: wTextCtrl): int {.validate, property, inline.} =
+  ## Returns the number of lines in the text control buffer. The same as getLineCount().
+  result = getLineCount()
 
-proc getLineLength*(self: wTextCtrl, line: int): int =
+proc getLengthOfLineContainingPos(self: wTextCtrl, pos: int): int {.validate, property, inline.} =
+  result = int SendMessage(mHwnd, EM_LINELENGTH, pos, 0)
+
+proc getLineLength*(self: wTextCtrl, line: int): int {.validate, property, inline.} =
+  ## Gets the length of the specified line, not including any trailing newline character
   result = getLengthOfLineContainingPos(xyToPosition(0, line))
 
-proc getLastPosition*(self: wTextCtrl): int =
+proc getLastPosition*(self: wTextCtrl): int {.validate, property.} =
+  ## Returns the zero based index of the last position in the text control,
+  ## which is equal to the number of characters in the control.
   if isMultiLine():
     let lastLineStart = xyToPosition(0, getNumberOfLines() - 1)
     let lastLineLength = getLengthOfLineContainingPos(lastLineStart)
     result = lastLineStart + lastLineLength
 
   else:
-    result = SendMessage(mHwnd, EM_LINELENGTH, 0, 0).int
+    result = int SendMessage(mHwnd, EM_LINELENGTH, 0, 0)
 
-proc isEmpty*(self: wTextCtrl): bool =
+proc isEmpty*(self: wTextCtrl): bool {.validate, inline.} =
+  # Returns true if the control is currently empty.
   result = getLastPosition() == 0
 
-proc positionToXY*(self: wTextCtrl, pos: int): wPoint =
+proc positionToXY*(self: wTextCtrl, pos: int): wPoint {.validate.} =
+  ## Converts given position to a zero-based column, line number pair.
   var line: int
-
   if mRich:
-    line = SendMessage(mHwnd, EM_EXLINEFROMCHAR, 0, pos).int
+    line = int SendMessage(mHwnd, EM_EXLINEFROMCHAR, 0, pos)
   else:
-    line = SendMessage(mHwnd, EM_LINEFROMCHAR, pos, 0).int
+    line = int SendMessage(mHwnd, EM_LINEFROMCHAR, pos, 0)
 
   # even if pos is too large, line is still last line
   let posLineStart = xyToPosition(0, line)
-
   result.x = pos - posLineStart
   result.y = line
 
   if result.x > getLineLength(line):
     raise newException(IndexError, "index out of bounds")
 
-proc showPosition*(self: wTextCtrl, pos: int) =
+proc showPosition*(self: wTextCtrl, pos: int) {.validate.} =
+  ## Makes the line containing the given position visible.
   let
     currentLine = SendMessage(mHwnd, EM_GETFIRSTVISIBLELINE, 0, 0)
     toLine = SendMessage(mHwnd, EM_LINEFROMCHAR, pos, 0)
@@ -86,158 +154,185 @@ proc showPosition*(self: wTextCtrl, pos: int) =
   if lineCount != 0:
     SendMessage(mHwnd, EM_LINESCROLL, 0, lineCount)
 
-# We implementation selection and range by nim Slice object
-# In nim, slice a..b are included a and b
+proc getSelection*(self: wTextCtrl): Slice[int] {.validate, property, inline.} =
+  ## Gets the current selection range. If result.b < result.a, there was no selection.
+  SendMessage(mHwnd, EM_GETSEL, &result.a, &result.b)
+  dec result.b # system return a==b if no selection, so -1.
 
-proc getSelection*(self: wTextCtrl): Slice[int] =
-  # if result.b < result.a means no selection
-  discard SendMessage(mHwnd, EM_GETSEL, addr result.a, addr result.b)
-  result.b -= 1
-
-proc getInsertionPoint*(self: wTextCtrl): int =
+proc getInsertionPoint*(self: wTextCtrl): int {.validate, property, inline.} =
+  ## Returns the insertion point, or cursor, position.
   result = getSelection().a
 
-proc setSelection*(self: wTextCtrl, range = Slice[int](a: -1, b: -1)) =
-  var range = range
-  if range.a == -1 and range.b == -1:
-    # a = b = -1 -> select all -> wparam = 0, lparam = -1
-    range.a = 0
-  else:
-    range.b += 1
+proc setSelection*(self: wTextCtrl, start: int, last: int) {.validate, property, inline.} =
+  ## Selects the text starting at the first position up to
+  ## (but not including) the character at the last position.
+  SendMessage(mHwnd, EM_SETSEL, start, last)
 
-  SendMessage(mHwnd, EM_SETSEL, range.a, range.b)
+proc setSelection*(self: wTextCtrl, range = Slice[int](a: -1, b: -1)) {.validate, property, inline.} =
+  ## Selects the text in range (including).
+  setSelection(range.a, range.b + 1)
 
-proc setInsertionPoint*(self: wTextCtrl, pos: int = -1) =
-  var pos = pos
-  if pos == -1:
-    pos = getLastPosition()
+proc selectAll*(self: wTextCtrl) {.validate, inline.} =
+  ## Selects all text.
+  setSelection(0, -1)
 
-  SendMessage(mHwnd, EM_SETSEL, pos, pos)
+proc setInsertionPoint*(self: wTextCtrl, pos: int) {.validate, property, inline.} =
+  ## Sets the insertion point at the given position.
+  setSelection(pos, pos)
 
-proc setInsertionPointEnd*(self: wTextCtrl) =
-  setInsertionPoint()
+proc setInsertionPointEnd*(self: wTextCtrl) {.validate, property, inline.} =
+  ## Sets the insertion point at the end of the text control.
+  setInsertionPoint(getLastPosition())
 
-proc selectAll*(self: wTextCtrl) =
-  setSelection()
-
-proc selectNone*(self: wTextCtrl) =
+proc selectNone*(self: wTextCtrl)  {.validate, inline.} =
+  ## Deselects selected text in the control.
   setInsertionPoint(getInsertionPoint())
 
-proc copy*(self: wTextCtrl) =
+proc getRange*(self: wTextCtrl, range: Slice[int]): string {.validate, property.} =
+  ## Returns the text in range.
+  if mRich:
+    var
+      buffer = T(range.b - range.a + 2)
+      textrange = TEXTRANGE(lpstrText: &buffer,
+        chrg: CHARRANGE(cpMin: range.a, cpMax: range.b + 1))
+
+    buffer.setLen(SendMessage(mHwnd, EM_GETTEXTRANGE, 0, &textrange))
+    result = $buffer
+
+  else:
+    let text = +$(getTitle()) # convert to wstring so that we can count in chars
+    result = $(text[range])
+
+proc getValue*(self: wTextCtrl): string {.validate, property.} =
+  ## Gets the contents of the control.
+  if mRich:
+    when winimAnsi:
+      var gtl = GETTEXTLENGTHEX(flags: GTL_DEFAULT, codepage: CP_ACP)
+    else:
+      var gtl = GETTEXTLENGTHEX(flags: GTL_DEFAULT, codepage: 1200)
+
+    let length = int SendMessage(mHwnd, EM_GETTEXTLENGTHEX, &gtl, 0)
+    result = getRange(0..<length)
+  else:
+    result = getTitle()
+
+proc copy*(self: wTextCtrl) {.validate, inline.} =
+  ## Copies the selected text to the clipboard.
   SendMessage(mHwnd, WM_COPY, 0, 0)
 
-proc cut*(self: wTextCtrl) =
+proc cut*(self: wTextCtrl) {.validate, inline.} =
+  ## Copies the selected text to the clipboard and removes it from the control.
   SendMessage(mHwnd, WM_CUT, 0, 0)
 
-proc paste*(self: wTextCtrl) =
+proc paste*(self: wTextCtrl) {.validate, inline.} =
+  ## Pastes text from the clipboard to the text item.
   SendMessage(mHwnd, WM_COPY, 0, 0)
 
-proc undo*(self: wTextCtrl) =
+proc undo*(self: wTextCtrl) {.validate, inline.} =
+  ## If there is an undo facility and the last operation can be undone, undoes the last operation.
   SendMessage(mHwnd, EM_UNDO, 0, 0)
 
-proc redo*(self: wTextCtrl) =
+proc redo*(self: wTextCtrl) {.validate, inline.} =
+  ## If there is a redo facility and the last operation can be redone, redoes the last operation.
   SendMessage(mHwnd, if mRich: EM_REDO else: EM_UNDO, 0, 0)
 
-proc canRedo*(self: wTextCtrl): bool =
+proc canRedo*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if there is a redo facility available and the last operation can be redone.
   result = SendMessage(mHwnd, EM_CANUNDO, 0, 0) != 0
 
-proc canUndo*(self: wTextCtrl): bool =
+proc canUndo*(self: wTextCtrl): bool {.validate, inline.} =
+  ## Returns true if there is an undo facility available and the last operation can be undone.
   result = SendMessage(mHwnd, if mRich: EM_CANREDO else: EM_CANUNDO, 0, 0) != 0
 
-proc setMaxLength*(self: wTextCtrl, length: int) =
+proc setMaxLength*(self: wTextCtrl, length: int) {.validate, property.} =
+  ## This function sets the maximum number of characters the user can enter into the control.
   if mRich:
     SendMessage(mHwnd, EM_EXLIMITTEXT, 0, length)
   else:
     SendMessage(mHwnd, EM_LIMITTEXT, length, 0)
 
-proc setValue*(self: wTextCtrl, value: string) =
+proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
+  ## Sets the new text control value.
+  ## Note that, unlike most other functions changing the controls values,
+  ## this function generates a wEvent_Text event. To avoid this you can use ChangeValue() instead.
   setLabel(value)
   discardEdits()
 
-  # MSDN:  EN_CHANGE notification code is not sent when the ES_MULTILINE style is used and the text is sent through WM_SETTEXT.
+  # MSDN: EN_CHANGE notification code is not sent when the
+  # ES_MULTILINE style is used and the text is sent through WM_SETTEXT.
   if not mRich and isMultiLine():
     SendMessage(mParent.mHwnd, WM_COMMAND, MAKELONG(GetWindowLongPtr(mHwnd, GWLP_ID), EN_CHANGE), mHwnd)
 
-proc changeValue*(self: wTextCtrl, value: string) =
-  # not to generate the wEvent_Text event
+proc changeValue*(self: wTextCtrl, value: string) {.validate.} =
+  ## Sets the new text control value.
+  ## This functions does not generate the wEvent_Text event.
   mDisableTextEvent = true
   setValue(value)
   mDisableTextEvent = false
 
-proc clear*(self: wTextCtrl) =
-    setValue("")
+proc clear*(self: wTextCtrl) {.validate, inline.} =
+  ## Clears the text in the control.
+  setValue("")
 
-proc getRange*(self: wTextCtrl, range = Slice[int](a: -1, b: -1)): string =
-  # -1..-1 is special for all text
-  var range = range
-
-  if mRich:
-    if range.a == -1 and range.b == -1:
-      var gtl = GETTEXTLENGTHEX(flags: GTL_DEFAULT, codepage: 1200)
-      range.a = 0
-      range.b = SendMessage(mHwnd, EM_GETTEXTLENGTHEX, addr gtl, 0).int
-
-    var
-      tr: TEXTRANGE
-      buffer = T(range.b - range.a + 2)
-    #   pbuffer = allocWString(range.b - range.a + 2)
-    #   buffer = cast[wstring](pbuffer)
-    # defer: dealloc(pbuffer)
-
-    tr.lpstrText = &buffer
-    tr.chrg.cpMin = range.a.int32
-    tr.chrg.cpMax = range.b.int32 + 1
-    SendMessage(mHwnd, EM_GETTEXTRANGE, 0, addr tr)
-    result = $buffer
-
-  else:
-    result = getTitle()
-    if range.a != -1 or range.b != -1:
-      result = result[range]
-
-proc getLineText*(self: wTextCtrl, line: int): string =
-  let
-    length = getLineLength(line)
-    pbuffer = allocWString(length + 2)
-    buffer = cast[wstring](pbuffer)
-    size = cast[ptr WORD](&buffer)
-  defer: dealloc(pbuffer)
-  size[] = length.WORD
-
-  SendMessage(mHwnd, EM_GETLINE, line, &buffer)
+proc getLineText*(self: wTextCtrl, line: int): string {.validate, property.} =
+  ## Returns the contents of a given line in the text control, not including any trailing newline character.
+  let length = getLineLength(line)
+  var buffer = T(length + 2)
+  let size = cast[ptr WORD](&buffer)
+  size[] = WORD length
+  buffer.setLen(SendMessage(mHwnd, EM_GETLINE, line, &buffer))
   result = $buffer
 
-proc getValue*(self: wTextCtrl): string =
-  result = getRange()
+proc writeText*(self: wTextCtrl, text: string) {.validate, inline.} =
+  ## Writes the text into the text control at the current insertion position.
+  SendMessage(mHwnd, EM_REPLACESEL, 1, &T(text))
 
-proc writeText*(self: wTextCtrl, text: string) =
-  SendMessage(mHwnd, EM_REPLACESEL, 1, &(T(text)))
-
-proc appendText*(self: wTextCtrl, text: string) =
-  setInsertionPoint()
+proc appendText*(self: wTextCtrl, text: string) {.validate, inline.} =
+  ## Appends the text to the end of the text control.
+  setInsertionPointEnd()
   writeText(text)
 
   if mRich and isMultiLine():
     SendMessage(mHwnd, WM_VSCROLL, SB_BOTTOM, 0)
 
-proc getStringSelection*(self: wTextCtrl): string =
+proc getTextSelection*(self: wTextCtrl): string {.validate, property.} =
+  ## Gets the text currently selected in the control or empty string if there is no selection.
   let sel = getSelection()
   result = (if sel.b >= sel.a: getRange(sel) else: "")
 
-proc replace*(self: wTextCtrl, range: Slice[int], value: string) =
+proc replace*(self: wTextCtrl, range: Slice[int], value: string) {.validate, inline.} =
+  ## Replaces the text in range.
   setSelection(range)
   writeText(value)
 
-proc remove*(self: wTextCtrl, range: Slice[int]) =
+proc remove*(self: wTextCtrl, range: Slice[int]) {.validate, inline.} =
+  ## Removes the text in range.
   replace(range, "")
 
-proc loadFile*(self: wTextCtrl, filename: string) =
+proc loadFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
+  ## Loads and displays the named file, if it exists.
   setValue(readFile(filename))
 
-proc saveFile*(self: wTextCtrl, filename: string) =
+proc saveFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
+  ## Saves the contents of the control in a text file.
   writeFile(filename, getValue())
 
-method getBestSize*(self: wTextCtrl): wSize =
+proc len*(self: wTextCtrl): int {.validate, inline.} =
+  ## Returns the number of characters in the control.
+  result = getLastPosition()
+
+proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
+  ## Appends the text to the end of the text control. The same as appendText()
+  appendText(text)
+
+iterator lines*(self: wTextCtrl): string {.validate.} =
+  ## Iterates over each line in the control.
+  let count = getLineCount()
+  for i in 0..<count:
+    yield getLineText(i)
+
+method getBestSize*(self: wTextCtrl): wSize {.property.} =
+  ## Returns the best acceptable minimal size for the control.
   if mRich:
     result = mBestSize
     # richedit's GWL_STYLE won't return WS_VSCROLL or WS_HSCROLL
@@ -252,18 +347,19 @@ method getBestSize*(self: wTextCtrl): wSize =
       size = getTextFontSize(line, mFont.mHandle)
       maxWidth = max(size.width, maxWidth)
 
-    let margin = getMargins()
+    let margin = getMargin()
     result.width = maxWidth + 11 + margin.left + margin.right
     result.height = size.height * getNumberOfLines() + 2
 
     let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
     if (style and WS_VSCROLL) != 0:
-      result.width += GetSystemMetrics(SM_CXVSCROLL).int
+      result.width += GetSystemMetrics(SM_CXVSCROLL)
 
     if (style and WS_HSCROLL) != 0:
-      result.height += GetSystemMetrics(SM_CYHSCROLL).int
+      result.height += GetSystemMetrics(SM_CYHSCROLL)
 
-method getDefaultSize*(self: wTextCtrl): wSize =
+method getDefaultSize*(self: wTextCtrl): wSize {.property.} =
+  ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(mFont.mHandle)
   if isMultiLine():
@@ -278,53 +374,55 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-# proc wTextCtrlNotifyHandler(self: wTextCtrl, code: INT, id: UINT_PTR, lparam: LPARAM, processed: var bool): LRESULT =
-#   case code
-#   of EN_REQUESTRESIZE:
-#     let requestSize  = cast[ptr REQRESIZE](lparam)
-#     mBestSize.width = int(requestSize.rc.right - requestSize.rc.left)
-#     mBestSize.height = int(requestSize.rc.bottom  - requestSize.rc.top)
+method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
+  ## Sets the background color of the control.
+  if mRich: SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, color)
+  procCall wWindow(self).setBackgroundColor(color)
 
-#   else:
-#     return self.wControlNotifyHandler(code, id, lparam, processed)
-
-var richDllLoaded {.threadvar.}: bool
-
-proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, value: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
   assert parent != nil
 
   mRich = ((style and wTeRich) != 0)
   mDisableTextEvent = false
-  if mRich and not richDllLoaded:
-    if LoadLibrary("msftedit.dll") != 0:
-      richDllLoaded = true
-    else:
-      mRich = false
-  let
+
+  if mRich and not loadRichDll():
+    mRich = false
+
+  var
     style = style and (not wTeRich)
     className = if mRich: MSFTEDIT_CLASS else: WC_EDIT
 
-  self.wControl.init(className=className, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  if (style and wTeMultiLine) == 0:
+    # single line text control should always have this style?
+    style = style or ES_AUTOHSCROLL
+
+  self.wControl.init(className=className, parent=parent, id=id, label=value,
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if mRich:
-    SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, parent.mBackgroundColor)
-    SendMessage(mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or ENM_REQUESTRESIZE)
+    SendMessage(mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or ENM_REQUESTRESIZE or ENM_UPDATE)
+    var format = PARAFORMAT2(
+      cbSize: sizeof(PARAFORMAT2),
+      dwMask: PFM_LINESPACING,
+      dyLineSpacing: 0,
+      bLineSpacingRule: 5)
+    SendMessage(mHwnd, EM_SETPARAFORMAT, 0, &format)
 
-    var format = PARAFORMAT2(cbSize: sizeof(PARAFORMAT2).UINT)
-    format.dwMask = PFM_LINESPACING
-    format.dyLineSpacing = 0
-    format.bLineSpacingRule = 5
-    echo SendMessage(mHwnd, EM_SETPARAFORMAT, 0, addr format)
+  # a text control by default have white background, not parent's background
+  setBackgroundColor(wWhite)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
-      let msg = case HIWORD(event.mWparam.int32)
+      case HIWORD(event.mWparam)
       of EN_CHANGE:
-        if mDisableTextEvent: 0.UINT else: wEvent_Text
-      of EN_MAXTEXT: wEvent_TextMaxlen
-      else: 0
-      if msg != 0:
-        self.processMessage(msg, event.mWparam, event.mLparam)
+        if not mDisableTextEvent:
+          self.processMessage(wEvent_Text, 0, 0)
+      of EN_UPDATE:
+        self.processMessage(wEvent_TextUpdate, 0, 0)
+      of EN_MAXTEXT:
+        self.processMessage(wEvent_TextMaxlen, 0, 0)
+      else: discard
 
   hardConnect(wEvent_Navigation) do (event: wEvent):
     if (style and wTeReadOnly) != 0:
@@ -338,22 +436,17 @@ proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string =
       if event.keyCode in {wKey_Left, wKey_Right}:
         event.veto
 
-proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl {.discardable.} =
+proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTextCtrl {.discardable.} =
+  ##　Constructor, creating and showing a text control.
   new(result)
-  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, value=value, pos=pos, size=size, style=style)
 
-# nim style getter/setter
-proc editable*(self: wTextCtrl): bool = isEditable()
-proc margins*(self: wTextCtrl): tuple[left, right: int] = getMargins()
-proc numberOfLines*(self: wTextCtrl): int = getNumberOfLines()
-proc lastPosition*(self: wTextCtrl): int = getLastPosition()
-proc selection*(self: wTextCtrl): Slice[int] = getSelection()
-proc insertionPoint*(self: wTextCtrl): int = getInsertionPoint()
-proc value*(self: wTextCtrl): string = getValue()
-proc `modified=`*(self: wTextCtrl, modified: bool) = setModified(modified)
-proc `editable=`*(self: wTextCtrl, flag: bool) = setEditable(flag)
-proc `margins=`*(self: wTextCtrl, margin: int) = setMargins(margin)
-proc `selection=`*(self: wTextCtrl, range: Slice[int]) = setSelection(range)
-proc `insertionPoint=`*(self: wTextCtrl, pos: int) = setInsertionPoint(pos)
-proc `maxLength=`*(self: wTextCtrl, length: int) = setMaxLength(length)
-proc `value=`*(self: wTextCtrl, value: string) = setValue(value)
+proc TextCtrl(hWnd: HWND): wTextCtrl {.discardable.} =
+  # only wrap a wWindow's child for now
+  let parent = wAppWindowFindByHwnd(GetParent(hwnd))
+  if parent == nil: return nil
+
+  new(result)
+  wWindow(result).init(hwnd=hwnd, parent=parent)
+  result.mRich = false
