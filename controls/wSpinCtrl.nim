@@ -121,11 +121,14 @@ proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, label: string =
   GetWindowRect(mHwnd, rect2)
   mUpdownWidth = int(rect1.right - rect2.right)
 
-  mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
 
   systemConnect(WM_NCDESTROY) do (event: wEvent):
     DestroyWindow(mUpdownHwnd)
     mUpdownHwnd = 0
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Left, wKey_Right}:
+      event.veto
 
 proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wSpinCtrl {.discardable.} =

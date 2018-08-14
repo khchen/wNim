@@ -146,6 +146,7 @@ proc getBitmap*(self: wButton): wBitmap {.validate, property.} =
 proc setDefault*(self: wButton, flag = true) {.validate, property.} =
   ## This sets the button to be the default item.
   mDefault = flag
+  addWindowStyle(BS_DEFPUSHBUTTON)
 
   if flag:
     for win in self.siblings:
@@ -159,6 +160,10 @@ proc setDropdownMenu*(self: wButton, menu: wMenu = nil) {.validate, property.} =
   else:
     clearWindowStyle(BS_SPLITBUTTON)
     mMenu = nil
+
+proc click*(self: wButton) {.validate, inline.} =
+  ## Simulates the user clicking a button.
+  SendMessage(mHwnd, BM_CLICK, 0, 0)
 
 method release(self: wButton) =
   if mImgData.himl != 0:

@@ -49,6 +49,7 @@ const
   wEvent_MiddleUp* = WM_MBUTTONUP
   wEvent_MiddleDoubleClick* = WM_MBUTTONDBLCLK
   wEvent_MouseWheel* = WM_MOUSEWHEEL
+  wEvent_MouseHorizontalWheel* = WM_MOUSEHWHEEL
   #WM_MOUSELAST
 
   wEvent_NcMouseMove* = WM_NCMOUSEMOVE # 0xA0

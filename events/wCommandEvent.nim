@@ -45,18 +45,3 @@ const
 
 proc isCommandEvent(msg: UINT): bool {.inline.} =
   msg in wEvent_CommandFirst..wEvent_CommandLast
-
-proc getCommandEvent(window: wWindow): UINT =
-  if window of wFrame:
-    result = wEvent_Menu
-  elif window of wButton:
-    result = wEvent_Button
-  elif window of wCheckBox:
-    result = wEvent_CheckBox
-  elif window of wRadioButton:
-    result = wEvent_RadioButton
-  elif window of wToolBar:
-    result = wEventTool
-  else:
-    assert true
-

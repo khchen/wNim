@@ -8,7 +8,6 @@ const
   wEvent_Horizontal* = WM_HSCROLL
   wEvent_Vertical* = WM_VSCROLL
   wEvent_Activate* = WM_ACTIVATE
-  wEvent_Create* = WM_CREATE
   wEvent_Destroy* = WM_DESTROY
   wEvent_CloseWindow* = WM_CLOSE
   wEvent_Close* = WM_CLOSE
@@ -17,6 +16,10 @@ const
   wEvent_MenuHighlight* = WM_MENUSELECT
   wEvent_Paint* = WM_PAINT
   wEvent_NcPaint* = WM_NCPAINT
+
+  # wEvent_AppQuit = WM_APP + 1
+  # wEvent_Navigation* = WM_APP + 2
+  # wEvent_MouseEnter* = WM_APP + 51
 
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_CommandFirst = WM_APP + 150
@@ -46,12 +49,12 @@ proc defaultPropagationLevel(msg: UINT): int =
     result = 0
 
 proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LPARAM = 0,
-    userData: int = 0): wEvent =
+    origin: HWND = 0, userData: int = 0): wEvent =
   ## Constructor.
 
   template CreateEvent(Constructor: untyped): untyped =
     Constructor(mWindow: window, mMsg: msg, mWparam: wParam, mLparam: lParam,
-      mUserData: userData)
+      mOrigin: origin, mUserData: userData)
 
   if msg.isMouseEvent():
     result = CreateEvent(wMouseEvent)
@@ -95,7 +98,7 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
   result.mPropagationLevel = msg.defaultPropagationLevel()
 
   # save the status for the last message occured
-  GetKeyboardState(addr result.mKeyStatus[0])
+  GetKeyboardState(cast[PBYTE](&result.mKeyStatus[0]))
   var val = GetMessagePos()
   result.mMousePos.x = GET_X_LPARAM(val)
   result.mMousePos.y = GET_Y_LPARAM(val)
@@ -118,7 +121,7 @@ proc getEventType*(self: wEvent): UINT {.validate, property, inline.} =
   result = mMsg
 
 proc getEventMessage*(self: wEvent): UINT {.validate, property, inline.} =
-  ## Returns the message code of the given event.
+  ## Returns the message code of the given event. The same as getEventType().
   result = mMsg
 
 proc getId*(self: wEvent): wCommandID {.validate, property, inline.} =
@@ -172,9 +175,17 @@ proc veto*(self: wEvent) {.validate, inline.} =
   #however, is it need more judgment?
   mResult = TRUE
 
+proc deny*(self: wEvent) {.validate, inline.} =
+  ## The same as veto().
+  veto()
+
 proc allow*(self: wEvent) {.validate, inline.} =
   ## This is the opposite of veto(): it explicitly allows the event to be processed.
   mResult = FALSE
+
+proc isAllowed*(self: wEvent): bool {.validate, inline.} =
+  ## Returns true if the change is allowed (veto() hasn't been called) or false otherwise (if it was).
+  result = mResult != TRUE
 
 proc stopPropagation*(self: wEvent): int {.validate, inline, discardable.} =
   ## Stop the event from propagating to its parent window.
@@ -230,35 +241,35 @@ proc getY*(self: wEvent): int {.validate, property, inline.} =
 
 proc lCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left ctrl key is pressed.
-  result = (mKeyStatus[wKeyLCtrl] and 128) != 0
+  result = mKeyStatus[wKeyLCtrl] < 0
 
 proc lShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left shift key is pressed.
-  result = (mKeyStatus[wKeyLShift] and 128) != 0
+  result = mKeyStatus[wKeyLShift] < 0
 
 proc lAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left alt key is pressed.
-  result = (mKeyStatus[wKeyLAlt] and 128) != 0
+  result = mKeyStatus[wKeyLAlt] < 0
 
 proc lWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left win key is pressed.
-  result = (mKeyStatus[wKeyLWin] and 128) != 0
+  result = mKeyStatus[wKeyLWin] < 0
 
 proc rCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right ctrl key is pressed.
-  result = (mKeyStatus[wKeyRCtrl] and 128) != 0
+  result = mKeyStatus[wKeyRCtrl] < 0
 
 proc rShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right shift key is pressed.
-  result = (mKeyStatus[wKeyRShift] and 128) != 0
+  result = mKeyStatus[wKeyRShift] < 0
 
 proc rAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right alt key is pressed.
-  result = (mKeyStatus[wKeyRAlt] and 128) != 0
+  result = mKeyStatus[wKeyRAlt] < 0
 
 proc rWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right win key is pressed.
-  result = (mKeyStatus[wKeyRWin] and 128) != 0
+  result = mKeyStatus[wKeyRWin] < 0
 
 proc ctrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any ctrl key is pressed.
@@ -278,22 +289,22 @@ proc winDown*(self: wEvent): bool {.validate, inline.} =
 
 proc leftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left mouse button is currently down.
-  result = (mKeyStatus[wKeyLButton] and 128) != 0
+  result = mKeyStatus[wKeyLButton] < 0
 
 proc rightDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right mouse button is currently down.
-  result = (mKeyStatus[wKeyRButton] and 128) != 0
+  result = mKeyStatus[wKeyRButton] < 0
 
 proc middleDown*(self: wEvent): bool {.validate, inline.} =
   ##  Returns true if the middle mouse button is currently down.
-  result = (mKeyStatus[wKeyMButton] and 128) != 0
+  result = mKeyStatus[wKeyMButton] < 0
 
 proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.} =
   ## Return an bool array with all the pressed keys.
   ## Using const defined in wKeyCodes.nim as the index.
   ## For exampel, echo event.keyStauts[wKeyCtrl]
   for key, val in mKeyStatus:
-    result[key] = (val and 128) != 0
+    result[key] = val < 0
 
 method getIndex*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.

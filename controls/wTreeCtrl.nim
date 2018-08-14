@@ -860,8 +860,6 @@ proc init(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultP
   self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}
-
   if (style and wTrTwistButtons) != 0:
     type SetWindowTheme = proc (hwnd: HWND, pszSubAppName: LPCWSTR, pszSubIdList: LPCWSTR): HRESULT {.stdcall.}
     let themeLib = loadLib("uxtheme.dll")
@@ -873,6 +871,10 @@ proc init(self: wTreeCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultP
     if mOwnsImageListState:  delete mImageListState
     mImageListNormal = nil
     mImageListState = nil
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right, wKey_Enter}:
+      event.veto
 
 proc TreeCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTreeCtrl {.discardable.} =
   new(result)

@@ -95,9 +95,9 @@ when not defined(wnimdoc):
     wApp* = ref wAppObj
     wAppObj = object of RootObj
       mInstance: HANDLE
-      mWindowList: seq[wWindow]
       mTopLevelWindowList: seq[wWindow]
       mWindowTable: Table[HWND, wWindow]
+      mDialogTable: Table[HWND, wWindow]
       mGDIStockSeq: seq[wGdiObject]
       mPropagationSet: HashSet[UINT]
       mMessageCountTable: CountTable[UINT]
@@ -106,6 +106,7 @@ when not defined(wnimdoc):
     wEvent* = ref wEventObj
     wEventObj = object of RootObj
       mWindow: wWindow
+      mOrigin: HWND
       mMsg: UINT
       mId: wCommandID
       mWparam: WPARAM
@@ -114,7 +115,7 @@ when not defined(wnimdoc):
       mSkip: bool
       mPropagationLevel: int
       mResult: LRESULT
-      mKeyStatus: array[256, byte]
+      mKeyStatus: array[256, int8] # use int8 so that we can test if it < 0
       mMousePos: wPoint
       mClientPos: wPoint
 
@@ -212,7 +213,6 @@ when not defined(wnimdoc):
 
     wControl* = ref wControlObj
     wControlObj = object of wWindowObj
-      mKeyUsed: set[wUSE_KEY]
 
     wStatusBar* = ref wStatusBarObj
     wStatusBarObj = object of wControl
@@ -256,7 +256,11 @@ when not defined(wnimdoc):
 
     wComboBox* = ref wComboBoxObj
     wComboBoxObj = object of wControlObj
+      mEdit: wWindow
+      mList: wWindow
       mOldEditProc: WNDPROC
+      mInitData: ptr UncheckedArray[string]
+      mInitCount: int
 
     wTextCtrl* = ref wTextCtrlObj
     wTextCtrlObj = object of wControlObj

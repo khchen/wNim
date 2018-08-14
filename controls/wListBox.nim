@@ -10,8 +10,8 @@
 ##    wLbSingle                       Single-selection list.
 ##    wLbMultiple                     Multiple-selection list.
 ##    wLbExtended                     Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse.
-##    wLbHScroll                      Create horizontal scrollbar if contents are too wide.
-##    wLbVScroll                      Create vertical scrollbar if contents are too long.
+##    wLbNeededScroll                 Only create a vertical scrollbar if needed.
+##    wLbAlwaysScroll                 Always show a vertical scrollbar.
 ##    wLbSort                         The listbox contents are sorted in alphabetical order.
 ##    wLbNoSel                        Specifies that the list box contains items that can be viewed but not selected.
 ##    ==============================  =============================================================
@@ -29,8 +29,15 @@ const
   wLbSingle* = 0
   wLbMultiple* = LBS_MULTIPLESEL
   wLbExtended* = LBS_EXTENDEDSEL
-  wLbHScroll* = WS_HSCROLL or LBS_DISABLENOSCROLL
-  wLbVScroll* = WS_VSCROLL or LBS_DISABLENOSCROLL
+  # The horizontal scroll of listbox bar is useless.
+  # Even shows it by WS_HSCROLL + LBS_DISABLENOSCROLL, it is always disabled?
+  # So we focus on vertical scroll bar here. (Testing under win10)
+  # There are three condition for vertical scroll:
+  #  1. no style: never shows a scroll bar. (wxLB_NO_SB)
+  #  2. WS_VSCROLLL: shows a vertical scroll bar only when list is too long. (wxLB_NEEDED_SB)
+  #  3. WS_VSCROLL + CBS_DISABLENOSCROLL: alwasy shows a vertical scroll bar. (wxLB_ALWAYS_SB)
+  wLbNeededScroll* = WS_VSCROLL
+  wLbAlwaysScroll* = WS_VSCROLL or LBS_DISABLENOSCROLL
   wLbSort* = LBS_SORT
   wLbNoSel* = LBS_NOSEL
 
@@ -42,19 +49,20 @@ proc getCount*(self: wListBox): int {.validate, property, inline.} =
   ## Returns the number of items in the control.
   result = len()
 
-proc getText*(self: wListBox, i: int): string {.validate, property.} =
+proc getText*(self: wListBox, index: int): string {.validate, property.} =
   ## Returns the label of the item with the given index.
   # use getText instead of getString, otherwise property become "string" keyword.
-  let maxLen = int SendMessage(mHwnd, LB_GETTEXTLEN, i, 0)
-  if maxLen == LB_ERR:
-    raise newException(IndexError, "index out of bounds")
+  let maxLen = int SendMessage(mHwnd, LB_GETTEXTLEN, index, 0)
+  if maxLen == LB_ERR: return nil
 
   var buffer = T(maxLen + 2)
-  buffer.setLen(SendMessage(mHwnd, LB_GETTEXT, i, &buffer))
+  buffer.setLen(SendMessage(mHwnd, LB_GETTEXT, index, &buffer))
   result = $buffer
 
-proc `[]`*(self: wListBox, i: int): string {.validate, inline.} =
-  getText(i)
+proc `[]`*(self: wListBox, index: int): string {.validate, inline.} =
+  result = getText(index)
+  if result == nil:
+    raise newException(IndexError, "index out of bounds")
 
 iterator items*(self: wListBox): string {.validate, inline.} =
   ## Iterate each item in this list box.
@@ -70,7 +78,7 @@ iterator pairs*(self: wListBox): tuple[key: int, val: string] {.validate, inline
 
 proc insert*(self: wListBox, pos: int, text: string) {.validate, inline.} =
   ## Inserts the given string before the specified position.
-  ## Note that the inserted item won't be sorted even the list box has wLbSort style.
+  ## Notice that the inserted item won't be sorted even the list box has wLbSort style.
   ## If pos is -1, the string is added to the end of the list.
   SendMessage(mHwnd, LB_INSERTSTRING, pos, &T(text))
 
@@ -94,7 +102,7 @@ proc delete*(self: wListBox, index: int) {.validate, inline.} =
   if index >= 0: SendMessage(mHwnd, LB_DELETESTRING, index, 0)
 
 proc delete*(self: wListBox, text: string) {.validate, inline.} =
-  ## Search and delete the specified string in the list box
+  ## Search and delete the specified string in the list box.
   delete(find(text))
 
 proc clear*(self: wListBox) {.validate, inline.} =
@@ -161,11 +169,11 @@ proc deselect*(self: wListBox, text: string) =
   if i >= 0: deselect(i)
 
 proc setSelection*(self: wListBox, index: int) {.validate, property, inline.} =
-  ## Sets the selection to the given index. The same as select.
+  ## Sets the selection to the given index. The same as select().
   select(index)
 
 proc setSelections*(self: wListBox, text: string) {.validate, property, inline.} =
-  ## Searches and sets the selection to the given text. The same as select.
+  ## Searches and sets the selection to the given text. The same as select().
   select(text)
 
 proc setSelections*(self: wListBox, list: openarray[int]) {.validate, property, inline.} =
@@ -262,13 +270,13 @@ method getBestSize*(self: wListBox): wSize =
   ## Returns the best acceptable minimal size for the control.
   result = countSize(1, 1.0)
 
-method prepare(self: wListBox) =
+method trigger(self: wListBox) =
   for i in 0..<mInitCount:
     let text = mInitData[i]
     SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
 
-proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint, size = wDefaultSize,
-    choices: openarray[string] = [], style: wStyle = 0) =
+proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
+    size = wDefaultSize, choices: openarray[string] = [], style: wStyle = 0) =
 
   mInitData = cast[ptr UncheckedArray[string]](choices)
   mInitCount = choices.len
@@ -276,7 +284,8 @@ proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPo
   self.wControl.init(className=WC_LISTBOX, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or LBS_NOTIFY or LBS_NOINTEGRALHEIGHT)
 
-  mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
+  # a list box by default have white background, not parent's background
+  setBackgroundColor(wWhite)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
@@ -286,6 +295,10 @@ proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPo
       of LBN_DBLCLK:
         self.processMessage(wEvent_ListBoxDoubleClick, event.mWparam, event.mLparam)
       else: discard
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+      event.veto
 
 proc ListBox*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize,
     choices: openarray[string] = [], style: wStyle = wLbSingle): wListBox {.discardable.} =

@@ -306,15 +306,6 @@ proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string =
 
   self.wControl.init(className=className, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  if (style and wTeReadOnly) != 0:
-    mKeyUsed = {}
-
-  elif (style and wTeMultiLine) != 0:
-    mKeyUsed = {wUSE_TAB, wUSE_ENTER, wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
-
-  else:
-    mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
-
   if mRich:
     SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, parent.mBackgroundColor)
     SendMessage(mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or ENM_REQUESTRESIZE)
@@ -334,6 +325,18 @@ proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, label: string =
       else: 0
       if msg != 0:
         self.processMessage(msg, event.mWparam, event.mLparam)
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if (style and wTeReadOnly) != 0:
+      return
+
+    elif (style and wTeMultiLine) != 0:
+      if event.keyCode in {wKey_Tab, wKey_Enter, wKey_Left, wKey_Right, wKey_Up, wKey_Down}:
+        event.veto
+
+    else:
+      if event.keyCode in {wKey_Left, wKey_Right}:
+        event.veto
 
 proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wTextCtrl {.discardable.} =
   new(result)

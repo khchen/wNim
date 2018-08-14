@@ -15,10 +15,15 @@
 ##    wVScroll                        Use this style to enable a vertical scrollbar.
 ##    wHScroll                        Use this style to enable a horizontal scrollbar.
 ##    wClipChildren                   Use this style to eliminate flicker caused by the background being repainted, then children being painted over them.
-##    wHideTaskbar                    Use this style to hide the taskbar item.
-##    wPopup                          The windows is a pop-up window (WS_POPUP).
+##    wHideTaskbar                    Use this style to hide the taskbar item (top-level window only).
+##    wInvisible                      The window is initially invisible (child window is visible by default).
+##    wPopup                          The window is a pop-up window (WS_POPUP).
 ##    wPopupWindow                    The window is a pop-up window (WS_POPUPWINDOW).
 ##    ==============================  =============================================================
+
+# forward declarations
+proc getScrollInfo(self: wScrollBar): SCROLLINFO
+proc setScrollPos*(self: wScrollBar, position: int)
 
 const
   wBorderSimple* = WS_BORDER
@@ -31,6 +36,7 @@ const
   wHScroll* = WS_HSCROLL
   wClipChildren* = WS_CLIPCHILDREN
   wHideTaskbar* = 0x10000000 shl 32
+  wInvisible* = 0x20000000 shl 32
   wPopup* = int64 cast[uint32](WS_POPUP) # WS_POPUP is 0x80000000L
   wPopupWindow* = int64 cast[uint32](WS_POPUPWINDOW)
 
@@ -152,7 +158,7 @@ proc delete*(self: wWindow) {.inline.} =
   DestroyWindow(mHwnd)
 
 proc destroy*(self: wWindow) {.validate, inline.} =
-  ## Destroys the window. The same as delete.
+  ## Destroys the window. The same as delete().
   delete()
 
 method release(self: wWindow) {.base, inline.} =
@@ -161,7 +167,7 @@ method release(self: wWindow) {.base, inline.} =
   # really resoruce clear is in WM_NCDESTROY
   discard
 
-method prepare(self: wWindow) {.base, inline.} =
+method trigger(self: wWindow) {.base, inline.} =
   # override this if a window need extra init after window create.
   # similar to WM_CREATE.
   discard
@@ -188,12 +194,12 @@ proc move*(self: wWindow, pos: wPoint) {.validate, inline.} =
   move(self, pos.x, pos.y)
 
 proc setPosition*(self: wWindow, pos: wPoint) {.validate, property, inline.} =
-  ## Moves the window to the specified position. The same as move.
+  ## Moves the window to the specified position. The same as move().
   ## wDefault to indicate not to change.
   move(self, pos.x, pos.y)
 
 proc setPosition*(self: wWindow, x: int, y: int) {.validate, property, inline.} =
-  ## Moves the window to the specified position. The same as move.
+  ## Moves the window to the specified position. The same as move().
   ## wDefault to indicate not to change.
   move(self, x, y)
 
@@ -568,7 +574,7 @@ proc getTitle*(self: wWindow): string {.validate, property.} =
   result = $title
 
 proc getLabel*(self: wWindow): string {.validate, property, inline.} =
-  ## Returns the label of the window. The same as getTitle.
+  ## Returns the label of the window. The same as getTitle().
   result = getTitle()
 
 proc getChildren*(self: wWindow): seq[wWindow] {.validate, property, inline.} =
@@ -625,7 +631,7 @@ proc setParent*(self: wWindow, parent: wWindow): bool {.validate, property, disc
     return true
 
 proc reparent*(self: wWindow, parent: wWindow): bool {.validate, inline, discardable.} =
-  ## Reparents the window. The same as setParent.
+  ## Reparents the window. The same as setParent().
   wValidate(parent)
   setParent(parent)
 
@@ -650,7 +656,7 @@ proc setTitle*(self: wWindow, title: string) {.validate, property, inline.} =
   SetWindowText(mHwnd, title)
 
 proc setLabel*(self: wWindow, label: string) {.validate, property, inline.} =
-  ## Sets the window's label. The same as setTitle.
+  ## Sets the window's label. The same as setTitle().
   wValidate(label)
   SetWindowText(mHwnd, label)
 
@@ -837,12 +843,17 @@ proc queueEvent*(self: wWindow, event: wEvent) {.validate.} =
   PostMessage(mHwnd, event.mMsg, event.mWparam, event.mLparam)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
-    ret: var LRESULT): bool {.discardable.} =
+    ret: var LRESULT, origin: HWND): bool {.discardable.} =
   # Use internally, generate the event object and process it.
   if wAppHasMessage(msg):
-    let event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam)
+    let event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam, origin=origin)
     result = processEvent(event)
     ret = event.mResult
+
+proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
+    ret: var LRESULT): bool {.discardable, inline.} =
+  # Use internally, ignore origin means origin is self.mHwnd.
+  result = processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM,
     lParam: LPARAM): bool {.validate, inline, discardable.} =
@@ -885,9 +896,6 @@ proc scrollEventTranslate(wParam: WPARAM, info: SCROLLINFO, position: var INT, i
       if isControl: wEvent_ScrollChanged else: wEvent_ScrollWinChanged
     else: 0
 
-proc getScrollInfo(self: wScrollBar): SCROLLINFO
-proc setScrollPos*(self: wScrollBar, position: int)
-
 proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
     isControl: bool, processed: var bool) =
   # handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll bar control
@@ -926,17 +934,6 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
     if not self.processMessage(defaultKind, wParam, dataPtr):
       self.processMessage(eventKind, wParam, dataPtr)
 
-proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} =
-  # assign to WNDCLASSEX.lpfnWndProc to invoke event handler
-  let self = wAppWindowFindByHwnd(hwnd)
-  if self != nil:
-    if self.processMessage(msg, wParam, lParam, result):
-      return result
-
-    elif self.mSubclassedOldProc != nil:
-      return CallWindowProc(self.mSubclassedOldProc, hwnd, msg, wParam, lParam)
-
-  return DefWindowProc(hwnd, msg, wParam, lParam)
 
 proc EventConnection(id: wCommandID = 0, handler: wEventHandler = nil, neatHandler: wEventNeatHandler = nil,
     userData = 0, undeletable = false): wEventConnection {.inline.} =
@@ -978,6 +975,20 @@ proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatHandl
   var connection = EventConnection(id=id, neatHandler=handler, userData=userData, undeletable=undeletable)
   self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+
+proc getCommandEvent(window: wWindow): UINT =
+  if window of wFrame:
+    result = wEvent_Menu
+  elif window of wButton:
+    result = wEvent_Button
+  elif window of wCheckBox:
+    result = wEvent_CheckBox
+  elif window of wRadioButton:
+    result = wEvent_RadioButton
+  elif window of wToolBar:
+    result = wEventTool
+  else:
+    assert true
 
 proc connect*(self: wWindow, id: wCommandID, handler: wEventHandler, userData: int = 0, undeletable = false) {.validate.} =
   ## Connects the specified ID with the event handler defined as "proc (event: wEvent)".
@@ -1031,25 +1042,15 @@ proc `.`*(self: wWindow, id: wCommandID, handler: wEventNeatHandler) {.inline.} 
   ## Symbol alias for connect.
   self.connect(id, handler)
 
-proc subclass(self: wWindow, hwnd: HWND): HWND =
-  result = mHwnd
-  mHwnd = hwnd
-  wAppWindowChange(self)
-  mSubclassedOldProc = cast[WNDPROC](SetWindowLongPtr(hwnd, GWL_WNDPROC, cast[LONG_PTR](wWndProc)))
-  assert mSubclassedOldProc != wWndProc
-
-proc unusedClassName(base: string): string =
-  var
-    count = 1
-    wc: WNDCLASSEX
-
-  while true:
-    result = base & $count
-    count.inc
-    if GetClassInfoEx(wAppGetInstance(), result, wc) == 0: break
 
 proc wWindow_DoMouseMove(event: wEvent) =
   let self = event.mWindow
+
+  # we only handle WM_MOUSEMOVE if it's not from child window
+  # (propagated or subclassed, ex: combobox)
+  if self.mHwnd != event.mOrigin:
+    return
+
   if not self.mMouseInWindow:
     # it would be wrong to assume that just because we get a mouse move
     # event that the mouse is inside the window: although this is usually
@@ -1067,7 +1068,7 @@ proc wWindow_DoMouseMove(event: wEvent) =
 
   else:
     # Windows doesn't send WM_MOUSELEAVE if the mouse has been captured so
-    #  send it here if we are using native mouse leave tracking
+    # send it here if we are using native mouse leave tracking
     if self.hasCapture() and not isMouseInWindow(self.mHwnd):
       self.processMessage(wEvent_MouseLeave, event.mWparam, event.mLparam)
 
@@ -1128,30 +1129,94 @@ proc wWindow_OnCtlColor(event: wEvent) =
 
   # here lparam.HANDLE maybe a subwindow of our wWindow
   # so need to find our wWindow to get the color setting
-  let hdc = HDC event.mWparam
-  var hwnd = HANDLE event.mLparam
-  while hwnd != 0:
-    let win = wAppWindowFindByHwnd(hwnd)
-    if win != nil:
-      SetBkColor(hdc, win.mBackgroundColor)
-      SetTextColor(hdc, win.mForegroundColor)
-      processed = true
-      event.mResult = win.mBackgroundBrush.mHandle.LRESULT
-      break
+  let
+    hdc = HDC event.mWparam
+    hwnd = HANDLE event.mLparam
+    win = wAppWindowFindByHwnd(hwnd)
 
-    hwnd = GetParent(hwnd)
+  if win != nil and win.mBackgroundBrush != nil:
+
+    if win.mBackgroundColor != wDefaultColor:
+      SetBkColor(hdc, win.mBackgroundColor)
+
+    if win.mForegroundColor != wDefaultColor:
+      SetTextColor(hdc, win.mForegroundColor)
+
+    event.mResult = LRESULT win.mBackgroundBrush.mHandle
+    processed = true
+
+
+proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} =
+  # assign to WNDCLASSEX.lpfnWndProc to invoke event handler
+
+  let self = wAppWindowFindByHwnd(hwnd)
+  if self != nil:
+    if self.processMessage(msg, wParam, lParam, result):
+      return result
+
+    elif self.mSubclassedOldProc != nil:
+      return CallWindowProc(self.mSubclassedOldProc, hwnd, msg, wParam, lParam)
+
+  return DefWindowProc(hwnd, msg, wParam, lParam)
+
+proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
+    uIdSubclass: UINT_PTR, dwRefData: DWORD_PTR): LRESULT {.stdcall.} =
+
+  let self = cast[wWindow](dwRefData)
+  if self.processMessage(msg, wparam, lparam, result):
+    return
+
+  if msg == WM_NCDESTROY:
+    RemoveWindowSubclass(hwnd, wSubProc, uIdSubclass)
+
+  return DefSubclassProc(hwnd, msg, wParam, lParam)
+
+proc subclass(self: wWindow, hwnd: HWND): HWND =
+  result = mHwnd
+  mHwnd = hwnd
+  wAppWindowChange(self)
+  mSubclassedOldProc = cast[WNDPROC](SetWindowLongPtr(hwnd, GWL_WNDPROC, cast[LONG_PTR](wWndProc)))
+  assert mSubclassedOldProc != wWndProc
+
+proc initBasic(self: wWindow) =
+  self.wView.init()
+  mSystemConnectionTable = initTable[UINT, seq[wEventConnection]]()
+  mConnectionTable = initTable[UINT, seq[wEventConnection]]()
+  mChildren = @[]
+  mMaxSize = wDefaultSize
+  mMinSize = wDefaultSize
+
+proc init(self: wWindow, hWnd: HWND, parent: wWindow) =
+  initBasic()
+  mHwnd = hWnd
+  mParent = parent
+
+  mBackgroundColor = wDefaultColor
+  mForegroundColor = wDefaultColor
+
+  let hFont = cast[HANDLE](SendMessage(mHwnd, WM_GETFONT, 0, 0))
+  if hFont != 0:
+    mFont = Font(hFont)
+  else:
+    mFont = wNormalFont
+
+  wAppWindowAdd(self)
+  parent.mChildren.add(self)
+
+  systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
+  systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+  systemConnect(WM_DESTROY, wWindow_DoDestroy)
+  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+  # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
+
+  SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
 
 proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, owner: wWindow = nil, className = "wWindow", title = "",
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
     id: wCommandID = 0, regist = true, callback: proc(self: wWindow) = nil) =
 
-  self.wView.init()
-  mConnectionTable = initTable[UINT, seq[wEventConnection]]()
-  mSystemConnectionTable = initTable[UINT, seq[wEventConnection]]()
-  mChildren = @[]
-  mMaxSize = wDefaultSize
-  mMinSize = wDefaultSize
+  initBasic()
   mParent = parent
 
   var
@@ -1168,6 +1233,16 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   mBackgroundBrush = Brush(bgColor)
   mBackgroundColor = bgColor
   mForegroundColor = fgColor
+
+  proc unusedClassName(base: string): string =
+    var
+      count = 1
+      wc: WNDCLASSEX
+
+    while true:
+      result = base & $count
+      count.inc
+      if GetClassInfoEx(wAppGetInstance(), result, wc) == 0: break
 
   var className = className
   if regist:
@@ -1186,7 +1261,7 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
 
   let
     isHideTaskbar = (style and wHideTaskbar) != 0
-    style = style and not (wHideTaskbar)
+    isInvisible = (style and wInvisible) != 0
 
   var
     msStyle = cast[DWORD](style and 0xFFFFFFFF)
@@ -1218,7 +1293,12 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
     if pos.y == wDefault: y = 0
     adjustForParentClientOriginAdd(x, y)
 
-  mHwnd = CreateWindowEx(exStyle, className, title, msStyle, x, y, 0, 0, parentHwnd, int id, wAppGetInstance(), nil)
+  if isInvisible:
+    msStyle = msStyle and (not WS_VISIBLE)
+
+  mHwnd = CreateWindowEx(exStyle, className, title, msStyle, x, y, 0, 0, parentHwnd,
+    int id, wAppGetInstance(), cast[LPVOID](self))
+
   if mHwnd == 0:
     raise newException(wError, className & " window creation failure")
 
@@ -1226,16 +1306,16 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   # todo: use prepare instead, delete this after code clear
   if callback != nil: callback(self)
 
-  # preapre something after window creating but before set size.
-  # aka WM_CREATE for wnim window.
-  prepare()
-
   wAppWindowAdd(self)
   if parent.isNil:
     wAppTopLevelWindowAdd(self)
   else:
     mFont = parent.mFont
     parent.mChildren.add(self)
+
+  # preapre something after window creating but before set size.
+  # aka WM_CREATE for wnim window.
+  trigger()
 
   if mFont == nil: mFont = wDefaultFont
   SendMessage(mHwnd, WM_SETFONT, mFont.mHandle, 1)
@@ -1254,11 +1334,12 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   # the different is: system event handle shouldn't modify the event object
   systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
   systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+  systemConnect(WM_DESTROY, wWindow_DoDestroy)
+  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+
   systemConnect(WM_GETMINMAXINFO, wWindow_DoGetMinMaxInfo)
   systemConnect(WM_VSCROLL, wWindow_DoScroll)
   systemConnect(WM_HSCROLL, wWindow_DoScroll)
-  systemConnect(WM_DESTROY, wWindow_DoDestroy)
-  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
 
   hardConnect(WM_NOTIFY, wWindow_OnNotify)
   hardConnect(WM_CTLCOLORBTN, wWindow_OnCtlColor)
@@ -1274,3 +1355,11 @@ proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, siz
   # there and don't do anything about it. Especially for controls.
   new(result)
   result.init(parent=parent, pos=pos, size=size, style=style, className=className, id=id)
+
+proc Window*(hWnd: HWND): wWindow {.discardable.} =
+  # only wrap a wWindow's child for now
+  let parent = wAppWindowFindByHwnd(GetParent(hwnd))
+  if parent == nil: return nil
+
+  new(result)
+  result.init(hwnd=hwnd, parent=parent)

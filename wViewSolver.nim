@@ -13,6 +13,10 @@
 ##   WEAKEST                         createStrength(0.0, 0.0, 0.01)
 ##   ==============================  =============================================================
 
+# forward declarations
+proc setSize*(self: wWindow, x, y, width, height: int)
+proc getRect*(self: wWindow): wRect
+
 # const REQUIRED* = createStrength(1000.0, 1000.0, 1000.0)
 # const STRONG* = createStrength(1.0, 0.0, 0.0)
 # const MEDIUM* = createStrength(0.0, 1.0, 0.0)
@@ -31,10 +35,6 @@ proc `|`*(strength: float, constraint: Constraint): Constraint {.inline.} =
 proc init(self: wViewSolver) =
   mSolver = newSolver()
   mViews = initSet[wView]()
-
-# forward declaration
-proc setSize*(self: wWindow, x, y, width, height: int)
-proc getRect*(self: wWindow): wRect
 
 proc addConstraint*(self: wViewSolver, constraint: Constraint) {.validate, inline.} =
   ## Add a constraint to the solver.

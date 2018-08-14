@@ -72,7 +72,7 @@ proc minimize*(self: wFrame, flag = true) {.validate.} =
     ShowWindow(mHwnd, if flag: SW_MINIMIZE else: SW_RESTORE)
 
 proc iconize*(self: wFrame, flag = true) {.validate, inline.} =
-  ## Iconizes or restores the frame. The same as minimize.
+  ## Iconizes or restores the frame. The same as minimize().
   minimize(flag)
 
 proc maximize*(self: wFrame, flag = true) {.validate.} =

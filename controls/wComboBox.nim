@@ -1,130 +1,211 @@
 ## A combobox is like a combination of an edit control and a listbox.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wCbSimple                       Creates a combobox with a permanently displayed list.
+##    wCbDropDown                     Creates a combobox with a drop-down list.
+##    wCbReadOnly                     Allows the user to choose from the list but doesn't allow to enter a value.
+##    wCbSort                         Sorts the entries in the list alphabetically.
+##    wCbNeededScroll                 Only create a vertical scrollbar if needed.
+##    wCbAlwaysScroll                 Always show a vertical scrollbar.
+##    wCbAutoHScroll                  Automatically scrolls the text in an edit control to the right when the user types a character at the end of the line.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wScrollEvent                    Description
+##    ==============================  =============================================================
+##    wEvent_ComboBox                 When an item on the list is selected, Calling GetValue() returns the new value of selection.
+##    wEvent_Text                     When the combobox text changes.
+##    wEvent_TextEnter                When pressing Enter key. If the event is skipped, combobox do it's default behavior.
+##    wEvent_ComboBoxCloseUp          When the list box of the combo box disappears.
+##    wEvent_ComboBoxDropDown         When the list box part of the combo box is shown.
+##    wEvent_CommandSetFocus          When the combobox receives the keyboard focus.
+##    wEvent_CommandKillFocus         When the combobox loses the keyboard focus.
+##    wEvent_CommandLeftDoubleClick   When the user double-clicks a string in the list, wCbSimple only.
+##    ==============================  =============================================================
 
-proc len*(self: wComboBox): int =
-  result = SendMessage(mHwnd, CB_GETCOUNT, 0, 0).int
+const
+  # ComboBox styles
+  wCbSimple* = CBS_SIMPLE # 01
+  wCbDropDown* = CBS_DROPDOWN # 02
+  wCbReadOnly* = CBS_DROPDOWNLIST # 03
+  wCbStyleMask = 0b11
+  wCbSort* = CBS_SORT
+  # A combobox never have a horizontal scroll bar.(Testing under win10)
+  # Others see wListBox.nim
+  wCbNeededScroll* = WS_VSCROLL
+  wCbAlwaysScroll* = WS_VSCROLL or CBS_DISABLENOSCROLL
+  wCbAutoHScroll* = CBS_AUTOHSCROLL
 
-proc getCount*(self: wComboBox): int =
+proc len*(self: wComboBox): int {.validate, inline.} =
+  ## Returns the number of items in the control.
+  result = int SendMessage(mHwnd, CB_GETCOUNT, 0, 0)
+
+proc getCount*(self: wComboBox): int {.validate, property, inline.} =
+  ## Returns the number of items in the control.
   result = len()
 
-proc getString*(self: wComboBox, n: int): string =
-  let maxLen = SendMessage(mHwnd, CB_GETLBTEXTLEN, n, 0).int + 1
-  if maxLen <= 0:
+proc getText*(self: wComboBox, index: int): string =
+  ## Returns the text of the item with the given index.
+  # use getText instead of getString, otherwise property become "string" keyword.
+  let maxLen = int SendMessage(mHwnd, CB_GETLBTEXTLEN, index, 0)
+  if maxLen == CB_ERR: return nil
+
+  var buffer = T(maxLen + 2)
+  buffer.setLen(SendMessage(mHwnd, CB_GETLBTEXT, index, &buffer))
+  result = $buffer
+
+proc `[]`*(self: wComboBox, index: int): string {.validate, inline.} =
+  result = getText(index)
+  if result == nil:
     raise newException(IndexError, "index out of bounds")
 
-  var
-    ptext = allocWString(maxLen)
-    text = cast[wstring](ptext)
-  defer: dealloc(ptext)
+iterator items*(self: wComboBox): string {.validate, inline.} =
+  ## Iterate each item in this combo box.
+  for i in 0..<len():
+    yield getText(i)
 
-  text.setLen(SendMessage(mHwnd, CB_GETLBTEXT, n, &text))
-  result = $text
-
-iterator items*(self: wComboBox): string =
-  let count = len()
+iterator pairs*(self: wComboBox): tuple[key: int, val: string] {.validate, inline.} =
+  ## Iterates over each item of listbox. Yields ``(index, [index])`` pairs.
   var i = 0
-  while i < count:
-    yield getString(i)
-    i.inc
+  for item in self:
+    yield (i, item)
+    inc i
 
-proc insert*(self: wComboBox, n: int, text: string) =
-  # Unlike the CB_ADDSTRING message, the CB_INSERTSTRING message does not cause a list with the CBS_SORT style to be sorted.
-  SendMessage(mHwnd, CB_INSERTSTRING, n, &(L(text)))
+proc insert*(self: wComboBox, pos: int, text: string) {.validate, inline.} =
+  ## Inserts the given string before the specified position.
+  ## Notice that the inserted item won't be sorted even the list box has wCbSort style.
+  ## If pos is -1, the string is added to the end of the list.
+  SendMessage(mHwnd, CB_INSERTSTRING, pos, &T(text))
 
-proc insert*(self: wComboBox, n: int, list: openarray[string]) =
+proc insert*(self: wComboBox, pos: int, list: openarray[string]) {.validate, inline.} =
+  ## Inserts multiple strings in the same time.
   for i, text in list:
-    insert(if n < 0: n else: i + n, text)
+    insert(if pos < 0: pos else: i + pos, text)
 
-proc append*(self: wComboBox, text: string) =
-  SendMessage(mHwnd, CB_ADDSTRING, 0, &(L(text)))
+proc append*(self: wComboBox, text: string) {.validate, inline.} =
+  ## Appends the given string to the end. If the combo box has the wCbSort style,
+  ## the string is inserted into the list and the list is sorted.
+  SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
 
-proc append*(self: wComboBox, list: openarray[string]) =
+proc append*(self: wComboBox, list: openarray[string]) {.validate, inline.} =
+  ## ## Appends multiple strings in the same time.
   for text in list:
     append(text)
 
-proc delete*(self: wComboBox, n: int) =
-  if n >= 0:
-    SendMessage(mHwnd, CB_DELETESTRING, n, 0)
+proc delete*(self: wComboBox, index: int) {.validate, inline.} =
+  ## Delete a string in the combo box.
+  if index >= 0: SendMessage(mHwnd, CB_DELETESTRING, index, 0)
 
-proc delete*(self: wComboBox, text: string) =
+proc delete*(self: wComboBox, text: string)  {.validate, inline.} =
+  ## Search and delete the specified string in the combo box.
   delete(find(text))
 
-proc clear*(self: wComboBox) =
+proc clear*(self: wComboBox)  {.validate, inline.} =
+  ## Remove all items from a combo box.
   SendMessage(mHwnd, CB_RESETCONTENT, 0, 0)
 
-proc findString*(self: wComboBox, text: string): int =
+proc findText*(self: wComboBox, text: string): int {.validate, inline.} =
+  ## Finds an item whose label matches the given text.
   result = find(text)
 
-proc getCurrentSelection*(self: wComboBox): int =
-  result = SendMessage(mHwnd, CB_GETCURSEL, 0, 0).int
+proc getCurrentSelection*(self: wComboBox): int {.validate, property, inline.} =
+  ## Returns the index of the selected item or wNOT_FOUND(-1) if no item is selected.
+  result = int SendMessage(mHwnd, CB_GETCURSEL, 0, 0)
 
-proc getSelection*(self: wComboBox): (int, int) =
-  discard SendMessage(mHwnd, CB_GETEDITSEL, addr result[0], addr result[1])
+proc getSelection*(self: wComboBox): Slice[int] {.validate, property, inline.} =
+  ## Gets the current selection range. If result.b < result.a, there was no selection.
+  SendMessage(mHwnd, CB_GETEDITSEL, &result.a, &result.b)
+  dec result.b # system return a==b if no selection, so -1.
 
-proc getInsertionPoint*(self: wComboBox): int =
-  discard SendMessage(mHwnd, CB_GETEDITSEL, addr result, 0)
+proc getInsertionPoint*(self: wComboBox): int {.validate, property, inline.} =
+  ## Returns the insertion point, or cursor.
+  # must discard here so that return the result directly.
+  discard SendMessage(mHwnd, CB_GETEDITSEL, &result, 0)
 
-proc getStringSelection*(self: wComboBox): string =
+proc getTextSelection*(self: wComboBox): string {.validate, property.} =
+  ## Gets the text currently selected in the control or empty string if there is no selection.
   let
-    text = L(getLabel())
+    text = +$(getLabel()) # convert to wstring so that we can count in chars
     sel = getSelection()
-  result = $(text[sel[0]..<sel[1]])
+  result = $(text[sel.a..<sel.b])
 
-proc setSelection*(self: wComboBox, start, last: int) =
+proc setSelection*(self: wComboBox, start: int, last: int) {.validate, property, inline.} =
+  ## Selects the text starting at the first position up to
+  ## (but not including) the character at the last position.
   SendMessage(mHwnd, CB_SETEDITSEL, 0, MAKELONG(start, last))
 
-proc select*(self: wComboBox, n: int) =
-  SendMessage(mHwnd, CB_SETCURSEL, n, 0)
+proc setSelection*(self: wComboBox, range: Slice[int]) {.validate, property, inline.} =
+  ## Selects the in range (including).
+  setSelection(range.a, range.b + 1)
 
-proc setSelection*(self: wComboBox, n: int) =
-  select(n)
+proc select*(self: wComboBox, index: int) {.validate, inline.} =
+  ## Sets the selection to the given index or removes the selection entirely if index == wNOT_FOUND(-1).
+  SendMessage(mHwnd, CB_SETCURSEL, index, 0)
 
-proc setString*(self: wComboBox, n: int, text: string) =
-  if n >= 0:
-    let reselect = (getCurrentSelection() == n)
-    delete(n)
-    insert(n, text)
+proc setSelection*(self: wComboBox, index: int) {.validate, property, inline.} =
+  ## The same as select().
+  select(index)
+
+proc setText*(self: wComboBox, index: int, text: string) {.validate, property.} =
+  ## Changes the text of the specified combobox item.
+  # use setText instead of setString, otherwise property become "string" keyword.
+  if index >= 0:
+    let reselect = (getCurrentSelection() == index)
+    delete(index)
+    insert(index, text)
     if reselect:
-      select(n)
+      select(index)
 
-proc changeValue*(self: wComboBox, text: string) =
-  # does not generate the wEvent_Text
-  let kind = GetWindowLongPtr(mHwnd, GWL_STYLE).DWORD and 0b11
+proc setValue*(self: wComboBox, text: string) {.validate, property.} =
+  ## Sets the text for the combobox text field.
+  ## Notice that this proc won't generate wEVT_TEXT event.
+  let kind = GetWindowLongPtr(mHwnd, GWL_STYLE) and wCbStyleMask
   if kind == wCbReadOnly:
-    let n = find(text)
-    select(n) # if n == -1, selection is removed
+    select(find(text)) # if result is -1, selection is removed
   else:
     setLabel(text)
 
-proc setValue*(self: wComboBox, text: string) =
-  # this method will generate a wEvent_Text event
-  changeValue(text)
-
-  let id = getId()
-  self.processMessage(wEvent_Text, cast[WPARAM](id), 0)
-
-proc getValue*(self: wComboBox): string =
+proc getValue*(self: wComboBox): string {.validate, property, inline.} =
+  ## Gets the text for the combobox text field.
   result = getLabel()
 
-proc isListEmpty*(self: wComboBox): bool =
+proc isListEmpty*(self: wComboBox): bool {.validate,  inline.} =
+  ## Returns true if the list of combobox choices is empty.
   result = (len() == 0)
 
-proc isTextEmpty*(self: wComboBox): bool =
-  result = (getLabel().len == 0)
+proc isTextEmpty*(self: wComboBox): bool {.validate,  inline.} =
+  ## Returns true if the text of the combobox is empty.
+  result = GetWindowTextLength(mHwnd) == 0
 
-proc popup*(self: wComboBox) =
+proc popup*(self: wComboBox) {.validate,  inline.} =
+  ## Shows the list box portion of the combo box.
   SendMessage(mHwnd, CB_SHOWDROPDOWN, TRUE, 0)
 
-proc dismiss*(self: wComboBox) =
+proc dismiss*(self: wComboBox) {.validate,  inline.} =
+  ## Hides the list box portion of the combo box.
   SendMessage(mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
+
+proc getEditControl*(self: wComboBox): wWindow {.validate, property, inline.} =
+  result = mEdit
+
+proc getListControl*(self: wComboBox): wWindow {.validate, property, inline.} =
+  result = mList
 
 proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
   const maxItem = 10
   let
     lineHeight = getLineControlDefaultHeight(mFont.mHandle)
-    kind = GetWindowLongPtr(mHwnd, GWL_STYLE).DWORD and 0b11
+    kind = GetWindowLongPtr(mHwnd, GWL_STYLE) and wCbStyleMask
     count = len()
 
-  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO).DWORD)
+  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
   GetComboBoxInfo(mHwnd, cbi)
 
   proc countWidth(rate: float): int =
@@ -134,77 +215,94 @@ proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
       result = max(result, int(size.width.float * rate) + 8)
 
   if kind == wCbSimple:
-    let itemHeight = SendMessage(mHwnd, CB_GETITEMHEIGHT, 0, 0).int
+    let itemHeight = int SendMessage(mHwnd, CB_GETITEMHEIGHT, 0, 0)
     result.width = countWidth(rate)
     result.height = lineHeight + min(max(count, minItem), maxItem) * itemHeight + 4 # not too tall, not too small
 
     let style = GetWindowLongPtr(cbi.hwndList, GWL_STYLE)
     if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or count > maxItem):
-      result.width += GetSystemMetrics(SM_CXVSCROLL).int
+      result.width += GetSystemMetrics(SM_CXVSCROLL)
 
   else:
-    result.width = countWidth(rate) + int(cbi.rcButton.right - cbi.rcButton.left) + 2
+    result.width = countWidth(rate) + (cbi.rcButton.right - cbi.rcButton.left) + 2
     result.height = getWindowRect(sizeOnly=true).height
 
 method getDefaultSize*(self: wComboBox): wSize =
+  ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = countSize(3, 1.3)
 
 method getBestSize*(self: wComboBox): wSize =
+  ## Returns the best acceptable minimal size for the control.
   result = countSize(1, 1.0)
 
-proc comboBoxEditProc(hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM): LRESULT {.stdcall.} =
-  var processed = false
-  var wComboHwnd = hwnd
-  while wComboHwnd != 0:
-    let win = wAppWindowFindByHwnd(wComboHwnd)
-    if win != nil and win of wComboBox:
-      let self = cast[wComboBox](win)
+method trigger(self: wComboBox) =
+  for i in 0..<mInitCount:
+    let text = mInitData[i]
+    SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
 
-      if msg == WM_CHAR and (wparam == VK_TAB or wparam == VK_RETURN):
-        processed = self.processMessage(msg, wparam, lparam, result)
+proc init(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: wStyle = 0) =
 
-      if not processed:
-        result = CallWindowProc(self.mOldEditProc, hwnd, msg, wParam, lParam)
+  mInitData = cast[ptr UncheckedArray[string]](choices)
+  mInitCount = choices.len
 
-      return result
+  # wCbDropDown as default style
+  var style = style
+  if (style and wCbStyleMask) == 0:
+    style = style or wCbDropDown
 
-    wComboHwnd = GetParent(wComboHwnd)
-
-proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0) =
-
-  assert parent != nil
-
-  var choices = @choices # so that callback can catch choices
-  proc callback(self: wWindow) =
-    for text in choices:
-      SendMessage(mHwnd, CB_ADDSTRING, 0, &(L(text)))
+  # only wCbSimple can use CBS_NOINTEGRALHEIGHT, otherwise drop down menu will disappear
+  if (style and wCbStyleMask) == wCbSimple:
+    style = style or CBS_NOINTEGRALHEIGHT
 
   self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id, pos=pos, size=size,
-    style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD, callback=callback)
+    style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD)
 
-  mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}
-
-  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO).DWORD)
+  # subclass child windows (edit and listbox) to handle the message in wNim's way
+  # todo: the returned subclassed object is wWindow. let it become wTextCtrl and wListBox?
+  # for wCbReadOnly, mHwnd == cbi.hwndItem, there is no child edit control
+  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
   GetComboBoxInfo(mHwnd, cbi)
 
-  # we only subclass the child edit control of combobox to handle tab and enter
-  # for wCbReadOnly, mHwnd == cbi.hwndItem, there is no child edit control
-  if mHwnd != cbi.hwndItem:
-    mOldEditProc = cast[WNDPROC](SetWindowLongPtr(cbi.hwndItem, GWL_WNDPROC, cast[LONG_PTR](comboBoxEditProc)))
+  if cbi.hwndItem != mHwnd:
+    mEdit = Window(cbi.hwndItem)
+    # we need send the navigation events to this wComboBox
+    # so that navigation key can works under subclassed window
+    mEdit.hardConnect(WM_CHAR) do (event: wEvent):
+      if event.keyCode == VK_RETURN:
+        # try to send wEvent_TextEnter first.
+        # If someone handle this, block the default behavior.
+        # for wCbSimple, the default enter behavior is set cursor to beginning
+        if self.processMessage(wEvent_TextEnter, 0, 0):
+          return
 
-  changeValue(value)
+      if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
+        event.skip
+
+    mEdit.hardConnect(WM_KEYDOWN) do (event: wEvent):
+      if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
+        event.skip
+
+    mEdit.hardConnect(WM_SYSCHAR) do (event: wEvent):
+      if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
+        event.skip
+
+  if cbi.hwndList != mHwnd:
+    mList = Window(cbi.hwndList)
+    # don't need hook navigation events because list window by defult won't get focus
+
+  setValue(value)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
-      let cmdEvent = case HIWORD(int32 event.mWparam)
+      let cmdEvent = case HIWORD(event.mWparam)
         of CBN_SELENDOK:
           # the system set the edit control value AFTER this event
-          # however, we need let getValue() return a correct value
+          # however, we need let getValue() return a correct value.
           let n = self.getCurrentSelection()
           if n >= 0:
-            self.setLabel(self.getString(n))
+            self.setLabel(self.getText(n))
           wEvent_ComboBox
         of CBN_EDITCHANGE: wEvent_Text
         of CBN_CLOSEUP: wEvent_ComboBoxCloseUp
@@ -217,19 +315,16 @@ proc wComboBoxInit(self: wComboBox, parent: wWindow, id: wCommandID = -1, value:
       if cmdEvent != 0:
         self.processMessage(cmdEvent, event.mWparam, event.mLparam)
 
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+      event.veto
+
 proc ComboBox*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: int64 = 0): wComboBox {.discardable.} =
-
+    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
+    style: wStyle = wCbDropDown): wComboBox {.discardable.} =
+  ## Constructor, creating and showing a combobox.
+  wValidate(parent)
   new(result)
-  result.wComboBoxInit(parent=parent, id=id, value=value, pos=pos, size=size, choices=choices, style=style)
+  result.init(parent=parent, id=id, value=value, pos=pos,
+    size=size, choices=choices, style=style)
 
-# nim style getter/setter
-
-proc count*(self: wComboBox): int = len()
-proc currentSelection*(self: wComboBox): int = getCurrentSelection()
-proc selection*(self: wComboBox): (int, int) = getSelection()
-proc insertionPoint*(self: wComboBox): int = getInsertionPoint()
-proc stringSelection*(self: wComboBox): string = getStringSelection()
-proc value*(self: wComboBox): string = getValue()
-proc `selection=`*(self: wComboBox, pos: int) = setSelection(pos)
-proc `value=`*(self: wComboBox, text: string) = setValue(text)

@@ -1,12 +1,12 @@
 ## A menu is a popup (or pull down) list of items.
 
+# forward declarations
+proc remove*(self: wMenu, submenu: wMenu)
+
 proc detach*(self: wMenu, menuBar: wMenuBar) {.validate.} =
   ## Detach a menu from a menubar.
   wValidate(menuBar)
   menuBar.remove(self)
-
-proc remove*(self: wMenu, submenu: wMenu)
-  # forward declaration needed here
 
 proc detach*(self: wMenu, parentMenu: wMenu) {.validate.} =
   ## Detach a menu from a parent menu.

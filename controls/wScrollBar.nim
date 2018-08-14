@@ -100,11 +100,6 @@ proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefault
 
   setScrollbar(0, 1, 2)
 
-  if isVertical():
-    mKeyUsed = {wUSE_UP, wUSE_DOWN}
-  else:
-    mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
-
   proc wScroll_DoScroll(event: wEvent) =
     var processed = false
     if event.mLparam == self.mHwnd:
@@ -113,6 +108,14 @@ proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefault
 
   parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
   parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if self.isVertical():
+      if event.keyCode in {wKey_Up, wKey_Down}:
+        event.veto
+    else:
+      if event.keyCode in {wKey_Right, wKey_Left}:
+        event.veto
 
 proc ScrollBar*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = 0): wScrollBar {.discardable.} =

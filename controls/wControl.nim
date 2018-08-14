@@ -1,29 +1,18 @@
 
-# override this
+# forward declaration
+proc click*(self: wButton) {.inline.}
+
 method getDefaultSize*(self: wControl): wSize =
+  # override this
   result = (100, 80)
 
-# override this
 method getBestSize*(self: wControl): wSize =
+  # override this
   result = (100, 80)
-
-proc useKey*(self: wControl, key: wUSE_KEY) =
-  mKeyUsed.incl(key)
-
-proc unuseKey*(self: wControl, key: wUSE_KEY) =
-  mKeyUsed.excl(key)
-
-proc useKey*(self: wControl, keys: set[wUSE_KEY]) =
-  mKeyUsed = mKeyUsed + keys
-
-proc unuseKey*(self: wControl, keys: set[wUSE_KEY]) =
-  mKeyUsed = mKeyUsed - keys
 
 proc wControl_DoMenuCommand(event: wEvent) =
   # relay control's WM_MENUCOMMAND to any wFrame (for example, wToolBar or wButton's submenu)
   let self = event.mWindow
-  echo self.type.name
-  echo self of wButton
 
   var win = self.mParent
   while win != nil:
@@ -105,7 +94,7 @@ proc groupStop(self: wControl, forward = true): wControl =
 
 # return control with specified letter,
 # however, click only there is one control with this letter
-proc mnemonicStop(self: wControl, letter: char, click: var bool): wControl =
+proc mnemonicStop(self: wControl, letter: char, onlyone: var bool): wControl =
   if mParent == nil or mParent.mChildren == nil: return
 
   let
@@ -124,52 +113,12 @@ proc mnemonicStop(self: wControl, letter: char, click: var bool): wControl =
         if text.find('&' & toUpperAscii(letter)) >= 0:
           if result == nil:
             result = control
-            click = true
+            onlyone = true
           else:
-            click = false
+            onlyone = false
             break
 
     if index == this: break
-
-# by default, control process following key and set processed = true to "EAT" the event
-proc eatKey(self: wControl, keyCode: WPARAM, processed: var bool): wUSE_KEY =
-  result = wUSE_NIL
-  var isCtrl, isShift, isAlt: bool
-  wGetModifier(isCtrl, isShift, isAlt)
-
-  if keyCode == VK_TAB and not (isAlt or isCtrl or isShift) and wUSE_TAB notin mKeyUsed:
-    processed = true
-    result = wUSE_TAB
-
-  elif keyCode == VK_TAB and not (isAlt or isCtrl) and isShift and wUSE_SHIFT_TAB notin mKeyUsed:
-    processed = true
-    result = wUSE_SHIFT_TAB
-
-  elif keyCode == VK_TAB and not (isAlt or isShift) and isCtrl and wUSE_SHIFT_TAB notin mKeyUsed:
-    processed = true
-    result = wUSE_CTRL_TAB
-
-  elif not (isAlt or isCtrl or isShift):
-
-    if keyCode == VK_RETURN and wUSE_ENTER notin mKeyUsed:
-      processed = true
-      result = wUSE_ENTER
-
-    elif keyCode == VK_UP and wUSE_UP notin mKeyUsed:
-      processed = true
-      result = wUSE_UP
-
-    elif keyCode == VK_DOWN and wUSE_DOWN notin mKeyUsed:
-      processed = true
-      result = wUSE_DOWN
-
-    elif keyCode == VK_LEFT and wUSE_LEFT notin mKeyUsed:
-      processed = true
-      result = wUSE_LEFT
-
-    elif keyCode == VK_RIGHT and wUSE_RIGHT notin mKeyUsed:
-      processed = true
-      result = wUSE_RIGHT
 
 proc drawDefaultButton(hwnd: HWND, flag = true) =
   let style = GetWindowLongPtr(hwnd, GWL_STYLE)
@@ -186,7 +135,17 @@ proc drawSiblingButtons(self: wControl, fun: proc(win: wWindow): bool) =
     if win of wButton:
       drawDefaultButton(win.mHwnd, fun(win))
 
+proc notControl(event: wEvent): bool {.inline.} =
+  # only handle if the event is really from a control
+  # it's false when the event is propagated from a subclassed window for controls
+  # for example, edit of ComboBox, and let wKeyEvent propagate
+  if not (event.window of wControl):
+    event.skip
+    return true
+
 proc wControl_DoKillFocus(event: wEvent) =
+  if event.notControl(): return
+
   let self = wControl(event.mWindow)
   # always save current focus to top level window
   # if top level window get focus after window switch, the control can get focus again
@@ -198,6 +157,8 @@ proc wControl_DoKillFocus(event: wEvent) =
     self.drawSiblingButtons() do (win: wWindow) -> bool: false
 
 proc wControl_DoSetFocus(event: wEvent) =
+  if event.notControl(): return
+
   let self = wControl(event.mWindow)
   # some button get focus => set itself and clear all others
   if self of wButton:
@@ -207,82 +168,75 @@ proc wControl_DoSetFocus(event: wEvent) =
   else:
     self.drawSiblingButtons() do (win: wWindow) -> bool: wButton(win).mDefault
 
-proc wControl_OnChar(event: wEvent)  =
-  let self = wControl(event.mWindow)
-  let keyCode = event.mWparam
+
+proc wControl_OnNavigation(event: wEvent) =
+  if event.notControl(): return
+  let self = wControl(event.window)
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
-  case self.eatKey(keyCode, processed)
-  of wUSE_TAB:
-    # by default, tab/shift+tab key pass focus to next/prev control
-    let control = self.tabStop(forward=true)
-    if control != nil: control.setFocus()
+  # let the control have a change to deny the navigation action
+  let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.wParam, lParam=event.lParam)
+  if self.processEvent(naviEvent) and not naviEvent.isAllowed:
+    return
 
-  of wUSE_SHIFT_TAB:
-    let control = self.tabStop(forward=false)
-    if control != nil: control.setFocus()
-
-  of wUSE_ENTER:
-    if self of wButton:
-      SendMessage(self.mHwnd, BM_CLICK, 0, 0)
-
-    else:
-      for win in self.siblings:
-        if win of wButton and wButton(win).mDefault:
-          SendMessage(win.mHwnd, BM_CLICK, 0, 0)
-
-  else: discard
-
-  # always generate wEvent_TextEnter event
-  if keyCode == VK_RETURN:
-    self.processMessage(wEvent_TextEnter, event.mWparam, event.mLparam)
-
-
-proc wControl_OnKeyDown(event: wEvent) =
-  let self = wControl(event.mWindow)
-  let keyCode = event.mWparam
-  var processed = false
-  defer: event.mSkip = not processed
-
-  case self.eatKey(keyCode, processed)
-  of wUSE_CTRL_TAB:
-    let control = self.tabStop(forward=true)
-    if control != nil: control.setFocus()
-
-  of wUSE_DOWN, wUSE_RIGHT:
-    let control = self.groupStop(forward=true)
-    if control != nil: control.setFocus()
-
-  of wUSE_UP, wUSE_LEFT:
-    let control = self.groupStop(forward=false)
-    if control != nil: control.setFocus()
-
-  else: discard
-
-proc wControl_OnSysChar(event: wEvent) =
-  let self = wControl(event.mWindow)
-  let keyCode = event.mWparam
-  var processed = false
-  defer: event.mSkip = not processed
-
-  # handle WM_SYSCHAR instead of WM_SYSKEYDOWN, there won't a beep sound.
-  # WM_SYSKEYDOWN -> TranslateMessage -> WM_SYSCHAR
-  # and system handle WM_SYSCHAR for menu select
-  # now, we only hand the control that has mnemonic leter
-  # try to handle focus across control and menu?
-
-  var ch = char keyCode
-  case ch:
-  of 'A'..'Z', 'a'..'z', '0'..'9':
-    var click: bool
-    let control = self.mnemonicStop(ch, click)
-
+  proc trySetFocus(control: wControl): bool {.discardable.} =
     if control != nil:
       control.setFocus()
-      if click: SendMessage(control.mHwnd, BM_CLICK, 0, 0)
       processed = true
+      result = true
+
+  let keyCode = event.keyCode
+  case event.eventMessage
+  of WM_CHAR:
+    if keyCode == VK_TAB:
+      # tab, shift+tab
+      trySetFocus(self.tabStop(forward=if event.shiftDown: false else: true))
+
+    elif keyCode == VK_RETURN and not event.shiftDown:
+      # enter
+      # the behavior of the default button: click the default button when press enter,
+      # except the focused control itself is a button
+      if self of wButton:
+        wButton(self).click
+        processed = true
+
+      else:
+        for win in self.siblings:
+          if win of wButton and wButton(win).mDefault:
+            wButton(win).click
+            processed = true
+            break
+
+  of WM_KEYDOWN:
+    if keyCode == VK_TAB and event.ctrlDown:
+      # ctrl+tab
+      trySetFocus(self.tabStop(forward=true))
+
+    elif keyCode in {VK_LEFT, VK_UP}:
+      # left, up
+      trySetFocus(self.groupStop(forward=false))
+
+    elif keyCode in {VK_RIGHT, VK_DOWN}:
+      # right, down
+      trySetFocus(self.groupStop(forward=true))
+
+  of WM_SYSCHAR:
+    # handle WM_SYSCHAR instead of WM_SYSKEYDOWN, there won't a beep sound.
+    # WM_SYSKEYDOWN -> TranslateMessage -> WM_SYSCHAR
+    # and then windows system handle WM_SYSCHAR for menu select
+    # now, we only handle the control that has mnemonic leter
+    # try to handle focus across control and menu?
+    var ch = char keyCode
+    if ch in 'A'..'Z' or ch in 'a'..'z' or ch in '0'..'9':
+      var onlyone: bool
+      let control = self.mnemonicStop(ch, onlyone)
+      if trySetFocus(control) and onlyone:
+        if control of wButton or control of wCheckBox or control of wRadioButton:
+          SendMessage(control.mHwnd, BM_CLICK, 0, 0)
+
   else: discard
+
 
 method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   var eventType: UINT
@@ -300,33 +254,35 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM, re
 proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -1, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0, callback: proc(self: wWindow) = nil) =
 
-  assert parent != nil
   var
     size = size
     style = style
 
-  if parent != nil:
-    var lastControl: wWindow = nil
+  var lastControl: wWindow = nil
+  for i in countdown(parent.mChildren.len - 1, 0):
+    let child = parent.mChildren[i]
+    if child of wControl:
+      lastControl = child
+      break
 
-    for i in countdown(parent.mChildren.len-1, 0):
-      let child = parent.mChildren[i]
-      if child of wControl:
-        lastControl = child
-        break
+  # by default, first not radiobutton (include first of all) or last radiobutton
+  # must has WS_GROUP style
 
-    if lastControl == nil or (self of wRadioButton) != (lastControl of wRadioButton):
-      style = style or WS_GROUP
+  if lastControl == nil or (self of wRadioButton) != (lastControl of wRadioButton):
+    style = style or WS_GROUP
 
   self.wWindow.init(title=label, className=className, parent=parent, pos=pos, size=size,
     style=style or WS_CHILD, fgColor=parent.mForegroundColor, bgColor=parent.mBackgroundColor,
     id=HMENU(id), regist=false, callback=callback)
 
-  mSubclassedOldProc = cast[WNDPROC](SetWindowLongPtr(mHwnd, GWL_WNDPROC, cast[LONG_PTR](wWndProc)))
+  SetWindowSubclass(mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
+
   mFocusable = true # by default, all control can has focus, modify this by subclass
-  mKeyUsed = {} # by default, a control don't use anykey, modify this by subclass
 
   systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
   systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
-  hardConnect(WM_CHAR, wControl_OnChar)
-  hardConnect(WM_KEYDOWN, wControl_OnKeyDown)
-  hardConnect(WM_SYSCHAR, wControl_OnSysChar)
+  hardConnect(WM_CHAR, wControl_OnNavigation)
+  hardConnect(WM_KEYDOWN, wControl_OnNavigation)
+  hardConnect(WM_SYSCHAR, wControl_OnNavigation)
+  # wAppDialogAdd(parent)
+

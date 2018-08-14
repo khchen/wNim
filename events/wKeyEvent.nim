@@ -22,9 +22,11 @@ const
   wEvent_KeyFirst = WM_KEYFIRST
   wEvent_KeyLast = WM_KEYLAST
 
-proc isKeyEvent(msg: UINT): bool {.inline.} =
-  msg in wEvent_KeyFirst..wEvent_KeyLast
+  wEvent_Navigation* = WM_APP + 2
 
-method getKeyCode*(self: wKeyEvent): int {.property.} =
+proc isKeyEvent(msg: UINT): bool {.inline.} =
+  msg in wEvent_KeyFirst..wEvent_KeyLast or msg == wEvent_Navigation
+
+method getKeyCode*(self: wKeyEvent): int {.property, inline.} =
   ## Returns the key code of the key that generated this event.
   result = int mWparam

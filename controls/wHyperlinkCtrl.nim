@@ -102,7 +102,6 @@ proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: str
   if url != nil and url.len != 0:
     setUrl(url, 0)
 
-  mKeyUsed = {wUSE_ENTER}
   mFocused = 0
 
   # syslink control has some unexceptable weird behavior for default tab/shift+tab handle
@@ -121,31 +120,35 @@ proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: str
     if mFocused >= 0:
       self.setFocused(mFocused)
 
-  hardConnect(WM_CHAR) do (event: wEvent):
-    var processed = false
-    defer: event.mSkip = not processed
+  # hardConnect(WM_CHAR) do (event: wEvent):
+  #   var processed = false
+  #   defer: event.mSkip = not processed
 
-    let keyCode = event.mWparam
-    case self.eatKey(keyCode, processed)
-    of wUSE_TAB:
-      if mFocused == self.getItemCount() - 1:
-        mFocused = -1
-        let control = self.tabStop(forward=true)
-        if control != nil: control.setFocus()
-      else:
-        mFocused.inc
-        self.setFocus()
+  #   let keyCode = event.mWparam
+  #   case self.eatKey(keyCode, processed)
+  #   of wUSE_TAB:
+  #     if mFocused == self.getItemCount() - 1:
+  #       mFocused = -1
+  #       let control = self.tabStop(forward=true)
+  #       if control != nil: control.setFocus()
+  #     else:
+  #       mFocused.inc
+  #       self.setFocus()
 
-    of wUSE_SHIFT_TAB:
-      if mFocused == 0:
-        mFocused = -1
-        let control = self.tabStop(forward=false)
-        if control != nil: control.setFocus()
-      else:
-        mFocused.dec
-        self.setFocus()
+  #   of wUSE_SHIFT_TAB:
+  #     if mFocused == 0:
+  #       mFocused = -1
+  #       let control = self.tabStop(forward=false)
+  #       if control != nil: control.setFocus()
+  #     else:
+  #       mFocused.dec
+  #       self.setFocus()
 
-    else: discard
+  #   else: discard
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode == wKey_Enter:
+      event.veto
 
 proc HyperLinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wHyperLinkCtrl {.discardable.} =
   new(result)

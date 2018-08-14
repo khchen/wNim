@@ -1,5 +1,5 @@
 ## A scroll event holds information about events sent from scrolling windows.
-## Note that these events are very similar to wScrollEvent but not derive from wCommandEvent.
+## Notice that these events are very similar to wScrollEvent but not derive from wCommandEvent.
 ## It means, these events won't propagate upwards by default.
 
 DefineIncrement(wEvent_ScrollWinFirst):

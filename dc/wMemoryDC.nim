@@ -1,5 +1,5 @@
 ## A memory device context provides a means to draw graphics onto a bitmap.
-## Note that the memory DC must be deleted (or the bitmap selected out of it)
+## Notice that the memory DC must be deleted (or the bitmap selected out of it)
 ## before a bitmap can be reselected into another memory DC. And, before
 ## performing any other operations on the bitmap data, the bitmap must be
 ## selected out of the memory DC:

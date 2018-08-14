@@ -273,33 +273,36 @@ proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string =
   if bkColor != mBackgroundColor:
     self.setBackgroundColor(bkColor)
 
-  mKeyUsed = {wUSE_LEFT, wUSE_RIGHT} # left and right to navigate between tabs
-
   systemConnect(WM_SIZE) do (event: wEvent):
     self.adjustPageSize()
 
   # up and down to pass focus to child
-  hardConnect(WM_KEYDOWN) do (event: wEvent):
-    var processed = false
-    defer: event.mSkip = not processed
-    if mHwnd == event.mWindow.mHwnd:
+  # hardConnect(WM_KEYDOWN) do (event: wEvent):
+  #   var processed = false
+  #   defer: event.mSkip = not processed
+  #   if mHwnd == event.mWindow.mHwnd:
 
-      let keyCode = event.mWparam
-      case self.eatKey(keyCode, processed)
-      of wUSE_DOWN:
-        for win in mPages[mSelection].mChildren:
-          if win of wControl and win.isFocusable():
-            win.setFocus()
-            break
+  #     let keyCode = event.mWparam
+  #     case self.eatKey(keyCode, processed)
+  #     of wUSE_DOWN:
+  #       for win in mPages[mSelection].mChildren:
+  #         if win of wControl and win.isFocusable():
+  #           win.setFocus()
+  #           break
 
-      of wUSE_UP:
-        for i in countdown(mPages[mSelection].mChildren.len-1, 0):
-          let win = mPages[mSelection].mChildren[i]
-          if win of wControl and win.isFocusable():
-            win.setFocus()
-            break
+  #     of wUSE_UP:
+  #       for i in countdown(mPages[mSelection].mChildren.len-1, 0):
+  #         let win = mPages[mSelection].mChildren[i]
+  #         if win of wControl and win.isFocusable():
+  #           win.setFocus()
+  #           break
 
-      else: discard
+  #     else: discard
+
+  # left and right to navigate between tabs
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Left, wKey_Right}:
+      event.veto
 
 proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wNoteBook {.discardable.} =
   new(result)

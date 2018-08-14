@@ -192,11 +192,6 @@ proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
   setValue(value)
   setRange(range)
 
-  if isVertical():
-    mKeyUsed = {wUSE_UP, wUSE_DOWN}
-  else:
-    mKeyUsed = {wUSE_RIGHT, wUSE_LEFT}
-
   proc scrollEventHandler(event: wEvent) =
     if event.mLparam != self.mHwnd: return
     let eventKind = case LOWORD(event.mWparam)
@@ -236,6 +231,14 @@ proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
 
   parent.systemConnect(WM_HSCROLL, scrollEventHandler)
   parent.systemConnect(WM_VSCROLL, scrollEventHandler)
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if self.isVertical():
+      if event.keyCode in {wKey_Up, wKey_Down}:
+        event.veto
+    else:
+      if event.keyCode in {wKey_Right, wKey_Left}:
+        event.veto
 
 proc Slider*(parent: wWindow, id: wCommandID = wDefaultID, value = 0, range: Slice[int] = 0..100,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSlHorizontal): wSlider {.discardable.} =

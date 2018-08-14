@@ -15,14 +15,6 @@ const
 
 
 
-  # ComboBox styles
-  wCbSimple* = CBS_SIMPLE
-  wCbDropDown* = CBS_DROPDOWN
-  wCbReadOnly* = CBS_DROPDOWNLIST
-  wCbSort* = CBS_SORT
-  wCbHScroll* = WS_HSCROLL
-  wCbVScroll* = WS_VSCROLL
-  wCbHasScrollBar* = CBS_DISABLENOSCROLL
 
   # TextCtrl styles
   wTeMultiLine* = ES_MULTILINE

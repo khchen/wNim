@@ -432,18 +432,18 @@ proc setExtendedStyle*(self: wListCtrl, exStyle: DWORD, flag = true) =
 proc getExtendedStyle*(self: wListCtrl): DWORD =
   SendMessage(mHwnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0).DWORD
 
-proc subclassEdit(self: wListCtrl, hwnd: HWND): wTextCtrl =
-  if hwnd != 0:
-    # todo: a dirty hack here, fix it
-    let textctrl = TextCtrl(parent=self, pos=(0, 0), size=(0, 0))
-    textctrl.mKeyUsed = {wUSE_TAB, wUSE_SHIFT_TAB, wUSE_ENTER, wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
-    let oldEditHwnd = textctrl.subclass(hwnd)
-    DestroyWindow(oldEditHwnd)
+# proc subclassEdit(self: wListCtrl, hwnd: HWND): wTextCtrl =
+#   if hwnd != 0:
+#     # todo: a dirty hack here, fix it
+#     let textctrl = TextCtrl(parent=self, pos=(0, 0), size=(0, 0))
+#     textctrl.mKeyUsed = {wUSE_TAB, wUSE_SHIFT_TAB, wUSE_ENTER, wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN}
+#     let oldEditHwnd = textctrl.subclass(hwnd)
+#     DestroyWindow(oldEditHwnd)
 
-    textctrl.systemConnect(WM_NCDESTROY) do(event: wEvent):
-      self.mTextCtrl = nil
+#     textctrl.systemConnect(WM_NCDESTROY) do(event: wEvent):
+#       self.mTextCtrl = nil
 
-    return textctrl
+#     return textctrl
 
 proc getEditControl*(self: wListCtrl): wTextCtrl =
   let hwnd = SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0).HWND
@@ -578,7 +578,6 @@ proc init(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultP
 
   SendMessage(mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)
 
-  mKeyUsed = {wUSE_RIGHT, wUSE_LEFT, wUSE_UP, wUSE_DOWN, wUSE_ENTER}
 
   # set default background color
   setBackgroundColor(SendMessage(mHwnd, LVM_GETBKCOLOR, 0, 0).wColor)
@@ -621,6 +620,10 @@ proc init(self: wListCtrl, parent: wWindow, id: wCommandID = -1, pos = wDefaultP
       # restore the background color
       SendMessage(mHwnd, LVM_SETTEXTBKCOLOR, 0, mBackgroundColor)
       SendMessage(mHwnd, LVM_SETBKCOLOR, 0, mBackgroundColor)
+
+  hardConnect(wEvent_Navigation) do (event: wEvent):
+    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+      event.veto
 
 proc ListCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wListCtrl {.discardable.} =
   new(result)
