@@ -1,155 +1,178 @@
+## This control shows a static text which links to one or more link.
+##
+## :Superclass:
+##    wControl
+##
+## :Styles:
+##    ==============================  =============================================================
+##    Styles                          Description
+##    ==============================  =============================================================
+##    wHlAlignLeft                    Align the text to the left.
+##    wHlAlignRight                   Align the text to the right.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wHyperLinkEvent                 Description
+##    ==============================  =============================================================
+##    wEvent_HyperLink                The hyperlink was clicked.
+##    ==============================  =============================================================
 
 const
   wHlAlignLeft* = 0
   wHlAlignRight* = LWS_RIGHT
 
-method getBestSize*(self: wHyperLinkCtrl): wSize =
+method getBestSize*(self: wHyperLinkCtrl): wSize {.property.} =
+  ## Returns the best acceptable minimal size for the control.
   var size: SIZE
-  SendMessage(mHwnd, LM_GETIDEALSIZE, 0, addr size)
-  result.width = size.cx.int
-  result.height = size.cy.int
+  SendMessage(mHwnd, LM_GETIDEALSIZE, 0, &size)
+  result.width = size.cx
+  result.height = size.cy
 
-method getDefaultSize*(self: wHyperLinkCtrl): wSize =
+method getDefaultSize*(self: wHyperLinkCtrl): wSize {.property, inline.} =
+  ## Returns the default size for the control.
   result = getBestSize()
 
-proc indexFocused(self: wHyperLinkCtrl, index: int): int32 =
+proc getItemCount*(self: wHyperLinkCtrl): int {.validate, property.} =
+  ## Returns the number of items in the hyperlink control.
+  # muse have LIF_STATE mask, otherwist the LM_GETITEM always return 0
+  var item = LITEM(mask: LIF_ITEMINDEX or LIF_STATE, iLink: 0)
+  while true:
+    if SendMessage(mHwnd, LM_GETITEM, 0, &item) == 0: break
+    item.iLink.inc
+  result = item.iLink
+
+proc len*(self: wHyperLinkCtrl): int {.validate, inline.} =
+  ## Returns the number of items in the hyperlink control. The same as getItemCount().
+  result = getItemCount()
+
+proc getFocused*(self: wHyperLinkCtrl): int {.validate, property.} =
+  ## Returns the index of current focused item.
+  var item = LITEM(mask: LIF_ITEMINDEX or LIF_STATE, stateMask: LIS_FOCUSED)
+  while true:
+    if SendMessage(mHwnd, LM_GETITEM, 0, &item) == 0:
+      return -1
+    if (item.state and LIS_FOCUSED) != 0:
+      return item.iLink
+    item.iLink.inc
+
+proc setFocused*(self: wHyperLinkCtrl, index: int) {.validate, property.} =
+  ## Sets focused item.
+  # must set focus after clear others, otherwise the setted focus will disappear
+  var item = LITEM(
+    mask: LIF_ITEMINDEX or LIF_STATE,
+    stateMask: LIS_FOCUSED,
+    state: 0,
+    iLink: 0)
+
+  while true:
+    if SendMessage(mHwnd, LM_SETITEM, 0, &item) == 0: break
+    item.iLink.inc
+
+  item.iLink = index
+  item.state = LIS_FOCUSED
+  SendMessage(mHwnd, LM_SETITEM, 0, &item)
+
+  # setfocus somehow clear the WS_TABSTOP style? add it back
+  addWindowStyle(WS_TABSTOP)
+  refresh()
+
+proc getILink(self: wHyperlinkCtrl, index: int): int =
   # if index == -1: get focused item
   # if focused item == -1: get first item
-  if index >= 0: result = index.int32
-  elif mFocused >= 0: result = mFocused.int32
+  if index >= 0: result = index
+  else: result = getFocused()
+  if result < 0: result = 0
 
 proc getItem(self: wHyperLinkCtrl, index = -1): LITEM =
-  result.iLink = indexFocused(index)
+  result.iLink = getILink(index)
   result.mask = LIF_ITEMINDEX or LIF_STATE or LIF_ITEMID or LIF_URL
   result.stateMask = LIS_FOCUSED or LIS_ENABLED or LIS_VISITED or LIS_HOTTRACK or LIS_DEFAULTCOLORS
-  discard SendMessage(mHwnd, LM_GETITEM, 0, addr result)
+  discard SendMessage(mHwnd, LM_GETITEM, 0, &result)
 
-proc getUrl*(self: wHyperLinkCtrl, index = -1): string =
+proc getUrl*(self: wHyperLinkCtrl, index = -1): string {.validate, property, inline.} =
+  ## Returns the URL associated with the hyperlink.
+  ## Index == -1 means the current focused item.
   var item = getItem(index)
-  result = $(nullTerminated(+$(item.szUrl)))
+  result = nullTerminated($item.szUrl)
 
-proc getLinkId*(self: wHyperLinkCtrl, index = -1): string =
+proc getLinkId*(self: wHyperLinkCtrl, index = -1): string {.validate, property, inline.} =
+  ## Returns the link ID associated with the hyperlink.
+  ## Index == -1 means the current focused item.
   var item = getItem(index)
-  result = $(nullTerminated(+$(item.szID)))
+  result = nullTerminated($item.szID)
 
-proc getVisited*(self: wHyperLinkCtrl, index = -1): bool =
+proc getVisited*(self: wHyperLinkCtrl, index = -1): bool {.validate, property, inline.} =
+  ## Returns true if the hyperlink has already been clicked by the user at least one time.
+  ## Index == -1 means the current focused item.
   var item = getItem(index)
   result = (item.state and LIS_VISITED) != 0
 
-proc setUrl*(self: wHyperLinkCtrl, url: string, index = -1) =
-  var item: LITEM
-  item.iLink = indexFocused(index)
-  item.mask = LIF_ITEMINDEX or LIF_URL
+proc setUrl*(self: wHyperLinkCtrl, url: string, index = -1) {.validate, property.} =
+  ## Sets the URL associated with the hyperlink.
+  ## Index == -1 means the current focused item.
+  var item = LITEM(iLink: getILink(index), mask: LIF_ITEMINDEX or LIF_URL)
   item.szUrl << +$url
-  SendMessage(mHwnd, LM_SETITEM, 0, addr item)
+  SendMessage(mHwnd, LM_SETITEM, 0, &item)
 
-proc setLinkId*(self: wHyperLinkCtrl, linkId: string, index = -1) =
-  var item: LITEM
-  item.iLink = indexFocused(index)
-  item.mask = LIF_ITEMINDEX or LIF_ITEMID
+proc setLinkId*(self: wHyperLinkCtrl, linkId: string, index = -1) {.validate, property.} =
+  ## Sets the link ID associated with the hyperlink.
+  ## Index == -1 means the current focused item.
+  var item = LITEM(iLink: getILink(index), mask: LIF_ITEMINDEX or LIF_ITEMID)
   item.szID << +$linkId
-  SendMessage(mHwnd, LM_SETITEM, 0, addr item)
+  SendMessage(mHwnd, LM_SETITEM, 0, &item)
 
-proc setVisited*(self: wHyperLinkCtrl, flag = true, index = 0) =
-  var item: LITEM
-  item.iLink = indexFocused(index)
-  item.mask = LIF_ITEMINDEX or LIF_STATE
-  item.stateMask = LIS_VISITED
-  item.state = LIS_VISITED
-  SendMessage(mHwnd, LM_SETITEM, 0, addr item)
-
-proc getItemCount*(self: wHyperLinkCtrl): int =
-  var item: LITEM
-  # muse at least get state or return null
-  item.mask = LIF_ITEMINDEX or LIF_STATE
-  result = 0
-  while true:
-    item.iLink = result.int32
-    if SendMessage(mHwnd, LM_GETITEM, 0, addr item) == 0: break
-    result.inc
-
-proc setFocused*(self: wHyperLinkCtrl, index: int) =
-  mFocused = index
-  var item: LITEM
-  var i = 0
-  item.mask = LIF_ITEMINDEX or LIF_STATE
-  item.stateMask = LIS_FOCUSED
-
-  while true:
-    item.state = if index == i: item.stateMask else: 0
-    item.iLink = i.int32
-    if SendMessage(mHwnd, LM_SETITEM, 0, addr item) == 0: break
-    i.inc
-
-proc getFocused*(self: wHyperLinkCtrl): int =
-  result = mFocused
-
-# todo: event rewite?
+proc setVisited*(self: wHyperLinkCtrl, flag = true, index = -1) {.validate, property.} =
+  ## Marks the hyperlink as visited.
+  ## Index == -1 means the current focused item.
+  var item = LITEM(
+    iLink: getILink(index),
+    mask: LIF_ITEMINDEX or LIF_STATE,
+    stateMask: LIS_VISITED,
+    state: LIS_VISITED)
+  echo SendMessage(mHwnd, LM_SETITEM, 0, &item)
 
 method processNotify(self: wHyperLinkCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   if code == NM_CLICK or code == NM_RETURN:
-    let nml = cast[PNMLINK](lparam)
-    mFocused = nml.item.iLink
-    return self.processMessage(wEvent_HyperLink, cast[WPARAM](id), lparam)
+    var processed = self.processMessage(wEvent_HyperLink, cast[WPARAM](id), lParam)
+    let pnmLink = cast[PNMLINK](lParam)
+    setVisited(true, pnmLink.item.iLink)
+    return processed
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
-  assert parent != nil
+proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "",
+    url = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
-  self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos,
+    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or WS_EX_CONTROLPARENT)
 
-  if url != nil and url.len != 0:
-    setUrl(url, 0)
-
-  mFocused = 0
-
-  # syslink control has some unexceptable weird behavior for default tab/shift+tab handle
-  # handle them by ourself
-  systemConnect(WM_SETFOCUS) do (event: wEvent):
-    let prevWin = wAppWindowFindByHwnd(event.mWparam.HWND)
-    if prevWin != nil and prevWin != self:
-      let thisIndex = mParent.mChildren.find(self)
-      let prevIndex = mParent.mChildren.find(prevWin)
-      if prevIndex != -1 and thisIndex != -1:
-        if thisIndex >= prevIndex:
-          mFocused = 0
-        else:
-          mFocused = self.getItemCount() - 1
-
-    if mFocused >= 0:
-      self.setFocused(mFocused)
-
-  # hardConnect(WM_CHAR) do (event: wEvent):
-  #   var processed = false
-  #   defer: event.skip(if processed: false else: true)
-
-  #   let keyCode = event.mWparam
-  #   case self.eatKey(keyCode, processed)
-  #   of wUSE_TAB:
-  #     if mFocused == self.getItemCount() - 1:
-  #       mFocused = -1
-  #       let control = self.tabStop(forward=true)
-  #       if control != nil: control.setFocus()
-  #     else:
-  #       mFocused.inc
-  #       self.setFocus()
-
-  #   of wUSE_SHIFT_TAB:
-  #     if mFocused == 0:
-  #       mFocused = -1
-  #       let control = self.tabStop(forward=false)
-  #       if control != nil: control.setFocus()
-  #     else:
-  #       mFocused.dec
-  #       self.setFocus()
-
-  #   else: discard
+  # if url != nil and url.len != 0:
+  #   setUrl(url, 0)
 
   hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode == wKey_Enter:
-      event.veto
+    # use arrow key to navigate between links in control.
+    var count = self.getItemCount()
+    if count >= 2:
+      var
+        prevFocused = self.getFocused()
+        focused = prevFocused
 
-proc HyperLinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wHyperLinkCtrl {.discardable.} =
+      if event.keyCode in {wKey_Right, wKey_Down}:
+        focused.inc
+        if focused >= count: focused = 0
+
+      elif event.keyCode in {wKey_Left, wKey_Up}:
+        focused.dec
+        if focused < 0: focused = count - 1
+
+      if prevFocused != focused:
+        self.setFocused(focused)
+        event.veto
+
+proc HyperLinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    url = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLinkCtrl {.discardable.} =
+  ##　Constructor, creating and showing a hyperlink control.
+  wValidate(parent)
   new(result)
   result.init(parent=parent, id=id, label=label, url=url, pos=pos, size=size, style=style)

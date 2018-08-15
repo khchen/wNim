@@ -7,7 +7,6 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_ListBox
   wEvent_ListBoxDoubleClick
   wEvent_CheckListBox
-  wEvent_HyperLink
   wEvent_Menu
   wEvent_RadioBox
   wEvent_RadioButton

@@ -11,6 +11,7 @@ proc isListEvent(msg: UINT): bool {.inline.}
 proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
 proc isSpinEvent(msg: UINT): bool {.inline.}
+proc isHyperLinkEvent(msg: UINT): bool {.inline.}
 
 const
   wEvent_PropagateMax* = int INT_PTR.high
@@ -42,7 +43,8 @@ const
   wEvent_ListFirst = WM_APP + 300
   wEvent_TreeFirst = WM_APP + 350
   wEvent_SpinFirst = WM_APP + 400
-  wEvent_CommandLast = WM_APP + 450
+  wEvent_HyperLinkFirst = WM_APP + 450
+  wEvent_CommandLast = WM_APP + 500
   wEvent_UserFirst* = wEvent_CommandLast + 1
 
 proc defaultPropagationLevel(msg: UINT): int =
@@ -82,6 +84,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isSpinEvent():
     result = CreateEvent(wSpinEvent)
+
+  elif msg.isHyperLinkEvent():
+    result = CreateEvent(wHyperLinkEvent)
 
   elif msg.isListEvent():
     result = CreateEvent(wListEvent)
@@ -335,4 +340,10 @@ method setSpinPos*(self: wEvent, pos: int) {.base, property.} = discard
 method getSpinDelta*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method setSpinDelta*(self: wEvent, delta: int) {.base, property.} = discard
+  ## Method needs to be overridden.
+method getUrl*(self: wEvent): string {.base, property.} = discard
+  ## Method needs to be overridden.
+method getLinkId*(self: wEvent): string {.base, property.} = discard
+  ## Method needs to be overridden.
+method getVisited*(self: wEvent): bool {.base, property.} = discard
   ## Method needs to be overridden.

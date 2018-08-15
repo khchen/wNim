@@ -129,6 +129,7 @@ when not defined(wnimdoc):
     wTreeEvent* = ref object of wCommandEvent
     wScrollEvent* = ref object of wCommandEvent
     wSpinEvent* = ref object of wCommandEvent
+    wHyperLinkEvent* = ref object of wCommandEvent
 
     wScrollData = object
       kind: int
@@ -283,7 +284,6 @@ when not defined(wnimdoc):
       mOwnsImageListState: bool
 
     wHyperLinkCtrl* = ref object of wControl
-      mFocused: int
 
     # wToolTip* = ref wToolTipObj
     # wToolTipObj = object of wControlObj

@@ -4,9 +4,10 @@ DefineIncrement(wEvent_SpinFirst):
   wEvent_SpinDown
   wEvent_SpinLeft
   wEvent_SpinRight
+  wEvent_SpinLast
 
 proc isSpinEvent(msg: UINT): bool {.inline.} =
-  msg == wEvent_Spin
+  msg in wEvent_SpinFirst..wEvent_SpinLast
 
 method getSpinPos*(self: wSpinEvent): int {.property, inline.} =
   ## Gets the current value (before change).
