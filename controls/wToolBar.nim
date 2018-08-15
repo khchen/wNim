@@ -284,7 +284,7 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
   # show the popupmenu is a default behavior, but can be overridden.
   let self = wToolBar event.mWindow
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   let
     menu = self.getDropdownMenu(event.mID)

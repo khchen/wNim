@@ -17,7 +17,6 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_ToolEnter
   wEvent_ComboBoxDropDown
   wEvent_ComboBoxCloseUp
-  wEvent_SpinCtrl
   wEvent_Text
   wEvent_TextCopy
   wEvent_TextCut

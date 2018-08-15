@@ -279,7 +279,7 @@ proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string =
   # up and down to pass focus to child
   # hardConnect(WM_KEYDOWN) do (event: wEvent):
   #   var processed = false
-  #   defer: event.mSkip = not processed
+  #   defer: event.skip(if processed: false else: true)
   #   if mHwnd == event.mWindow.mHwnd:
 
   #     let keyCode = event.mWparam

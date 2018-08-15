@@ -92,8 +92,7 @@ when not defined(wnimdoc):
     wEventHandler = proc (event: wEvent)
     wEventNeatHandler = proc ()
 
-    wApp* = ref wAppObj
-    wAppObj = object of RootObj
+    wApp* = ref object of RootObj
       mInstance: HANDLE
       mTopLevelWindowList: seq[wWindow]
       mWindowTable: Table[HWND, wWindow]
@@ -102,8 +101,7 @@ when not defined(wnimdoc):
       mMessageCountTable: CountTable[UINT]
       mExitCode: uint
 
-    wEvent* = ref wEventObj
-    wEventObj = object of RootObj
+    wEvent* = ref object of RootObj
       mWindow: wWindow
       mOrigin: HWND
       mMsg: UINT
@@ -118,55 +116,31 @@ when not defined(wnimdoc):
       mMousePos: wPoint
       mClientPos: wPoint
 
-    wMouseEvent* = ref wMouseEventObj
-    wMouseEventObj = object of wEventObj
-
-    wKeyEvent* = ref wKeyEventObj
-    wKeyEventObj = object of wEventObj
-
-    wSizeEvent* = ref wSizeEventObj
-    wSizeEventObj = object of wEventObj
-
-    wMoveEvent* = ref wMoveEventObj
-    wMoveEventObj = object of wEventObj
-
-    wScrollWinEvent* = ref wScrollWinEventObj
-    wScrollWinEventObj = object of wEventObj
-
-    wOtherEvent* = ref wOtherEventObj
-    wOtherEventObj = object of wEventObj
-
-    wContextMenuEvent* = ref wContextMenuEventObj
-    wContextMenuEventObj = object of wEventObj
-
-    wCommandEvent* = ref wCommandEventObj
-    wCommandEventObj = object of wEventObj
-
-    wStatusBarEvent* = ref wStatusBarEventObj
-    wStatusBarEventObj = object of wCommandEventObj
-
-    wListEvent* = ref wListEventObj
-    wListEventObj = object of wCommandEventObj
-
-    wTreeEvent* = ref wTreeEventObj
-    wTreeEventObj = object of wCommandEventObj
-
-    wScrollEvent* = ref wScrollEventObj
-    wScrollEventObj = object of wCommandEventObj
+    wMouseEvent* = ref object of wEvent
+    wKeyEvent* = ref object of wEvent
+    wSizeEvent* = ref object of wEvent
+    wMoveEvent* = ref object of wEvent
+    wScrollWinEvent* = ref object of wEvent
+    wOtherEvent* = ref object of wEvent
+    wContextMenuEvent* = ref object of wEvent
+    wCommandEvent* = ref object of wEvent
+    wStatusBarEvent* = ref object of wCommandEvent
+    wListEvent* = ref object of wCommandEvent
+    wTreeEvent* = ref object of wCommandEvent
+    wScrollEvent* = ref object of wCommandEvent
+    wSpinEvent* = ref object of wCommandEvent
 
     wScrollData = object
       kind: int
       orientation: int
 
-    wView* = ref wViewObj
-    wViewObj = object of RootObj
+    wView* = ref object of RootObj
       mLeft: Variable
       mRight: Variable
       mTop: Variable
       mBottom: Variable
 
-    wViewSolver* = ref wViewSolverObj
-    wViewSolverObj = object of RootObj
+    wViewSolver* = ref object of RootObj
       mSolver: Solver
       mViews: HashSet[wView]
 
@@ -177,8 +151,7 @@ when not defined(wnimdoc):
       userData: int
       undeletable: bool
 
-    wWindow* = ref wWindowObj
-    wWindowObj = object of wViewObj
+    wWindow* = ref object of wView
       mHwnd: HWND
       mParent: wWindow
       mChildren: seq[wWindow]
@@ -201,20 +174,16 @@ when not defined(wnimdoc):
       mMouseInWindow: bool
       # acceleratorTable =
 
-    wFrame* = ref wFrameObj
-    wFrameObj = object of wWindowObj
+    wFrame* = ref object of wWindow
       mMenuBar: wMenuBar
       mIcon: wIcon
       mDisableList: seq[wWindow]
 
-    wPanel* = ref wPanelObj
-    wPanelObj = object of wWindowObj
+    wPanel* = ref object of wWindow
 
-    wControl* = ref wControlObj
-    wControlObj = object of wWindowObj
+    wControl* = ref object of wWindow
 
-    wStatusBar* = ref wStatusBarObj
-    wStatusBarObj = object of wControl
+    wStatusBar* = ref object of wControl
       mFiledNumbers: int
       mWidths: array[256, int32]
 
@@ -224,91 +193,73 @@ when not defined(wnimdoc):
       mLongHelp: string
       mMenu: wMenu
 
-    wToolBar* = ref wToolBarObj
-    wToolBarObj = object of wControl
+    wToolBar* = ref object of wControl
       mTools: seq[wToolBarTool]
 
-    wButton* = ref wButtonObj
-    wButtonObj = object of wControlObj
+    wButton* = ref object of wControl
       mImgData: BUTTON_IMAGELIST
       mDefault: bool
       mMenu: wMenu
 
-    wStaticText* = ref wStaticTextObj
-    wStaticTextObj = object of wControlObj
+    wStaticText* = ref object of wControl
 
-    wStaticBitmap* = ref wStaticBitmapObj
-    wStaticBitmapObj = object of wControlObj
+    wStaticBitmap* = ref object of wControl
       mBitmap: wBitmap
 
-    wStaticLine* = ref wStaticLineObj
-    wStaticLineObj = object of wControlObj
+    wStaticLine* = ref object of wControl
 
-    wCheckBox* = ref wCheckBoxObj
-    wCheckBoxObj = object of wControlObj
+    wCheckBox* = ref object of wControl
 
-    wRadioButton* = ref wRadioButtonObj
-    wRadioButtonObj = object of wControlObj
+    wRadioButton* = ref object of wControl
 
-    wStaticBox* = ref wStaticBoxObj
-    wStaticBoxObj = object of wControlObj
+    wStaticBox* = ref object of wControl
 
-    wComboBox* = ref wComboBoxObj
-    wComboBoxObj = object of wControlObj
+    wComboBox* = ref object of wControl
       mEdit: wTextCtrl
       mList: wWindow
       mOldEditProc: WNDPROC
       mInitData: ptr UncheckedArray[string]
       mInitCount: int
 
-    wTextCtrl* = ref wTextCtrlObj
-    wTextCtrlObj = object of wControlObj
+    wTextCtrl* = ref object of wControl
       mRich: bool
       mDisableTextEvent: bool
       mBestSize: wSize
 
-    wNoteBook* = ref wNoteBookObj
-    wNoteBookObj = object of wControlObj
+    wNoteBook* = ref object of wControl
       mSelection: int
       mPages: seq[wWindow]
 
-    wSpinCtrl* = ref wSpinCtrlObj
-    wSpinCtrlObj = object of wControlObj
+    wSpinCtrl* = ref object of wControl
       mUpdownHwnd: HWND
       mUpdownWidth: int
 
-    wSlider* = ref wSliderObj
-    wSliderObj = object of wControlObj
+    wSpinButton* = ref object of wControl
+
+    wSlider* = ref object of wControl
       mReversed: bool
       mMax: int
       mMin: int
       mDragging: bool
 
-    wScrollBar* = ref wScrollBarObj
-    wScrollBarObj = object of wControlObj
+    wScrollBar* = ref object of wControl
       mPageSize: int
       mRange: int
 
-    wGauge* = ref wGaugeObj
-    wGaugeObj = object of wControlObj
+    wGauge* = ref object of wControl
       mTaskBar: ptr ITaskbarList3
 
-    wCalendarCtrl* = ref wCalendarCtrlObj
-    wCalendarCtrlObj = object of wControlObj
+    wCalendarCtrl* = ref object of wControl
 
-    wDatePickerCtrl* = ref wDatePickerCtrlObj
-    wDatePickerCtrlObj = object of wControlObj
+    wDatePickerCtrl* = ref object of wControl
 
-    wTimePickerCtrl* = ref wTimePickerCtrlObj
-    wTimePickerCtrlObj = object of wDatePickerCtrlObj
+    wTimePickerCtrl* = ref object of wDatePickerCtrl
 
-    wListBox* = ref wListBoxObj
-    wListBoxObj = object of wControlObj
+    wListBox* = ref object of wControl
       mInitData: ptr UncheckedArray[string]
       mInitCount: int
 
-    wListCtrl* = ref wListCtrlObj
-    wListCtrlObj = object of wControlObj
+    wListCtrl* = ref object of wControl
       mColCount: int
       mImageListNormal: wImageList
       mImageListSmall: wImageList
@@ -319,45 +270,37 @@ when not defined(wnimdoc):
       mAlternateRowColor: wColor
       mTextCtrl: wTextCtrl
 
-    wTreeItem* = ref wTreeItemObj
-    wTreeItemObj = object of RootObj
+    wTreeItem* = ref object of RootObj
       mHandle: HTREEITEM
       mTreeCtrl: wTreeCtrl
 
     wTreeItemId* = wTreeItem
 
-    wTreeCtrl* = ref wTreeCtrlObj
-    wTreeCtrlObj = object of wControlObj
+    wTreeCtrl* = ref object of wControl
       mImageListNormal: wImageList
       mImageListState: wImageList
       mOwnsImageListNormal: bool
       mOwnsImageListState: bool
 
-    wHyperLinkCtrl* = ref wHyperLinkCtrlObj
-    wHyperLinkCtrlObj = object of wControlObj
+    wHyperLinkCtrl* = ref object of wControl
       mFocused: int
 
     # wToolTip* = ref wToolTipObj
     # wToolTipObj = object of wControlObj
 
-    wMenuBase* = ref wMenuBaseObj
-    wMenuBaseObj = object of RootObj
+    wMenuBase* = ref object of RootObj
       mHmenu: HMENU
 
-    wMenu* = ref wMenuObj
-    wMenuObj = object of wMenuBaseObj
-      # mTitle: string
+    wMenu* = ref object of wMenuBase
       mBitmap: wBitmap
       mItemList: seq[wMenuItem]
       mParentMenuCountTable: CountTable[wMenuBase]
 
-    wMenuBar* = ref wMenuBarObj
-    wMenuBarObj = object of wMenuBaseObj
+    wMenuBar* = ref object of wMenuBase
       mMenuList: seq[wMenu]
       mParentFrameSet: HashSet[wFrame]
 
-    wMenuItem* = ref wMenuItemObj
-    wMenuItemObj = object of RootObj
+    wMenuItem* = ref object of RootObj
       mId: wCommandID
       mKind: int
       mText: string
@@ -366,20 +309,16 @@ when not defined(wnimdoc):
       mSubmenu: wMenu
       mParentMenu: wMenu
 
-    wImage* = ref wImageObj
-    wImageObj = object of RootObj
+    wImage* = ref object of RootObj
       mGdipBmp: ptr GpBitmap
 
-    wImageList* = ref wImageListObj
-    wImageListObj = object of RootObj
+    wImageList* = ref object of RootObj
       mHandle: HIMAGELIST
 
-    wGdiObject* = ref wGdiObjectObj
-    wGdiObjectObj = object of RootObj
+    wGdiObject* = ref object of RootObj
       mHandle: HANDLE
 
-    wFont* = ref wFontObj
-    wFontObj = object of wGdiObjectObj
+    wFont* = ref object of wGdiObject
       mPointSize: float
       mFamily: int
       mWeight: int
@@ -388,30 +327,25 @@ when not defined(wnimdoc):
       mFaceName: string
       mEncoding: int
 
-    wPen* = ref wPenObj
-    wPenObj = object of wGdiObjectObj
+    wPen* = ref object of wGdiObject
       mColor: wColor
       mStyle: DWORD
       mWidth: int
 
-    wBrush* = ref wBrushObj
-    wBrushObj = object of wGdiObjectObj
+    wBrush* = ref object of wGdiObject
       mColor: wColor
       mStyle: DWORD
 
-    wBitmap* = ref wBitmapObj
-    wBitmapObj = object of wGdiObjectObj
+    wBitmap* = ref object of wGdiObject
       mWidth: int
       mHeight: int
       mDepth: int
 
-    wIcon* = ref wIconObj
-    wIconObj = object of wGdiObjectObj
+    wIcon* = ref object of wGdiObject
       mWidth: int
       mHeight: int
 
-    wCursor* = ref wCursorObj
-    wCursorObj = object of wGdiObjectObj
+    wCursor* = ref object of wGdiObject
 
     # device context type is "object" not "ref object"
     wDC* = object of RootObj

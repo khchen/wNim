@@ -1,3 +1,7 @@
+# forward declaration
+proc getScrollPos*(self: wScrollBar): int {.inline.}
+proc getValue*(self: wSlider): int {.inline.}
+
 DefineIncrement(wEvent_ScrollFirst):
   wEvent_Slider
   wEvent_ScrollBar
@@ -25,9 +29,6 @@ method getOrientation*(self: wScrollEvent): int {.property, inline.} =
   ## Returns wHORIZONTAL or wVERTICAL
   let dataPtr = cast[ptr wScrollData](mLparam)
   result = dataPtr.orientation
-
-proc getScrollPos*(self: wScrollBar): int {.inline.}
-proc getValue*(self: wSlider): int {.inline.}
 
 method getScrollPos*(self: wScrollEvent): int {.property.} =
   ## Returns the position of the scrollbar.

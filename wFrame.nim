@@ -168,7 +168,7 @@ proc wFrame_OnSetFocus(event: wEvent) =
   # when a frame got focus, try to pass focus to mSaveFocus or first focusable control
   let self = event.mWindow
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   if self.mSaveFocus != nil:
     self.mSaveFocus.setFocus()
@@ -186,7 +186,7 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
   # The default handler for wEvent_MenuHighlight in wFrame displays help text in the status bar.
   let self = wFrame event.mWindow
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   if self.mStatusBar != nil and self.mMenuBar != nil:
     let
@@ -216,7 +216,7 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
 proc wFrame_OnMenuCommand(event: wEvent) =
   let self = event.mWindow
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   let
     pos = int event.mWparam
@@ -242,7 +242,7 @@ when defined(useWinXP):
   # under Windows XP, menu icon must draw by outself
   proc wFrame_OnMeasureItem(event: wEvent) =
     var processed = false
-    defer: event.mSkip = not processed
+    defer: event.skip(if processed: false else: true)
 
     var pStruct = cast[LPMEASUREITEMSTRUCT](event.mLparam)
     if pStruct.CtlType == ODT_MENU and pStruct.itemData != 0:
@@ -261,7 +261,7 @@ when defined(useWinXP):
 
   proc wFrame_OndrawItem(event: wEvent) =
     var processed = false
-    defer: event.mSkip = not processed
+    defer: event.skip(if processed: false else: true)
 
     var pStruct = cast[LPDRAWITEMSTRUCT](event.mLparam)
     if pStruct.CtlType == ODT_MENU and pStruct.itemData != 0:

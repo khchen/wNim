@@ -1,3 +1,17 @@
+# forward declaration
+proc isMouseEvent(msg: UINT): bool {.inline.}
+proc isKeyEvent(msg: UINT): bool {.inline.}
+proc isSizeEvent(msg: UINT): bool {.inline.}
+proc isMoveEvent(msg: UINT): bool {.inline.}
+proc isContextMenuEvent(msg: UINT): bool {.inline.}
+proc isScrollWinEvent(msg: UINT): bool {.inline.}
+proc isCommandEvent(msg: UINT): bool {.inline.}
+proc isScrollEvent(msg: UINT): bool {.inline.}
+proc isListEvent(msg: UINT): bool {.inline.}
+proc isTreeEvent(msg: UINT): bool {.inline.}
+proc isStatusBarEvent(msg: UINT): bool {.inline.}
+proc isSpinEvent(msg: UINT): bool {.inline.}
+
 const
   wEvent_PropagateMax* = int INT_PTR.high
   wEvent_PropagateNone* = 0
@@ -27,20 +41,9 @@ const
   wEvent_ScrollFirst = WM_APP + 250
   wEvent_ListFirst = WM_APP + 300
   wEvent_TreeFirst = WM_APP + 350
-  wEvent_CommandLast = WM_APP + 400
+  wEvent_SpinFirst = WM_APP + 400
+  wEvent_CommandLast = WM_APP + 450
   wEvent_UserFirst* = wEvent_CommandLast + 1
-
-proc isMouseEvent(msg: UINT): bool {.inline.}
-proc isKeyEvent(msg: UINT): bool {.inline.}
-proc isSizeEvent(msg: UINT): bool {.inline.}
-proc isMoveEvent(msg: UINT): bool {.inline.}
-proc isContextMenuEvent(msg: UINT): bool {.inline.}
-proc isScrollWinEvent(msg: UINT): bool {.inline.}
-proc isCommandEvent(msg: UINT): bool {.inline.}
-proc isScrollEvent(msg: UINT): bool {.inline.}
-proc isListEvent(msg: UINT): bool {.inline.}
-proc isTreeEvent(msg: UINT): bool {.inline.}
-proc isStatusBarEvent(msg: UINT): bool {.inline.}
 
 proc defaultPropagationLevel(msg: UINT): int =
   if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
@@ -77,6 +80,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
   elif msg.isScrollEvent():
     result = CreateEvent(wScrollEvent)
 
+  elif msg.isSpinEvent():
+    result = CreateEvent(wSpinEvent)
+
   elif msg.isListEvent():
     result = CreateEvent(wListEvent)
 
@@ -103,10 +109,6 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
   result.mMousePos.x = GET_X_LPARAM(val)
   result.mMousePos.y = GET_Y_LPARAM(val)
   result.mClientPos = wDefaultPoint
-
-proc clone*(self: wEvent): wEvent {.validate.} =
-  ## Returns a copy of the event.
-  deepCopy(result, self)
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the object (usually a window) associated with the event
@@ -325,4 +327,12 @@ method getScrollPos*(self: wEvent): int {.base, property.} = discard
 method getKind*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getWheelRotation*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getSpinPos*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method setSpinPos*(self: wEvent, pos: int) {.base, property.} = discard
+  ## Method needs to be overridden.
+method getSpinDelta*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method setSpinDelta*(self: wEvent, delta: int) {.base, property.} = discard
   ## Method needs to be overridden.

@@ -1047,7 +1047,6 @@ proc wWindow_DoMouseMove(event: wEvent) =
   let self = event.mWindow
 
   # we only handle WM_MOUSEMOVE if it's not from child window
-  # (propagated or subclassed, ex: combobox)
   if self.mHwnd != event.mOrigin:
     return
 
@@ -1115,17 +1114,18 @@ proc wWindow_DoNcDestroy(event: wEvent) =
 proc wWindow_OnNotify(event: wEvent) =
   let self = event.mWindow
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   let pNMHDR = cast[LPNMHDR](event.mLparam)
   var win = wAppWindowFindByHwnd(pNMHDR.hwndFrom)
-  if win == nil: win = self # by default, handle it ourselves
+  if win == nil:
+    win = self # by default, handle it ourselves
 
   processed = win.processNotify(cast[INT](pNMHDR.code), pNMHDR.idFrom, event.mLparam, event.mResult)
 
 proc wWindow_OnCtlColor(event: wEvent) =
   var processed = false
-  defer: event.mSkip = not processed
+  defer: event.skip(if processed: false else: true)
 
   # here lparam.HANDLE maybe a subwindow of our wWindow
   # so need to find our wWindow to get the color setting

@@ -20,7 +20,7 @@
 ##
 ## :Events:
 ##    ==============================  =============================================================
-##    wScrollEvent                    Description
+##    wCommandEvent                   Description
 ##    ==============================  =============================================================
 ##    wEvent_Text                     When the text changes.
 ##    wEvent_TextUpdate               When the control is about to redraw itself.
@@ -168,7 +168,7 @@ proc setSelection*(self: wTextCtrl, start: int, last: int) {.validate, property,
   ## (but not including) the character at the last position.
   SendMessage(mHwnd, EM_SETSEL, start, last)
 
-proc setSelection*(self: wTextCtrl, range = Slice[int](a: -1, b: -1)) {.validate, property, inline.} =
+proc setSelection*(self: wTextCtrl, range: Slice[int]) {.validate, property, inline.} =
   ## Selects the text in range (including).
   setSelection(range.a, range.b + 1)
 
@@ -255,6 +255,7 @@ proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
   ## Sets the new text control value.
   ## Note that, unlike most other functions changing the controls values,
   ## this function generates a wEvent_Text event. To avoid this you can use ChangeValue() instead.
+  wValidate(value)
   setLabel(value)
   discardEdits()
 
@@ -266,6 +267,7 @@ proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
 proc changeValue*(self: wTextCtrl, value: string) {.validate.} =
   ## Sets the new text control value.
   ## This functions does not generate the wEvent_Text event.
+  wValidate(value)
   mDisableTextEvent = true
   setValue(value)
   mDisableTextEvent = false
@@ -285,10 +287,12 @@ proc getLineText*(self: wTextCtrl, line: int): string {.validate, property.} =
 
 proc writeText*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Writes the text into the text control at the current insertion position.
+  wValidate(text)
   SendMessage(mHwnd, EM_REPLACESEL, 1, &T(text))
 
 proc appendText*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control.
+  wValidate(text)
   setInsertionPointEnd()
   writeText(text)
 
@@ -302,6 +306,7 @@ proc getTextSelection*(self: wTextCtrl): string {.validate, property.} =
 
 proc replace*(self: wTextCtrl, range: Slice[int], value: string) {.validate, inline.} =
   ## Replaces the text in range.
+  wValidate(value)
   setSelection(range)
   writeText(value)
 
@@ -311,10 +316,12 @@ proc remove*(self: wTextCtrl, range: Slice[int]) {.validate, inline.} =
 
 proc loadFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
   ## Loads and displays the named file, if it exists.
+  wValidate(filename)
   setValue(readFile(filename))
 
 proc saveFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
   ## Saves the contents of the control in a text file.
+  wValidate(filename)
   writeFile(filename, getValue())
 
 proc len*(self: wTextCtrl): int {.validate, inline.} =
@@ -365,6 +372,11 @@ method getDefaultSize*(self: wTextCtrl): wSize {.property.} =
   if isMultiLine():
     result.height *= 3
 
+method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
+  ## Sets the background color of the control.
+  if mRich: SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, color)
+  procCall wWindow(self).setBackgroundColor(color)
+
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
@@ -374,14 +386,8 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
-  ## Sets the background color of the control.
-  if mRich: SendMessage(mHwnd, EM_SETBKGNDCOLOR, 0, color)
-  procCall wWindow(self).setBackgroundColor(color)
-
 proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, value: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
-  assert parent != nil
 
   mRich = ((style and wTeRich) != 0)
   mDisableTextEvent = false
@@ -437,8 +443,9 @@ proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, value: string =
         event.veto
 
 proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTextCtrl {.discardable.} =
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTeLeft): wTextCtrl {.discardable.} =
   ##　Constructor, creating and showing a text control.
+  wValidate(parent)
   new(result)
   result.init(parent=parent, id=id, value=value, pos=pos, size=size, style=style)
 

@@ -15,12 +15,6 @@ const
 
 
 
-  # SpinCtrl styles
-  wSpArrowKeys* = UDS_ARROWKEYS
-  wSpWrap* = UDS_ALIGNRIGHT # ** a hack value, see wSpinCtrl.nil
-  # wSpReadOnly* = wTeReadOnly
-
-
 
   # Imagelist styles and consts
   wImageListNormal* = LVSIL_NORMAL

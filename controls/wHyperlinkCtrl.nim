@@ -122,7 +122,7 @@ proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: str
 
   # hardConnect(WM_CHAR) do (event: wEvent):
   #   var processed = false
-  #   defer: event.mSkip = not processed
+  #   defer: event.skip(if processed: false else: true)
 
   #   let keyCode = event.mWparam
   #   case self.eatKey(keyCode, processed)
