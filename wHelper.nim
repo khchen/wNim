@@ -191,6 +191,82 @@ proc loadRichDll(): bool =
       richDllLoaded = true
   result = richDllLoaded
 
+proc getThemeBackgroundColor*(hWnd: HWND): wColor =
+  var gResult {.global.}: wColor = wDefaultColor
+  if gResult != wDefaultColor:
+    return gResult
+
+  type
+    GetCurrentThemeName = proc (pszThemeFileName: LPWSTR, dwMaxNameChars: int32, pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR, cchMaxSizeChars: int32): HRESULT {.stdcall.}
+    OpenThemeData = proc (hwnd: HWND, pszClassList: LPCWSTR): HANDLE {.stdcall.}
+    CloseThemeData = proc (hTheme: HANDLE): HRESULT {.stdcall.}
+    GetThemeColor = proc (hTheme: HANDLE, iPartId, iStateId, iPropId: int32, pColor: ptr wColor): HRESULT {.stdcall.}
+    IsAppThemed = proc (): BOOL {.stdcall.}
+    IsThemeActive = proc (): BOOL {.stdcall.}
+
+  let
+    comctl32Lib = loadLib("comctl32.dll")
+    themeLib = loadLib("uxtheme.dll")
+
+  if themeLib != nil:
+    # if aero theme is active: use white color
+    try:
+      if comctl32Lib == nil: raise
+      defer: comctl32Lib.unloadLib()
+
+      let
+        isAppThemed = cast[IsAppThemed](themeLib.checkedSymAddr("IsThemeActive"))
+        isThemeActive = cast[IsThemeActive](themeLib.checkedSymAddr("IsThemeActive"))
+        getCurrentThemeName = cast[GetCurrentThemeName](themeLib.checkedSymAddr("GetCurrentThemeName"))
+
+      if isAppThemed() == 0 or isThemeActive() == 0: raise
+
+      var
+        themeFile = newWString(1024)
+        themeColor = newWString(256)
+
+      if getCurrentThemeName(themeFile, 1024, themeColor, 256, nil, 0).FAILED or
+        "Aero" notin $themeFile or "NormalColor" notin $themeColor: raise
+
+      let dllGetVersion = cast[DLLGETVERSIONPROC](comctl32Lib.checkedSymAddr("DllGetVersion"))
+      var dvi = DLLVERSIONINFO(cbSize: sizeof(DLLVERSIONINFO).DWORD)
+      if dllGetVersion(dvi).FAILED or dvi.dwMajorVersion < 6.DWORD: raise
+
+      gResult = wWHITE
+      return gResult
+
+    except: discard
+
+    # check theme color
+    try:
+      const
+        TABP_BODY = 10
+        NORMAL = 1
+        FILLCOLORHINT = 3821
+        FILLCOLOR = 3802
+
+      let
+        openThemeData = cast[OpenThemeData](themeLib.checkedSymAddr("OpenThemeData"))
+        closeThemeData = cast[CloseThemeData](themeLib.checkedSymAddr("CloseThemeData"))
+        getThemeColor = cast[GetThemeColor](themeLib.checkedSymAddr("GetThemeColor"))
+        hTheme = openThemeData(hWnd, "TAB")
+
+      if hTheme == 0: raise
+      defer: discard closeThemeData(hTheme)
+
+      var color: wColor
+      if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLORHINT, addr color).SUCCEEDED and color != 1:
+        gResult = color
+        return gResult
+
+      if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLOR, addr color).SUCCEEDED:
+        gResult = color
+        return gResult
+
+    except: discard
+
+  return gResult
+
 # todo
 # try to fix windows 10 SetWindowPos problem
 # https://blog.forrestthewoods.com/building-a-better-aero-snap-757f68a1305f

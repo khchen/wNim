@@ -171,83 +171,24 @@ proc removeAllPages*(self: wNoteBook, delete = false) =
 proc deleteAllPages*(self: wNoteBook) =
   removeAllPages(delete=true)
 
-proc getThemeBackgroundColor*(self: wNoteBook): wColor =
-  var gResult {.global.}: wColor = wDefaultColor
-  if gResult != wDefaultColor:
-    return gResult
+proc setFocusAt(self: wNoteBook, index: int) =
+  setSelection(index)
+  setFocus()
+  SendMessage(mHwnd, TCM_SETCURFOCUS, index, 0)
 
-  else:
-    type
-      GetCurrentThemeName = proc (pszThemeFileName: LPWSTR, dwMaxNameChars: int32, pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR, cchMaxSizeChars: int32): HRESULT {.stdcall.}
-      OpenThemeData = proc (hwnd: HWND, pszClassList: LPCWSTR): HANDLE {.stdcall.}
-      CloseThemeData = proc (hTheme: HANDLE): HRESULT {.stdcall.}
-      GetThemeColor = proc (hTheme: HANDLE, iPartId, iStateId, iPropId: int32, pColor: ptr wColor): HRESULT {.stdcall.}
-      IsAppThemed = proc (): BOOL {.stdcall.}
-      IsThemeActive = proc (): BOOL {.stdcall.}
+proc focusNext(self: wNoteBook): bool =
+  if mPages.len >= 0:
+    var index = mSelection + 1
+    if index >= mPages.len: index = 0
+    setFocusAt(index)
+    return true
 
-    let
-      comctl32Lib = loadLib("comctl32.dll")
-      themeLib = loadLib("uxtheme.dll")
-
-    if themeLib != nil:
-      # if aero theme is active: use white color
-      try:
-        if comctl32Lib == nil: raise
-        defer: comctl32Lib.unloadLib()
-
-        let
-          isAppThemed = cast[IsAppThemed](themeLib.checkedSymAddr("IsThemeActive"))
-          isThemeActive = cast[IsThemeActive](themeLib.checkedSymAddr("IsThemeActive"))
-          getCurrentThemeName = cast[GetCurrentThemeName](themeLib.checkedSymAddr("GetCurrentThemeName"))
-
-        if isAppThemed() == 0 or isThemeActive() == 0: raise
-
-        var
-          themeFile = newWString(1024)
-          themeColor = newWString(256)
-
-        if getCurrentThemeName(themeFile, 1024, themeColor, 256, nil, 0).FAILED or
-          "Aero" notin $themeFile or "NormalColor" notin $themeColor: raise
-
-        let dllGetVersion = cast[DLLGETVERSIONPROC](comctl32Lib.checkedSymAddr("DllGetVersion"))
-        var dvi = DLLVERSIONINFO(cbSize: sizeof(DLLVERSIONINFO).DWORD)
-        if dllGetVersion(dvi).FAILED or dvi.dwMajorVersion < 6.DWORD: raise
-
-        gResult = wWHITE
-        return gResult
-
-      except: discard
-
-      # check theme color
-      try:
-        const
-          TABP_BODY = 10
-          NORMAL = 1
-          FILLCOLORHINT = 3821
-          FILLCOLOR = 3802
-
-        let
-          openThemeData = cast[OpenThemeData](themeLib.checkedSymAddr("OpenThemeData"))
-          closeThemeData = cast[CloseThemeData](themeLib.checkedSymAddr("CloseThemeData"))
-          getThemeColor = cast[GetThemeColor](themeLib.checkedSymAddr("GetThemeColor"))
-          hTheme = openThemeData(mHwnd, "TAB")
-
-        if hTheme == 0: raise
-        defer: discard closeThemeData(hTheme)
-
-        var color: wColor
-        if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLORHINT, addr color).SUCCEEDED and color != 1:
-          gResult = color
-          return gResult
-
-        if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLOR, addr color).SUCCEEDED:
-          gResult = color
-          return gResult
-
-      except: discard
-
-    gResult = mBackgroundColor
-    return gResult
+proc focusPrev(self: wNoteBook): bool =
+  if mPages.len >= 0:
+    var index = mSelection - 1
+    if index < 0: index = mPages.len - 1
+    setFocusAt(index)
+    return true
 
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   var eventKind: UINT
@@ -262,56 +203,65 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM, r
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0) =
+proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
-  self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, label=label, pos=pos, size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or TCS_FIXEDWIDTH or WS_TABSTOP)
+  self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, label=label,
+    pos=pos, size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or
+    WS_VISIBLE or TCS_FIXEDWIDTH or WS_TABSTOP)
 
   mPages = newSeq[wWindow]()
   mSelection = -1
 
-  let bkColor = getThemeBackgroundColor()
-  if bkColor != mBackgroundColor:
+  let bkColor = getThemeBackgroundColor(mHwnd)
+  if bkColor != wDefaultColor:
     self.setBackgroundColor(bkColor)
 
   systemConnect(WM_SIZE) do (event: wEvent):
     self.adjustPageSize()
 
-  # up and down to pass focus to child
-  # hardConnect(WM_KEYDOWN) do (event: wEvent):
-  #   var processed = false
-  #   defer: event.skip(if processed: false else: true)
-  #   if mHwnd == event.mWindow.mHwnd:
 
-  #     let keyCode = event.mWparam
-  #     case self.eatKey(keyCode, processed)
-  #     of wUSE_DOWN:
-  #       for win in mPages[mSelection].mChildren:
-  #         if win of wControl and win.isFocusable():
-  #           win.setFocus()
-  #           break
+  hardConnect(WM_KEYDOWN) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+    case event.keyCode
+    # up and down to pass focus to child
+    # We don't handle in wEvent_Navigation becasue
+    # we want to block the event at all.
+    of VK_DOWN:
+      for win in mPages[mSelection].mChildren:
+        if win of wControl and win.isFocusable():
+          win.setFocus()
+          processed = true
+          break
 
-  #     of wUSE_UP:
-  #       for i in countdown(mPages[mSelection].mChildren.len-1, 0):
-  #         let win = mPages[mSelection].mChildren[i]
-  #         if win of wControl and win.isFocusable():
-  #           win.setFocus()
-  #           break
+    of VK_UP:
+      for i in countdown(mPages[mSelection].mChildren.len - 1, 0):
+        let win = mPages[mSelection].mChildren[i]
+        if win of wControl and win.isFocusable():
+          win.setFocus()
+          processed = true
+          break
 
-  #     else: discard
+    else: discard
 
-  # left and right to navigate between tabs
   hardConnect(wEvent_Navigation) do (event: wEvent):
+    # left and right to navigate between tabs, let system do that
     if event.keyCode in {wKey_Left, wKey_Right}:
       event.veto
 
-proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0): wNoteBook {.discardable.} =
+    # ctrl+tab in wNoteBook self also navigate between tabs
+    if event.ctrlDown and event.keyCode == VK_TAB:
+      if event.shiftDown:
+        if self.focusPrev():
+          event.veto
+      else:
+        if self.focusNext():
+          event.veto
+
+proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wNoteBook {.discardable.} =
+
   new(result)
   result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
-
-# nim style getter/setter
-
-proc selection*(self: wNoteBook): int = getSelection()
-proc pageCount*(self: wNoteBook): int = getPageCount()
-proc currentPage*(self: wNoteBook): wWindow = getCurrentPage()
-proc page*(self: wNoteBook, n: int): wWindow = getPage(n)
-proc `selection=`*(self: wNoteBook, n: int) = setSelection(n)

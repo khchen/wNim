@@ -1,6 +1,8 @@
 
 # forward declaration
 proc click*(self: wButton) {.inline.}
+proc focusNext(self: wNoteBook): bool
+proc focusPrev(self: wNoteBook): bool
 
 method getDefaultSize*(self: wControl): wSize =
   # override this
@@ -42,78 +44,6 @@ proc getNextTab(self: wControl, previous: bool): wControl =
     let win = wAppWindowFindByHwnd(hWnd)
     if win != nil and win of wControl and win.isFocusable():
       return wControl(win)
-
-
-proc tabStop(self: wControl, forward = true): wControl =
-
-  proc isTabStop(self: wControl): bool =
-    # syslink control has some unexceptable weird behavior to change it's own WS_TABSTOP
-    # so we always assume that wHyperLinkCtrl control has WS_TABSTOP flag
-
-    if isFocusable() and ((GetWindowLongPtr(mHwnd, GWL_STYLE).DWORD and WS_TABSTOP) != 0 or self of wHyperLinkCtrl):
-      result = true
-
-  if mParent == nil or mParent.mChildren == nil: return
-
-  let
-    siblings = mParent.mChildren
-    this = siblings.find(self)
-
-  var index = this
-  while true:
-    if forward:
-      index.inc
-      if index >= siblings.len: index = 0
-    else:
-      index.dec
-      if index < 0: index = siblings.len - 1
-
-    if index == this: break
-
-    if siblings[index] of wControl:
-      let control = cast[wControl](siblings[index])
-      if control.isTabStop():
-        result = control
-        break
-
-proc groupStop(self: wControl, forward = true): wControl =
-  if mParent == nil or mParent.mChildren == nil: return
-
-  let
-    siblings = mParent.mChildren
-    this = siblings.find(self)
-
-  var index = this
-  while true:
-    if not forward and (GetWindowLongPtr(siblings[index].mHwnd, GWL_STYLE).DWORD and WS_GROUP) != 0: break
-
-    if forward:
-      index.inc
-      if index >= siblings.len: break
-    else:
-      index.dec
-      if index < 0: break
-
-    if siblings[index] of wControl:
-      let control = cast[wControl](siblings[index])
-      if forward and (GetWindowLongPtr(control.mHwnd, GWL_STYLE).DWORD and WS_GROUP) != 0:
-        break
-
-      if control.isFocusable():
-        result = control
-        break
-
-  # focus parent control
-  if result == nil and (index >= siblings.len or index <= 0):
-    var parent = mParent
-    while parent != nil:
-      if parent of wControl:
-        let control = cast[wControl](parent)
-        if control.isFocusable():
-          result = control
-          break
-
-      parent = parent.mParent
 
 # return control with specified letter,
 # however, click only there is one control with this letter
@@ -199,7 +129,7 @@ proc wControl_OnNavigation(event: wEvent) =
   defer: event.skip(if processed: false else: true)
 
   proc isAllowed(): bool =
-    # let the control have a change to deny the navigation action
+    # let the control have a change to veto the navigation action
     let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.wParam, lParam=event.lParam)
     if self.processEvent(naviEvent) and not naviEvent.isAllowed:
       return false
@@ -207,6 +137,7 @@ proc wControl_OnNavigation(event: wEvent) =
       return true
 
   proc trySetFocus(control: wControl): bool {.discardable.} =
+    # set focus and return true only if control in not nil
     if control != nil:
       control.setFocus()
       processed = true
@@ -246,7 +177,19 @@ proc wControl_OnNavigation(event: wEvent) =
     if keyCode == VK_TAB and event.ctrlDown:
       # ctrl+tab, ctrl+shift+tab
       if isAllowed():
-        trySetFocus(self.getNextTab(previous=if event.shiftDown: true else: false))
+        # find self or parent's wNoteBook control, in notebook, use ctrl+tab to change tab
+        var control: wWindow = self
+        while control != nil:
+          if control of wNoteBook:
+            if event.shiftDown:
+              processed = wNoteBook(control).focusPrev()
+            else:
+              processed = wNoteBook(control).focusNext()
+            break
+          control = control.mParent
+
+        if not processed:
+          trySetFocus(self.getNextTab(previous=if event.shiftDown: true else: false))
 
     elif keyCode in {VK_LEFT, VK_UP}:
       # left, up

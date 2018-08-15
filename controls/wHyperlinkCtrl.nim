@@ -145,7 +145,7 @@ proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: str
     url = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
   self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or WS_EX_CONTROLPARENT)
+    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   # if url != nil and url.len != 0:
   #   setUrl(url, 0)

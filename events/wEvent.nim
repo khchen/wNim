@@ -5,6 +5,7 @@ proc isSizeEvent(msg: UINT): bool {.inline.}
 proc isMoveEvent(msg: UINT): bool {.inline.}
 proc isContextMenuEvent(msg: UINT): bool {.inline.}
 proc isScrollWinEvent(msg: UINT): bool {.inline.}
+proc isNavigationEvent(msg: UINT): bool {.inline.}
 proc isCommandEvent(msg: UINT): bool {.inline.}
 proc isScrollEvent(msg: UINT): bool {.inline.}
 proc isListEvent(msg: UINT): bool {.inline.}
@@ -12,6 +13,7 @@ proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
 proc isSpinEvent(msg: UINT): bool {.inline.}
 proc isHyperLinkEvent(msg: UINT): bool {.inline.}
+proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
 const
   wEvent_PropagateMax* = int INT_PTR.high
@@ -78,6 +80,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isScrollWinEvent():
     result = CreateEvent(wScrollWinEvent)
+
+  elif msg.isNavigationEvent():
+    result = CreateEvent(wNavigationEvent)
 
   elif msg.isScrollEvent():
     result = CreateEvent(wScrollEvent)
@@ -220,8 +225,6 @@ proc getPropagationLevel*(self: wEvent): int {.validate, property, inline.} =
 proc setPropagationLevel*(self: wEvent, propagationLevel: int) {.validate, property, inline.}  =
   ## Set how many levels the event can propagate.
   mPropagationLevel = propagationLevel
-
-proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
 proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
   ## Get coordinate of the cursor.

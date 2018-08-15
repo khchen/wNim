@@ -124,6 +124,7 @@ when not defined(wnimdoc):
     wOtherEvent* = ref object of wEvent
     wContextMenuEvent* = ref object of wEvent
     wCommandEvent* = ref object of wEvent
+    wNavigationEvent* = ref object of wEvent
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
     wTreeEvent* = ref object of wCommandEvent
