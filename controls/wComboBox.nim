@@ -62,6 +62,8 @@ proc getText*(self: wComboBox, index: int): string =
   result = $buffer
 
 proc `[]`*(self: wComboBox, index: int): string {.validate, inline.} =
+  ## Returns the text of the item with the given index.
+  ## Raise error if index out of bounds.
   result = getText(index)
   if result == nil:
     raise newException(IndexError, "index out of bounds")

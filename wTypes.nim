@@ -229,8 +229,9 @@ when not defined(wnimdoc):
       mBestSize: wSize
 
     wNoteBook* = ref object of wControl
+      mImageList: wImageList
       mSelection: int
-      mPages: seq[wWindow]
+      mPages: seq[wPanel]
 
     wSpinCtrl* = ref object of wControl
       mUpdownHwnd: HWND

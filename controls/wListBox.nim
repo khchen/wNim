@@ -60,6 +60,8 @@ proc getText*(self: wListBox, index: int): string {.validate, property.} =
   result = $buffer
 
 proc `[]`*(self: wListBox, index: int): string {.validate, inline.} =
+  ## Returns the label of the item with the given index.
+  ## Raise error if index out of bounds.
   result = getText(index)
   if result == nil:
     raise newException(IndexError, "index out of bounds")

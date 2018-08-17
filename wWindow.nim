@@ -92,7 +92,7 @@ method getClientSize*(self: wWindow): wSize {.base, property.} =
 method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
   ## Get the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
-  ## scrollbars, other decorations...)
+  ## scrollbars, other decorations...).
   result.x = mMarginX
   result.y = mMarginY
   if mToolBar != nil:
@@ -855,8 +855,8 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
   # Use internally, ignore origin means origin is self.mHwnd.
   result = processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
-proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM,
-    lParam: LPARAM): bool {.validate, inline, discardable.} =
+proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM = 0,
+    lParam: LPARAM = 0): bool {.validate, inline, discardable.} =
   # use internally, the same but ignore the return value.
   var dummy: LRESULT
   result = processMessage(msg, wParam, lParam, dummy)

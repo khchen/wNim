@@ -510,12 +510,20 @@ proc scale*(self: wImage, width, height: int, quality = wIMAGE_QUALITY_NORMAL): 
   if newGdipbmp.isNil: raise newException(wImageError, "wImage scale failure")
   result = Image(newGdipbmp, copy=false)
 
+proc scale*(self: wImage, size: wSize, quality = wIMAGE_QUALITY_NORMAL): wImage {.validate, inline.} =
+  ## Returns a scaled version of the image.
+  result = scale(size.width, size.height, quality)
+
 proc rescale*(self: wImage, width, height: int, quality = wIMAGE_QUALITY_NORMAL) {.validate, discardable.} =
   ## Changes the size of the image in-place by scaling it.
   let newGdipbmp = wGdipScale(mGdipBmp, width, height, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage rescale failure")
   GdipDisposeImage(mGdipBmp)
   mGdipBmp = newGdipbmp
+
+proc rescale*(self: wImage, size: wSize, quality = wIMAGE_QUALITY_NORMAL) {.validate, inline, discardable.} =
+  ## Changes the size of the image in-place by scaling it.
+  rescale(size.width, size.height, quality)
 
 proc size*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0): wImage {.validate.} =
   ## Returns a resized version of this image without scaling it.
@@ -525,7 +533,7 @@ proc size*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0): wImage {
   if newGdipbmp.isNil: raise newException(wImageError, "wImage size failure")
   result = Image(newGdipbmp, copy=false)
 
-proc size*(self: wImage, width, height: int, x, y: int = 0, align = 0): wImage {.validate.} =
+proc size*(self: wImage, width, height: int, x, y: int = 0, align = 0): wImage {.validate, inline.} =
   ## Returns a resized version of this image without scaling it.
   result = size((width, height), (x, y), align)
 

@@ -249,7 +249,8 @@ iterator pairs*(self: wMenuBar): (int, wMenu) {.validate.} =
     yield (i, menu)
 
 proc `[]`*(self: wMenuBar, pos: int): wMenu {.validate, inline.} =
-  ## Returns the menu at pos, raise error if index out of bounds.
+  ## Returns the menu at pos.
+  ## Raise error if index out of bounds.
   result = mMenuList[pos]
 
 proc len*(self: wMenuBar): int {.validate, inline.} =

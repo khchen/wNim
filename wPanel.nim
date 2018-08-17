@@ -15,4 +15,5 @@ proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
   ## Constructor.
   wValidate(parent)
   new(result)
+  # should a panel have WS_TABSTOP style?
   result.init(parent=parent, pos=pos, size=size, style=style or WS_TABSTOP, className=className)

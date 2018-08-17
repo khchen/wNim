@@ -143,6 +143,19 @@ proc wControl_OnNavigation(event: wEvent) =
       processed = true
       result = true
 
+  proc notebookChangeTab(previous: bool) =
+    # if self or any parent is a wNoteBook control, try to switch the tab
+    var control: wWindow = self
+    while control != nil:
+      if control of wNoteBook:
+        if previous:
+          processed = wNoteBook(control).focusPrev()
+        else:
+          processed = wNoteBook(control).focusNext()
+        break
+      control = control.mParent
+
+
   let keyCode = event.keyCode
   case event.eventMessage
   of WM_CHAR:
@@ -177,19 +190,17 @@ proc wControl_OnNavigation(event: wEvent) =
     if keyCode == VK_TAB and event.ctrlDown:
       # ctrl+tab, ctrl+shift+tab
       if isAllowed():
-        # find self or parent's wNoteBook control, in notebook, use ctrl+tab to change tab
-        var control: wWindow = self
-        while control != nil:
-          if control of wNoteBook:
-            if event.shiftDown:
-              processed = wNoteBook(control).focusPrev()
-            else:
-              processed = wNoteBook(control).focusNext()
-            break
-          control = control.mParent
+        # ctrl+tab under notebook can change the tab
+        notebookChangeTab(previous=event.shiftDown)
 
         if not processed:
           trySetFocus(self.getNextTab(previous=if event.shiftDown: true else: false))
+
+    elif keyCode in {VK_NEXT, VK_PRIOR} and event.ctrlDown:
+      # ctrl+pgup, ctrl+pgdn
+      if isAllowed():
+        # only works if there is a wNoteBook control
+        notebookChangeTab(previous=event.shiftDown)
 
     elif keyCode in {VK_LEFT, VK_UP}:
       # left, up

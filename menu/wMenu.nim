@@ -469,12 +469,12 @@ iterator items*(self: wMenu): wMenuItem {.validate.} =
     yield item
 
 proc `[]`*(self: wMenu, pos: int): wMenuItem {.validate, inline.} =
-  ## Returns the menu item at pos.
+  ## Returns the menu item at pos. Raise error if index out of bounds.
   result = mItemList[pos]
 
 proc len*(self: wMenu): int {.validate, inline.} =
   ## Returns the number of wMenuItem objects in the menu.
-  ## This shoud be equal to getCount in most case.
+  ## This shoud be equal to getCount() in most case.
   result = mItemList.len
 
 proc init(self: wMenu) =
