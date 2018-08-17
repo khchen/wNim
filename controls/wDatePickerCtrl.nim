@@ -2,8 +2,10 @@
 ##
 ## :Superclass:
 ##    wControl
+##
 ## :Appearance:
 ##    .. image:: images/wDatePickerCtrl.png
+##
 ## :Styles:
 ##    ==============================  =============================================================
 ##    Styles                          Description

@@ -1201,7 +1201,10 @@ proc init(self: wWindow, hWnd: HWND, parent: wWindow) =
     mFont = wNormalFont
 
   wAppWindowAdd(self)
-  parent.mChildren.add(self)
+  if parent == nil:
+    wAppTopLevelWindowAdd(self)
+  else:
+    parent.mChildren.add(self)
 
   systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
   systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
@@ -1357,9 +1360,6 @@ proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, siz
   result.init(parent=parent, pos=pos, size=size, style=style, className=className, id=id)
 
 proc Window*(hWnd: HWND): wWindow {.discardable.} =
-  # only wrap a wWindow's child for now
   let parent = wAppWindowFindByHwnd(GetParent(hwnd))
-  if parent == nil: return nil
-
   new(result)
   result.init(hwnd=hwnd, parent=parent)

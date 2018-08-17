@@ -58,7 +58,7 @@ converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
   ## We usually use the enum for where need a command ID. see the examples.
 
 type
-  wPredefinedID* = enum
+  wID* = enum
     ## Predefined names to use as menus or controls ID.
     wID_LOWEST = 4999, wID_OPEN, wID_CLOSE, wID_NEW, wID_SAVE, wID_SAVEAS, wID_REVERT, wID_EXIT, wID_UNDO,
       wID_REDO, wID_HELP, wID_PRINT, wID_PRINT_SETUP, wID_PREVIEW, wID_ABOUT, wID_HELP_CONTENTS, wID_HELP_COMMANDS
@@ -68,22 +68,12 @@ type
     wID_FILE1 = 5050, wID_FILE2, wID_FILE3, wID_FILE4, wID_FILE5, wID_FILE6, wID_FILE7, wID_FILE8, wID_FILE9
     wID_OK = 5100, wID_CANCEL, wID_APPLY, wID_YES, wID_NO, wID_STATIC, wID_FORWARD, wID_BACKWARD, wID_DEFAULT
       wID_MORE, wID_SETUP, wID_RESET, wID_CONTEXT_HELP, wID_YESTOALL, wID_NOTOALL, wID_ABORT, wID_RETRY, wID_IGNORE
+      wID_CONTINUE, wID_TRYAGAIN
 
     wID_SYSTEM_MENU = 5200, wID_CLOSE_FRAME, wID_MOVE_FRAME, wID_RESIZE_FRAME, wID_MAXIMIZE_FRAME, wID_ICONIZE_FRAME, wID_RESTORE_FRAME
     wID_FILEDLGG = 5900
     wID_HIGHEST = 5999
     wID_USER
-
-  wUSE_KEY = enum
-    wUSE_NIL
-    wUSE_TAB
-    wUSE_SHIFT_TAB
-    wUSE_CTRL_TAB
-    wUSE_ENTER
-    wUSE_LEFT
-    wUSE_RIGHT
-    wUSE_UP
-    wUSE_DOWN
 
 when not defined(wnimdoc):
   # Mutually recursive types are only possible within a single type section.
@@ -378,13 +368,20 @@ when not defined(wnimdoc):
       mPs: PAINTSTRUCT
 
     wMessageDialog* = object of RootObj
+      mHookRef: ref HHOOK
       mParent: wWindow
       mMessage: string
       mCaption: string
-      mStyle: int64
+      mStyle: wStyle
+      mLabelText: TableRef[INT, string]
+
+    wDirDialog* = object of RootObj
+      mParent: wWindow
+      mMessage: string
+      mStyle: wStyle
+      mPath: ref string
 
     wFileDialog* = object of RootObj
-    wDirDialog* = object of RootObj
     wColorDialog* = object of RootObj
 
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}

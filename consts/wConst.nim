@@ -98,14 +98,3 @@ const
   wCenter* = wLeft or wRight
   wMiddle* = wUp or wDown
 
-  # MessageDialog styles
-  wOk* = 1
-  wYesNo* = 2
-  wCancel* = 4
-  wYesDefault* = 0x200
-  wNoDefault* = 0x400
-  wIconHand* = MB_ICONHAND # 0x10
-  wIconErr* = MB_ICONERROR # 0x10
-  wIconQuestion* = MB_ICONQUESTION # 0x20
-  wIconExclamation* = MB_ICONEXCLAMATION # 0x30
-  wIconInformation* = MB_ICONINFORMATION # 0x40

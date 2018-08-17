@@ -2,8 +2,10 @@
 ##
 ## :Superclass:
 ##    wControl
+##
 ## :Appearance:
 ##    .. image:: images/wTimePickerCtrl.png
+##
 ## :Events:
 ##    ==============================  =============================================================
 ##    Events                          Description

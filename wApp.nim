@@ -15,7 +15,7 @@ proc App*(): wApp =
   InitCommonControlsEx(ctrl)
 
   when compileOption("threads"):
-    discard CoInitializeEx(nil, COINIT_MULTITHREADED)
+    discard CoInitializeEx(nil, COINIT_APARTMENTTHREADED)
   else:
     discard CoInitialize(nil)
 

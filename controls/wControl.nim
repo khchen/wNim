@@ -1,16 +1,10 @@
+## This is the base class for a GUI controls.
+## Here have no any public proc or method.
 
 # forward declaration
 proc click*(self: wButton) {.inline.}
 proc focusNext(self: wNoteBook): bool
 proc focusPrev(self: wNoteBook): bool
-
-method getDefaultSize*(self: wControl): wSize =
-  # override this
-  result = (100, 80)
-
-method getBestSize*(self: wControl): wSize =
-  # override this
-  result = (100, 80)
 
 proc wControl_DoMenuCommand(event: wEvent) =
   # relay control's WM_MENUCOMMAND to any wFrame (for example, wToolBar or wButton's submenu)
@@ -45,9 +39,9 @@ proc getNextTab(self: wControl, previous: bool): wControl =
     if win != nil and win of wControl and win.isFocusable():
       return wControl(win)
 
-# return control with specified letter,
-# however, click only there is one control with this letter
-proc mnemonicStop(self: wControl, letter: char, onlyone: var bool): wControl =
+proc getNextMnemonic(self: wControl, letter: char, onlyone: var bool): wControl =
+  # return control with specified letter,
+  # however, click only there is one control with this letter
   if mParent == nil or mParent.mChildren == nil: return
 
   let
@@ -222,7 +216,7 @@ proc wControl_OnNavigation(event: wEvent) =
       var ch = char keyCode
       if ch in 'A'..'Z' or ch in 'a'..'z' or ch in '0'..'9':
         var onlyone: bool
-        let control = self.mnemonicStop(ch, onlyone)
+        let control = self.getNextMnemonic(ch, onlyone)
         if trySetFocus(control) and onlyone:
           if control of wButton or control of wCheckBox or control of wRadioButton:
             SendMessage(control.mHwnd, BM_CLICK, 0, 0)
@@ -276,5 +270,3 @@ proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -
   hardConnect(WM_CHAR, wControl_OnNavigation)
   hardConnect(WM_KEYDOWN, wControl_OnNavigation)
   hardConnect(WM_SYSCHAR, wControl_OnNavigation)
-  # wAppDialogAdd(parent)
-
