@@ -26,12 +26,12 @@ method getClientSize*(self: wNoteBook): wSize {.property.} =
   var r: RECT
   GetClientRect(mHwnd, r)
   SendMessage(mHwnd, TCM_ADJUSTRECT, false, &r)
-  result.width = r.right - r.left - mMarginX * 2
-  result.height = r.bottom - r.top - mMarginY * 2
+  result.width = r.right - r.left - (mMargin.left + mMargin.right)
+  result.height = r.bottom - r.top - (mMargin.up + mMargin.down)
 
 method getClientAreaOrigin*(self: wNoteBook): wPoint {.property.} =
   ## Get the origin of the client area of the window relative to the window top left corner.
-  result = (mMarginX, mMarginY)
+  result = (mMargin.left, mMargin.up)
   var r: RECT
   GetClientRect(mHwnd, r)
   SendMessage(mHwnd, TCM_ADJUSTRECT, false, &r)
@@ -147,7 +147,6 @@ proc setSelection*(self: wNoteBook, pos: int): int {.validate, property, discard
   if pos >= 0 and pos < mPages.len:
     if mSelection == -1 or mSelection != pos:
       # let the user have a change to veto the changing action
-      let oldSelection = mSelection
       let event = Event(window=self, msg=wEvent_NoteBookPageChanging)
       if not self.processEvent(event) or event.isAllowed:
         changeSelection(pos)
@@ -168,7 +167,7 @@ proc `[]`*(self: wNoteBook, pos: int): wPanel {.validate, inline.} =
   ## Raise error if index out of bounds.
   result = mPages[pos]
 
-iterator items(self: wNoteBook): wPanel {.validate.} =
+iterator items*(self: wNoteBook): wPanel {.validate.} =
   ## Iterate each page in this notebook control.
   for page in mPages:
     yield page

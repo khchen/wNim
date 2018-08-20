@@ -206,9 +206,6 @@ proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_Button, event.mWparam, event.mLparam)
 
-  # send WM_MENUCOMMAND to wFrame
-  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
-
 proc Button*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = 0): wButton {.discardable.} =
   ## Constructor, creating and showing a button.

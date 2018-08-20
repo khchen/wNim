@@ -10,9 +10,8 @@
 ##    ==============================  =============================================================
 ##    Styles                          Description
 ##    ==============================  =============================================================
-##    wDpSpin                         Show spin-control-like arrows to change individual date components.
 ##    wDpDropDown                     Show drop-down part from which the user can select a date.
-##    wDpDefault                      Best supported for the current platform (currently wDpSpin under Windows).
+##    wDpSpin                         Show spin-control-like arrows to change individual date components.
 ##    wDpAllowNone                    The control allows the user to not enter any valid date at all.
 ##    wDpShowCentury                  Forces display of the century in the default date format.
 ##    ==============================  =============================================================
@@ -25,9 +24,8 @@
 ##    ==============================  =============================================================
 
 const
-  wDpSpin*: wStyle = DTS_UPDOWN
   wDpDropDown*: wStyle = 0
-  wDpDefault*: wStyle = wDpSpin
+  wDpSpin*: wStyle = DTS_UPDOWN
   wDpAllowNone*: wStyle = DTS_SHOWNONE
   wDpShowCentury*: wStyle = DTS_SHORTDATECENTURYFORMAT
 
@@ -90,7 +88,7 @@ method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPA
 
 proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
-    style: wStyle = wDpDefault) =
+    style: wStyle = wDpDropDown) =
 
   self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
@@ -104,7 +102,7 @@ proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
 
 proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID,
     date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
-    style: wStyle = wDpDefault): wDatePickerCtrl {.discardable.} =
+    style: wStyle = wDpDropDown): wDatePickerCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

@@ -19,8 +19,8 @@ method getDefaultSize*(self: wStaticBox): wSize {.property.} =
 
 method getClientAreaOrigin*(self: wStaticBox): wPoint {.property.} =
   ## Get the origin of the client area of the window relative to the window top left corner.
-  result.x = mMarginX
-  result.y = mMarginY
+  result.x = mMargin.left
+  result.y = mMargin.up
   let labelSize = getLabelSize()
   result.y += labelSize.height div 2
 
@@ -38,8 +38,7 @@ proc init(self: wStaticBox, parent: wWindow, id: wCommandID = -1, label: string 
     style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or WS_CLIPSIBLINGS)
 
   mFocusable = false
-  mMarginX = 12
-  mMarginY = 12
+  setMargin(12)
 
 proc StaticBox*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wStaticBox {.discardable.} =

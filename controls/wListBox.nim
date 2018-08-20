@@ -89,10 +89,11 @@ proc insert*(self: wListBox, pos: int, list: openarray[string]) {.validate, inli
   for i, text in list:
     insert(if pos < 0: pos else: i + pos, text)
 
-proc append*(self: wListBox, text: string) {.validate, inline.} =
+proc append*(self: wListBox, text: string): int {.validate, discardable, inline.} =
   ## Appends the given string to the end. If the list box has the wLbSort style,
   ## the string is inserted into the list and the list is sorted.
-  SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
+  ## The return value is the index of the string in the list box.
+  result = int SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
 
 proc append*(self: wListBox, list: openarray[string]) {.validate, inline.} =
   ## Appends multiple strings in the same time.
@@ -288,6 +289,9 @@ proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPo
 
   # a list box by default have white background, not parent's background
   setBackgroundColor(wWhite)
+
+  if (style and wLbNoSel) != 0:
+    mFocusable = false
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:

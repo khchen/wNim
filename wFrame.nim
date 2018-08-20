@@ -15,8 +15,16 @@
 ##    wSystemMenu                     Displays a system menu containing the list of various windows commands in the window title bar.
 ##    wResizeBorder                   Displays a resizable border around the window.
 ##    wStayOnTop                      Stay on top of all other windows.
+##    wModalFrame                     Creates a frame with a modal dialog-box style.
 ##    wFrameToolWindow                Causes a frame with a small title bar to be created; the frame does not appear in the taskbar.
 ##    wDefaultFrameStyle              The default style for a frame.
+##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wCommandEvent                   Description
+##    ==============================  =============================================================
+##    wEvent_Menu                     A menu item is selected.
 ##    ==============================  =============================================================
 
 const
@@ -29,6 +37,7 @@ const
   wSystemMenu* = WS_SYSMENU
   wResizeBorder* = WS_SIZEBOX
   wStayOnTop* = WS_EX_TOPMOST shl 32
+  wModalFrame* = DS_MODALFRAME
   wFrameToolWindow* = WS_EX_TOOLWINDOW shl 32
   wDefaultFrameStyle* = wMinimizeBox or wMaximize_BOX or wResizeBorder or wSystemMenu or wCaption
 
@@ -150,11 +159,24 @@ proc wFrame_DoSize(event: wEvent) =
   # this child is resized to take the entire frame client area.
   # If two or more windows are present, they should be laid out explicitly by manually.
   let self = event.mWindow
-  if self.mChildren.len > 0:
+  var childOne: wWindow
+
+  for child in self.mChildren:
+    if (not (child of wStatusBar)) and (not (child of wToolBar)):
+      if childOne == nil:
+        childOne = child
+      else: # more the one child, nothing to do
+        return
+
+  if childOne != nil:
     let clientSize = self.getClientSize()
-    for child in self.mChildren:
-      if (not (child of wStatusBar)) and (not (child of wToolBar)):
-        child.setSize(0, 0, clientSize.width, clientSize.height)
+    childOne.setSize(0, 0, clientSize.width, clientSize.height)
+
+  # if self.mChildren.len > 0:
+  #   let clientSize = self.getClientSize()
+  #   for child in self.mChildren:
+  #     if (not (child of wStatusBar)) and (not (child of wToolBar)):
+  #       child.setSize(0, 0, clientSize.width, clientSize.height)
 
 proc findFocusableChild(self: wWindow): wWindow =
   for win in mChildren:

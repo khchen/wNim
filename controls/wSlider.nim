@@ -220,7 +220,6 @@ proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
 
     if eventKind != 0:
       var
-        processed = false
         orientation = if self.isVertical(): wVertical else: wHorizontal
         scrollData = wScrollData(kind: eventKind, orientation: orientation)
         dataPtr = cast[LPARAM](&scrollData)

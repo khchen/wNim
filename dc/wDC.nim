@@ -431,11 +431,13 @@ proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor, destC
   ## The circle is placed at the center of rect.
   gradientFillConcentric(rect, initialColor, destColor, (rect.width div 2, rect.height div 2))
 
-proc getHandle*(self: wDC): HANDLE {.inline, property.} = mHdc
+proc getHandle*(self: wDC): HANDLE {.inline, property.} =
   ## Returns a value that can be used as a handle to the native drawing context.
+  result = mHdc
 
-proc getHdc*(self: wDC): HANDLE {.inline, property.} = mHdc
+proc getHdc*(self: wDC): HANDLE {.inline, property.} =
   ## Returns a value that can be used as a handle to the native drawing context.
+  result = mHdc
 
 proc getDepth*(self: wDC): int {.inline, property.} =
   ## Returns the depth (number of bits/pixel) of this DC.

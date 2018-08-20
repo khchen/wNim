@@ -27,7 +27,10 @@ proc bottom*(self: wView): Variable {.inline.} = mBottom
 
 proc layoutDsl(parent, x: NimNode): NimNode =
   var code = "{.push hint[XDeclaredButNotUsed]: off.}\n"
-  code &= "let wView_Solver = ViewSolver()\n"
+  code &= "when not declaredInScope(wView_Solver):\n"
+  code &= "  var wView_Solver = ViewSolver()\n"
+  code &= "else:\n"
+  code &= "  wView_Solver = ViewSolver()\n"
   code &= "block:\n"
   code &= "  let solver = wView_Solver\n"
   code &= "  var self: wView\n"

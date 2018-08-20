@@ -32,7 +32,6 @@ method getOrientation*(self: wScrollEvent): int {.property, inline.} =
 
 method getScrollPos*(self: wScrollEvent): int {.property.} =
   ## Returns the position of the scrollbar.
-  let dataPtr = cast[ptr wScrollData](mLparam)
   if self.mWindow of wScrollBar:
     result = wScrollBar(self.mWindow).getScrollPos()
   elif self.mWindow of wSlider:

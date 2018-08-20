@@ -7,13 +7,12 @@
 proc init(self: wPanel, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className: string = "wPanel") =
 
-  self.wWindow.init(parent=parent, pos=pos, size=size, style=style, className=className,
+  self.wWindow.init(parent=parent, pos=pos, size=size, style=style or WS_CLIPCHILDREN, className=className,
     bgColor=GetSysColor(COLOR_BTNFACE))
 
 proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wPanel"): wPanel {.discardable.} =
+    style: wStyle = 0): wPanel {.discardable.} =
   ## Constructor.
   wValidate(parent)
   new(result)
-  # should a panel have WS_TABSTOP style?
-  result.init(parent=parent, pos=pos, size=size, style=style or WS_TABSTOP, className=className)
+  result.init(parent=parent, pos=pos, size=size, style=style)

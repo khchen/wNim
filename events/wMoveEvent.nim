@@ -7,17 +7,19 @@
 ##    ==============================  =============================================================
 ##    wEvent_Move                     Window is moved.
 ##    wEvent_Moving                   Window is moving.
+##    wEvent_Dragging                 Window is dragging by user. This event can be vetoed.
 
 const
   wEvent_Move* = WM_MOVE
   wEvent_Moving* = WM_MOVING
+  wEvent_Dragging* = WM_APP + 56
 
 proc isMoveEvent(msg: UINT): bool {.inline.} =
-  msg == wEvent_Move or msg == wEvent_Moving
+  msg in {wEvent_Move, wEvent_Moving, wEvent_Dragging}
 
 method getPosition*(self: wMoveEvent): wPoint {.property.} =
   ## Returns the entire size of the window generating the size change event.
-  if mMsg == WM_MOVE:
+  if mMsg in {WM_MOVE, wEvent_Dragging}:
     result.x = GET_X_LPARAM(mLparam)
     result.y = GET_Y_LPARAM(mLparam)
   elif mMsg == WM_MOVING:

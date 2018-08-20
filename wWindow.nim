@@ -68,8 +68,8 @@ method getClientSize*(self: wWindow): wSize {.base, property.} =
   ## Returns the size of the window 'client area' in pixels.
   var r: RECT
   GetClientRect(mHwnd, r)
-  result.width = r.right - r.left - mMarginX * 2
-  result.height = r.bottom - r.top - mMarginY * 2
+  result.width = r.right - r.left - (mMargin.left + mMargin.right)
+  result.height = r.bottom - r.top - (mMargin.up + mMargin.down)
 
   if mToolBar != nil:
     let rect = mToolBar.getWindowRect()
@@ -90,11 +90,11 @@ method getClientSize*(self: wWindow): wSize {.base, property.} =
     result.height -= rect.height
 
 method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
-  ## Get the origin of the client area of the window relative to the window
+  ## Gets the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
   ## scrollbars, other decorations...).
-  result.x = mMarginX
-  result.y = mMarginY
+  result.x = mMargin.left
+  result.y = mMargin.up
   if mToolBar != nil:
     let rect = mToolBar.getWindowRect()
     case toolBarDirection(mToolBar.mHwnd)
@@ -116,44 +116,50 @@ proc adjustForParentClientOriginSub(self: wWindow, x, y: var int) =
     x -= point.x
     y -= point.y
 
-proc getMarginX*(self: wWindow): int {.validate, property, inline.} =
-  ## Get the margin setting of the windows' x-axis.
+proc getMargin*(self: wWindow): wDirection {.validate, property, inline.} =
+  ## Gets the margin setting of the window.
   ## Margin is the extra space around the client area..
-  result = mMarginX
-
-proc getMarginY*(self: wWindow): int {.validate, property, inline.} =
-  ## Get the margin setting of the windows' y-axis.
-  ## Margin is the extra space around the client area..
-  result = mMarginY
-
-proc getMargin*(self: wWindow): tuple[x: int, y: int] {.validate, property, inline.} =
-  ## Get the margin setting of the window as a tuple.
-  ## Margin is the extra space around the client area..
-  result = (mMarginX, mMarginY)
+  result = mMargin
 
 proc setMarginX*(self: wWindow, margin: int) {.validate, property, inline.}=
-  ## Set the x-axis margin..
-  mMarginX = margin
+  ## Sets the x-axis margin..
+  mMargin.left = margin
+  mMargin.right = margin
 
 proc setMarginY*(self: wWindow, margin: int) {.validate, property, inline.}=
-  ## Set the y-axis margin.
-  mMarginY = margin
+  ## Sets the y-axis margin.
+  mMargin.up = margin
+  mMargin.down = margin
 
 proc setMargin*(self: wWindow, margin: int) {.validate, property, inline.}=
-  ## Set the x-axis and y-axis margin at the same time.
-  mMarginX = margin
-  mMarginY = margin
+  ## Sets the window margins to the same value.
+  mMargin = (margin, margin, margin, margin)
 
-proc setMargin*(self: wWindow, margin: (int, int)) {.validate, property, inline.}=
-  ## Set the x-axis and y-axis margin at the same time.
-  mMarginX = margin[0]
-  mMarginY = margin[1]
+proc setMargin*(self: wWindow, margin: wDirection) {.validate, property, inline.}=
+  ## Sets the window margins.
+  mMargin = margin
+
+proc setMarginLeft*(self: wWindow, margin: int) {.validate, property, inline.} =
+  ## Sets the left margin
+  mMargin.left = margin
+
+proc setMarginUp*(self: wWindow, margin: int) {.validate, property, inline.} =
+  ## Sets the up margin
+  mMargin.up = margin
+
+proc setMarginRight*(self: wWindow, margin: int) {.validate, property, inline.} =
+  ## Sets the right margin
+  mMargin.right = margin
+
+proc setMarginDown*(self: wWindow, margin: int) {.validate, property, inline.} =
+  ## Sets the down margin
+  mMargin.down = margin
 
 proc close*(self: wWindow) {.validate, inline.} =
   ## This function simply generates a wEvent_Close whose handler usually tries to close the window.
   SendMessage(mHwnd, WM_CLOSE, 0, 0)
 
-proc delete*(self: wWindow) {.inline.} =
+proc delete*(self: wWindow) {.validate, inline.} =
   ## Destroys the window.
   DestroyWindow(mHwnd)
 
@@ -935,46 +941,58 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
       self.processMessage(eventKind, wParam, dataPtr)
 
 
-proc EventConnection(id: wCommandID = 0, handler: wEventHandler = nil, neatHandler: wEventNeatHandler = nil,
-    userData = 0, undeletable = false): wEventConnection {.inline.} =
+proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventHandler = nil,
+    neatHandler: wEventNeatHandler = nil, userData = 0,
+    undeletable = false): wEventConnection {.inline.} =
 
-  result = (id: id, handler: handler, neatHandler: neatHandler, userData: userData, undeletable: undeletable)
+  result = (msg: msg, id: id, handler: handler, neatHandler: neatHandler,
+    userData: userData, undeletable: undeletable)
 
-# used internally: a default behavior cannot be changed by user
-proc systemConnect(self: wWindow, msg: UINT, handler: wEventHandler) =
-  var connection = EventConnection(handler=handler, undeletable=true)
-  self.mSystemConnectionTable.mgetOrPut(msg, @[]).add(connection)
+proc systemConnect(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.discardable.} =
+  # Used internally: a default behavior cannot be changed by user
+  var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
+  mSystemConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
-# used internally: a default behavior can be changed by user but cannot be deleted
-proc hardConnect(self: wWindow, msg: UINT, handler: wEventHandler) =
-  var connection = EventConnection(handler=handler, undeletable=true)
-  self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+proc hardConnect(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.discardable.} =
+  # Used internally: a default behavior can be changed by user but cannot be deleted
+  var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
+  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
-proc connect*(self: wWindow, msg: UINT, handler: wEventHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, msg: UINT, handler: wEventHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(handler=handler, userData=userData, undeletable=undeletable)
-  self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  var connection = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=undeletable)
+  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
-proc connect*(self: wWindow, msg: UINT, handler: wEventNeatHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, msg: UINT, handler: wEventNeatHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc ()".
-  var connection = EventConnection(neatHandler=handler, userData=userData, undeletable=undeletable)
-  self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  var connection = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=undeletable)
+  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
-proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(id=id, handler=handler, userData=userData, undeletable=undeletable)
-  self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  var connection = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=undeletable)
+  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
-proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc ()".
-  var connection = EventConnection(id=id, neatHandler=handler, userData=userData, undeletable=undeletable)
-  self.mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  var connection = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=undeletable)
+  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
+  result = connection
 
 proc getCommandEvent(window: wWindow): UINT =
   if window of wFrame:
@@ -990,15 +1008,17 @@ proc getCommandEvent(window: wWindow): UINT =
   else:
     assert true
 
-proc connect*(self: wWindow, id: wCommandID, handler: wEventHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, id: wCommandID, handler: wEventHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the specified ID with the event handler defined as "proc (event: wEvent)".
   assert id.ord != 0
-  connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
+  result = connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
 
-proc connect*(self: wWindow, id: wCommandID, handler: wEventNeatHandler, userData: int = 0, undeletable = false) {.validate.} =
+proc connect*(self: wWindow, id: wCommandID, handler: wEventNeatHandler,
+    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
   ## Connects the specified ID with the event handler defined as "proc ()".
   assert id.ord != 0
-  connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
+  result = connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
 
 proc disconnect*(self: wWindow, msg: UINT, limit = -1) {.validate.} =
   ## Disconnects the given event type from the event handler.
@@ -1026,22 +1046,266 @@ proc disconnect*(self: wWindow, id: wCommandID, limit = -1) {.validate.} =
   ## Disconnects the specified ID from the event handler.
   disconnect(self, self.getCommandEvent(), id, limit)
 
-proc `.`*(self: wWindow, msg: UINT, handler: wEventHandler) {.inline.} =
-  ## Symbol alias for connect.
-  self.connect(msg, handler)
+proc systemDisconnect(self: wWindow, connection: wEventConnection) =
+  # Used internally, disconnects the specified connection that returned by systemConnect().
+  let msg = connection.msg
+  mSystemConnectionTable.withValue(msg, list):
+    for i in countdown(list.high, 0):
+      if list[i] == connection:
+        list.delete(i)
+        wAppDecMessage(msg)
 
-proc `.`*(self: wWindow, msg: UINT, handler: wEventNeatHandler) {.inline.} =
-  ## Symbol alias for connect.
-  self.connect(msg, handler)
+proc disconnect*(self: wWindow, connection: wEventConnection) =
+  ## Disconnects the specified token that returned by connect().
+  let msg = connection.msg
+  mConnectionTable.withValue(msg, list):
+    for i in countdown(list.high, 0):
+      if list[i] == connection:
+        list.delete(i)
+        wAppDecMessage(msg)
 
-proc `.`*(self: wWindow, id: wCommandID, handler: wEventHandler) {.inline.} =
+proc `.`*(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.inline, discardable.} =
   ## Symbol alias for connect.
-  self.connect(id, handler)
+  result = self.connect(msg, handler)
 
-proc `.`*(self: wWindow, id: wCommandID, handler: wEventNeatHandler) {.inline.} =
+proc `.`*(self: wWindow, msg: UINT, handler: wEventNeatHandler): wEventConnection {.inline, discardable.} =
   ## Symbol alias for connect.
-  self.connect(id, handler)
+  result = self.connect(msg, handler)
 
+proc `.`*(self: wWindow, id: wCommandID, handler: wEventHandler): wEventConnection {.inline, discardable.} =
+  ## Symbol alias for connect.
+  result = self.connect(id, handler)
+
+proc `.`*(self: wWindow, id: wCommandID, handler: wEventNeatHandler): wEventConnection {.inline, discardable.} =
+  ## Symbol alias for connect.
+  result = self.connect(id, handler)
+
+proc setDraggable*(self: wWindow, flag = true, inClient = true) {.validate, property.} =
+  ## Allow a child window to be moved using the mouse.
+  ## If inClient is true, the window is limited inside the client area.
+  ## When a window is dragging by user, it receive wEvent_Dragging event.
+  if mParent == nil: return
+
+  # connect event handler dynamically.
+  # the good point is these codes can be discard when deadCodeElim turned on.
+
+  # use hardConnect instead of systemConnect to block the default mouse handler
+  # during dragging
+
+  if mDraggableInfo == nil:
+    new(mDraggableInfo)
+  else:
+    disconnect(mDraggableInfo.connection.move)
+    disconnect(mDraggableInfo.connection.up)
+
+  let info = mDraggableInfo
+  info.enable = flag
+  info.inClient = inClient
+
+  info.connection.move = hardConnect(WM_MOUSEMOVE) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    # do nothing when a window is still sizing.
+    if mSizingInfo != nil:
+      let info = mSizingInfo
+      if info.ready.up or info.ready.down or info.ready.left or info.ready.right or info.dragging:
+        return
+
+    # checking event.leftDown is enough to know dragging or not
+    if info.enable and event.leftDown and not info.dragging:
+      info.startPos = self.getPosition()
+      info.startMousePos = event.getMouseScreenPos()
+
+      let event = Event(window=self, msg=wEvent_Dragging, 0,
+        MAKELPARAM(info.startPos.x, info.startPos.y))
+
+      if not self.processEvent(event) or event.isAllowed:
+        self.captureMouse()
+        SetCursor(LoadCursor(0, IDC_SIZEALL))
+        info.dragging = true
+        processed = true
+
+    elif info.dragging:
+      var newPos = info.startPos + event.getMouseScreenPos() - info.startMousePos
+      var currentRect = self.getRect()
+      var clientSize = mParent.getClientSize()
+
+      if info.inClient:
+        newPos.x = newPos.x.clamp(0, clientSize.width - currentRect.width)
+        newPos.y = newPos.y.clamp(0, clientSize.height - currentRect.height)
+
+      if (currentRect.x, currentRect.y) != newPos:
+        let event = Event(window=self, msg=wEvent_Dragging, 0,
+          MAKELPARAM(newPos.x, newPos.y))
+
+        if not self.processEvent(event) or event.isAllowed:
+          self.move(newPos)
+          processed = true
+
+  info.connection.up = hardConnect(wEvent_LeftUp) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    if info.dragging:
+      info.dragging = false
+      self.releaseMouse()
+      processed = true
+
+
+proc setSizingBorder*(self: wWindow, direction: wDirection) =
+  ## Allow a child window to be changed size using the mouse.
+  ## When a window is sizing by user, it receive wEvent_Sizing event.
+  if mParent == nil: return
+
+  # connect event handler dynamically.
+  # See setDraggable()
+
+  if mSizingInfo == nil:
+    new(mSizingInfo)
+  else:
+    disconnect(mSizingInfo.connection.move)
+    disconnect(mSizingInfo.connection.up)
+    disconnect(mSizingInfo.connection.down)
+    disconnect(mSizingInfo.connection.cursor)
+
+  let info = mSizingInfo
+  info.border = direction
+
+  info.connection.move = hardConnect(WM_MOUSEMOVE) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    if info.border == (0, 0, 0, 0): return
+
+    if info.dragging:
+      var newPos = mParent.screenToClient(event.getMouseScreenPos())
+      var currentRect = self.getRect()
+      var clientSize = mParent.getClientSize()
+      var newRect = currentRect
+
+      proc satisfied(): bool =
+        # use min, max because the window maybe already out of client area
+        if newRect.x < min(currentRect.x, 0): return false
+        if newRect.y < min(currentRect.y, 0): return false
+
+        if newRect.x + newRect.width > max(clientSize.width,
+          currentRect.x + currentRect.width): return false
+
+        if newRect.y + newRect.height > max(clientSize.height,
+          currentRect.y + currentRect.height): return false
+
+        if mMinSize != wDefaultSize:
+          if newRect.width < mMinSize.width or newRect.height < mMinSize.height: return false
+
+        if mMaxSize != wDefaultSize:
+          if newRect.width > mMaxSize.width or newRect.height > mMaxSize.height: return false
+        return true
+
+      if info.ready.down:
+        newRect.height = newPos.y - currentRect.y + info.offset.down
+        if not satisfied(): newRect.height = currentRect.height
+
+      if info.ready.right:
+        newRect.width = newPos.x - currentRect.x + info.offset.right
+        if not satisfied(): newRect.width = currentRect.width
+
+      if info.ready.up:
+        newRect.y = newPos.y - info.offset.up
+        newRect.height = currentRect.height - (newRect.y - currentRect.y)
+        if not satisfied():
+          newRect.y = currentRect.y
+          newRect.height = currentRect.height
+
+      if info.ready.left:
+        newRect.x = newPos.x - info.offset.left
+        newRect.width = currentRect.width - (newRect.x - currentRect.x)
+        if not satisfied():
+          newRect.x = currentRect.x
+          newRect.width = currentRect.width
+
+      if newRect != currentRect:
+        let event = Event(window=self, msg=wEvent_Sizing,
+          MAKEWPARAM(newRect.width, newRect.height),
+          MAKELPARAM(newRect.x, newRect.y))
+
+        if not self.processEvent(event) or event.isAllowed:
+          self.setSize(newRect)
+          processed = true
+
+    elif not event.leftDown:
+      var rect: RECT
+      GetWindowRect(mHwnd, rect)
+      var mousePos = event.getMouseScreenPos()
+      var oldReady = info.ready
+
+      info.ready.up = info.border.up > 0 and
+        mousePos.y in rect.top..(rect.top + info.border.up)
+
+      info.ready.down = info.border.down > 0 and
+        mousePos.y in (rect.bottom - info.border.down)..rect.bottom
+
+      info.ready.left = info.border.left > 0 and
+        mousePos.x in rect.left..(rect.left + info.border.left)
+
+      info.ready.right = info.border.right > 0 and
+        mousePos.x in (rect.right - info.border.right)..rect.right
+
+      if oldReady != info.ready:
+        SendMessage(mHwnd, WM_SETCURSOR, 0, HTCLIENT)
+
+      # just collect information, no need to block?
+      # so dont set processed = true
+
+  info.connection.cursor = hardConnect(WM_SETCURSOR) do (event: wEvent):
+    var processed = false
+    defer:
+      # MSDN: If an application processes this message, it should return TRUE.
+      if processed: event.result = TRUE
+      event.skip(if processed: false else: true)
+
+    if (LOWORD(event.lParam) == HTCLIENT):
+      var vertical, horizontal: bool
+      if info.ready.up or info.ready.down: vertical = true
+      if info.ready.left or info.ready.right: horizontal = true
+      if vertical and horizontal:
+        SetCursor(LoadCursor(0, IDC_SIZEALL))
+        processed = true
+      elif vertical:
+        SetCursor(LoadCursor(0, IDC_SIZENS))
+        processed = true
+      elif horizontal:
+        SetCursor(LoadCursor(0, IDC_SIZEWE))
+        processed = true
+
+  info.connection.down = hardConnect(wEvent_LeftDown) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    if info.ready.up or info.ready.down or info.ready.left or info.ready.right:
+      let event = Event(window=self, msg=wEvent_Sizing)
+      if not self.processEvent(event) or event.isAllowed:
+        self.captureMouse()
+        info.dragging = true
+
+        var rect: RECT
+        GetWindowRect(mHwnd, rect)
+        var mousePos = event.getMouseScreenPos()
+
+        info.offset.left = mousePos.x - rect.left
+        info.offset.up = mousePos.y - rect.top
+        info.offset.right = rect.right - mousePos.x
+        info.offset.down = rect.bottom - mousePos.y
+        processed = true
+
+  info.connection.up = hardConnect(wEvent_LeftUp) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    if info.dragging:
+      info.dragging = false
+      self.releaseMouse()
+      processed = true
 
 proc wWindow_DoMouseMove(event: wEvent) =
   let self = event.mWindow
@@ -1073,6 +1337,17 @@ proc wWindow_DoMouseMove(event: wEvent) =
 
 proc wWindow_DoMouseLeave(event: wEvent) =
   event.mWindow.mMouseInWindow = false
+
+proc wWindow_DoSize(event: wEvent) =
+  case int event.wParam:
+  of SIZE_RESTORED:
+    event.window.processMessage(wEvent_Size, event.wParam, event.lParam)
+  of SIZE_MINIMIZED:
+    event.window.processMessage(wEvent_Minimize, event.wParam, event.lParam)
+  of SIZE_MAXIMIZED:
+    event.window.processMessage(wEvent_Maximize, event.wParam, event.lParam)
+    event.window.processMessage(wEvent_Size, event.wParam, event.lParam)
+  else: discard # don't care about SIZE_MAXHIDE, SIZE_MAXSHOW, etc
 
 proc wWindow_DoGetMinMaxInfo(event: wEvent) =
   let self = event.mWindow
@@ -1170,13 +1445,6 @@ proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     RemoveWindowSubclass(hwnd, wSubProc, uIdSubclass)
 
   return DefSubclassProc(hwnd, msg, wParam, lParam)
-
-proc subclass(self: wWindow, hwnd: HWND): HWND =
-  result = mHwnd
-  mHwnd = hwnd
-  wAppWindowChange(self)
-  mSubclassedOldProc = cast[WNDPROC](SetWindowLongPtr(hwnd, GWL_WNDPROC, cast[LONG_PTR](wWndProc)))
-  assert mSubclassedOldProc != wWndProc
 
 proc initBasic(self: wWindow) =
   self.wView.init()
@@ -1337,6 +1605,7 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   # the different is: system event handle shouldn't modify the event object
   systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
   systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+  systemConnect(WM_SIZE, wWindow_DoSize)
   systemConnect(WM_DESTROY, wWindow_DoDestroy)
   systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
 
@@ -1349,7 +1618,6 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
-
 
 proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className = "wWindow"): wWindow {.discardable.} =

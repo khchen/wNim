@@ -39,7 +39,7 @@ DefineIncrement(wEvent_CommandFirst):
 
 const
   wEventTool* = wEvent_Menu
-  wEventTimeChanged* = wEvent_DateChanged
+  wEvent_TimeChanged* = wEvent_DateChanged
 
 proc isCommandEvent(msg: UINT): bool {.inline.} =
   msg in wEvent_CommandFirst..wEvent_CommandLast

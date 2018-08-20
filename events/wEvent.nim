@@ -37,6 +37,12 @@ const
   # wEvent_AppQuit = WM_APP + 1
   # wEvent_Navigation* = WM_APP + 2
   # wEvent_MouseEnter* = WM_APP + 51
+  # wEvent_Size* = WM_APP + 52
+  # wEvent_Iconize* = WM_APP + 53
+  # wEvent_Minimize* = WM_APP + 53
+  # wEvent_Maximize* = WM_APP + 54
+  # wEvent_Sizing* = WM_APP + 55
+  # wEvent_Dragging* = WM_APP + 56
 
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_CommandFirst = WM_APP + 150

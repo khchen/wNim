@@ -2,6 +2,12 @@
 converter DWORDToInt(x: DWORD): int = int x
 converter IntToDWORD(x: int): DWORD = DWORD x
 
+proc `-`(a, b: wPoint): wPoint =
+  result = (a.x - b.x, a.y - b.y)
+
+proc `+`(a, b: wPoint): wPoint =
+  result = (a.x + b.x, a.y + b.y)
+
 
 template GET_X_LPARAM*(x: untyped): int = int cast[int16](LOWORD(x))
 template GET_Y_LPARAM*(x: untyped): int = int cast[int16](HIWORD(x))
@@ -48,19 +54,6 @@ proc wGetDPI(): int =
   var hdc = GetDC(0)
   result = GetDeviceCaps(hdc, LOGPIXELSY)
   ReleaseDC(0, hdc)
-
-proc wIsModifierDown(vk: int32): bool =
-  result = GetKeyState(vk) < 0
-
-proc wIsShiftDown(): bool = wIsModifierDown(VK_SHIFT)
-proc wIsCtrlDown(): bool = wIsModifierDown(VK_CONTROL)
-proc wIsAltDown(): bool = wIsModifierDown(VK_MENU)
-# proc wIsAnyModifierDown(): bool = wIsShiftDown() or wIsCtrlDown() or wIsAltDown()
-
-proc wGetModifier(isCtrl, isShift, isAlt: var bool) =
-  isCtrl = wIsCtrlDown()
-  isShift = wIsShiftDown()
-  isAlt = wIsAltDown()
 
 proc toWStyle(style, exstyle: DWORD): wStyle {.inline.} =
   result = exstyle.wStyle shl 32 or style.wStyle

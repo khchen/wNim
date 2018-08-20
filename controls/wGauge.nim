@@ -96,7 +96,7 @@ proc isVertical*(self: wGauge): bool {.validate, inline.} =
   ## Returns true if the gauge is vertical and false otherwise.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and PBS_VERTICAL) != 0
 
-proc init(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
+proc init(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100, value = 0,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
   let
@@ -108,6 +108,7 @@ proc init(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
 
   mFocusable = false
   setRange(range)
+  setValue(value)
 
   if taskBarProgress:
     let
@@ -123,9 +124,9 @@ proc init(self: wGauge, parent: wWindow, id: wCommandID = -1, range = 100,
       if mTaskBar != nil:
         mTaskBar.Release()
 
-proc Gauge*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wGaHorizontal): wGauge {.discardable.} =
+proc Gauge*(parent: wWindow, id: wCommandID = wDefaultID, range = 100, value = 0,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wGaHorizontal): wGauge {.discardable.} =
   ## Constructor, creating and showing a gauge.
   wValidate(parent)
   new(result)
-  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
+  result.init(parent=parent, id=id, range=range, value=value, pos=pos, size=size, style=style)

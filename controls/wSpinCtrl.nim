@@ -236,7 +236,14 @@ proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, value: string =
 
 proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "0",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpLeft): wSpinCtrl {.discardable.} =
-  ## Constructor, creating and showing a spin control.
+  ## Constructor, creating and showing a spin control. Value as text.
   wValidate(parent)
   new(result)
   result.init(parent=parent, id=id, value=value, pos=pos, size=size, style=style)
+
+proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: int,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpLeft): wSpinCtrl {.discardable.} =
+  ## Constructor, creating and showing a spin control. Value as int.
+  wValidate(parent)
+  new(result)
+  result.init(parent=parent, id=id, value=($value), pos=pos, size=size, style=style)

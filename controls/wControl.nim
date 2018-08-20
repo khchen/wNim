@@ -7,7 +7,9 @@ proc focusNext(self: wNoteBook): bool
 proc focusPrev(self: wNoteBook): bool
 
 proc wControl_DoMenuCommand(event: wEvent) =
-  # relay control's WM_MENUCOMMAND to any wFrame (for example, wToolBar or wButton's submenu)
+  # relay control's WM_MENUCOMMAND to any wFrame
+  # for example, wToolBar or wButton's submenu
+  # or any popup menu from control
   let self = event.mWindow
 
   var win = self.mParent
@@ -267,6 +269,8 @@ proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -
 
   systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
   systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
+  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
   hardConnect(WM_CHAR, wControl_OnNavigation)
   hardConnect(WM_KEYDOWN, wControl_OnNavigation)
   hardConnect(WM_SYSCHAR, wControl_OnNavigation)
+

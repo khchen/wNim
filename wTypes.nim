@@ -18,6 +18,13 @@ type
     width: int
     height: int
 
+  wDirection* = tuple
+    ## A data structure contains left, up, right, down.
+    left: int
+    up: int
+    right: int
+    down: int
+
   wError* = object of Exception
     ## Base of exception use in wNim.
 
@@ -137,18 +144,33 @@ when not defined(wnimdoc):
       mViews: HashSet[wView]
 
     wEventConnection = tuple
+      msg: UINT
       id: wCommandID
       handler: wEventHandler
       neatHandler: wEventNeatHandler
       userData: int
       undeletable: bool
 
+    wSizingInfo = ref object
+      border: wDirection
+      dragging: bool
+      ready: tuple[up, down, left, right: bool]
+      offset: wDirection
+      connection: tuple[move, up, down, cursor: wEventConnection]
+
+    wDraggableInfo = ref object
+      enable: bool
+      inClient: bool
+      dragging: bool
+      startMousePos: wPoint
+      startPos: wPoint
+      connection: tuple[move, up: wEventConnection]
+
     wWindow* = ref object of wView
       mHwnd: HWND
       mParent: wWindow
       mChildren: seq[wWindow]
-      mMarginX: int
-      mMarginY: int
+      mMargin: wDirection
       mStatusBar: wStatusBar
       mToolBar: wToolBar
       mFont: wFont
@@ -164,6 +186,11 @@ when not defined(wnimdoc):
       mMinSize: wSize
       mDummyParent: HWND
       mMouseInWindow: bool
+      mSizingInfo: wSizingInfo
+      mDraggableInfo: wDraggableInfo
+
+      # mDraggable: bool
+      # mDraggableDragging: bool
       # acceleratorTable =
 
     wFrame* = ref object of wWindow
@@ -276,6 +303,22 @@ when not defined(wnimdoc):
       mOwnsImageListState: bool
 
     wHyperLinkCtrl* = ref object of wControl
+
+    wSplitter* = ref object of wControl
+      mIsVertical: bool
+      mSize: int
+      mDragging: bool
+      mResizing: bool
+      mPanel1: wPanel
+      mPanel2: wPanel
+      mMin1: int
+      mMin2: int
+      mPosOffset: wPoint
+      mInPanelMargin: bool
+      mSystemConnections: seq[tuple[win: wWindow, conn: wEventConnection]]
+      mConnections: seq[tuple[win: wWindow, conn: wEventConnection]]
+      mAttach1: bool
+      mAttach2: bool
 
     # wToolTip* = ref wToolTipObj
     # wToolTipObj = object of wControlObj

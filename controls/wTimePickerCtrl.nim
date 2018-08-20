@@ -10,7 +10,7 @@
 ##    ==============================  =============================================================
 ##    Events                          Description
 ##    ==============================  =============================================================
-##    wEventTimeChanged               The selected time changed.
+##    wEvent_TimeChanged              The selected time changed.
 ##    ==============================  =============================================================
 
 proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int] {.validate, property.} =

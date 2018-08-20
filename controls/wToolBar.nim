@@ -316,7 +316,7 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
       self.processMessage(wEventTool, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
-  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
+  # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
 
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
