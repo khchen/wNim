@@ -22,6 +22,8 @@ when not defined(release):
     (x, x.type.name)
   proc wValidateToPointer*(x: string): (pointer, string) =
     ((if x.isNil: cast[pointer](0) else: cast[pointer](unsafeaddr x)), x.type.name)
+  proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
+    (cast[pointer](x), x.type.name)
 
   template wValidate(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
     for tup in vargs:

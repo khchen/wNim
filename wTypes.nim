@@ -97,6 +97,7 @@ when not defined(wnimdoc):
       mPropagationSet: HashSet[UINT]
       mMessageCountTable: CountTable[UINT]
       mExitCode: uint
+      mAccelExists: bool
 
     wEvent* = ref object of RootObj
       mWindow: wWindow
@@ -151,6 +152,11 @@ when not defined(wnimdoc):
       userData: int
       undeletable: bool
 
+    wAcceleratorTable* = ref object of RootObj
+      mHandle: HACCEL
+      mAccels: seq[ACCEL]
+      mModified: bool
+
     wSizingInfo = ref object
       border: wDirection
       dragging: bool
@@ -180,6 +186,7 @@ when not defined(wnimdoc):
       mSubclassedOldProc: WNDPROC
       mConnectionTable: Table[UINT, seq[wEventConnection]]
       mSystemConnectionTable: Table[UINT, seq[wEventConnection]]
+      mAcceleratorTable: wAcceleratorTable
       mSaveFocus: wWindow
       mFocusable: bool
       mMaxSize: wSize
@@ -188,10 +195,6 @@ when not defined(wnimdoc):
       mMouseInWindow: bool
       mSizingInfo: wSizingInfo
       mDraggableInfo: wDraggableInfo
-
-      # mDraggable: bool
-      # mDraggableDragging: bool
-      # acceleratorTable =
 
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar

@@ -688,6 +688,20 @@ proc getTransparent*(self: wWindow): int {.validate, property.} =
   if GetLayeredWindowAttributes(mHwnd, nil, &alpha, nil) == 0: return -1
   result = int alpha
 
+proc setAcceleratorTable*(self: wWindow, accel: wAcceleratorTable) {.validate, property, inline.} =
+  ## Sets the accelerator table for this window.
+  wValidate(accel)
+
+  # always check that is there an accelerator needs to be translated in main loop
+  # seems do no harm. however, only check it on necessary is more clever.
+  wAppAccelOn()
+
+  mAcceleratorTable = accel
+
+proc getAcceleratorTable*(self: wWindow): wAcceleratorTable {.validate, property, inline.} =
+  ## Gets the accelerator table for this window.
+  result = mAcceleratorTable
+
 proc toBar(orientation: int): int {.inline.} =
   assert orientation in {wHorizontal, wVertical}
   result = if orientation == wHorizontal: SB_HORZ else: SB_VERT
@@ -1391,6 +1405,20 @@ proc wWindow_DoNcDestroy(event: wEvent) =
     if index != -1:
       self.mParent.mChildren.delete(index)
 
+proc wWindow_OnCommand(event: wEvent) =
+  let self = event.mWindow
+  var processed = false
+  defer: event.skip(if processed: false else: true)
+
+  # wParam (high word) == 0: menu, == 1: accelerator
+  # we only handle accelerator here.
+  # typically, a accelerator table is associated with a frame.
+  # however, there maybe some exception (editor?)
+  # So we handle this at wWindow level.
+  if event.lParam == 0 and HIWORD(event.wParam) == 1:
+    let id = LOWORD(event.wParam)
+    processed = self.processMessage(wEvent_Menu, id, 0, event.mResult)
+
 proc wWindow_OnNotify(event: wEvent) =
   let self = event.mWindow
   var processed = false
@@ -1618,6 +1646,7 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   systemConnect(WM_VSCROLL, wWindow_DoScroll)
   systemConnect(WM_HSCROLL, wWindow_DoScroll)
 
+  hardConnect(WM_COMMAND, wWindow_OnCommand)
   hardConnect(WM_NOTIFY, wWindow_OnNotify)
   hardConnect(WM_CTLCOLORBTN, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)

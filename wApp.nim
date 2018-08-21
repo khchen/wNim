@@ -8,7 +8,7 @@ var wTheApp {.threadvar.}: wApp
 proc App*(): wApp =
   ## Constructor.
   if not wTheApp.isNil:
-    raise newException(LibraryError, "allow only one instance of wApp")
+    raise newException(wError, "allow only one instance of wApp")
 
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES)
@@ -22,6 +22,7 @@ proc App*(): wApp =
   new(result)
   result.mInstance = GetModuleHandle(nil)
   result.mExitCode = 0
+  result.mAccelExists = false
   result.mTopLevelWindowList = @[]
   result.mWindowTable = initTable[HWND, wWindow]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
@@ -37,14 +38,6 @@ proc wAppHasTopLevelWindow(): bool {.inline.} =
 
 proc wAppWindowAdd(win: wWindow) {.inline.} =
   wTheApp.mWindowTable[win.mHwnd] = win
-
-proc wAppWindowChange(win: wWindow) =
-  for key, value in wTheApp.mWindowTable:
-    if value == win:
-      wTheApp.mWindowTable.del(key)
-      break
-
-  wAppWindowAdd(win)
 
 proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline.} =
   result = wTheApp.mWindowTable.getOrDefault(hwnd)
@@ -75,6 +68,9 @@ proc wAppDecMessage(msg: UINT) {.inline.} =
 proc wAppHasMessage(msg: UINT): bool {.inline.} =
   msg in wTheApp.mMessageCountTable
 
+proc wAppAccelOn() {.inline.} =
+  wTheApp.mAccelExists = true
+
 template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
   if sn > wTheApp.mGDIStockSeq.high:
     wTheApp.mGDIStockSeq.setlen(sn+1)
@@ -95,12 +91,25 @@ proc MessageLoop(isMainLoop: bool = true): int =
       if isMainLoop == false or wAppHasTopLevelWindow() == false:
         break
 
+    var accelProcessed = false
+    if wTheApp.mAccelExists:
+      var win = wAppWindowFindByHwnd(msg.hwnd)
+      while win != nil:
+        if win.mAcceleratorTable != nil:
+          let hAccel = win.mAcceleratorTable.getHandle()
+          if hAccel != 0 and TranslateAccelerator(win.mHwnd, hAccel, msg) != 0:
+            accelProcessed = true
+            break
+
+        win = win.mParent
+
     # we can use IsDialogMessage here to handle key navigation
     # however, it is not flexible enouth
     # so we handle all the navigation by outself in wControl
 
-    TranslateMessage(msg)
-    DispatchMessage(msg)
+    if not accelProcessed:
+      TranslateMessage(msg)
+      DispatchMessage(msg)
 
   result = int msg.wParam
 
