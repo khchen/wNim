@@ -248,6 +248,11 @@ proc setSize*(self: wWindow, size: wSize) {.validate, property, inline.} =
   ## wDefault to indicate not to change.
   setSize(self, size.width, size.height)
 
+proc setSize*(self: wWindow, point: wPoint, size: wSize) {.validate, property, inline.} =
+  ## Sets the size of the window in pixels.
+  ## wDefault to indicate not to change.
+  setSize(self, point.x, point.y, size.width, size.height)
+
 proc setSize*(self: wWindow, rect: wRect) {.validate, property, inline.} =
   ## Sets the size of the window in pixels.
   ## wDefault to indicate not to change.

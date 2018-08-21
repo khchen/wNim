@@ -17,6 +17,13 @@
 ##    wSpBorder                       Draws a standard border.
 ##    wSp3dBorder                     Draws a 3D effect border around splitter.
 ##    ==============================  =============================================================
+##
+## :Events:
+##    ==============================  =============================================================
+##    wMoveEvent                      Description
+##    ==============================  =============================================================
+##    wEvent_Splitter                 The position is dragging by user. This event can be vetoed.
+##    ==============================  =============================================================
 
 const
   # use the same define as wSpinButton
@@ -59,8 +66,10 @@ proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
 
 proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
   if mDragging:
-    var pos = mParent.screenToClient(event.getMouseScreenPos()) - mPosOffset
-    self.splitterResize(pos)
+    let event = Event(window=self, msg=wEvent_Splitter)
+    if not self.processEvent(event) or event.isAllowed:
+      var pos = mParent.screenToClient(event.getMouseScreenPos()) - mPosOffset
+      self.splitterResize(pos)
 
   elif index > 0:
     let pos = event.getMousePos()
@@ -78,16 +87,21 @@ proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
         else:
           pos.y < 0
 
+    if not isEnabled():
+      mInPanelMargin = false
+
     # WM_SETCURSOR won't happen when mouse just moving into the margin area.
     if mInPanelMargin:
       SendMessage(event.window.mHwnd, WM_SETCURSOR, 0, HTCLIENT)
 
 proc wSplitter_DoLeftDown(self: wSplitter, event: wEvent, index: int) =
   if index == 0 or mInPanelMargin:
-    event.window.captureMouse()
-    mDragging = true
-    # Here can't just use getMousePos() because we need client pos relative to splitter.
-    mPosOffset = self.screenToClient(event.getMouseScreenPos())
+    let event = Event(window=self, msg=wEvent_Splitter)
+    if not self.processEvent(event) or event.isAllowed:
+      event.window.captureMouse()
+      mDragging = true
+      # Here can't just use getMousePos() because we need client pos relative to splitter.
+      mPosOffset = self.screenToClient(event.getMouseScreenPos())
 
 proc wSplitter_DoLeftUp(self: wSplitter, event: wEvent, index: int) =
   if mDragging:
@@ -95,13 +109,25 @@ proc wSplitter_DoLeftUp(self: wSplitter, event: wEvent, index: int) =
     event.window.releaseMouse()
 
 proc wSplitter_OnSetCursor(self: wSplitter, event: wEvent, index: int) =
+  var processed = false
+  defer:
+    # MSDN: If an application processes this message, it should return TRUE.
+    if processed: event.result = TRUE
+    event.skip(if processed: false else: true)
+
   if (LOWORD(event.lParam) != HTCLIENT) or (index != 0 and not mInPanelMargin):
-    event.skip
     return
 
-  # MSDN: If an application processes this message, it should return TRUE.
-  SetCursor(LoadCursor(0, if mIsVertical: IDC_SIZEWE else: IDC_SIZENS))
-  event.result = TRUE
+  let event = Event(window=self, msg=wEvent_SplitterCursor, WPARAM mIsVertical)
+  if not self.processEvent(event) or event.isAllowed:
+    let cursor =
+      if event.result == 0:
+        LoadCursor(0, if mIsVertical: IDC_SIZEWE else: IDC_SIZENS)
+      else:
+        HCURSOR event.result
+
+    SetCursor(cursor)
+    processed = true
 
 proc clearEventHandle(self: wSplitter) =
   for tup in mConnections:
@@ -219,6 +245,18 @@ proc attachPanel*(self: wSplitter, attach = true) =
   mAttach1 = attach
   mAttach2 = attach
   reattach()
+
+proc setSplitMode*(self: wSplitter, mode: int) =
+  ## Sets the split mode. Mode can be wSpHorizontal or wSpVertical.
+  if mode in {wVertical, wSpVertical}:
+    if not mIsVertical:
+      mIsVertical = true
+      splitterResize()
+
+  elif mode in {wHorizontal, wSpHorizontal}:
+    if mIsVertical:
+      mIsVertical = false
+      splitterResize()
 
 proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle, className="wSplitter") =

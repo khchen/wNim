@@ -43,6 +43,8 @@ const
   # wEvent_Maximize* = WM_APP + 54
   # wEvent_Sizing* = WM_APP + 55
   # wEvent_Dragging* = WM_APP + 56
+  # wEvent_Splitter* = WM_APP + 57
+  # wEvent_SplitterCursor* = WM_APP + 58
 
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_CommandFirst = WM_APP + 150

@@ -9,9 +9,6 @@ proc `+`(a, b: wPoint): wPoint =
   result = (a.x + b.x, a.y + b.y)
 
 
-template GET_X_LPARAM*(x: untyped): int = int cast[int16](LOWORD(x))
-template GET_Y_LPARAM*(x: untyped): int = int cast[int16](HIWORD(x))
-
 # add wValidate(self, frame, text, etc) at beginning of static object proc
 # method don't need self check becasue it's checked by dispatcher
 # not nil don't work will on 0.18.0 and 0.18.1
