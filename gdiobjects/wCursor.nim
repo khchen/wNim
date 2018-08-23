@@ -50,7 +50,7 @@ method delete*(self: wCursor) =
     mHandle = 0
 
 proc final*(self: wCursor) =
-  ## Default finalizer for wIcon.
+  ## Default finalizer for wCursor.
   delete()
 
 proc init*(self: wCursor) =
@@ -77,6 +77,7 @@ proc Cursor*(id: int): wCursor {.inline.} =
 
 proc init*(self: wCursor, data: ptr byte, length: int, size=wDefaultSize) =
   # here support .ico, .png, .cur, .ani
+  wValidate(data)
   init()
   mHandle = createIconFromMemory(data, length, width=size.width,
     height=size.height, isIcon=false)
@@ -95,6 +96,7 @@ proc Cursor*(data: ptr byte, length: int, size = wDefaultSize): wCursor {.inline
   result.init(data, length, size)
 
 proc init*(self: wCursor, str: string) =
+  wValidate(str)
   init()
   if str.isVaildPath():
     mHandle = LoadCursorFromFile(str)
@@ -104,13 +106,14 @@ proc init*(self: wCursor, str: string) =
     init(cast[ptr byte](&str), str.len)
 
 proc Cursor*(str: string): wCursor {.inline.} =
-  ## Creates a cursor by passing a filename. Supports .cur and .ani.
-  ## If str is not a valid file path, it will be regarded as the file binary data in memory.
+  ## Creates a cursor from a file. Supports .cur and .ani.
+  ## If str is not a valid file path, it will be regarded as the binary data in memory.
   wValidate(str)
   new(result, final)
   result.init(str)
 
 proc init*(self: wCursor, icon: wIcon, hotSpot = wDefaultPoint) =
+  wValidate(icon)
   init()
   mHandle = createIconFromHIcon(icon.mHandle, isIcon=false, hotSpot=hotSpot)
   if mHandle != 0:
@@ -124,6 +127,7 @@ proc Cursor*(icon: wIcon, hotSpot = wDefaultPoint): wCursor {.inline.} =
   result.init(icon, hotSpot)
 
 proc init*(self: wCursor, image: wImage, hotSpot = wDefaultPoint) =
+  wValidate(image)
   init()
   try:
     var icon = Icon(image)
@@ -138,6 +142,7 @@ proc Cursor*(image: wImage, hotSpot = wDefaultPoint): wCursor {.inline.} =
   result.init(image, hotSpot)
 
 proc init*(self: wCursor, cursor: wCursor, hotSpot = wDefaultPoint) =
+  wValidate(cursor)
   init()
   mHandle = createIconFromHIcon(cursor.mHandle, isIcon=false, hotSpot=hotSpot)
   if mHandle != 0:

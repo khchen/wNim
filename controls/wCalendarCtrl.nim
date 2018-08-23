@@ -131,7 +131,9 @@ proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   ## Retrieves the maximum date range that can be selected
   result = int SendMessage(mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
-method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool =
+
   case code
   of MCN_SELCHANGE:
     return self.processMessage(wEvent_CalendarSelChanged, id, lparam, ret)
@@ -142,12 +144,17 @@ method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARA
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wCalendarCtrl, parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wCalendarCtrl) =
+  ## Default finalizer for wCalendarCtrl.
+  discard
 
-  assert parent != nil
+proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
+    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0) {.validate.} =
 
-  self.wControl.init(className=MONTHCAL_CLASS, parent=parent, id=id, label="", pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  wValidate(parent)
+  self.wControl.init(className=MONTHCAL_CLASS, parent=parent, id=id, label="",
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if (style and wCalMondayFirst) != 0:
     SendMessage(mHwnd, MCM_SETFIRSTDAYOFWEEK, 0, 0)
@@ -162,9 +169,9 @@ proc init(self: wCalendarCtrl, parent: wWindow, id: wCommandID = wDefaultID, dat
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 
-
-proc CalendarCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wCalendarCtrl {.discardable.} =
+proc CalendarCtrl*(parent: wWindow, id = wDefaultID,
+    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0): wCalendarCtrl {.inline, discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description
@@ -176,5 +183,5 @@ proc CalendarCtrl*(parent: wWindow, id: wCommandID = wDefaultID, date: wTime = w
   ## size        Initial size. If left at default value, the control chooses its own best size.
   ## style       The window style.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, date=date, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, date, pos, size, style)

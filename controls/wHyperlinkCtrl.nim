@@ -141,9 +141,15 @@ method processNotify(self: wHyperLinkCtrl, code: INT, id: UINT_PTR, lParam: LPAR
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: string = "",
-    url = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wHyperLinkCtrl) =
+  ## Default finalizer for wHyperLinkCtrl.
+  discard
 
+proc init*(self: wHyperLinkCtrl, parent: wWindow, id = wDefaultID,
+    label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
@@ -170,9 +176,10 @@ proc init(self: wHyperLinkCtrl, parent: wWindow, id: wCommandID = -1, label: str
         self.setFocused(focused)
         event.veto
 
-proc HyperLinkCtrl*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
-    url = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLinkCtrl {.discardable.} =
+proc HyperLinkCtrl*(parent: wWindow, id = wDefaultID,
+    label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0): wHyperLinkCtrl {.inline, discardable.} =
   ##　Constructor, creating and showing a hyperlink control.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, label=label, url=url, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, label, url, pos, size, style)

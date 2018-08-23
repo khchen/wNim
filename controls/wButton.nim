@@ -190,9 +190,15 @@ method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM, ret
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wButton) =
+  ## Default finalizer for wButton.
+  discard
 
+proc init*(self: wButton, parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = style and (not 0xF)
 
@@ -206,9 +212,9 @@ proc init(self: wButton, parent: wWindow, id: wCommandID = -1, label: string = "
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_Button, event.mWparam, event.mLparam)
 
-proc Button*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wButton {.discardable.} =
+proc Button*(parent: wWindow, id = wDefaultID, label: string = "", pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wButton {.inline, discardable.} =
   ## Constructor, creating and showing a button.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, label, pos, size, style)

@@ -1,7 +1,7 @@
 ## This control allows the user to enter time.
 ##
 ## :Superclass:
-##    wControl
+##    wDatePickerCtrl
 ##
 ## :Appearance:
 ##    .. image:: images/wTimePickerCtrl.png
@@ -34,19 +34,19 @@ proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int]) {.validat
   ## Changes the current time of the control.
   setTime(time.hour, time.min, time.sec)
 
-proc getValue*(self: wTimePickerCtrl): wTime {.validate, property.} =
-  ## Returns the currently entered time.
-  var st: SYSTEMTIME
-  if GDT_VALID == SendMessage(mHwnd, DTM_GETSYSTEMTIME, 0, addr st):
-    result = st.toTime()
+proc final*(self: wTimePickerCtrl) =
+  ## Default finalizer for wTimePickerCtrl.
+  discard
 
-proc setValue*(self: wTimePickerCtrl, time: wTime) {.validate, property.} =
-  ## Changes the current value of the control.
-  var st = time.toSystemTime()
-  SendMessage(mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
+proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID, time = wDefaultTime,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
 
-proc TimePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID, time: wTime = wDefaultTime,
-    pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize, style: wStyle = 0): wTimePickerCtrl {.discardable.} =
+  wValidate(parent)
+  self.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos,
+    size=size, style=style or DTS_TIMEFORMAT)
+
+proc TimePickerCtrl*(parent: wWindow, id = wDefaultID, time = wDefaultTime,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTimePickerCtrl {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description
@@ -58,5 +58,5 @@ proc TimePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID, time: wTime =
   ## size        Initial size. If left at default value, the control chooses its own best size.
   ## style       The window style, should be left at 0 as there are no special styles for this control in this version.
   wValidate(parent)
-  new(result)
-  result.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos, size=size, style=style or DTS_TIMEFORMAT)
+  new(result, final)
+  result.init(parent, id, time, pos, size, style)

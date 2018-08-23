@@ -4,17 +4,22 @@
 ## :Superclass:
 ##    wWindow
 
-proc init(self: wPanel, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className: string = "wPanel") =
+proc final*(self: wPanel) =
+  ## Default finalizer for wPanel.
+  discard
 
+proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0, className = "wPanel") {.validate, inline.} =
+  wValidate(parent)
   # add wDoubleBuffered to avoid flickering during resizing
   # Does it any problem to add it by default?
-  self.wWindow.init(parent=parent, pos=pos, size=size, style=style or wDoubleBuffered, className=className,
+  self.wWindow.initVerbosely(parent=parent, pos=pos, size=size,
+    style=style or wDoubleBuffered, className=className,
     bgColor=GetSysColor(COLOR_BTNFACE))
 
 proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wPanel {.discardable.} =
+    style: wStyle = 0, className = "wPanel"): wPanel {.inline, discardable.} =
   ## Constructor.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, pos, size, style, className)

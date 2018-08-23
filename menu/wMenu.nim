@@ -477,7 +477,11 @@ proc len*(self: wMenu): int {.validate, inline.} =
   ## This shoud be equal to getCount() in most case.
   result = mItemList.len
 
-proc init(self: wMenu) =
+proc final*(self: wMenu) =
+  ## Default finalizer for wMenu.
+  delete()
+
+proc init*(self: wMenu) {.validate.} =
   mHmenu = CreatePopupMenu()
   var menuInfo = MENUINFO(
     cbSize: sizeof(MENUINFO),
@@ -488,17 +492,19 @@ proc init(self: wMenu) =
   mItemList = @[]
   mParentMenuCountTable = initCountTable[wMenuBase]()
 
-proc final(self: wMenu) =
-  delete()
-
-proc Menu*(): wMenu =
+proc Menu*(): wMenu {.inline.} =
   ## Construct an empty menu.
   new(result, final)
   result.init()
 
-proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu =
+proc init*(self: wMenu, menuBar: wMenuBar, text: string,
+    bitmap: wBitmap = nil) {.validate.} =
+  wValidate(menuBar, text)
+  init()
+  menuBar.append(self, text, bitmap)
+
+proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu {.inline.} =
   ## Construct an empty menu and append to menubar.
   wValidate(menuBar, text)
   new(result, final)
-  result.init()
-  menuBar.append(result, text, bitmap)
+  result.init(menuBar, text, bitmap)

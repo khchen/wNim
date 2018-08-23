@@ -182,8 +182,15 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
       # Return nonzero to prevent the change, or zero to allow the change, same as our mResult
       event.result = spinEvent.result
 
-proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, value: string = "0",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wSpinCtrl) =
+  ## Default finalizer for wSpinCtrl.
+  discard
+
+proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
+    value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wSpLeft) {.validate.} =
+
+  wValidate(parent)
   var
     textStyle = style and (not (wSpArrowKeys or wSpWrap)) or ES_AUTOHSCROLL or wBorderSunken
     updownStyle = UDS_ALIGNRIGHT or UDS_SETBUDDYINT or UDS_HOTTRACK
@@ -221,7 +228,7 @@ proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, value: string =
     if event.lParam == mHwnd and HIWORD(event.wParam) == EN_CHANGE:
       self.processMessage(wEvent_Text, 0, 0)
 
-    # cannot use processNotify method becasue the notify sent to updown's parent
+  # cannot use processNotify method becasue the notify sent to updown's parent
   parent.hardConnect(WM_NOTIFY) do (event: wEvent):
     wSpinCtrl_OnNotify(self, event)
 
@@ -234,16 +241,24 @@ proc init(self: wSpinCtrl, parent: wWindow, id: wCommandID = -1, value: string =
       if event.keyCode in {wKey_Left, wKey_Right}:
         event.veto
 
-proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "0",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpLeft): wSpinCtrl {.discardable.} =
+proc SpinCtrl*(parent: wWindow, id = wDefaultID,
+    value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wSpLeft): wSpinCtrl {.inline, discardable.} =
   ## Constructor, creating and showing a spin control. Value as text.
   wValidate(parent)
   new(result)
-  result.init(parent=parent, id=id, value=value, pos=pos, size=size, style=style)
+  result.init(parent, id, value, pos, size, style)
 
-proc SpinCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: int,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpLeft): wSpinCtrl {.discardable.} =
+proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
+    value: int, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wSpLeft) {.validate.} =
+  wValidate(parent)
+  init(parent, id, $value, pos, size, style)
+
+proc SpinCtrl*(parent: wWindow, id = wDefaultID,
+    value: int, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wSpLeft): wSpinCtrl {.inline, discardable.} =
   ## Constructor, creating and showing a spin control. Value as int.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, value=($value), pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, value, pos, size, style)

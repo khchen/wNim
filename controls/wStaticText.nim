@@ -51,9 +51,15 @@ proc wStaticText_DoCommand(event: wEvent) =
       self.processMessage(wEvent_CommandLeftDoubleClick, event.mWparam, event.mLparam)
     else: discard
 
-proc init(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wStaticText) =
+  ## Default finalizer for wStaticText.
+  discard
 
+proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wAlignLeft) {.validate.} =
+
+  wValidate(parent, label)
   self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label, pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
 
@@ -64,9 +70,10 @@ proc init(self: wStaticText, parent: wWindow, id: wCommandID = -1, label: string
     # when size change, StaticText should refresh itself, but windows system don't do it
     self.refresh()
 
-proc StaticText*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wAlignLeft): wStaticText {.discardable.} =
+proc StaticText*(parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wAlignLeft): wStaticText {.inline, discardable.} =
   ## Constructor, creating and showing a text control.
   wValidate(parent, label)
-  new(result)
-  result.init(parent=parent, label=label, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, label, pos, size, style)

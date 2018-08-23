@@ -386,9 +386,15 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wTextCtrl) =
+  ## Default finalizer for wTextCtrl.
+  discard
 
+proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
+    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wTeLeft) {.validate.} =
+
+  wValidate(parent)
   mRich = ((style and wTeRich) != 0)
   mDisableTextEvent = false
 
@@ -442,18 +448,25 @@ proc init(self: wTextCtrl, parent: wWindow, id: wCommandID = -1, value: string =
       if event.keyCode in {wKey_Left, wKey_Right}:
         event.veto
 
-proc TextCtrl*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTeLeft): wTextCtrl {.discardable.} =
+proc TextCtrl*(parent: wWindow, id = wDefaultID,
+    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wTeLeft): wTextCtrl {.inline, discardable.} =
   ##　Constructor, creating and showing a text control.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, value=value, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, value, pos, size, style)
 
-proc TextCtrl(hWnd: HWND): wTextCtrl {.discardable.} =
+proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
   # only wrap a wWindow's child for now
-  let parent = wAppWindowFindByHwnd(GetParent(hwnd))
-  if parent == nil: return nil
+  let parent = wAppWindowFindByHwnd(GetParent(hWnd))
+  if parent == nil:
+    raise newException(wError, "cannot wrap this textctrl.")
 
-  new(result)
-  wWindow(result).init(hwnd=hwnd, parent=parent)
-  result.mRich = false
+  self.wWindow.init(hwnd)
+  mRich = false
+  mDisableTextEvent = false
+
+proc TextCtrl*(hWnd: HWND): wTextCtrl {.inline, discardable.} =
+  ## A special constructor to subclass the textctrl of other contorls.
+  new(result, final)
+  result.init(hWnd)

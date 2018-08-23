@@ -250,9 +250,15 @@ proc setSplitMode*(self: wSplitter, mode: int) {.validate, property, inline.} =
       splitterResize()
       splitterResetCursor()
 
-proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle, className="wSplitter") =
+proc final*(self: wSplitter) =
+  ## Default finalizer for wSplitter.
+  discard
 
+proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical,
+    className = "wSplitter") {.validate.} =
+
+  wValidate(parent)
   mSize = 6
   mMin1 = 0
   mMin2 = 0
@@ -267,8 +273,8 @@ proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefault
     if size.height != wDefault:
       mSize = size.height
 
-  self.wWindow.init(parent=parent, style=style and wInvisible, className=className,
-    bgColor=GetSysColor(COLOR_ACTIVEBORDER))
+  self.wWindow.initVerbosely(parent=parent, id=id, style=style and wInvisible,
+    className=className, bgColor=GetSysColor(COLOR_ACTIVEBORDER))
 
   mPanel1 = Panel(parent, style=wInvisible)
   mPanel2 = Panel(parent, style=wInvisible)
@@ -293,9 +299,10 @@ proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefault
       mSize = if mIsVertical: winpos.cx else: winpos.cy
       self.splitterResize()
 
-proc Splitter*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpVertical): wSplitter {.inline.} =
+proc Splitter*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wSpVertical,
+    className = "wSplitter"): wSplitter {.inline, discardable.} =
   ## Constructor. For vertical splitter, settings of y-axis are ignored, vice versa.
   wValidate(parent)
-  new(result)
-  result.init(parent, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, pos, size, style, className)

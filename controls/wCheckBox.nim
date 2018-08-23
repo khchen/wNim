@@ -68,9 +68,15 @@ proc setValue*(self: wCheckBox, state: bool) {.validate, property, inline.} =
   ## Sets the checkbox to the given state.
   SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
-proc init(self: wCheckBox, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wCheckBox) =
+  ## Default finalizer for wCheckBox.
+  discard
 
+proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wChk2State) {.validate.} =
+
+  wValidate(parent)
   let checkType = if (style and wChk3State) != 0: BS_AUTO3STATE else: BS_AUTOCHECKBOX
 
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
@@ -83,10 +89,10 @@ proc init(self: wCheckBox, parent: wWindow, id: wCommandID = -1, label: string =
     if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_CheckBox, event.mWparam, event.mLparam)
 
-proc CheckBox*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wChk2State): wCheckBox {.discardable.} =
+proc CheckBox*(parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wChk2State): wCheckBox {.inline, discardable.} =
   ## Constructor, creating and showing a checkbox
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
-
+  new(result, final)
+  result.init(parent, id, label, pos, size, style)

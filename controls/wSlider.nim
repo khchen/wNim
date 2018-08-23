@@ -182,9 +182,15 @@ proc clearTicks*(self: wSlider, ) {.validate, property, inline.} =
   ## Clears the ticks.
   SendMessage(mHwnd, TBM_CLEARTICS, TRUE, 0)
 
-proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
-    range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wSlider) =
+  ## Default finalizer for wSlider.
+  discard
 
+proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
+    value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wSlHorizontal) {.validate.} =
+
+  wValidate(parent)
   self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or TBS_FIXEDLENGTH)
   # TBS_FIXEDLENGTH is need so that TBM_SETTHUMBLENGTH works
@@ -239,9 +245,10 @@ proc init(self: wSlider, parent: wWindow, id: wCommandID = -1, value = 0,
       if event.keyCode in {wKey_Right, wKey_Left}:
         event.veto
 
-proc Slider*(parent: wWindow, id: wCommandID = wDefaultID, value = 0, range: Slice[int] = 0..100,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSlHorizontal): wSlider {.discardable.} =
+proc Slider*(parent: wWindow, id = wDefaultID, value = 0,
+    range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wSlHorizontal): wSlider {.inline, discardable.} =
   ## Constructor, creating and showing a slider.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, value=value, range=range, id=id, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, value, range, pos, size, style)

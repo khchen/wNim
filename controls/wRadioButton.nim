@@ -39,9 +39,15 @@ proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
   ## Sets the radio button to checked or unchecked status.
   SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
-proc init(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wRadioButton) =
+  ## Default finalizer for wRadioButton.
+  discard
 
+proc init*(self: wRadioButton, parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = (style and (not 0xF)) or BS_AUTORADIOBUTTON
 
@@ -52,10 +58,10 @@ proc init(self: wRadioButton, parent: wWindow, id: wCommandID = -1, label: strin
     if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_RadioButton, event.mWparam, event.mLparam)
 
-proc RadioButton*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wRadioButton {.discardable.} =
+proc RadioButton*(parent: wWindow, id = wDefaultID,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0): wRadioButton {.inline, discardable.} =
   ## Constructor, creating and showing a radio button.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, label=label, pos=pos, size=size, style=style)
-
+  new(result, final)
+  result.init(parent, id, label, pos, size, style)

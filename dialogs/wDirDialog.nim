@@ -126,16 +126,16 @@ proc showModal*(self: wDirDialog): wID {.discardable.} =
   if result == wID_OK and (mStyle and wDdChangeDir) != 0:
     SetCurrentDirectory(mPath)
 
-proc show*(self: wDirDialog): wID {.discardable, inline.} =
+proc show*(self: wDirDialog): wID {.inline, discardable.} =
   ## The same as showModal().
   result = showModal()
 
-proc showModalResult*(self: wDirDialog): string {.discardable, inline.} =
+proc showModalResult*(self: wDirDialog): string {.inline, discardable.} =
   ## Shows the dialog, returning the selected path or nil.
   if showModal() == wID_OK:
     result = getPath()
 
-proc showResult*(self: wDirDialog): string {.discardable, inline.} =
+proc showResult*(self: wDirDialog): string {.inline, discardable.} =
   ## The same as showModalResult().
   if show() == wID_OK:
     result = getPath()

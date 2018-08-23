@@ -100,7 +100,7 @@ proc insertPage*(self: wNoteBook, pos = -1, page: wPanel, text = "",
     updateSelection(pos)
 
 proc insertPage*(self: wNoteBook, pos = -1, text = "", select = false,
-    image: wImage = nil, imageId: int = -1): wPanel {.validate, discardable, inline.} =
+    image: wImage = nil, imageId: int = -1): wPanel {.validate, inline, discardable.} =
   ## Inserts a new page at the specified position. Return the new page (wPanel object).
   result = Panel(self, style=wInvisible)
   insertPage(pos=pos, page=result, text=text, select=select, image=image, imageId=imageId)
@@ -113,7 +113,7 @@ proc addPage*(self: wNoteBook, page: wPanel, text = "", select = false,
   insertPage(page=page, text=text, select=select, image=image, imageId=imageId)
 
 proc addPage*(self: wNoteBook, text = "", select = false,
-    image: wImage = nil, imageId: int = -1): wPanel {.validate, discardable, inline.} =
+    image: wImage = nil, imageId: int = -1): wPanel {.validate, inline, discardable.} =
   ## Adds a new page. Return the new page (wPanel object).
   result = insertPage(text=text, select=select, image=image, imageId=imageId)
 
@@ -210,7 +210,7 @@ proc removeAllPagesImpl(self: wNoteBook, delete = false) =
   SendMessage(mHwnd, TCM_DELETEALLITEMS, 0, 0)
   mSelection = -1
 
-proc removePage*(self: wNoteBook, pos: int): wPanel {.validate, discardable, inline.} =
+proc removePage*(self: wNoteBook, pos: int): wPanel {.validate, inline, discardable.} =
   ## Removes the specified page, without deleting the associated panel object.
   ## Returns the removed panel object.
   result = removePageImpl(pos, delete=false)
@@ -303,9 +303,14 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM, r
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wNoteBook) =
+  ## Default finalizer for wNoteBook.
+  discard
 
+proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
   # don't allow TCS_BUTTONS style -> it have different behavior with normal style, it's hard to deal with
   var style = style and (not (TCS_BUTTONS or TCS_MULTILINE))
@@ -356,9 +361,9 @@ proc init(self: wNoteBook, parent: wWindow, id: wCommandID = -1, pos = wDefaultP
     if event.keyCode in {wKey_Left, wKey_Right}:
       event.veto
 
-proc NoteBook*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wNoteBook {.discardable.} =
+proc NoteBook*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wNoteBook {.inline, discardable.} =
   ## Constructs a notebook control.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, pos, size, style)

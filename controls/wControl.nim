@@ -239,8 +239,10 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM, re
   else: return
   return self.processMessage(eventType, cast[WPARAM](id), lparam, ret)
 
-proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: int64 = 0, callback: proc(self: wWindow) = nil) =
+proc init(self: wControl, className: string, parent: wWindow,
+    id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0) =
+  # a global init for GUI controls, is this need to be public?
 
   var
     size = size
@@ -259,9 +261,9 @@ proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -
   if lastControl == nil or (self of wRadioButton) != (lastControl of wRadioButton):
     style = style or WS_GROUP
 
-  self.wWindow.init(title=label, className=className, parent=parent, pos=pos, size=size,
+  self.wWindow.initVerbosely(title=label, className=className, parent=parent, pos=pos, size=size,
     style=style or WS_CHILD, fgColor=parent.mForegroundColor, bgColor=parent.mBackgroundColor,
-    id=HMENU(id), regist=false, callback=callback)
+    id=HMENU(id), regist=false)
 
   SetWindowSubclass(mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
 
@@ -273,4 +275,3 @@ proc init(self: wControl, className: string, parent: wWindow, id: wCommandID = -
   hardConnect(WM_CHAR, wControl_OnNavigation)
   hardConnect(WM_KEYDOWN, wControl_OnNavigation)
   hardConnect(WM_SYSCHAR, wControl_OnNavigation)
-

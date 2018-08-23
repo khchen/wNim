@@ -271,85 +271,12 @@ proc wGdipGetQualityParameters(quality: var LONG): EncoderParameters =
   result.Parameter[0].NumberOfValues = 1;
   result.Parameter[0].Value = &quality
 
-proc init(self: wImage, gdip: ptr GpBitmap, copy=true) =
-  wGdipInit()
-  if copy:
-    if GdipCloneImage(gdip, cast[ptr ptr GpImage](&mGdipBmp)) != Ok:
-      error()
-  else:
-    mGdipBmp = gdip
-
-proc init(self: wImage, data: ptr byte, length: int) =
-  wGdipInit()
-  let stream = wGdipCreateStreamOnMemory(data, length)
-  defer:
-    if stream != nil: stream.Release()
-
-  if stream == nil or GdipCreateBitmapFromStream(stream, &mGdipBmp) != Ok:
-    error()
-
-proc init(self: wImage, filename: wstring) =
-  wGdipInit()
-  if GdipCreateBitmapFromFile(filename, &mGdipBmp) != Ok:
-    error()
-
-proc init(self: wImage, str: string) =
-  wGdipInit()
-  # Here do a magic, str can be filename or raw data
-  if str.isVaildPath():
-    init(+$str)
-  else:
-    init(cast[ptr byte](&str), str.len)
-
-proc init(self: wImage, width, height: int) =
-  wGdipInit()
-  if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &mGdipBmp) != Ok:
-    error()
-
 proc delete*(self: wImage) {.validate.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
   if mGdipBmp != nil:
     GdipDisposeImage(mGdipBmp)
     mGdipBmp = nil
-
-proc final(self: wImage) =
-  delete()
-
-proc Image*(gdip: ptr GpBitmap, copy=true): wImage =
-  ## Creates an image from a gdiplus bitmap handle.
-  ## If copy is false, this only wrap it to wImage object.
-  wValidate(gdip)
-  new(result, final)
-  result.init(gdip, copy)
-
-proc Image*(name: string|wstring): wImage =
-  ## Creates an image from a file.
-  ## Use getDecoders iterator to list the supported format.
-  ## This construct accepts either file name or binary data. For example:
-  ##
-  ## .. code-block:: Nim
-  ##   const data = staticRead("test.png")
-  ##   var image = Image(data)
-  wValidate(name)
-  new(result, final)
-  result.init(name)
-
-proc Image*(data: ptr byte, length: int): wImage =
-  ## Creates an image from binary image data.
-  ## Use getDecoders iterator to list the supported format.
-  wValidate(data)
-  new(result, final)
-  result.init(data, length)
-
-proc Image*(width, height: int): wImage =
-  ## Creates an empty image with the given size.
-  new(result, final)
-  result.init(width, height)
-
-proc Image*(size: wSize): wImage =
-  ## Creates an empty image with the given size.
-  result = Image(size.width, size.height)
 
 proc getHandle*(self: wImage): ptr GpBitmap {.validate, property, inline.} =
   ## Gets the real resource handle of gdiplus bitmap.
@@ -436,13 +363,6 @@ proc getAlpha*(self: wImage, pos: wPoint): byte {.validate, property.} =
   ## Return alpha value at given pixel location.
   result = getAlpha(pos.x, pos.y)
 
-proc copy*(self: wImage): wImage {.validate.} =
-  ## Returns an identical copy of this image.
-  try:
-    result = Image(mGdipBmp, copy=true)
-  except:
-    raise newException(wImageError, "wImage copy failure")
-
 iterator getEncoders*(self: wImage): string {.validate.} =
   ## Iterates over each available image encoder on system.
   # also use validate pragma to ensure wGdipInit() was called.
@@ -503,6 +423,94 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
 
   except:
     raise newException(wImageError, "wImage saveData failure")
+
+proc final(self: wImage) =
+  ## Default finalizer for wImage.
+  delete()
+
+proc init*(self: wImage, gdip: ptr GpBitmap, copy = true) {.validate.} =
+  wValidate(gdip)
+  wGdipInit()
+  if copy:
+    if GdipCloneImage(gdip, cast[ptr ptr GpImage](&mGdipBmp)) != Ok:
+      error()
+  else:
+    mGdipBmp = gdip
+
+proc Image*(gdip: ptr GpBitmap, copy = true): wImage {.inline.} =
+  ## Creates an image from a gdiplus bitmap handle.
+  ## If copy is false, this only wrap it to wImage object.
+  ## Notice this means the handle will be destroyed by wImage when it is destroyed.
+  wValidate(gdip)
+  new(result, final)
+  result.init(gdip, copy)
+
+proc init*(self: wImage, image: wImage) {.validate, inline.} =
+  wValidate(image)
+  init(image.mGdipBmp, copy=true)
+
+proc Image*(image: wImage): wImage {.inline.} =
+  ## Creates an image from wImage object, aka. copy constructors.
+  wValidate(image)
+  new(result, final)
+  result.init(image)
+
+proc init*(self: wImage, data: ptr byte, length: int) {.validate.} =
+  wValidate(data)
+  wGdipInit()
+  let stream = wGdipCreateStreamOnMemory(data, length)
+  defer:
+    if stream != nil: stream.Release()
+
+  if stream == nil or GdipCreateBitmapFromStream(stream, &mGdipBmp) != Ok:
+    error()
+
+proc Image*(data: ptr byte, length: int): wImage {.inline.} =
+  ## Creates an image from binary image data.
+  ## Use getDecoders iterator to list the supported format.
+  wValidate(data)
+  new(result, final)
+  result.init(data, length)
+
+proc init*(self: wImage, str: string) {.validate.} =
+  wValidate(str)
+  wGdipInit()
+  if str.isVaildPath():
+    if GdipCreateBitmapFromFile(str, &mGdipBmp) != Ok:
+      error()
+  else:
+    init(cast[ptr byte](&str), str.len)
+
+proc Image*(str: string): wImage {.inline.} =
+  ## Creates an image from a file.
+  ## Use getDecoders iterator to list the supported format.
+  ## If str is not a valid file path, it will be regarded as the binary data in memory.
+  ## For example:
+  ##
+  ## .. code-block:: Nim
+  ##   const data = staticRead("test.png")
+  ##   var image = Image(data)
+  wValidate(str)
+  new(result, final)
+  result.init(str)
+
+proc init*(self: wImage, width: int, height: int) {.validate.} =
+  wGdipInit()
+  if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &mGdipBmp) != Ok:
+    error()
+
+proc Image*(width: int, height: int): wImage {.inline.} =
+  ## Creates an empty image with the given size.
+  new(result, final)
+  result.init(width, height)
+
+proc init*(self: wImage, size: wSize) {.validate, inline.} =
+  init(size.width, size.height)
+
+proc Image*(size: wSize): wImage {.inline.} =
+  ## Creates an empty image with the given size.
+  new(result, final)
+  result.init(size)
 
 proc scale*(self: wImage, width, height: int, quality = wIMAGE_QUALITY_NORMAL): wImage {.validate.} =
   ## Returns a scaled version of the image.
@@ -713,3 +721,4 @@ when not defined(useWinXP):
       effect(LevelsEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage levels failure")
+

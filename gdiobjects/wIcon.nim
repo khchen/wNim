@@ -58,7 +58,8 @@ proc wIcon_FromImage(self: wIcon, image: wImage, size = wDefaultSize) =
   if GdipCreateHICONFromBitmap(image.mGdipBmp, &mHandle) != Ok:
     error()
 
-proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.inline.} =
+proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate, inline.} =
+  wValidate(image)
   self.wGdiObject.init()
   wIcon_FromImage(image, size)
 
@@ -68,7 +69,8 @@ proc Icon*(image: wImage, size = wDefaultSize): wIcon {.inline.} =
   new(result, final)
   result.init(image, size)
 
-proc init*(self: wIcon, data: ptr byte, length: int, size = wDefaultSize) =
+proc init*(self: wIcon, data: ptr byte, length: int, size = wDefaultSize) {.validate.} =
+  wValidate(data)
   self.wGdiObject.init()
   # createIconFromMemory better than Image() becasue it choose
   # best fits icon in icon group, and it supports .ani format.
@@ -88,7 +90,8 @@ proc Icon*(data: ptr byte, length: int, size = wDefaultSize): wIcon {.inline.} =
   new(result, final)
   result.init(data, length, size)
 
-proc init*(self: wIcon, str: string, size = wDefaultSize) =
+proc init*(self: wIcon, str: string, size = wDefaultSize) {.validate.} =
+  wValidate(str)
   var
     buffer: ptr byte
     length: int
@@ -106,12 +109,13 @@ proc init*(self: wIcon, str: string, size = wDefaultSize) =
 
 proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from a image file.
-  ## If str is not a valid file path, it will be regarded as the file binary data in memory.
+  ## If str is not a valid file path, it will be regarded as the binary data in memory.
   wValidate(str)
   new(result, final)
   result.init(str, size)
 
-proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) =
+proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) {.validate.} =
+  wValidate(file)
   self.wGdiObject.init()
   mHandle = createIconFromPE(file, index, size.width, size.height)
   if mHandle != 0:
@@ -127,20 +131,27 @@ proc Icon*(file: string, index: int, size = wDefaultSize): wIcon {.inline.} =
   new(result, final)
   result.init(file, index, size)
 
-proc init*(self: wIcon, hIcon: HICON) =
+proc init*(self: wIcon, hIcon: HICON, copy = true) {.validate.} =
   self.wGdiObject.init()
-  mHandle = createIconFromHIcon(hIcon, isIcon=true)
+  if copy:
+    mHandle = createIconFromHIcon(hIcon, isIcon=true)
+  else:
+    mHandle = hIcon
+
   if mHandle != 0:
     (mWidth, mHeight) = getIconSize(mHandle)
   else:
     error()
 
-proc Icon*(hIcon: HICON): wIcon {.inline.} =
-  ## Creates an icon from Windows icon handle. This make a copy of icon.
+proc Icon*(hIcon: HICON, copy = true): wIcon {.inline.} =
+  ## Creates an icon from Windows icon handle.
+  ## If copy is false, this only wrap it to wIcon object.
+  ## Notice this means the handle will be destroyed by wIcon when it is destroyed.
   new(result, final)
-  result.init(hIcon)
+  result.init(hIcon, copy)
 
-proc init*(self: wIcon, icon: wIcon) =
+proc init*(self: wIcon, icon: wIcon) {.validate.} =
+  wValidate(icon)
   init(icon.mHandle)
 
 proc Icon*(icon: wIcon): wIcon {.inline.} =

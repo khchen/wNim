@@ -30,9 +30,14 @@ method getClientSize*(self: wStaticBox): wSize {.property.} =
   let labelSize = getLabelSize()
   result.height -= labelSize.height div 2
 
-proc init(self: wStaticBox, parent: wWindow, id: wCommandID = -1, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wStaticBox) =
+  ## Default finalizer for wStaticBox.
+  discard
 
+proc init*(self: wStaticBox, parent: wWindow, id = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+
+  wValidate(parent, label)
   # staticbox need WS_CLIPSIBLINGS
   self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or WS_CLIPSIBLINGS)
@@ -40,9 +45,10 @@ proc init(self: wStaticBox, parent: wWindow, id: wCommandID = -1, label: string 
   mFocusable = false
   setMargin(12)
 
-proc StaticBox*(parent: wWindow, id: wCommandID = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wStaticBox {.discardable.} =
+proc StaticBox*(parent: wWindow, id = wDefaultID, label: string = "",
+    pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0): wStaticBox {.inline, discardable.} =
   ## Constructor, creating and showing a static box.
   wValidate(parent, label)
-  new(result)
-  result.init(parent=parent, label=label, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, label, pos, size, style)

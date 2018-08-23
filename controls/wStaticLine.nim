@@ -12,8 +12,8 @@
 ##    ==============================  =============================================================
 
 const
-  wLiHorizontal* = SS_LEFT
-  wLiVertical* = SS_RIGHT
+  wLiHorizontal* = SS_LEFT # 0
+  wLiVertical* = SS_RIGHT # 2
 
 method getDefaultSize*(self: wStaticLine): wSize {.property.} =
   ## Returns the default size for the control.
@@ -37,16 +37,17 @@ proc isVertical*(self: wStaticLine): bool {.validate.} =
   ## Returns true if the line is vertical, false if horizontal.
   result = (getWindowStyle() and wLiVertical) != 0
 
-proc init(self: wStaticLine, parent: wWindow, id: wCommandID = -1,
-  pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wStaticLine) =
+  ## Default finalizer for wStaticLine.
+  discard
 
-  # wLiVertical == SS_RIGHT == 2
-  # wLiHorizontal == SS_LEFT == 0
+proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0) {.validate.} =
 
+  wValidate(parent)
   var size = size
   if size != wDefaultSize:
-    let isVertical = (style and wLiVertical) != 0
-    if isVertical:
+    if (style and wLiVertical) != 0:
       size.width = 2
     else:
       size.height = 2
@@ -56,9 +57,9 @@ proc init(self: wStaticLine, parent: wWindow, id: wCommandID = -1,
 
   mFocusable = false
 
-proc StaticLine*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wStaticLine {.discardable.} =
+proc StaticLine*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wStaticLine {.inline, discardable.} =
   ## Constructor, creating and showing a static line.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, pos, size, style)

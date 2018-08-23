@@ -258,7 +258,11 @@ proc len*(self: wMenuBar): int {.validate, inline.} =
   ## This shoud be equal to getCount in most case.
   result = mMenuList.len
 
-proc init(self: wMenuBar) =
+proc final*(self: wMenuBar) =
+  ## Default finalizer for wMenuBar.
+  delete()
+
+proc init*(self: wMenuBar) {.validate.} =
   mHmenu = CreateMenu()
   var menuInfo = MENUINFO(
     cbSize: sizeof(MENUINFO),
@@ -268,22 +272,28 @@ proc init(self: wMenuBar) =
   mMenuList = @[]
   mParentFrameSet = initSet[wFrame]()
 
-proc final(self: wMenuBar) =
-  delete()
-
-proc MenuBar*(): wMenuBar =
+proc MenuBar*(): wMenuBar {.inline.} =
   ## Construct an empty menubar.
   new(result, final)
   result.init()
 
-proc MenuBar*(menus: openarray[(wMenu, string)]): wMenuBar =
-  ## Construct a menubar from arrays of menus and titles.
-  result = MenuBar()
+proc init*(self: wMenuBar, menus: openarray[(wMenu, string)]) {.validate.} =
+  init()
   for menu in menus:
-    result.append(menu[0], menu[1])
+    append(menu[0], menu[1])
 
-proc MenuBar*(frame: wFrame, menus: openarray[(wMenu, string)] = []): wMenuBar =
+proc MenuBar*(menus: openarray[(wMenu, string)]): wMenuBar {.inline.} =
+  ## Construct a menubar from arrays of menus and titles.
+  new(result, final)
+  result.init(menus)
+
+proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = []) {.validate.} =
+  wValidate(frame)
+  init(menus)
+  attach(frame)
+
+proc MenuBar*(frame: wFrame, menus: openarray[(wMenu, string)] = []): wMenuBar {.inline.} =
   ## Construct a menubar from arrays of menus and titles, and attach it to frame window.
   wValidate(frame)
-  result = MenuBar(menus)
-  result.attach(frame)
+  new(result, final)
+  result.init(frame, menus)

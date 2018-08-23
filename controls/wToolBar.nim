@@ -296,10 +296,19 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
     self.popupMenu(menu, rect.left, rect.bottom)
     processed = true
 
-proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = wTbDefaultStyle) =
+proc final*(self: wToolBar) =
+  ## Default finalizer for wToolBar.
+  discard
+
+proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
+    style: wStyle = wTbDefaultStyle) {.validate.} =
+
+  wValidate(parent)
   mTools = @[]
 
-  self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id, style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
+  self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id,
+    style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
+
   SendMessage(mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
   SendMessage(mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 
@@ -321,9 +330,9 @@ proc init(self: wToolBar, parent: wWindow, id: wCommandID = -1, style: int64 = w
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
 
-proc ToolBar*(parent: wWindow, id: wCommandID = wDefaultID,
-    style: wStyle = wTbDefaultStyle): wToolBar {.discardable.} =
+proc ToolBar*(parent: wWindow, id = wDefaultID,
+    style: wStyle = wTbDefaultStyle): wToolBar {.inline, discardable.} =
   ## Constructs a toolbar.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, style=style)
+  new(result, final)
+  result.init(parent, id, style)

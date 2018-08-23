@@ -187,6 +187,6 @@ proc showModal*(self: wMessageDialog): wID {.discardable.} =
   of IDYES: wID_YES
   else: wID_OK
 
-proc show*(self: wMessageDialog): wID {.discardable, inline.} =
+proc show*(self: wMessageDialog): wID {.inline, discardable.} =
   ## The same as ShowModal().
   result = showModal()

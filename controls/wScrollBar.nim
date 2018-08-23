@@ -92,9 +92,14 @@ proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
   let info = getScrollInfo()
   result = info.nPos
 
-proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wScrollBar) =
+  ## Default finalizer for wScrollBar.
+  discard
 
+proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
@@ -117,9 +122,9 @@ proc init(self: wScrollBar, parent: wWindow, id: wCommandID = -1, pos = wDefault
       if event.keyCode in {wKey_Right, wKey_Left}:
         event.veto
 
-proc ScrollBar*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wScrollBar {.discardable.} =
+proc ScrollBar*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = 0): wScrollBar {.inline, discardable.} =
   ## Constructor, creating and showing a scrollbar.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, pos=pos, size=size, style=style)

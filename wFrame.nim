@@ -309,11 +309,17 @@ when defined(useWinXP):
         event.mResult = TRUE
         processed = true
 
-proc init*(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize,
-    style: wStyle = wDefaultFrameStyle, className = "wFrame") =
+proc final*(self: wFrame) =
+  ## Default finalizer for wFrame.
+  discard
 
-  self.wWindow.init(title=title, pos=pos, size=size, style=style or WS_CLIPCHILDREN, owner=owner,
-    className=className, bgColor=GetSysColor(COLOR_APPWORKSPACE))
+proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
+    className = "wFrame") {.validate.} =
+
+  self.wWindow.initVerbosely(title=title, pos=pos, size=size,
+    style=style or WS_CLIPCHILDREN, owner=owner, className=className,
+    bgColor=GetSysColor(COLOR_APPWORKSPACE))
 
   systemConnect(wEvent_Size, wFrame_DoSize)
 
@@ -325,10 +331,11 @@ proc init*(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wS
     hardConnect(WM_MEASUREITEM, wFrame_OnMeasureItem)
     hardConnect(WM_DRAWITEM, wFrame_OndrawItem)
 
-proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wDefaultFrameStyle, className = "wFrame"): wFrame {.discardable.} =
+proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
+    className = "wFrame"): wFrame {.inline, discardable.} =
   ## Constructor, creating the frame. A frame is the top-level window so it cannot have a parent.
   ## However, it can has an owner. The frame will be minimized when its owner is minimized and
   ## restored when it is restored.
-  new(result)
-  result.init(owner=owner, title=title, pos=pos, size=size, style=style, className=className)
+  new(result, final)
+  result.init(owner, title, pos, size, style, className)

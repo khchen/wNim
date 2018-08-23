@@ -928,7 +928,7 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret = event.mResult
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
-    ret: var LRESULT): bool {.discardable, inline.} =
+    ret: var LRESULT): bool {.inline, discardable.} =
   # Use internally, ignore origin means origin is self.mHwnd.
   result = processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
@@ -1034,33 +1034,33 @@ proc hardConnect(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnec
   result = connection
 
 proc connect*(self: wWindow, msg: UINT, handler: wEventHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=undeletable)
+  var connection = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=false)
   mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
   result = connection
 
 proc connect*(self: wWindow, msg: UINT, handler: wEventNeatHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc ()".
-  var connection = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=undeletable)
+  var connection = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=false)
   mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
   result = connection
 
 proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=undeletable)
+  var connection = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=false)
   mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
   result = connection
 
 proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc ()".
-  var connection = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=undeletable)
+  var connection = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=false)
   mConnectionTable.mgetOrPut(msg, @[]).add(connection)
   wAppIncMessage(msg)
   result = connection
@@ -1080,16 +1080,16 @@ proc getCommandEvent(window: wWindow): UINT =
     assert true
 
 proc connect*(self: wWindow, id: wCommandID, handler: wEventHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the specified ID with the event handler defined as "proc (event: wEvent)".
   assert id.ord != 0
-  result = connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
+  result = connect(self, self.getCommandEvent(), id, handler, userData)
 
 proc connect*(self: wWindow, id: wCommandID, handler: wEventNeatHandler,
-    userData: int = 0, undeletable = false): wEventConnection {.validate, discardable.} =
+    userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the specified ID with the event handler defined as "proc ()".
   assert id.ord != 0
-  result = connect(self, self.getCommandEvent(), id, handler, userData, undeletable)
+  result = connect(self, self.getCommandEvent(), id, handler, userData)
 
 proc disconnect*(self: wWindow, msg: UINT, limit = -1) {.validate.} =
   ## Disconnects the given event type from the event handler.
@@ -1566,7 +1566,12 @@ proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
 
   return DefSubclassProc(hwnd, msg, wParam, lParam)
 
-proc initBasic(self: wWindow) =
+proc final*(self: wWindow) =
+  ## Default finalizer for wWindow.
+  # Just don't need do anything. WM_NCDESTROY does a lot.
+  discard
+
+proc initBase(self: wWindow) =
   self.wView.init()
   mSystemConnectionTable = initTable[UINT, seq[wEventConnection]]()
   mConnectionTable = initTable[UINT, seq[wEventConnection]]()
@@ -1575,40 +1580,12 @@ proc initBasic(self: wWindow) =
   mMinSize = wDefaultSize
   mCursor = wNilCursor
 
-proc init(self: wWindow, hWnd: HWND, parent: wWindow) =
-  initBasic()
-  mHwnd = hWnd
-  mParent = parent
-
-  mBackgroundColor = wDefaultColor
-  mForegroundColor = wDefaultColor
-
-  let hFont = cast[HANDLE](SendMessage(mHwnd, WM_GETFONT, 0, 0))
-  if hFont != 0:
-    mFont = Font(hFont)
-  else:
-    mFont = wNormalFont
-
-  wAppWindowAdd(self)
-  if parent == nil:
-    wAppTopLevelWindowAdd(self)
-  else:
-    parent.mChildren.add(self)
-
-  systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
-  systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
-  systemConnect(WM_DESTROY, wWindow_DoDestroy)
-  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
-  # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
-
-  SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
-
-proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, owner: wWindow = nil, className = "wWindow", title = "",
+proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
+    title = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
-    id: wCommandID = 0, regist = true, callback: proc(self: wWindow) = nil) =
-
-  initBasic()
+    className = "wWindow", owner: wWindow = nil,  regist = true) =
+  # use internally
+  initBase()
   mParent = parent
 
   var
@@ -1694,10 +1671,6 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   if mHwnd == 0:
     raise newException(wError, className & " window creation failure")
 
-  # a callback is need if something need do after window create
-  # todo: use prepare instead, delete this after code clear
-  if callback != nil: callback(self)
-
   wAppWindowAdd(self)
   if parent.isNil:
     wAppTopLevelWindowAdd(self)
@@ -1742,15 +1715,49 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
   hardConnect(WM_SETCURSOR, wWindow_OnSetCursor)
 
-proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wWindow"): wWindow {.discardable.} =
+proc init*(self: wWindow, hWnd: HWND) {.validate.} =
+  initBase()
+  mHwnd = hWnd
+  mParent = wAppWindowFindByHwnd(GetParent(hwnd))
+  mBackgroundColor = wDefaultColor
+  mForegroundColor = wDefaultColor
+
+  let hFont = cast[HANDLE](SendMessage(mHwnd, WM_GETFONT, 0, 0))
+  if hFont != 0:
+    mFont = Font(hFont)
+  else:
+    mFont = wNormalFont
+
+  wAppWindowAdd(self)
+  if mParent == nil:
+    wAppTopLevelWindowAdd(self)
+  else:
+    mParent.mChildren.add(self)
+
+  systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
+  systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+  systemConnect(WM_DESTROY, wWindow_DoDestroy)
+  systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+  # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
+
+  SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
+
+proc Window*(hWnd: HWND): wWindow {.discardable.} =
+  ## Subclassed constructor
+  new(result, final)
+  result.init(hwnd)
+
+proc init*(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
+    className = "wWindow") {.validate, inline.} =
+  initVerbosely(parent=parent, id=id, pos=pos, size=size, style=style,
+    className=className)
+
+proc Window*(parent: wWindow = nil, id: wCommandID = 0,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
+    className = "wWindow"): wWindow {.inline, discardable.} =
   ## Constructs a window.
   # make all wWindow and subclass as discardable, because sometimes we just want a window
   # there and don't do anything about it. Especially for controls.
-  new(result)
-  result.init(parent=parent, pos=pos, size=size, style=style, className=className, id=id)
-
-proc Window*(hWnd: HWND): wWindow {.discardable.} =
-  let parent = wAppWindowFindByHwnd(GetParent(hwnd))
-  new(result)
-  result.init(hwnd=hwnd, parent=parent)
+  new(result, final)
+  result.init(parent, id, pos, size, style, className)

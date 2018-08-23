@@ -1,7 +1,6 @@
 ## A wImageList contains a list of images.
 ## It is used principally in conjunction with wTreeCtrl and wListCtrl.
 
-
 proc add*(self: wImageList, icon: wIcon): int {.validate, discardable.} =
   ## Adds a new image using an icon.
   ## Return the new zero-based image index.
@@ -70,20 +69,29 @@ proc delete*(self: wImageList) {.validate.} =
     ImageList_Destroy(mHandle)
     mHandle = 0
 
-proc final(self: wImageList) =
+proc final*(self: wImageList) {.validate.} =
+  ## Default finalizer for wImageList.
   delete()
 
-proc init(self: wImageList, width: int, height: int, mask = true, initialCount = 1) =
+proc init*(self: wImageList, width: int, height: int, mask = false,
+    initialCount = 1) {.validate, inline.} =
   let flag = if mask: ILC_COLOR32 or ILC_MASK else: ILC_COLOR32
   mHandle = ImageList_Create(width, height, flag, initialCount, 1)
 
-proc ImageList*(width: int, height: int, mask = false, initialCount = 1): wImageList =
+proc ImageList*(width: int, height: int, mask = false,
+    initialCount = 1): wImageList {.inline.} =
   ## Constructor specifying the image size, whether image masks should be created,
   ## and the initial size of the list.
   new(result, final)
   result.init(width, height, mask, initialCount)
 
-proc ImageList*(size: wSize, mask = false, initialCount = 1): wImageList =
+proc init*(self: wImageList, size: wSize, mask = false,
+    initialCount = 1) {.validate, inline.} =
+  init(size.width, size.height, mask, initialCount)
+
+proc ImageList*(size: wSize, mask = false,
+    initialCount = 1): wImageList {.inline.} =
   ## Constructor specifying the image size, whether image masks should be created,
   ## and the initial size of the list.
-  result = ImageList(size.width, size.height, mask, initialCount)
+  new(result, final)
+  result.init(size, mask, initialCount)

@@ -10,7 +10,7 @@
 ##    ==============================  =============================================================
 ##    Styles                          Description
 ##    ==============================  =============================================================
-##    wDpDropDown                     Show drop-down part from which the user can select a date.
+##    wDpDropDown                     Show drop-down part from which the user can select a date (Default).
 ##    wDpSpin                         Show spin-control-like arrows to change individual date components.
 ##    wDpAllowNone                    The control allows the user to not enter any valid date at all.
 ##    wDpShowCentury                  Forces display of the century in the default date format.
@@ -86,10 +86,15 @@ method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPA
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
-    date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
-    style: wStyle = wDpDropDown) =
+proc final*(self: wDatePickerCtrl) =
+  ## Default finalizer for wDatePickerCtrl.
+  discard
 
+proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
+    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wDpDropDown) {.validate.} =
+
+  wValidate(parent)
   self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
@@ -100,9 +105,9 @@ proc init(self: wDatePickerCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 
-proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID,
-    date: wTime = wDefaultTime, pos: wPoint = wDefaultPoint, size: wSize = wDefaultSize,
-    style: wStyle = wDpDropDown): wDatePickerCtrl {.discardable.} =
+proc DatePickerCtrl*(parent: wWindow, id = wDefaultID,
+    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = wDpDropDown): wDatePickerCtrl {.inline, discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description
@@ -114,5 +119,5 @@ proc DatePickerCtrl*(parent: wWindow, id: wCommandID = wDefaultID,
   ##    size     Initial size. If left at default value, the control chooses its own best size.
   ##    style    The window style.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, date=date, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, date, pos, size, style)

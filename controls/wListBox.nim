@@ -89,7 +89,7 @@ proc insert*(self: wListBox, pos: int, list: openarray[string]) {.validate, inli
   for i, text in list:
     insert(if pos < 0: pos else: i + pos, text)
 
-proc append*(self: wListBox, text: string): int {.validate, discardable, inline.} =
+proc append*(self: wListBox, text: string): int {.validate, inline, discardable.} =
   ## Appends the given string to the end. If the list box has the wLbSort style,
   ## the string is inserted into the list and the list is sorted.
   ## The return value is the index of the string in the list box.
@@ -278,9 +278,15 @@ method trigger(self: wListBox) =
     let text = mInitData[i]
     SendMessage(mHwnd, LB_ADDSTRING, 0, &T(text))
 
-proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
-    size = wDefaultSize, choices: openarray[string] = [], style: wStyle = 0) =
+proc final*(self: wListBox) =
+  ## Default finalizer for wListBox.
+  discard
 
+proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
+    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
+    style: wStyle = wLbSingle) {.validate.} =
+
+  wValidate(parent)
   mInitData = cast[ptr UncheckedArray[string]](choices)
   mInitCount = choices.len
 
@@ -306,9 +312,10 @@ proc init(self: wListBox, parent: wWindow, id: wCommandID = -1, pos = wDefaultPo
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 
-proc ListBox*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint, size = wDefaultSize,
-    choices: openarray[string] = [], style: wStyle = wLbSingle): wListBox {.discardable.} =
+proc ListBox*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, choices: openarray[string] = [],
+    style: wStyle = wLbSingle): wListBox {.inline, discardable.} =
   ## Constructor, creating and showing a list box.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, pos=pos, size=size, choices=choices, style=style)
+  new(result, final)
+  result.init(parent, id, pos, size, choices, style)

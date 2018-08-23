@@ -120,7 +120,14 @@ method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM, 
   else: return false
   return self.processMessage(eventKind, cast[WPARAM](id), lparam)
 
-proc init(self: wStatusBar, parent: wWindow, style: wStyle = 0, id: wCommandID = -1) =
+proc final*(self: wStatusBar) =
+  ## Default finalizer for wStatusBar.
+  discard
+
+proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
+    style: wStyle = 0) {.validate.} =
+
+  wValidate(parent)
   self.wControl.init(className=STATUSCLASSNAME, parent=parent, id=id, pos=(0, 0),
     size=(0, 0), style=style or WS_CHILD or WS_VISIBLE)
 
@@ -135,9 +142,9 @@ proc init(self: wStatusBar, parent: wWindow, style: wStyle = 0, id: wCommandID =
     # then recount the width of fields
     self.resize()
 
-proc StatusBar*(parent: wWindow, id: wCommandID = wDefaultID,
-    style: wStyle = 0): wStatusBar {.discardable.} =
+proc StatusBar*(parent: wWindow, id = wDefaultID,
+    style: wStyle = 0): wStatusBar {.inline, discardable.} =
   ## Constructor.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, style=style, id=id)
+  new(result, final)
+  result.init(parent, id, style)

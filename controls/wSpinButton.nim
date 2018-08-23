@@ -72,9 +72,14 @@ proc wSpinButton_OnNotify(self: wSpinButton, event: wEvent) =
     if processed:
       event.result = spinEvent.result
 
-proc init(self: wSpinButton, parent: wWindow, id: wCommandID = -1, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) =
+proc final*(self: wSpinButton) =
+  ## Default finalizer for wSpinButton.
+  discard
 
+proc init*(self: wSpinButton, parent: wWindow, id = wDefaultID,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical) {.validate.} =
+
+  wValidate(parent)
   # up-down control without buddy window cannot have a focus
   # (in fact, it do have a focus but without any visual change)
   # so UDS_ARROWKEYS have no use here. How to fix?
@@ -86,9 +91,9 @@ proc init(self: wSpinButton, parent: wWindow, id: wCommandID = -1, pos = wDefaul
   parent.hardConnect(WM_NOTIFY) do (event: wEvent):
     wSpinButton_OnNotify(self, event)
 
-proc SpinButton*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wSpVertical): wSpinButton {.discardable.} =
+proc SpinButton*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+    size = wDefaultSize, style: wStyle = wSpVertical): wSpinButton {.inline, discardable.} =
   ## Constructor, creating and showing a spin button.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
+  new(result, final)
+  result.init(parent, id, pos, size, style)

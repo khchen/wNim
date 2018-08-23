@@ -108,25 +108,26 @@ iterator items*(self: wAcceleratorTable): wAcceleratorEntry {.validate, inline.}
   for accel in mAccels:
     yield wAcceleratorEntry accel
 
-proc final(self: wAcceleratorTable) =
+proc final*(self: wAcceleratorTable) =
+  ## Default finalizer for wAcceleratorTable.
   mAccels.setLen(0)
   if mHandle != 0:
     DestroyAcceleratorTable(mHandle)
   mHandle = 0
 
-proc init(self: wAcceleratorTable) {.inline.} =
+proc init*(self: wAcceleratorTable) {.validate, inline.} =
   mAccels = @[]
-
-proc init(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
-  mAccels = newSeqOfCap[ACCEL](entries.len)
-  for entry in entries:
-    mAccels.add(ACCEL entry)
-  mModified = true
 
 proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
   ## Constructor.
   new(result, final)
   result.init()
+
+proc init*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
+  mAccels = newSeqOfCap[ACCEL](entries.len)
+  for entry in entries:
+    mAccels.add(ACCEL entry)
+  mModified = true
 
 proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]): wAcceleratorTable {.inline.} =
   ## Initializes the accelerator table from an openarray of wAcceleratorEntry.

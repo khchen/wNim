@@ -227,9 +227,15 @@ method trigger(self: wComboBox) =
     let text = mInitData[i]
     SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
 
-proc init(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string], style: wStyle = 0) =
+proc final*(self: wComboBox) =
+  ## Default finalizer for wComboBox.
+  discard
 
+proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
+    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+    choices: openarray[string] = [], style: wStyle = wCbDropDown) {.validate.} =
+
+  wValidate(parent)
   mInitData = cast[ptr UncheckedArray[string]](choices)
   mInitCount = choices.len
 
@@ -305,12 +311,10 @@ proc init(self: wComboBox, parent: wWindow, id: wCommandID = -1, value: string =
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 
-proc ComboBox*(parent: wWindow, id: wCommandID = wDefaultID, value: string = "",
+proc ComboBox*(parent: wWindow, id = wDefaultID, value: string = "",
     pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = wCbDropDown): wComboBox {.discardable.} =
+    style: wStyle = wCbDropDown): wComboBox {.inline, discardable.} =
   ## Constructor, creating and showing a combobox.
   wValidate(parent)
-  new(result)
-  result.init(parent=parent, id=id, value=value, pos=pos,
-    size=size, choices=choices, style=style)
-
+  new(result, final)
+  result.init(parent, id, value, pos, size, choices, style)
