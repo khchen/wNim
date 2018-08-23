@@ -7,7 +7,9 @@
 proc init(self: wPanel, parent: wWindow = nil, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className: string = "wPanel") =
 
-  self.wWindow.init(parent=parent, pos=pos, size=size, style=style or WS_CLIPCHILDREN, className=className,
+  # add wDoubleBuffered to avoid flickering during resizing
+  # Does it any problem to add it by default?
+  self.wWindow.init(parent=parent, pos=pos, size=size, style=style or wDoubleBuffered, className=className,
     bgColor=GetSysColor(COLOR_BTNFACE))
 
 proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,

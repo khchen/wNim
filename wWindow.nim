@@ -12,6 +12,7 @@
 ##    wBorderStatic                   Displays a border suitable for a static control.
 ##    wBorderDouble                   Displays a double border.
 ##    wTransparentWindow              The window is transparent.
+##    wDoubleBuffered                 The window is double-buffered.
 ##    wVScroll                        Use this style to enable a vertical scrollbar.
 ##    wHScroll                        Use this style to enable a horizontal scrollbar.
 ##    wClipChildren                   Use this style to eliminate flicker caused by the background being repainted, then children being painted over them.
@@ -32,6 +33,7 @@ const
   wBorderStatic* = WS_EX_STATICEDGE shl 32
   wBorderDouble* = WS_EX_DLGMODALFRAME shl 32
   wTransparentWindow* = WS_EX_TRANSPARENT shl 32
+  wDoubleBuffered* = WS_EX_COMPOSITED shl 32
   wVScroll* = WS_VSCROLL
   wHScroll* = WS_HSCROLL
   wClipChildren* = WS_CLIPCHILDREN

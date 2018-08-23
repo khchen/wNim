@@ -37,14 +37,16 @@ proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
   mResizing = true
   defer: mResizing = false
 
-  # avoid flickering
-  SendMessage(mParent.mHwnd, WM_SETREDRAW, FALSE, 0)
+  proc countLimit(delta: var int, limit: int) =
+    delta = delta.clamp(mMin1.clamp(0, limit), (limit + mSize - mMin2).clamp(0, limit))
 
   var clientSize = mParent.getClientSize()
   var pos = if pos == wDefaultPoint: getPosition() else: pos
+  var isShown = isShownOnScreen()
 
-  proc countLimit(delta: var int, limit: int) =
-    delta = delta.clamp(mMin1.clamp(0, limit), (limit + mSize - mMin2).clamp(0, limit))
+  # avoid flickering
+  if isShown:
+    SendMessage(mParent.mHwnd, WM_SETREDRAW, FALSE, 0)
 
   if mIsVertical:
     var limit = clientSize.width - mSize
@@ -61,8 +63,9 @@ proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
     mPanel1.setSize(0, 0, clientSize.width, delta)
     mPanel2.setSize(0, delta + mSize, clientSize.width, limit - delta)
 
-  SendMessage(mParent.mHwnd, WM_SETREDRAW, TRUE, 0)
-  RedrawWindow(mParent.mHwnd, nil, 0, RDW_INVALIDATE or RDW_ERASE or RDW_ALLCHILDREN or RDW_UPDATENOW)
+  if isShown:
+    SendMessage(mParent.mHwnd, WM_SETREDRAW, TRUE, 0)
+    RedrawWindow(mParent.mHwnd, nil, 0, RDW_INVALIDATE or RDW_ERASE or RDW_ALLCHILDREN or RDW_UPDATENOW)
 
 proc splitterResetCursor(self: wSplitter) =
   if mIsVertical:
@@ -162,35 +165,35 @@ proc reattach(self: wSplitter) =
   if mAttach1: bindEventHandle(1)
   if mAttach2: bindEventHandle(2)
 
-proc getPanel1*(self: wSplitter): wPanel =
+proc getPanel1*(self: wSplitter): wPanel {.validate, property, inline.} =
   ## Returns the left/top panel.
   result = mPanel1
 
-proc getPanel2*(self: wSplitter): wPanel =
+proc getPanel2*(self: wSplitter): wPanel {.validate, property, inline.} =
   ## Returns the right/bottom panel.
   result = mPanel2
 
-proc setMinPanelSize1*(self: wSplitter, min = 0) =
+proc setMinPanelSize1*(self: wSplitter, min = 0) {.validate, property, inline.} =
   ## Sets the minimum size of left/top panel.
   mMin1 = min
   splitterResize()
 
-proc setMinPanelSize2*(self: wSplitter, min = 0) =
+proc setMinPanelSize2*(self: wSplitter, min = 0) {.validate, property, inline.} =
   ## Sets the minimum size of right/bottom panel.
   mMin2 = min
   splitterResize()
 
-proc setMinPanelSize*(self: wSplitter, min = 0) =
+proc setMinPanelSize*(self: wSplitter, min = 0) {.validate, property, inline.} =
   ## Sets the minimum size of both panels.
   mMin1 = min
   mMin2 = min
   splitterResize()
 
-proc setInvisible*(self: wSplitter) =
+proc setInvisible*(self: wSplitter) {.validate, property, inline.} =
   ## Sets the splitter should be invisible. The same as setSize(0, 0).
   setSize(0, 0)
 
-proc setPanel1*(self: wSplitter, panel: wPanel): wPanel {.discardable.} =
+proc setPanel1*(self: wSplitter, panel: wPanel): wPanel {.validate, property, discardable.} =
   ## This function replaces the left/top panel with another one.
   ## New panel's parent must the same as splitter's parent. Otherwise, the function failure.
   ## Returns the old panel or nil.
@@ -199,7 +202,7 @@ proc setPanel1*(self: wSplitter, panel: wPanel): wPanel {.discardable.} =
     mPanel1 = panel
     reattach()
 
-proc setPanel2*(self: wSplitter, panel: wPanel): wPanel {.discardable.} =
+proc setPanel2*(self: wSplitter, panel: wPanel): wPanel {.validate, property, discardable.} =
   ## This function replaces the right/bottom panel with another one.
   ## New panel's parent must the same as splitter's parent. Otherwise, the function failure.
   ## Returns the old panel or nil.
@@ -208,32 +211,32 @@ proc setPanel2*(self: wSplitter, panel: wPanel): wPanel {.discardable.} =
     mPanel2 = panel
     reattach()
 
-proc swap*(self: wSplitter) =
+proc swap*(self: wSplitter) {.validate.} =
   ## Swaps two panel.
   swap(mPanel1, mPanel2)
   swap(mAttach1, mAttach2)
   reattach()
   splitterResize()
 
-proc attachPanel1*(self: wSplitter, attach = true) =
+proc attachPanel1*(self: wSplitter, attach = true) {.validate, inline.} =
   ## Attach the splitter to left/top panel so that users can drag the
   ## margin of the panel to resize it.
   mAttach1 = attach
   reattach()
 
-proc attachPanel2*(self: wSplitter, attach = true) =
+proc attachPanel2*(self: wSplitter, attach = true) {.validate, inline.} =
   ## Attach the splitter to right/bottom panel so that users can drag the
   ## margin of the panel to resize it.
   mAttach2 = attach
   reattach()
 
-proc attachPanel*(self: wSplitter, attach = true) =
+proc attachPanel*(self: wSplitter, attach = true) {.validate, inline.} =
   ## Attach splitter to both panels.
   mAttach1 = attach
   mAttach2 = attach
   reattach()
 
-proc setSplitMode*(self: wSplitter, mode: int) =
+proc setSplitMode*(self: wSplitter, mode: int) {.validate, property, inline.} =
   ## Sets the split mode. Mode can be wSpHorizontal or wSpVertical.
   if mode in {wVertical, wSpVertical}:
     if not mIsVertical:
@@ -291,7 +294,7 @@ proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefault
       self.splitterResize()
 
 proc Splitter*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpVertical): wSplitter =
+    style: wStyle = wSpVertical): wSplitter {.inline.} =
   ## Constructor. For vertical splitter, settings of y-axis are ignored, vice versa.
   wValidate(parent)
   new(result)
