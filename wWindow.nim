@@ -545,8 +545,6 @@ proc hasCapture*(self: wWindow): bool {.validate, inline.} =
   ## Returns true if this window has the current mouse capture.
   result = (mHwnd == GetCapture())
 
-#todo: setCursor
-
 proc getHandle*(self: wWindow): HANDLE {.validate, property, inline.} =
   ## Returns the system HWND of this window.
   result = mHwnd
@@ -701,6 +699,58 @@ proc setAcceleratorTable*(self: wWindow, accel: wAcceleratorTable) {.validate, p
 proc getAcceleratorTable*(self: wWindow): wAcceleratorTable {.validate, property, inline.} =
   ## Gets the accelerator table for this window.
   result = mAcceleratorTable
+
+proc setCursorImpl(self: wWindow, cursor: wCursor, override = false) =
+  var cursorChanged = true
+  if override:
+    if mOverrideCursor == cursor: cursorChanged = false
+    elif mOverrideCursor != nil and cursor != nil and
+      mOverrideCursor.mHandle == cursor.mHandle: cursorChanged = false
+
+    mOverrideCursor = cursor
+  else:
+    # cursor and mCursor won't be nil here
+    if mCursor.mHandle == cursor.mHandle and mOverrideCursor == nil:
+      cursorChanged = false
+
+    mCursor = cursor
+    mOverrideCursor = nil
+  if not cursorChanged: return
+
+  # If mouse is captured, cursor should change immediately.
+  # Otherwise, if there is a window under the mouse point,
+  # sent WM_SETCURSOR to it again to decide what cursor it should use.
+  var hWnd = 0
+  if hasCapture():
+    hWnd = mHwnd
+
+  else:
+    let win = wFindWindowAtPoint()
+    if win != nil:
+      hWnd = win.mHwnd
+
+  if hWnd != 0:
+    SendMessage(hWnd, WM_SETCURSOR, WPARAM hWnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE))
+
+proc setCursor*(self: wWindow, cursor: wCursor) =
+  ## Sets the window's cursor.
+  ## The cursor may be wNilCursor, in which case the window cursor will be reset.
+  ## Notice that the window cursor also sets it for the children of the window implicitly.
+  ## Set children's cursor to wDefaultCursor can restore the children's default cursor.
+  ##
+  ## For example, if you change a frame's cursor, the textctrl in the frame will uses the cursor too.
+  ## To avoid it, you can set textctrl's cursor to wDefaultCursor.
+  wValidate(cursor)
+  setCursorImpl(cursor, override=false)
+
+proc setOverrideCursor(self: wWindow, cursor: wCursor) =
+  # Sets a temporary cursor to override the default one.
+  # Is this need to be public?
+  setCursorImpl(cursor, override=true)
+
+proc getCursor*(self: wWindow): wCursor =
+  ## Return the cursor associated with this window.
+  result = mCursor
 
 proc toBar(orientation: int): int {.inline.} =
   assert orientation in {wHorizontal, wVertical}
@@ -1141,7 +1191,7 @@ proc setDraggable*(self: wWindow, flag = true, inClient = true) {.validate, prop
 
       if not self.processEvent(event) or event.isAllowed:
         self.captureMouse()
-        SetCursor(LoadCursor(0, IDC_SIZEALL))
+        self.setOverrideCursor(wSizeAllCursor)
         info.dragging = true
         processed = true
 
@@ -1168,9 +1218,9 @@ proc setDraggable*(self: wWindow, flag = true, inClient = true) {.validate, prop
 
     if info.dragging:
       info.dragging = false
+      self.setOverrideCursor(nil)
       self.releaseMouse()
       processed = true
-
 
 proc setSizingBorder*(self: wWindow, direction: wDirection) =
   ## Allow a child window to be changed size using the mouse.
@@ -1186,7 +1236,6 @@ proc setSizingBorder*(self: wWindow, direction: wDirection) =
     disconnect(mSizingInfo.connection.move)
     disconnect(mSizingInfo.connection.up)
     disconnect(mSizingInfo.connection.down)
-    disconnect(mSizingInfo.connection.cursor)
 
   let info = mSizingInfo
   info.border = direction
@@ -1256,7 +1305,6 @@ proc setSizingBorder*(self: wWindow, direction: wDirection) =
       var rect: RECT
       GetWindowRect(mHwnd, rect)
       var mousePos = event.getMouseScreenPos()
-      var oldReady = info.ready
 
       info.ready.up = info.border.up > 0 and
         mousePos.y in rect.top..(rect.top + info.border.up)
@@ -1270,32 +1318,19 @@ proc setSizingBorder*(self: wWindow, direction: wDirection) =
       info.ready.right = info.border.right > 0 and
         mousePos.x in (rect.right - info.border.right)..rect.right
 
-      if oldReady != info.ready:
-        SendMessage(mHwnd, WM_SETCURSOR, 0, HTCLIENT)
+      let vertical = info.ready.up or info.ready.down
+      let horizontal = info.ready.left or info.ready.right
+      if vertical and horizontal:
+        self.setOverrideCursor(wSizeAllCursor)
+      elif vertical:
+        self.setOverrideCursor(wSizeNsCursor)
+      elif horizontal:
+        self.setOverrideCursor(wSizeWeCursor)
+      else:
+        self.setOverrideCursor(nil)
 
       # just collect information, no need to block?
       # so dont set processed = true
-
-  info.connection.cursor = hardConnect(WM_SETCURSOR) do (event: wEvent):
-    var processed = false
-    defer:
-      # MSDN: If an application processes this message, it should return TRUE.
-      if processed: event.result = TRUE
-      event.skip(if processed: false else: true)
-
-    if (LOWORD(event.lParam) == HTCLIENT):
-      var vertical, horizontal: bool
-      if info.ready.up or info.ready.down: vertical = true
-      if info.ready.left or info.ready.right: horizontal = true
-      if vertical and horizontal:
-        SetCursor(LoadCursor(0, IDC_SIZEALL))
-        processed = true
-      elif vertical:
-        SetCursor(LoadCursor(0, IDC_SIZENS))
-        processed = true
-      elif horizontal:
-        SetCursor(LoadCursor(0, IDC_SIZEWE))
-        processed = true
 
   info.connection.down = hardConnect(wEvent_LeftDown) do (event: wEvent):
     var processed = false
@@ -1453,6 +1488,56 @@ proc wWindow_OnCtlColor(event: wEvent) =
     event.mResult = LRESULT win.mBackgroundBrush.mHandle
     processed = true
 
+proc wWindow_OnSetCursor(event: wEvent) =
+  var processed = false
+  defer:
+    # MSDN: If an application processes this message, it should return TRUE.
+    if processed: event.result = TRUE
+    event.skip(if processed: false else: true)
+
+  # Windows system sent WM_SETCURSOR to parent before processing by default.
+  # So we need to check wParam, otherwise, the message will "propagate" to
+  # parent's handle.
+  #
+  # There are 3 situation to deal with
+  # 1. This window has a custom cursor or override cursor -> just show it.
+  # 2. This window don't have a custom cursor. Becasue all window's mCursor
+  #    is set to wNilCursor by default. In this situation, find custom cursor
+  #    of ancestor if possible. This behavior is like what system usually do.
+  # 3. This window has it's own cursor setting. For example, an editor control.
+  #    To deal with this, set this mCursor to wDefaultCursor. Here we just do
+  #    nothing but try to let the control's wndproc do it's job.
+  #    (avoid return TRUE in acestor's handler, so we check wParam).
+  #
+  # Before all of that, using wEvent_SetCursor to ask the cursor.
+
+  if HWND(event.wParam) == event.window.mHwnd and LOWORD(event.lParam) == HTCLIENT:
+    var hCursor: HCURSOR = 0
+    let event = Event(window=event.window, msg=wEvent_SetCursor)
+    if event.window.processEvent(event) and event.getCursor() != nil:
+      hCursor = event.getCursor().mHandle
+
+    if hCursor == 0:
+      let tmpCursor = event.window.mOverrideCursor
+      if tmpCursor != nil and tmpCursor.isCustomCursor:
+        hCursor = tmpCursor.mHandle
+
+    if hCursor == 0:
+      let cursor = event.window.mCursor
+      if cursor.isCustomCursor:
+        hCursor = cursor.mHandle
+
+      elif cursor.isNilCursor:
+        var win = event.window.mParent
+        while win != nil:
+          if win.mCursor.isCustomCursor:
+            hCursor = win.mCursor.mHandle
+            break
+          win = win.mParent
+
+    if hCursor != 0:
+      SetCursor(hCursor)
+      processed = true
 
 proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} =
   # assign to WNDCLASSEX.lpfnWndProc to invoke event handler
@@ -1486,6 +1571,7 @@ proc initBasic(self: wWindow) =
   mChildren = @[]
   mMaxSize = wDefaultSize
   mMinSize = wDefaultSize
+  mCursor = wNilCursor
 
 proc init(self: wWindow, hWnd: HWND, parent: wWindow) =
   initBasic()
@@ -1652,6 +1738,7 @@ proc init(self: wWindow, parent: wWindow = nil, pos = wDefaultPoint, size = wDef
   hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
+  hardConnect(WM_SETCURSOR, wWindow_OnSetCursor)
 
 proc Window*(parent: wWindow = nil, id: wCommandID = 0, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className = "wWindow"): wWindow {.discardable.} =

@@ -14,7 +14,6 @@ const
   wEvent_Moving* = WM_MOVING
   wEvent_Dragging* = WM_APP + 56
   wEvent_Splitter* = WM_APP + 57
-  wEvent_SplitterCursor* = WM_APP + 58
 
 proc isMoveEvent(msg: UINT): bool {.inline.} =
   msg in {wEvent_Move, wEvent_Moving, wEvent_Dragging}

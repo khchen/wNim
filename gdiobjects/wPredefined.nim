@@ -27,7 +27,14 @@ DefineIncrement(0):
   GreenBrush
   CyanBrush
   RedBrush
-  NullBitmap
+  NilBitmap
+  NilCursor
+  DefaultCursor
+  ArrorCursor
+  SizeAllCursor
+  SizeWeCursor
+  SizeNsCursor
+  HandCursor
 
 template wNormalFont*(): untyped =
   wAppGDIStock(wFont, NormalFont):
@@ -140,7 +147,34 @@ template wRedBrush*(): untyped =
 template wDefaultBrush*(): untyped =
   wWhiteBrush()
 
-template wNullBitmap*(): untyped =
-  wAppGDIStock(wBitmap, NullBitmap):
+template wNilBitmap*(): untyped =
+  wAppGDIStock(wBitmap, NilBitmap):
     Bmp(0, 0)
 
+template wNilCursor*(): untyped =
+  wAppGDIStock(wCursor, NilCursor):
+    Cursor()
+
+template wDefaultCursor*(): untyped =
+  wAppGDIStock(wCursor, DefaultCursor):
+    Cursor(-1)
+
+template wArrorCursor*(): untyped =
+  wAppGDIStock(wCursor, ArrorCursor):
+    Cursor(wCursorArrow)
+
+template wSizeAllCursor*(): untyped =
+  wAppGDIStock(wCursor, SizeAllCursor):
+    Cursor(wCursorSizeAll)
+
+template wSizeWeCursor*(): untyped =
+  wAppGDIStock(wCursor, SizeWeCursor):
+    Cursor(wCursorSizeWe)
+
+template wSizeNsCursor*(): untyped =
+  wAppGDIStock(wCursor, SizeNsCursor):
+    Cursor(wCursorSizeNs)
+
+template wHandCursor*(): untyped =
+  wAppGDIStock(wCursor, HandCursor):
+    Cursor(wCursorHand)

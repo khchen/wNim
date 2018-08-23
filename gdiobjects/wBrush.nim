@@ -60,7 +60,7 @@ proc init(self: wBrush, color: wColor, style: DWORD) =
   initFromNative(lb)
 
 proc final(self: wBrush) =
-  self.wGdiObject.final()
+  delete()
 
 proc getColor*(self: wBrush): wColor {.validate, property, inline.} =
   ## Returns a reference to the brush color.

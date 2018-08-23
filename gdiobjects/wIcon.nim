@@ -7,43 +7,8 @@ type
   wIconError* = object of wGdiObjectError
     ## An error raised when wIcon creation failure.
 
-#todo:
-# load from resource
-# load from .ico file
-# load from exe/dll, etc
-# create for file or path?
-
 proc error(self: wIcon) {.inline.} =
   raise newException(wIconError, "wIcon creation failure")
-
-proc init(self: wIcon, image: wImage) =
-  self.wGdiObject.init()
-
-  # todo: GdipCreateHICONFromBitmap don't hanlde alpha channel well
-  # write some code to do it by self
-  if GdipCreateHICONFromBitmap(image.mGdipBmp, addr mHandle) != Ok:
-    error()
-
-  var width, height: UINT
-  GdipGetImageWidth(image.mGdipBmp, addr width)
-  GdipGetImageHeight(image.mGdipBmp, addr height)
-  mWidth = width.int
-  mHeight = height.int
-
-proc init(self: wIcon, filename: string) =
-  try:
-    init(Image(filename))
-  except:
-    error()
-
-proc init(self: wIcon, data: ptr byte, length: int) =
-  try:
-    init(Image(data, length))
-  except:
-    error()
-
-proc final(self: wIcon) =
-  self.wGdiObject.final()
 
 proc getSize*(self: wIcon): wSize {.validate, property, inline.} =
   ## Gets the size of the icon in pixels.
@@ -57,22 +22,129 @@ proc getHeight*(self: wIcon): int {.validate, property, inline.} =
   ## Gets the height of the icon in pixels.
   result = mHeight
 
-proc Icon*(image: wImage): wIcon =
+method delete*(self: wIcon) {.inline.} =
+  ## Nim's garbage collector will delete this object by default.
+  ## However, sometimes you maybe want do that by yourself.
+  if mHandle != 0:
+    DestroyIcon(mHandle)
+    mHandle = 0
+
+proc final*(self: wIcon) =
+  ## Default finalizer for wIcon.
+  delete()
+
+proc wIcon_FromImage(self: wIcon, image: wImage, size = wDefaultSize) =
+  # todo: GdipCreateHICONFromBitmap don't hanlde alpha channel very well
+
+  var image = image
+  var imgSize = image.getSize()
+  var isResize = false
+
+  if size.width > 0 and size.width != imgSize.width:
+    isResize = true
+    mWidth = size.width
+  else:
+    mWidth = imgSize.width
+
+  if size.height > 0 and size.height != imgSize.height:
+    isResize = true
+    mHeight = size.height
+  else:
+    mHeight = imgSize.height
+
+  if isResize:
+    image = image.scale(mWidth, mHeight)
+
+  if GdipCreateHICONFromBitmap(image.mGdipBmp, &mHandle) != Ok:
+    error()
+
+proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.inline.} =
+  self.wGdiObject.init()
+  wIcon_FromImage(image, size)
+
+proc Icon*(image: wImage, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from the given wImage object.
   wValidate(image)
   new(result, final)
-  result.init(image)
+  result.init(image, size)
 
-proc Icon*(filename: string): wIcon =
-  ## Creates an icon from a image file.
-  wValidate(filename)
-  new(result, final)
-  result.init(filename)
+proc init*(self: wIcon, data: ptr byte, length: int, size = wDefaultSize) =
+  self.wGdiObject.init()
+  # createIconFromMemory better than Image() becasue it choose
+  # best fits icon in icon group, and it supports .ani format.
+  mHandle = createIconFromMemory(data, length, width=size.width,
+    height=size.height, isIcon=true)
 
-proc Icon*(data: ptr byte|ptr char|cstring, length: int): wIcon =
-  ## Creates an icon from raw image data.
+  if mHandle != 0:
+    (mWidth, mHeight) = getIconSize(mHandle)
+  else:
+    wIcon_FromImage(Image(data, length), size)
+
+proc Icon*(data: ptr byte, length: int, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from binary data of image file format.
+  ## Supports .ico, .cur (choose best fits image from group), .ani (without animated),
+  ## and other formats that wImage supported.
   wValidate(data)
   new(result, final)
-  result.init(cast[ptr byte](data), length)
+  result.init(data, length, size)
 
-#todo: Copy constructor
+proc init*(self: wIcon, str: string, size = wDefaultSize) =
+  var
+    buffer: ptr byte
+    length: int
+    data: string
+
+  if str.isVaildPath():
+    data = readFile(str)
+    buffer = cast[ptr byte](&data)
+    length = data.len
+  else:
+    buffer = cast[ptr byte](&str)
+    length = str.len
+
+  init(buffer, length, size)
+
+proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from a image file.
+  ## If str is not a valid file path, it will be regarded as the file binary data in memory.
+  wValidate(str)
+  new(result, final)
+  result.init(str, size)
+
+proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) =
+  self.wGdiObject.init()
+  mHandle = createIconFromPE(file, index, size.width, size.height)
+  if mHandle != 0:
+    (mWidth, mHeight) = getIconSize(mHandle)
+  else:
+    error()
+
+proc Icon*(file: string, index: int, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from a PE file (.exe or .dll).
+  ## Empty string indicates the current executable file.
+  ## Positive index indicates the icon position, and negative value for icon ID.
+  wValidate(file)
+  new(result, final)
+  result.init(file, index, size)
+
+proc init*(self: wIcon, hIcon: HICON) =
+  self.wGdiObject.init()
+  mHandle = createIconFromHIcon(hIcon, isIcon=true)
+  if mHandle != 0:
+    (mWidth, mHeight) = getIconSize(mHandle)
+  else:
+    error()
+
+proc Icon*(hIcon: HICON): wIcon {.inline.} =
+  ## Creates an icon from Windows icon handle. This make a copy of icon.
+  new(result, final)
+  result.init(hIcon)
+
+proc init*(self: wIcon, icon: wIcon) =
+  init(icon.mHandle)
+
+proc Icon*(icon: wIcon): wIcon {.inline.} =
+  ## Creates an icon from wIcon object, aka. copy constructors.
+  wValidate(icon)
+  new(result, final)
+  result.init(icon)

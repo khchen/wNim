@@ -66,7 +66,7 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   lb.lbStyle = elp.elpBrushStyle
   lb.lbColor = elp.elpColor
   lb.lbHatch = elp.elpHatch
-  mHandle = ExtCreatePen(elp.elpPenStyle, elp.elpWidth, lb, 0, nil)
+  mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC, elp.elpWidth, lb, 0, nil)
   if mHandle == 0:
     raise newException(wFontError, "wPen creation failure")
 
@@ -77,7 +77,7 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
 proc init(self: wPen, color: wColor = wBLACK, style: DWORD = wPenStyleSolid, width: int = 1) =
   let hatch = style shr 16
   var elp: EXTLOGPEN
-  elp.elpPenStyle = PS_GEOMETRIC or (style and 0xFFFF)
+  elp.elpPenStyle = style and 0xFFFF
   elp.elpWidth = width
   elp.elpColor = color
 
@@ -92,7 +92,7 @@ proc init(self: wPen, color: wColor = wBLACK, style: DWORD = wPenStyleSolid, wid
   initFromNative(elp)
 
 proc final(self: wPen) =
-  self.wGdiObject.final()
+  delete()
 
 proc getColor*(self: wPen): wColor {.validate, property, inline.} =
   ## Returns a reference to the pen color.
@@ -121,7 +121,7 @@ proc setWidth*(self: wPen, width: int) {.validate, property.} =
   DeleteObject(mHandle)
   init(color=mColor, style=mStyle, width=width)
 
-proc Pen*(color: wColor = wBLACK, style: DWORD = wPenStyleSolid or wPenCapRound, width: int = 1): wPen =
+proc Pen*(color: wColor = wBlack, style: DWORD = wPenStyleSolid or wPenCapRound, width: int = 1): wPen =
   ## Constructs a pen from color, width, and style.
   new(result, final)
   result.init(color=color, style=style, width=width)

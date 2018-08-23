@@ -87,7 +87,7 @@ proc init(self: wBitmap, handle: HBITMAP, copy=true) =
     mDepth = int bm.bmBitsPixel
 
 proc final(self: wBitmap) =
-  self.wGdiObject.final()
+  delete()
 
 proc getSize*(self: wBitmap): wSize {.validate, property, inline.} =
   ## Returns the size of the bitmap in pixels.

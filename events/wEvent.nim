@@ -6,6 +6,7 @@ proc isMoveEvent(msg: UINT): bool {.inline.}
 proc isContextMenuEvent(msg: UINT): bool {.inline.}
 proc isScrollWinEvent(msg: UINT): bool {.inline.}
 proc isNavigationEvent(msg: UINT): bool {.inline.}
+proc isSetCursorEvent(msg: UINT): bool {.inline.}
 proc isCommandEvent(msg: UINT): bool {.inline.}
 proc isScrollEvent(msg: UINT): bool {.inline.}
 proc isListEvent(msg: UINT): bool {.inline.}
@@ -36,6 +37,7 @@ const
 
   # wEvent_AppQuit = WM_APP + 1
   # wEvent_Navigation* = WM_APP + 2
+  # wEvent_SetCursor* = WM_APP + 3
   # wEvent_MouseEnter* = WM_APP + 51
   # wEvent_Size* = WM_APP + 52
   # wEvent_Iconize* = WM_APP + 53
@@ -44,7 +46,6 @@ const
   # wEvent_Sizing* = WM_APP + 55
   # wEvent_Dragging* = WM_APP + 56
   # wEvent_Splitter* = WM_APP + 57
-  # wEvent_SplitterCursor* = WM_APP + 58
 
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_CommandFirst = WM_APP + 150
@@ -91,6 +92,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isNavigationEvent():
     result = CreateEvent(wNavigationEvent)
+
+  elif msg.isSetCursorEvent():
+    result = CreateEvent(wSetCursorEvent)
 
   elif msg.isScrollEvent():
     result = CreateEvent(wScrollEvent)
@@ -357,4 +361,8 @@ method getUrl*(self: wEvent): string {.base, property.} = discard
 method getLinkId*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
 method getVisited*(self: wEvent): bool {.base, property.} = discard
+  ## Method needs to be overridden.
+method getCursor*(self: wEvent): wCursor {.base, property.} = discard
+  ## Method needs to be overridden.
+method setCursor*(self: wEvent, cursor: wCursor) {.base, property.} = discard
   ## Method needs to be overridden.

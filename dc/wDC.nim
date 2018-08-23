@@ -455,23 +455,29 @@ proc getLogicalFunction*(self: wDC): int {.inline, property.} =
   ## Gets the current logical function.
   result = GetROP2(mHdc)
 
-proc getPen*(self: wDC): wPen {.inline, property.} = mPen
+proc getPen*(self: wDC): wPen {.inline, property.} =
   ## Gets the current pen.
+  result = mPen
 
-proc getBrush*(self: wDC): wBrush {.inline, property.} = mBrush
+proc getBrush*(self: wDC): wBrush {.inline, property.} =
   ## Gets the current brush.
+  result = mBrush
 
-proc getFont*(self: wDC): wFont {.inline, property.} = mFont
+proc getFont*(self: wDC): wFont {.inline, property.} =
   ## Gets the current font.
+  result = mFont
 
-proc getTextForeground*(self: wDC): wColor {.inline, property.} = mTextForegroundColor
+proc getTextForeground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text foreground color.
+  result = mTextForegroundColor
 
-proc getTextBackground*(self: wDC): wColor {.inline, property.} = mTextBackgroundColor
+proc getTextBackground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text background color.
+  result = mTextBackgroundColor
 
-proc getBackground*(self: wDC): wBrush {.inline, property.} = mBackground
+proc getBackground*(self: wDC): wBrush {.inline, property.} =
   ## Gets the brush used for painting the background.
+  result = mBackground
 
 proc getBackgroundMode*(self: wDC): int {.inline, property.} =
   ## Returns the current background mode: wPenStyleSolid or wPenStyleTransparent.
@@ -488,8 +494,9 @@ proc getOrigin*(self: wDC): wPoint {.property.} =
   result.x = p.x
   result.y = p.y
 
-proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} = mScale
+proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} =
   ## Gets the current scale factor.
+  result = mScale
 
 proc getSize*(self: wDC): wSize {.property.} =
   ## Gets the size of the device context.
@@ -651,7 +658,7 @@ proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0, sou
   ## Copy from a source DC to this DC and treat a RGB color as transparent.
   TransparentBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc, srcWidth, srcHeight, transparent)
 
-proc drawBitmap*(self: wDC, bmp: wBitmap, x: int, y: int = 0, transparent = true) =
+proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
   ## Draw a bitmap on the device context at the specified point.
   ## If transparent is true and the bitmap has a transparency mask, the bitmap will be drawn transparently.
   wValidate(bmp)

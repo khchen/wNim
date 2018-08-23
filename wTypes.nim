@@ -123,6 +123,7 @@ when not defined(wnimdoc):
     wContextMenuEvent* = ref object of wEvent
     wCommandEvent* = ref object of wEvent
     wNavigationEvent* = ref object of wEvent
+    wSetCursorEvent* = ref object of wEvent
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
     wTreeEvent* = ref object of wCommandEvent
@@ -162,7 +163,7 @@ when not defined(wnimdoc):
       dragging: bool
       ready: tuple[up, down, left, right: bool]
       offset: wDirection
-      connection: tuple[move, up, down, cursor: wEventConnection]
+      connection: tuple[move, up, down: wEventConnection]
 
     wDraggableInfo = ref object
       enable: bool
@@ -183,6 +184,8 @@ when not defined(wnimdoc):
       mBackgroundColor: wColor
       mForegroundColor: wColor
       mBackgroundBrush: wBrush
+      mCursor: wCursor
+      mOverrideCursor: wCursor
       mSubclassedOldProc: WNDPROC
       mConnectionTable: Table[UINT, seq[wEventConnection]]
       mSystemConnectionTable: Table[UINT, seq[wEventConnection]]
@@ -384,6 +387,8 @@ when not defined(wnimdoc):
       mHeight: int
 
     wCursor* = ref object of wGdiObject
+      mDeletable: bool
+      mIconResource: bool
 
     # device context type is "object" not "ref object"
     wDC* = object of RootObj

@@ -3,7 +3,7 @@
 ## programmatically.
 ##
 ## A splitter can also attach to one or both panel so that the panel's margin
-## become draggable. Of course it only works if the margin size near to the spliter
+## become draggable. Of course it only works if the margin size near to the splitter
 ## is not zero.
 ##
 ## :Superclass:
@@ -64,6 +64,12 @@ proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
   SendMessage(mParent.mHwnd, WM_SETREDRAW, TRUE, 0)
   RedrawWindow(mParent.mHwnd, nil, 0, RDW_INVALIDATE or RDW_ERASE or RDW_ALLCHILDREN or RDW_UPDATENOW)
 
+proc splitterResetCursor(self: wSplitter) =
+  if mIsVertical:
+    setCursor(wSizeWeCursor)
+  else:
+    setCursor(wSizeNsCursor)
+
 proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
   if mDragging:
     let event = Event(window=self, msg=wEvent_Splitter)
@@ -72,8 +78,9 @@ proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
       self.splitterResize(pos)
 
   elif index > 0:
+    let panel = event.window
     let pos = event.getMousePos()
-    let size = event.window.getClientSize()
+    let size = panel.getClientSize()
 
     mInPanelMargin =
       if mIsVertical:
@@ -90,9 +97,14 @@ proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
     if not isEnabled():
       mInPanelMargin = false
 
-    # WM_SETCURSOR won't happen when mouse just moving into the margin area.
     if mInPanelMargin:
-      SendMessage(event.window.mHwnd, WM_SETCURSOR, 0, HTCLIENT)
+      panel.setOverrideCursor(if mIsVertical: wSizeWeCursor else: wSizeNsCursor)
+    else:
+      panel.setOverrideCursor(nil)
+
+proc wSplitter_DoMouseLeave(self: wSplitter, event: wEvent, index: int) =
+  mInPanelMargin = false
+  event.window.setOverrideCursor(nil)
 
 proc wSplitter_DoLeftDown(self: wSplitter, event: wEvent, index: int) =
   if index == 0 or mInPanelMargin:
@@ -107,27 +119,6 @@ proc wSplitter_DoLeftUp(self: wSplitter, event: wEvent, index: int) =
   if mDragging:
     mDragging = false
     event.window.releaseMouse()
-
-proc wSplitter_OnSetCursor(self: wSplitter, event: wEvent, index: int) =
-  var processed = false
-  defer:
-    # MSDN: If an application processes this message, it should return TRUE.
-    if processed: event.result = TRUE
-    event.skip(if processed: false else: true)
-
-  if (LOWORD(event.lParam) != HTCLIENT) or (index != 0 and not mInPanelMargin):
-    return
-
-  let event = Event(window=self, msg=wEvent_SplitterCursor, WPARAM mIsVertical)
-  if not self.processEvent(event) or event.isAllowed:
-    let cursor =
-      if event.result == 0:
-        LoadCursor(0, if mIsVertical: IDC_SIZEWE else: IDC_SIZENS)
-      else:
-        HCURSOR event.result
-
-    SetCursor(cursor)
-    processed = true
 
 proc clearEventHandle(self: wSplitter) =
   for tup in mConnections:
@@ -160,13 +151,9 @@ proc bindEventHandle(self: wSplitter, index: int) =
     wSplitter_DoLeftUp(self, event, index)
   mSystemConnections.add((win, conn))
 
-  conn = win.hardConnect(WM_SETCURSOR) do (event: wEvent):
-    wSplitter_OnSetCursor(self, event, index)
-  mConnections.add((win, conn))
-
   if index in 1..2:
     conn = win.systemConnect(wEvent_MouseLeave) do (event: wEvent):
-      mInPanelMargin = false
+      wSplitter_DoMouseLeave(self, event, index)
     mSystemConnections.add((win, conn))
 
 proc reattach(self: wSplitter) =
@@ -252,11 +239,13 @@ proc setSplitMode*(self: wSplitter, mode: int) =
     if not mIsVertical:
       mIsVertical = true
       splitterResize()
+      splitterResetCursor()
 
   elif mode in {wHorizontal, wSpHorizontal}:
     if mIsVertical:
       mIsVertical = false
       splitterResize()
+      splitterResetCursor()
 
 proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle, className="wSplitter") =
@@ -281,6 +270,7 @@ proc init(self: wSplitter, parent: wWindow, pos = wDefaultPoint, size = wDefault
   mPanel1 = Panel(parent, style=wInvisible)
   mPanel2 = Panel(parent, style=wInvisible)
   splitterResize(pos)
+  splitterResetCursor()
 
   if (style and wInvisible) == 0:
     show()

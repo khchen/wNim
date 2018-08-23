@@ -95,7 +95,7 @@ var
 proc wGdipInit() =
   if wGdiplusToken == 0:
     var si = GdiplusStartupInput(GdiplusVersion: 1)
-    GdiplusStartup(addr wGdiplusToken, si, nil)
+    GdiplusStartup(&wGdiplusToken, si, nil)
 
 proc wGdipCreateStreamOnMemory(data: pointer, length: int = 0): ptr IStream =
   if SHCreateMemStream == nil:
@@ -171,8 +171,8 @@ proc wGdipGetEncoderCLSID(fileType: string): CLSID =
 proc wGdipScale(gdipbmp: ptr GpBitmap, width, height: int, quality: InterpolationMode): ptr GpBitmap =
   var graphic: ptr GpGraphics
   try:
-    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, addr result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, addr graphic) != Ok: raise
+    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &result) != Ok: raise
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
     if GdipSetInterpolationMode(graphic, quality) != Ok: raise
     if GdipDrawImageRectI(graphic, gdipbmp, 0, 0, width, height) != Ok: raise
   except:
@@ -193,14 +193,14 @@ proc wGdipSize(gdipbmp: ptr GpBitmap, size: wSize, pos: wPoint, align: int = 0):
       x = int32 pos.x
       y = int32 pos.y
 
-    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](addr width2)) != Ok: raise
-    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](addr height2)) != Ok: raise
+    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width2)) != Ok: raise
+    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height2)) != Ok: raise
 
     if width2 <= 0 or height2 <= 0: raise
     if align != 0: wGdipAlign(x, y, width, height, width2, height2, align)
 
-    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, addr result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, addr graphic) != Ok: raise
+    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &result) != Ok: raise
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
     if GdipDrawImageRectI(graphic, gdipbmp, x, y, width2, height2) != Ok: raise
   except:
     if result != nil:
@@ -214,12 +214,12 @@ proc wGdipTransform(gdipbmp: ptr GpBitmap, scaleX, scaleY, angle, deltaX, deltaY
   var graphic: ptr GpGraphics
   try:
     var width, height: int32
-    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](addr width)) != Ok: raise
-    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](addr height)) != Ok: raise
+    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width)) != Ok: raise
+    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height)) != Ok: raise
     if width <= 0 or height <= 0: raise
 
-    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, addr result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, addr graphic) != Ok: raise
+    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &result) != Ok: raise
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
     if GdipSetInterpolationMode(graphic, quality) != Ok: raise
 
     var
@@ -250,15 +250,15 @@ proc wGdipPaste(gdipbmp1, gdipbmp2: ptr GpBitmap, x, y: int32, align: int = 0): 
     x = x
     y = y
 
-  if GdipGetImageWidth(gdipbmp1, cast[ptr UINT](addr width1)) != Ok: return false
-  if GdipGetImageHeight(gdipbmp1, cast[ptr UINT](addr height1)) != Ok: return false
-  if GdipGetImageWidth(gdipbmp2, cast[ptr UINT](addr width2)) != Ok: return false
-  if GdipGetImageHeight(gdipbmp2, cast[ptr UINT](addr height2)) != Ok: return false
+  if GdipGetImageWidth(gdipbmp1, cast[ptr UINT](&width1)) != Ok: return false
+  if GdipGetImageHeight(gdipbmp1, cast[ptr UINT](&height1)) != Ok: return false
+  if GdipGetImageWidth(gdipbmp2, cast[ptr UINT](&width2)) != Ok: return false
+  if GdipGetImageHeight(gdipbmp2, cast[ptr UINT](&height2)) != Ok: return false
 
   if width1 <= 0 or height1 <= 0 or width2 <= 0 or height2 <= 0: return false
   if align != 0: wGdipAlign(x, y, width1, height1, width2, height2, align)
 
-  if GdipGetImageGraphicsContext(gdipbmp1, addr graphic) != Ok: return false
+  if GdipGetImageGraphicsContext(gdipbmp1, &graphic) != Ok: return false
   defer: GdipDeleteGraphics(graphic)
 
   if GdipDrawImageRectI(graphic, gdipbmp2, x, y, width2, height2) != Ok: return false
@@ -269,12 +269,12 @@ proc wGdipGetQualityParameters(quality: var LONG): EncoderParameters =
   result.Parameter[0].Guid = EncoderQuality
   result.Parameter[0].Type = encoderParameterValueTypeLong.ord
   result.Parameter[0].NumberOfValues = 1;
-  result.Parameter[0].Value = addr quality
+  result.Parameter[0].Value = &quality
 
 proc init(self: wImage, gdip: ptr GpBitmap, copy=true) =
   wGdipInit()
   if copy:
-    if GdipCloneImage(gdip, cast[ptr ptr GpImage](addr mGdipBmp)) != Ok:
+    if GdipCloneImage(gdip, cast[ptr ptr GpImage](&mGdipBmp)) != Ok:
       error()
   else:
     mGdipBmp = gdip
@@ -285,25 +285,25 @@ proc init(self: wImage, data: ptr byte, length: int) =
   defer:
     if stream != nil: stream.Release()
 
-  if stream == nil or GdipCreateBitmapFromStream(stream, addr mGdipBmp) != Ok:
+  if stream == nil or GdipCreateBitmapFromStream(stream, &mGdipBmp) != Ok:
     error()
 
 proc init(self: wImage, filename: wstring) =
   wGdipInit()
-  if GdipCreateBitmapFromFile(filename, addr mGdipBmp) != Ok:
+  if GdipCreateBitmapFromFile(filename, &mGdipBmp) != Ok:
     error()
 
-proc init(self: wImage, name: string) =
+proc init(self: wImage, str: string) =
   wGdipInit()
-  # Here do a magic, name can be filename or raw data
-  if name.len <= MAX_PATH and PathFileExists(name) != 0:
-    init(+$name)
+  # Here do a magic, str can be filename or raw data
+  if str.isVaildPath():
+    init(+$str)
   else:
-    init(cast[ptr byte](&name), name.len)
+    init(cast[ptr byte](&str), str.len)
 
 proc init(self: wImage, width, height: int) =
   wGdipInit()
-  if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, addr mGdipBmp) != Ok:
+  if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB, nil, &mGdipBmp) != Ok:
     error()
 
 proc delete*(self: wImage) {.validate.} =
@@ -335,12 +335,12 @@ proc Image*(name: string|wstring): wImage =
   new(result, final)
   result.init(name)
 
-proc Image*(data: ptr byte|ptr char|cstring, length: int): wImage =
+proc Image*(data: ptr byte, length: int): wImage =
   ## Creates an image from binary image data.
   ## Use getDecoders iterator to list the supported format.
   wValidate(data)
   new(result, final)
-  result.init(cast[ptr byte](data), length)
+  result.init(data, length)
 
 proc Image*(width, height: int): wImage =
   ## Creates an empty image with the given size.
@@ -358,14 +358,14 @@ proc getHandle*(self: wImage): ptr GpBitmap {.validate, property, inline.} =
 proc getWidth*(self: wImage): int {.validate, property.} =
   ## Gets the width of the image in pixels.
   var width: UINT
-  if GdipGetImageWidth(mGdipBmp, addr width) != Ok:
+  if GdipGetImageWidth(mGdipBmp, &width) != Ok:
     raise newException(wImageError, "wImage getWidth failure")
   result = int width
 
 proc getHeight*(self: wImage): int {.validate, property.} =
   ## Gets the height of the image in pixels.
   var height: UINT
-  if GdipGetImageHeight(mGdipBmp, addr height) != Ok:
+  if GdipGetImageHeight(mGdipBmp, &height) != Ok:
     raise newException(wImageError, "wImage getHeight failure")
   result = int height
 
@@ -376,7 +376,7 @@ proc getSize*(self: wImage): wSize {.validate, property, inline.} =
 
 proc getPixel*(self: wImage, x: int, y: int): ARGB {.validate, property.} =
   ## Return the ARGB value at given pixel location.
-  if GdipBitmapGetPixel(mGdipBmp, x, y, addr result) != Ok:
+  if GdipBitmapGetPixel(mGdipBmp, x, y, &result) != Ok:
     raise newException(wImageError, "wImage getPixel failure")
 
 proc getPixel*(self: wImage, pos: wPoint): ARGB {.validate, property.} =
@@ -479,7 +479,7 @@ proc saveFile*(self: wImage, filename: string, fileType: string = nil, quality: 
       encoderParameters = wGdipGetQualityParameters(quality)
       clsid = wGdipGetEncoderCLSID(ext)
 
-    if GdipSaveImageToFile(mGdipBmp, +$filename, clsid, addr encoderParameters) != Ok: raise
+    if GdipSaveImageToFile(mGdipBmp, +$filename, clsid, &encoderParameters) != Ok: raise
 
   except:
     raise newException(wImageError, "wImage saveFile failure")
@@ -498,7 +498,7 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
     defer:
       if stream != nil: stream.Release()
 
-    if stream == nil or GdipSaveImageToStream(mGdipBmp, stream, clsid, addr encoderParameters) != Ok: raise
+    if stream == nil or GdipSaveImageToStream(mGdipBmp, stream, clsid, &encoderParameters) != Ok: raise
     wGdipReadStream(stream, result)
 
   except:
@@ -642,7 +642,7 @@ when not defined(useWinXP):
     rect.right = getWidth()
     rect.bottom = getHeight()
 
-    if GdipCreateEffect(guid, addr effect) != Ok: raise
+    if GdipCreateEffect(guid, &effect) != Ok: raise
     defer: GdipDeleteEffect(effect)
 
     if GdipSetEffectParameters(effect, pParam, size.UINT) != Ok: raise
@@ -650,7 +650,7 @@ when not defined(useWinXP):
     # GdipBitmapApplyEffect sometimes crash due to unknow reason (only 64bit)
 
     # if don't set rect, the image size will change?
-    if GdipBitmapCreateApplyEffect(addr mGdipBmp, 1, effect, addr rect, nil, addr newGdipbmp, false, nil, nil) != Ok: raise
+    if GdipBitmapCreateApplyEffect(&mGdipBmp, 1, effect, &rect, nil, &newGdipbmp, false, nil, nil) != Ok: raise
 
     GdipDisposeImage(mGdipBmp)
     mGdipBmp = newGdipbmp
@@ -659,7 +659,7 @@ when not defined(useWinXP):
     ## Blur effect (Windows Vista or later).
     var param = BlurParams(radius: radius.float32, expandEdge: expandEdge)
     try:
-      effect(BlurEffectGuid, addr param, sizeof(param))
+      effect(BlurEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage blur failure")
 
@@ -667,7 +667,7 @@ when not defined(useWinXP):
     ## Brightness or contrast adjustment (Windows Vista or later).
     var param = BrightnessContrastParams(brightnessLevel: brightness, contrastLevel: contrast)
     try:
-      effect(BrightnessContrastEffectGuid, addr param, sizeof(param))
+      effect(BrightnessContrastEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage brightnessContrast failure")
 
@@ -675,7 +675,7 @@ when not defined(useWinXP):
     ## Sharpen effect (Windows Vista or later).
     var param = SharpenParams(radius: radius.float32, amount: amount.float32)
     try:
-      effect(SharpenEffectGuid, addr param, sizeof(param))
+      effect(SharpenEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage sharpen failure")
 
@@ -683,7 +683,7 @@ when not defined(useWinXP):
     ## Tint effect (Windows Vista or later).
     var param = TintParams(hue: hue, amount: amount)
     try:
-      effect(TintEffectGuid, addr param, sizeof(param))
+      effect(TintEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage tint failure")
 
@@ -692,7 +692,7 @@ when not defined(useWinXP):
     ## Hue, saturation, or lightness adjustment (Windows Vista or later).
     var param = HueSaturationLightnessParams(hueLevel: hue, saturationLevel: saturation, lightnessLevel: lightness)
     try:
-      effect(HueSaturationLightnessEffectGuid, addr param, sizeof(param))
+      effect(HueSaturationLightnessEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage hueSaturationLightness failure")
 
@@ -701,7 +701,7 @@ when not defined(useWinXP):
     ## Color balance adjustment (Windows Vista or later).
     var param = ColorBalanceParams(cyanRed: cyanRed, magentaGreen: magentaGreen, yellowBlue: yellowBlue)
     try:
-      effect(ColorBalanceEffectGuid, addr param, sizeof(param))
+      effect(ColorBalanceEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage colorBalance failure")
 
@@ -710,6 +710,6 @@ when not defined(useWinXP):
     ## Light, midtone, or dark adjustment (Windows Vista or later).
     var param = LevelsParams(highlight: highlight, midtone: midtone, shadow: shadow)
     try:
-      effect(LevelsEffectGuid, addr param, sizeof(param))
+      effect(LevelsEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage levels failure")

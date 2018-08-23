@@ -152,7 +152,7 @@ proc init(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault, weig
   initFromNative(lf)
 
 proc final(self: wFont) =
-  self.wGdiObject.final()
+  delete()
 
 proc getPointSize*(self: wFont): float {.validate, property, inline.} =
   ## Gets the point size.

@@ -309,7 +309,7 @@ when defined(useWinXP):
         event.mResult = TRUE
         processed = true
 
-proc init(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize,
+proc init*(self: wFrame, owner: wWindow = nil, title = "", pos: wPoint, size: wSize,
     style: wStyle = wDefaultFrameStyle, className = "wFrame") =
 
   self.wWindow.init(title=title, pos=pos, size=size, style=style or WS_CLIPCHILDREN, owner=owner,

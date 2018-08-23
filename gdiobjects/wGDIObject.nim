@@ -10,12 +10,9 @@ proc getHandle*(self: wGdiObject): HANDLE {.validate, property, inline.} =
 proc init(self: wGdiObject) =
   discard # do nothing for now
 
-proc delete*(self: wGdiObject) {.validate.} =
+method delete*(self: wGdiObject) {.base.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
   if mHandle != 0:
     DeleteObject(mHandle)
     mHandle = 0
-
-proc final(self: wGdiObject) =
-  delete()

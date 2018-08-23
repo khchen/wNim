@@ -5,7 +5,7 @@
 ## selected out of the memory DC:
 ##
 ## .. code-block:: Nim
-##   temp_dc.selectObject(wNullBitmap) # here wNullBitmap is a predefined bitmap
+##   temp_dc.selectObject(wNilBitmap) # here wNilBitmap is a predefined bitmap
 ##
 ## Like other DC object, wMemoryDC need nim's destructors to release the resource.
 ## For nim version 0.18.0, you must compile with --newruntime option to get destructor works.

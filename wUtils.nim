@@ -1,7 +1,7 @@
 proc wGetMousePosition*(): wPoint =
   ## Returns the mouse position in screen coordinates.
   var mousePos: POINT
-  if GetCursorPos(addr mousePos) != 0:
+  if GetCursorPos(&mousePos) != 0:
     result.x = mousePos.x
     result.y = mousePos.y
 
