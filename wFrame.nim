@@ -130,6 +130,35 @@ proc disableMinimizeButton*(self: wFrame) {.validate, inline.} =
   ## Disables the Minimize button.
   enableMinimizeButton(false)
 
+proc shortcutId(self: wFrame, flag: int, keyCode: int): wCommandID =
+  var accel = getAcceleratorTable()
+  if accel == nil:
+    accel = AcceleratorTable()
+    setAcceleratorTable(accel)
+
+  var id = keyCode
+  if (flag and wAccelCtrl) != 0: id = id or 0x100
+  if (flag and wAccelAlt) != 0: id = id or 0x200
+  if (flag and wAccelShift) != 0: id = id or 0x400
+  id = 65536 - id
+
+  accel.add(flag, keyCode, wCommandID id)
+  result = wCommandID id
+
+proc shortcut*(self: wFrame, flag: int, keyCode: int,
+    handler: wEventHandler): wEventConnection {.validate, discardable.} =
+  ## Quickly bind a keyboard shortcut to an event handler.
+  ## If this frame not yet have a accelerator table, it will create a new one.
+  ## This function use wCommandID between 64257..65535.
+  return self.connect(shortcutId(flag, keyCode), handler)
+
+proc shortcut*(self: wFrame, flag: int, keyCode: int,
+    handler: wEventNeatHandler): wEventConnection {.validate, discardable.} =
+  ## Quickly bind a keyboard shortcut to an event handler.
+  ## If this frame not yet have a accelerator table, it will create a new one.
+  ## This function use wCommandID between 64257..65535.
+  return self.connect(shortcutId(flag, keyCode), handler)
+
 proc showModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows the frame as an application-modal dialog.
   ## Program flow does not return until the dialog has been dismissed with EndModal.

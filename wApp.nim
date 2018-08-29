@@ -30,6 +30,9 @@ proc App*(): wApp =
   result.mMessageCountTable = initCountTable[UINT]()
   wTheApp = result
 
+proc wAppGetCurrentApp*(): wApp {.inline.} =
+  result = wTheApp
+
 proc wAppGetInstance(): HANDLE {.inline.} =
   result = wTheApp.mInstance
 
@@ -139,3 +142,4 @@ proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) =
 
 proc isMessagePropagation*(self: wApp, msg: UINT): bool =
   result = msg in self.mPropagationSet
+

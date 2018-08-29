@@ -34,6 +34,7 @@ const
   wEvent_MenuHighlight* = WM_MENUSELECT
   wEvent_Paint* = WM_PAINT
   wEvent_NcPaint* = WM_NCPAINT
+  wEvent_HotKey* = WM_HOTKEY
 
   # wEvent_AppQuit = WM_APP + 1
   # wEvent_Navigation* = WM_APP + 2
@@ -56,7 +57,7 @@ const
   wEvent_SpinFirst = WM_APP + 400
   wEvent_HyperLinkFirst = WM_APP + 450
   wEvent_CommandLast = WM_APP + 500
-  wEvent_UserFirst* = wEvent_CommandLast + 1
+  wEvent_App* = wEvent_CommandLast + 1
 
 proc defaultPropagationLevel(msg: UINT): int =
   if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
@@ -127,9 +128,7 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   # save the status for the last message occured
   GetKeyboardState(cast[PBYTE](&result.mKeyStatus[0]))
-  var val = GetMessagePos()
-  result.mMousePos.x = GET_X_LPARAM(val)
-  result.mMousePos.y = GET_Y_LPARAM(val)
+  result.mMousePos = wGetMessagePosition()
   result.mClientPos = wDefaultPoint
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
@@ -365,4 +364,16 @@ method getVisited*(self: wEvent): bool {.base, property.} = discard
 method getCursor*(self: wEvent): wCursor {.base, property.} = discard
   ## Method needs to be overridden.
 method setCursor*(self: wEvent, cursor: wCursor) {.base, property.} = discard
+  ## Method needs to be overridden.
+method getColumn*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getText*(self: wEvent): string {.base, property.} = discard
+  ## Method needs to be overridden.
+method getItem*(self: wEvent): wTreeItem {.base, property.} = discard
+  ## Method needs to be overridden.
+method getOldItem*(self: wEvent): wTreeItem {.base, property.} = discard
+  ## Method needs to be overridden.
+method getInsertMark*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getPoint*(self: wEvent): wPoint {.base, property.} = discard
   ## Method needs to be overridden.

@@ -52,7 +52,7 @@ macro DefineIncrement(start: int, x: untyped): untyped =
     result.add newConstStmt(postfix(name, "*"), newLit(index))
     index.inc
 
-macro property(x: untyped): untyped =
+macro property*(x: untyped): untyped =
   when defined(wnimdoc):
     result = x
   else:
@@ -96,7 +96,7 @@ macro property(x: untyped): untyped =
     else:
       result = x
 
-macro validate(x: untyped): untyped =
+macro validate*(x: untyped): untyped =
   when defined(wnimdoc):
     result = x
   else:
@@ -107,3 +107,28 @@ macro validate(x: untyped): untyped =
       x.body.insert(0, call)
 
     result = x
+
+# add wValidate(self, frame, text, etc) at beginning of static object proc
+# method don't need self check becasue it's checked by dispatcher
+# not nil don't work will on 0.18.0 and 0.18.1
+
+when not defined(release):
+  import typetraits
+
+  proc wValidateToPointer*(x: ref): (pointer, string) =
+    (cast[pointer](unsafeaddr x[]), x.type.name)
+  proc wValidateToPointer*(x: pointer): (pointer, string) =
+    (x, x.type.name)
+  proc wValidateToPointer*(x: string): (pointer, string) =
+    ((if x.isNil: cast[pointer](0) else: cast[pointer](unsafeaddr x)), x.type.name)
+  proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
+    (cast[pointer](x), x.type.name)
+
+  template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
+    for tup in vargs:
+      if tup[0] == nil:
+        raise newException(NilAccessError, " not allow nil " & tup[1])
+
+else:
+  proc wValidateToPointer*[T](x: T): pointer = nil
+  template wValidate*(vargs: varargs[pointer, wValidateToPointer]): untyped = discard

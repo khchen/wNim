@@ -71,8 +71,8 @@ iterator items*(self: wListBox): string {.validate, inline.} =
   for i in 0..<len():
     yield getText(i)
 
-iterator pairs*(self: wListBox): tuple[key: int, val: string] {.validate, inline.} =
-  ## Iterates over each item of listbox. Yields ``(index, [index])`` pairs.
+iterator pairs*(self: wListBox): (int, string) {.validate, inline.} =
+  ## Iterates over each item in this list box. Yields ``(index, [index])`` pairs.
   var i = 0
   for item in self:
     yield (i, item)

@@ -42,6 +42,12 @@ const
   wPopup* = int64 cast[uint32](WS_POPUP) # WS_POPUP is 0x80000000L
   wPopupWindow* = int64 cast[uint32](WS_POPUPWINDOW)
 
+const
+  wModShift* = MOD_SHIFT
+  wModCtrl* = MOD_CONTROL
+  wModAlt* = MOD_ALT
+  wModWin* = MOD_WIN
+
 method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base.} =
   var rect: RECT
   GetWindowRect(mHwnd, rect)
@@ -857,6 +863,31 @@ proc stopTimer*(self: wWindow, id = 1) {.validate, inline.} =
   ## Stop the timer.
   KillTimer(mHwnd, UINT_PTR id)
 
+proc registerHotKey*(self: wWindow, id: int, modifiers: int,
+    keyCode: int): bool {.validate, inline, discardable.} =
+  ## Registers a system wide hotkey.
+  ## Every time the user presses the hotkey registered here, this window will receive a wEvent_HotKey event.
+  ## Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin
+  result = RegisterHotKey(mHwnd, id, modifiers, keyCode) != 0
+
+proc unregisterHotKey*(self: wWindow, id: int): bool {.validate, inline, discardable.} =
+  ## Unregisters a system wide hotkey.
+  result = UnregisterHotKey(mHwnd, id) != 0
+
+proc setDoubleBuffered*(self: wWindow, on = true) {.validate, property.} =
+  ## Turn on or off double buffering of the window.
+  var exStyle = GetWindowLongPtr(mHwnd, GWL_STYLE)
+  exStyle =
+    if on:
+      exStyle or WS_EX_COMPOSITED
+    else:
+      exStyle and (not WS_EX_COMPOSITED)
+  SetWindowLongPtr(mHwnd, GWL_EXSTYLE, exStyle)
+
+proc getDoubleBuffered*(self: wWindow): bool {.validate, property.} =
+  ## Returns true if the window contents is double-buffered by the system
+  result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and WS_EX_COMPOSITED) != 0
+
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterates over each window's child.
   for child in mChildren:
@@ -878,7 +909,7 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
   var processed = false
   defer: result = processed
 
-  template callHandler(connection: untyped): untyped =
+  proc callHandler(connection: wEventConnection) =
     if connection.id == 0 or connection.id == id:
       if not connection.handler.isNil:
         connection.handler(event)
@@ -891,7 +922,10 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
   mSystemConnectionTable.withValue(msg, list):
     # always invoke every system event handler
     # so we don't break even the event is processed
-    for connection in list: # FIFO
+    # notice: use list instead of seq here,
+    # because handler may modify list by disconnect
+    for node in list.nodes: # FIFO
+      let connection = node.value
       connection.callHandler()
 
   # system event never block following event
@@ -900,8 +934,8 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
   var this = self
   while true:
     this.mConnectionTable.withValue(msg, list):
-      for i in countdown(list.high, 0): # FILO
-        let connection = list[i]
+      for node in list.rnodes: # FILO
+        let connection = node.value
         # make sure we clear the skip state before every callHandler
         event.mSkip = false
         connection.callHandler()
@@ -1022,14 +1056,14 @@ proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventHandler = nil
 proc systemConnect(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.discardable.} =
   # Used internally: a default behavior cannot be changed by user
   var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
-  mSystemConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mSystemConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
 proc hardConnect(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.discardable.} =
   # Used internally: a default behavior can be changed by user but cannot be deleted
   var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
-  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
@@ -1037,7 +1071,7 @@ proc connect*(self: wWindow, msg: UINT, handler: wEventHandler,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc (event: wEvent)".
   var connection = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=false)
-  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
@@ -1045,7 +1079,7 @@ proc connect*(self: wWindow, msg: UINT, handler: wEventNeatHandler,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc ()".
   var connection = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=false)
-  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
@@ -1053,7 +1087,7 @@ proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventHandler,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc (event: wEvent)".
   var connection = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=false)
-  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
@@ -1061,7 +1095,7 @@ proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatHandl
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc ()".
   var connection = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=false)
-  mConnectionTable.mgetOrPut(msg, @[]).add(connection)
+  mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
@@ -1095,9 +1129,9 @@ proc disconnect*(self: wWindow, msg: UINT, limit = -1) {.validate.} =
   ## Disconnects the given event type from the event handler.
   var count = 0
   mConnectionTable.withValue(msg, list):
-    for i in countdown(list.high, 0):
-      if not list[i].undeletable:
-        list.delete(i)
+    for node in list.rnodes:
+      if not node.value.undeletable:
+        list.remove(node)
         wAppDecMessage(msg)
         count.inc
         if limit >= 0 and count >= limit: break
@@ -1106,9 +1140,9 @@ proc disconnect*(self: wWindow, msg: UINT, id: wCommandID, limit = -1) {.validat
   ## Disconnects the given event type and specified ID from the event handler.
   var count = 0
   mConnectionTable.withValue(msg, list):
-    for i in countdown(list.high, 0):
-      if list[i].id == id and not list[i].undeletable:
-        list.delete(i)
+    for node in list.rnodes:
+      if node.value.id == id and not node.value.undeletable:
+        list.remove(node)
         wAppDecMessage(msg)
         count.inc
         if limit >= 0 and count >= limit: break
@@ -1121,18 +1155,18 @@ proc systemDisconnect(self: wWindow, connection: wEventConnection) =
   # Used internally, disconnects the specified connection that returned by systemConnect().
   let msg = connection.msg
   mSystemConnectionTable.withValue(msg, list):
-    for i in countdown(list.high, 0):
-      if list[i] == connection:
-        list.delete(i)
+    for node in list.nodes:
+      if node.value == connection:
+        list.remove(node)
         wAppDecMessage(msg)
 
 proc disconnect*(self: wWindow, connection: wEventConnection) =
   ## Disconnects the specified token that returned by connect().
   let msg = connection.msg
   mConnectionTable.withValue(msg, list):
-    for i in countdown(list.high, 0):
-      if list[i] == connection:
-        list.delete(i)
+    for node in list.nodes:
+      if node.value == connection:
+        list.remove(node)
         wAppDecMessage(msg)
 
 proc `.`*(self: wWindow, msg: UINT, handler: wEventHandler): wEventConnection {.inline, discardable.} =
@@ -1168,12 +1202,22 @@ proc setDraggable*(self: wWindow, flag = true, inClient = true) {.validate, prop
   else:
     disconnect(mDraggableInfo.connection.move)
     disconnect(mDraggableInfo.connection.up)
+    disconnect(mDraggableInfo.connection.down)
 
   let info = mDraggableInfo
   info.enable = flag
   info.inClient = inClient
 
-  info.connection.move = hardConnect(WM_MOUSEMOVE) do (event: wEvent):
+  proc shouldStartDragging(start: wPoint, current: wPoint): bool =
+    if (abs(start.x - current.x) > int GetSystemMetrics(SM_CXDRAG)) or
+        (abs(start.y - current.y) > int GetSystemMetrics(SM_CYDRAG)):
+      return true
+
+  info.connection.down = hardConnect(wEvent_LeftDown) do (event: wEvent):
+    info.startMousePos = event.getMouseScreenPos()
+    event.skip
+
+  info.connection.move = hardConnect(wEvent_MouseMove) do (event: wEvent):
     var processed = false
     defer: event.skip(if processed: false else: true)
 
@@ -1184,7 +1228,8 @@ proc setDraggable*(self: wWindow, flag = true, inClient = true) {.validate, prop
         return
 
     # checking event.leftDown is enough to know dragging or not
-    if info.enable and event.leftDown and not info.dragging:
+    if info.enable and event.leftDown and not info.dragging and
+        shouldStartDragging(info.startMousePos, event.getMouseScreenPos()):
       info.startPos = self.getPosition()
       info.startMousePos = event.getMouseScreenPos()
 
@@ -1242,7 +1287,7 @@ proc setSizingBorder*(self: wWindow, direction: wDirection) =
   let info = mSizingInfo
   info.border = direction
 
-  info.connection.move = hardConnect(WM_MOUSEMOVE) do (event: wEvent):
+  info.connection.move = hardConnect(wEvent_MouseMove) do (event: wEvent):
     var processed = false
     defer: event.skip(if processed: false else: true)
 
@@ -1549,9 +1594,6 @@ proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.
     if self.processMessage(msg, wParam, lParam, result):
       return result
 
-    elif self.mSubclassedOldProc != nil:
-      return CallWindowProc(self.mSubclassedOldProc, hwnd, msg, wParam, lParam)
-
   return DefWindowProc(hwnd, msg, wParam, lParam)
 
 proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
@@ -1573,8 +1615,8 @@ proc final*(self: wWindow) =
 
 proc initBase(self: wWindow) =
   self.wView.init()
-  mSystemConnectionTable = initTable[UINT, seq[wEventConnection]]()
-  mConnectionTable = initTable[UINT, seq[wEventConnection]]()
+  mConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
+  mSystemConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
   mChildren = @[]
   mMaxSize = wDefaultSize
   mMinSize = wDefaultSize

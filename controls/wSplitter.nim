@@ -6,6 +6,10 @@
 ## become draggable. Of course it only works if the margin size near to the splitter
 ## is not zero.
 ##
+## Notice: wSplitter turns on double buffering of the both panels by default to avoid flicker.
+## However, a few controls don't suppoort it, for example, report view mode of wListCtrl.
+## You muse turn off it if you want to use these controls.
+##
 ## :Superclass:
 ##    wControl
 ##
@@ -33,6 +37,18 @@ const
   wSpBorder* = wBorderSimple
   wSp3dBorder* = wBorderStatic
 
+proc doSetSize(self: wWindow, rect: wRect) =
+  if getRect() != rect:
+    var isShown = isShownOnScreen()
+    if isShown:
+      SendMessage(mHwnd, WM_SETREDRAW, FALSE, 0)
+
+    setSize(rect)
+
+    if isShown:
+      SendMessage(mHwnd, WM_SETREDRAW, TRUE, 0)
+      RedrawWindow(mHwnd, nil, 0, RDW_INVALIDATE or RDW_ERASE or RDW_ALLCHILDREN or RDW_UPDATENOW)
+
 proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
   mResizing = true
   defer: mResizing = false
@@ -42,30 +58,21 @@ proc splitterResize(self: wSplitter, pos = wDefaultPoint) =
 
   var clientSize = mParent.getClientSize()
   var pos = if pos == wDefaultPoint: getPosition() else: pos
-  var isShown = isShownOnScreen()
-
-  # avoid flickering
-  if isShown:
-    SendMessage(mParent.mHwnd, WM_SETREDRAW, FALSE, 0)
 
   if mIsVertical:
     var limit = clientSize.width - mSize
     var delta = if pos.x == wDefault: limit div 2 else: pos.x
     delta.countLimit(limit)
-    setSize(delta, 0, mSize, clientSize.height)
-    mPanel1.setSize(0, 0, delta, clientSize.height)
-    mPanel2.setSize(delta + mSize, 0, limit - delta, clientSize.height)
+    doSetSize((delta, 0, mSize, clientSize.height))
+    mPanel1.doSetSize((0, 0, delta, clientSize.height))
+    mPanel2.doSetSize((delta + mSize, 0, limit - delta, clientSize.height))
   else:
     var limit = clientSize.height - mSize
     var delta = if pos.y == wDefault: limit div 2 else: pos.y
     delta.countLimit(limit)
-    setSize(0, delta, clientSize.width, mSize)
-    mPanel1.setSize(0, 0, clientSize.width, delta)
-    mPanel2.setSize(0, delta + mSize, clientSize.width, limit - delta)
-
-  if isShown:
-    SendMessage(mParent.mHwnd, WM_SETREDRAW, TRUE, 0)
-    RedrawWindow(mParent.mHwnd, nil, 0, RDW_INVALIDATE or RDW_ERASE or RDW_ALLCHILDREN or RDW_UPDATENOW)
+    doSetSize((0, delta, clientSize.width, mSize))
+    mPanel1.doSetSize((0, 0, clientSize.width, delta))
+    mPanel2.doSetSize((0, delta + mSize, clientSize.width, limit - delta))
 
 proc splitterResetCursor(self: wSplitter) =
   if mIsVertical:
@@ -280,6 +287,11 @@ proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
   mPanel2 = Panel(parent, style=wInvisible)
   splitterResize(pos)
   splitterResetCursor()
+
+  # add dobule buffer to avoid flickering during resizing
+  # however, listctrl not support, how to fix?
+  mPanel1.setDoubleBuffered(true)
+  mPanel2.setDoubleBuffered(true)
 
   if (style and wInvisible) == 0:
     show()

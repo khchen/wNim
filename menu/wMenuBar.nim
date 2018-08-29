@@ -244,7 +244,7 @@ iterator items*(self: wMenuBar): wMenu {.validate.} =
     yield menu
 
 iterator pairs*(self: wMenuBar): (int, wMenu) {.validate.} =
-  ## Pair iterator for indexes/menus in a menubar.
+  ## Iterates over each menu of menubar. Yields ``(index, [index])`` pairs.
   for i, menu in mMenuList:
     yield (i, menu)
 

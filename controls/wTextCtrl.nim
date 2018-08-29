@@ -386,6 +386,21 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
+method release(self: wTextCtrl) =
+  mParent.systemDisconnect(mCommandConn)
+
+proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
+  if event.mLparam == self.mHwnd:
+    case HIWORD(event.mWparam)
+    of EN_CHANGE:
+      if not self.mDisableTextEvent:
+        self.processMessage(wEvent_Text, 0, 0)
+    of EN_UPDATE:
+      self.processMessage(wEvent_TextUpdate, 0, 0)
+    of EN_MAXTEXT:
+      self.processMessage(wEvent_TextMaxlen, 0, 0)
+    else: discard
+
 proc final*(self: wTextCtrl) =
   ## Default finalizer for wTextCtrl.
   discard
@@ -424,17 +439,8 @@ proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
   # a text control by default have white background, not parent's background
   setBackgroundColor(wWhite)
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd:
-      case HIWORD(event.mWparam)
-      of EN_CHANGE:
-        if not mDisableTextEvent:
-          self.processMessage(wEvent_Text, 0, 0)
-      of EN_UPDATE:
-        self.processMessage(wEvent_TextUpdate, 0, 0)
-      of EN_MAXTEXT:
-        self.processMessage(wEvent_TextMaxlen, 0, 0)
-      else: discard
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    wTextCtrl_ParentOnCommand(self, event)
 
   hardConnect(wEvent_Navigation) do (event: wEvent):
     if (style and wTeReadOnly) != 0:
@@ -465,6 +471,8 @@ proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
   self.wWindow.init(hwnd)
   mRich = false
   mDisableTextEvent = false
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    wTextCtrl_ParentOnCommand(self, event)
 
 proc TextCtrl*(hWnd: HWND): wTextCtrl {.inline, discardable.} =
   ## A special constructor to subclass the textctrl of other contorls.

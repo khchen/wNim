@@ -127,7 +127,16 @@ when not defined(wnimdoc):
     wSetCursorEvent* = ref object of wEvent
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
+      mIndex: int
+      mCol: int
+      mText: string
     wTreeEvent* = ref object of wCommandEvent
+      mTreeCtrl: wTreeCtrl
+      mHandle: HTREEITEM
+      mOldHandle: HTREEITEM
+      mText: string
+      mInsertMark: int
+      mPoint: wPoint
     wScrollEvent* = ref object of wCommandEvent
     wSpinEvent* = ref object of wCommandEvent
     wHyperLinkEvent* = ref object of wCommandEvent
@@ -172,7 +181,7 @@ when not defined(wnimdoc):
       dragging: bool
       startMousePos: wPoint
       startPos: wPoint
-      connection: tuple[move, up: wEventConnection]
+      connection: tuple[move, down, up: wEventConnection]
 
     wWindow* = ref object of wView
       mHwnd: HWND
@@ -187,9 +196,8 @@ when not defined(wnimdoc):
       mBackgroundBrush: wBrush
       mCursor: wCursor
       mOverrideCursor: wCursor
-      mSubclassedOldProc: WNDPROC
-      mConnectionTable: Table[UINT, seq[wEventConnection]]
-      mSystemConnectionTable: Table[UINT, seq[wEventConnection]]
+      mSystemConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
+      mConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
       mAcceleratorTable: wAcceleratorTable
       mSaveFocus: wWindow
       mFocusable: bool
@@ -251,6 +259,7 @@ when not defined(wnimdoc):
       mRich: bool
       mDisableTextEvent: bool
       mBestSize: wSize
+      mCommandConn: wEventConnection
 
     wNoteBook* = ref object of wControl
       mImageList: wImageList
@@ -291,23 +300,26 @@ when not defined(wnimdoc):
       mImageListNormal: wImageList
       mImageListSmall: wImageList
       mImageListState: wImageList
-      mOwnsImageListNormal: bool
-      mOwnsImageListSmall: bool
-      mOwnsImageListState: bool
       mAlternateRowColor: wColor
       mTextCtrl: wTextCtrl
-
-    wTreeItem* = ref object of RootObj
-      mHandle: HTREEITEM
-      mTreeCtrl: wTreeCtrl
-
-    wTreeItemId* = wTreeItem
+      mDragging: bool
 
     wTreeCtrl* = ref object of wControl
       mImageListNormal: wImageList
       mImageListState: wImageList
       mOwnsImageListNormal: bool
       mOwnsImageListState: bool
+      mInSortChildren: bool
+      mDataTable: Table[HTREEITEM, int]
+      mTextCtrl: wTextCtrl
+      mEnableInsertMark: bool
+      mDragging: bool
+      mCurrentInsertMark: int
+      mCurrentInsertItem: HTREEITEM
+
+    wTreeItem* = object
+      mHandle: HTREEITEM
+      mTreeCtrl: wTreeCtrl
 
     wHyperLinkCtrl* = ref object of wControl
 

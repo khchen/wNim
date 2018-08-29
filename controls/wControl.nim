@@ -6,6 +6,17 @@ proc click*(self: wButton) {.inline.}
 proc focusNext(self: wNoteBook): bool
 proc focusPrev(self: wNoteBook): bool
 
+# GUI controls by default don't apply the window margin setting,
+# (except wStaticBox and wNoteBook, however they have their own override)
+method getClientSize*(self: wControl): wSize {.property.} =
+  var r: RECT
+  GetClientRect(mHwnd, r)
+  result.width = r.right - r.left
+  result.height = r.bottom - r.top
+
+method getClientAreaOrigin*(self: wControl): wPoint {.property.} =
+  result = (0, 0)
+
 proc wControl_DoMenuCommand(event: wEvent) =
   # relay control's WM_MENUCOMMAND to any wFrame
   # for example, wToolBar or wButton's submenu

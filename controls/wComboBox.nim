@@ -73,8 +73,8 @@ iterator items*(self: wComboBox): string {.validate, inline.} =
   for i in 0..<len():
     yield getText(i)
 
-iterator pairs*(self: wComboBox): tuple[key: int, val: string] {.validate, inline.} =
-  ## Iterates over each item of listbox. Yields ``(index, [index])`` pairs.
+iterator pairs*(self: wComboBox): (int, string) {.validate, inline.} =
+  ## Iterates over each item in this combo box. Yields ``(index, [index])`` pairs.
   var i = 0
   for item in self:
     yield (i, item)

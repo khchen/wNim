@@ -8,31 +8,12 @@ proc `-`(a, b: wPoint): wPoint =
 proc `+`(a, b: wPoint): wPoint =
   result = (a.x + b.x, a.y + b.y)
 
-
-# add wValidate(self, frame, text, etc) at beginning of static object proc
-# method don't need self check becasue it's checked by dispatcher
-# not nil don't work will on 0.18.0 and 0.18.1
-
-when not defined(release):
-  import typetraits
-
-  proc wValidateToPointer*(x: ref): (pointer, string) =
-    (cast[pointer](unsafeaddr x[]), x.type.name)
-  proc wValidateToPointer*(x: pointer): (pointer, string) =
-    (x, x.type.name)
-  proc wValidateToPointer*(x: string): (pointer, string) =
-    ((if x.isNil: cast[pointer](0) else: cast[pointer](unsafeaddr x)), x.type.name)
-  proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
-    (cast[pointer](x), x.type.name)
-
-  template wValidate(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
-    for tup in vargs:
-      if tup[0] == nil:
-        raise newException(NilAccessError, " not allow nil " & tup[1])
-
-else:
-  proc wValidateToPointer*[T](x: T): pointer = nil
-  template wValidate(vargs: varargs[pointer, wValidateToPointer]): untyped = discard
+iterator rnodes[T](L: SomeLinkedList[T]): SomeLinkedNode[T] =
+  var it = L.tail
+  while it != nil:
+    var prv = it.prev
+    yield it
+    it = prv
 
 proc toRect(r: wRect): RECT =
   result.left = r.x

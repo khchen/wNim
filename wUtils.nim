@@ -5,6 +5,12 @@ proc wGetMousePosition*(): wPoint =
     result.x = mousePos.x
     result.y = mousePos.y
 
+proc wGetMessagePosition*(): wPoint =
+  ## Returns the mouse position in screen coordinates.
+  var val = GetMessagePos()
+  result.x = GET_X_LPARAM(val)
+  result.y = GET_Y_LPARAM(val)
+
 proc wGetKeyState*(key: int): bool =
   ## For normal keys, returns true if the specified key is currently down.
   ## For togglable keys (Caps Lock, Num Lock and Scroll Lock),
