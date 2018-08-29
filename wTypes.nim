@@ -84,7 +84,7 @@ converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
   ## We usually use the enum for where need a command ID. see the examples.
 
 type
-  wID* = enum
+  wId* = enum
     ## Predefined names to use as menus or controls ID.
     wID_LOWEST = 4999, wID_OPEN, wID_CLOSE, wID_NEW, wID_SAVE, wID_SAVEAS, wID_REVERT, wID_EXIT, wID_UNDO,
       wID_REDO, wID_HELP, wID_PRINT, wID_PRINT_SETUP, wID_PREVIEW, wID_ABOUT, wID_HELP_CONTENTS, wID_HELP_COMMANDS
@@ -98,7 +98,6 @@ type
 
     wID_SYSTEM_MENU = 5200, wID_CLOSE_FRAME, wID_MOVE_FRAME, wID_RESIZE_FRAME, wID_MAXIMIZE_FRAME,
     wID_ICONIZE_FRAME, wID_RESTORE_FRAME
-    wID_FILEDLGG = 5900
     wID_HIGHEST = 5999
     wID_USER
 
@@ -478,7 +477,16 @@ when not defined(wnimdoc):
       mStyle: wStyle
       mPath: ref string
 
-    wFileDialog* = object of RootObj
+    wFileDialog* = ref object of RootObj
+      mParent: wWindow
+      mMessage: string
+      mDefaultDir: string
+      mDefaultFile: string
+      mWildcard: string
+      mStyle: wStyle
+      mPos: wPoint
+      mSize: wSize
+
     wColorDialog* = object of RootObj
 
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}

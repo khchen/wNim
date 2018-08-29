@@ -158,7 +158,7 @@ proc wMessageDialog_CBTProc(nCode: INT, wParam: WPARAM, lParam: LPARAM): LRESULT
     # we can subclass this messagebox, but what to do?
     # let win = Window(HWND wParam)
 
-proc showModal*(self: wMessageDialog): wID {.discardable.} =
+proc showModal*(self: wMessageDialog): wId {.discardable.} =
   ## Shows the dialog, returning one of wID_OK, wID_YES, wID_NO, wID_CANCEL,
   ## wID_TRYAGAIN, wID_CONTINUE, wID_ABORT, wID_RETRY or wID_IGNORE.
   var
@@ -187,6 +187,6 @@ proc showModal*(self: wMessageDialog): wID {.discardable.} =
   of IDYES: wID_YES
   else: wID_OK
 
-proc show*(self: wMessageDialog): wID {.inline, discardable.} =
+proc show*(self: wMessageDialog): wId {.inline, discardable.} =
   ## The same as ShowModal().
   result = showModal()

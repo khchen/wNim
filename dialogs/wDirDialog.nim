@@ -42,7 +42,7 @@ proc getMessage*(self: wDirDialog): string {.property, inline.} =
   result = mMessage
 
 when not defined(useWinXP):
-  proc showModal_VistaLaster(self: wDirDialog): wID =
+  proc showModal_VistaLaster(self: wDirDialog): wId =
     var
       dialog: ptr IFileOpenDialog
       item: ptr IShellItem
@@ -84,7 +84,7 @@ proc wDirDialog_CallbackProc(hwnd: HWND, uMsg: UINT, lp: LPARAM, pData: LPARAM):
   if uMsg == BFFM_INITIALIZED:
     SendMessage(hwnd, BFFM_SETSELECTION, TRUE, pData)
 
-proc showModal_XPCompatible(self: wDirDialog): wID =
+proc showModal_XPCompatible(self: wDirDialog): wId =
   var bi = BROWSEINFO(ulFlags: BIF_RETURNONLYFSDIRS or BIF_USENEWUI)
   var buffer: TString
 
@@ -113,7 +113,7 @@ proc showModal_XPCompatible(self: wDirDialog): wID =
   mPath[] = $buffer
   result = wID_OK
 
-proc showModal*(self: wDirDialog): wID {.discardable.} =
+proc showModal*(self: wDirDialog): wId {.discardable.} =
   ## Shows the dialog, returning wID_OK if the user pressed OK, and wID_CANCEL otherwise.
   when defined(useWinXP):
     result = showModal_XPCompatible()
@@ -126,7 +126,7 @@ proc showModal*(self: wDirDialog): wID {.discardable.} =
   if result == wID_OK and (mStyle and wDdChangeDir) != 0:
     SetCurrentDirectory(mPath)
 
-proc show*(self: wDirDialog): wID {.inline, discardable.} =
+proc show*(self: wDirDialog): wId {.inline, discardable.} =
   ## The same as showModal().
   result = showModal()
 
