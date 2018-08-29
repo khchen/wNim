@@ -29,6 +29,7 @@
 ##    ==============================  =============================================================
 
 const
+  # frame styles
   wIconize* = WS_ICONIC
   wCaption* = WS_CAPTION
   wMinimize* = WS_MINIMIZE
@@ -41,6 +42,11 @@ const
   wModalFrame* = DS_MODALFRAME
   wFrameToolWindow* = WS_EX_TOOLWINDOW shl 32
   wDefaultFrameStyle* = wMinimizeBox or wMaximize_BOX or wResizeBorder or wSystemMenu or wCaption
+  # balloon icon
+  wBallonNone* = NIIF_NONE
+  wBallonInfo* = NIIF_INFO
+  wBallonWarning* = NIIF_WARNING
+  wBallonError* = NIIF_ERROR
 
 method getDefaultSize*(self: wFrame): wSize {.validate.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
@@ -184,6 +190,83 @@ proc endModal*(self: wFrame, retCode: int = 0) =
   PostMessage(0, wEvent_AppQuit, WPARAM retCode, 0)
   hide()
 
+proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip: string = nil)
+    {.validate, property.} =
+  ## Creates the system tray icon.
+  wValidate(icon)
+  if icon != nil:
+    mTrayIcon = icon
+    mTrayToolTip = tooltip
+
+    var nid = NOTIFYICONDATA(
+      cbSize: sizeof(NOTIFYICONDATA),
+      hWnd: mHwnd,
+      uFlags: NIF_MESSAGE or NIF_ICON,
+      hIcon: icon.mHandle,
+      uCallbackMessage: wEvent_TrayIcon)
+
+    if tooltip.len != 0:
+      nid.uFlags = nid.uFlags or NIF_TIP
+      nid.szTip << T(tooltip)
+
+    if Shell_NotifyIcon(if mTrayIconAdded: NIM_MODIFY else: NIM_ADD, &nid):
+      if not mTrayIconAdded:
+        mTrayIconAdded = true
+
+        let msgTaskbarCreated = RegisterWindowMessage("TaskbarCreated")
+        mCreateConn = systemConnect(msgTaskbarCreated) do (event: wEvent):
+          # taskbar crash, recreate trayicon
+          mTrayIconAdded = false
+          self.setTrayIcon(mTrayIcon, mTrayToolTip)
+
+        mTrayConn = systemConnect(wEvent_TrayIcon) do (event: wEvent):
+          let msg = case event.lParam
+          of WM_LBUTTONDOWN: wEvent_TrayLeftDown
+          of WM_LBUTTONUP: wEvent_TrayLeftUp
+          of WM_RBUTTONDOWN: wEvent_TrayRightDown
+          of WM_RBUTTONUP: wEvent_TrayRightUp
+          of WM_LBUTTONDBLCLK: wEvent_TrayLeftDoubleClick
+          of WM_RBUTTONDBLCLK: wEvent_TrayRightDoubleClick
+          of WM_MOUSEMOVE: wEvent_TrayMove
+          of NIN_BALLOONTIMEOUT: wEvent_TrayBalloonTimeout
+          of NIN_BALLOONUSERCLICK: wEvent_TrayBalloonClick
+          else: 0
+          if msg != 0: self.processMessage(msg)
+
+proc removeTrayIcon*(self: wFrame) {.validate.} =
+  ## Removes the system tray icon.
+  if mTrayIconAdded:
+    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: mHwnd)
+    Shell_NotifyIcon(NIM_DELETE, &nid)
+    mTrayIconAdded = false
+    mTrayIcon = nil
+    mTrayToolTip = nil
+    systemDisconnect(mCreateConn)
+    systemDisconnect(mTrayConn)
+
+proc showBalloon*(self: wFrame, title: string, text: string, timeout: int = 3000,
+    flag = wBallonNone) {.validate.} =
+  ## Display a balloon notification. Only works when the frame already have a
+  ## tray icon. *flag* is one of wBallonNone, wBallonInfo, wBallonWarning or
+  ## wBallonError.
+  wValidate(title, text)
+  if mTrayIconAdded:
+    # uVersion and uTimeout in the union, need setter
+    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: mHwnd)
+    nid.uVersion = 3
+    Shell_NotifyIcon(NIM_SETVERSION, &nid)
+
+    nid = NOTIFYICONDATA(
+      cbSize: sizeof(NOTIFYICONDATA),
+      hWnd: mHwnd,
+      uFlags: NIF_INFO)
+
+    nid.uTimeout = timeout
+    nid.szInfo << T(text)
+    nid.szInfoTitle << T(title)
+    nid.dwInfoFlags = flag
+    Shell_NotifyIcon(NIM_MODIFY, &nid)
+
 proc wFrame_DoSize(event: wEvent) =
   # If the frame has exactly one child window, not counting the status and toolbar,
   # this child is resized to take the entire frame client area.
@@ -281,10 +364,10 @@ proc wFrame_OnMenuCommand(event: wEvent) =
       menu = cast[wMenu](menuInfo.dwMenuData)
       item = menu.mItemList[pos]
 
-    if item.mKind == wItemCheck:
+    if item.mKind == wMenuItemCheck:
       menu.toggle(pos)
 
-    elif item.mKind == wItemRadio:
+    elif item.mKind == wMenuItemRadio:
       menu.check(pos)
 
     # convet to wEvent_Menu message.
@@ -341,6 +424,10 @@ when defined(useWinXP):
 proc final*(self: wFrame) =
   ## Default finalizer for wFrame.
   discard
+
+method release(self: wFrame) =
+  # delete the tray icon (if any)
+  removeTrayIcon()
 
 proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wDefaultFrameStyle,

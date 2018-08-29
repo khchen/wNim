@@ -35,6 +35,12 @@ const
   wTbBottom* = CCS_BOTTOM
   wTbRight* = CCS_RIGHT
   wTbDefaultStyle* = wTbFlat or wTbhorizontal
+  # ToolBar kind
+  wTbNormal* = TBSTYLE_BUTTON
+  wTbSeparator* = TBSTYLE_SEP
+  wTbCheck* = TBSTYLE_CHECK
+  wTbRadio* = TBSTYLE_CHECKGROUP
+  wTbDropDown* = BTNS_WHOLEDROPDOWN
 
 # toolbar's best size and default size are current size
 method getBestSize*(self: wToolBar): wSize {.property, inline.} =
@@ -65,7 +71,8 @@ proc getToolPos*(self: wToolBar, toolId: wCommandID): int {.validate, property.}
   result = int SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
 
 proc deleteToolByPos*(self: wToolBar, pos: Natural) {.validate.} =
-  ## This function behaves like deleteTool but it deletes the tool at the specified position.
+  ## This function behaves like deleteTool but it deletes the tool at the
+  ## specified position.
   let tool = getToolByPos(pos)
   if tool != nil:
     SendMessage(mHwnd, TB_DELETEBUTTON, pos, 0)
@@ -83,11 +90,13 @@ proc clearTools*(self: wToolBar) {.validate.} =
   for i in 1..getToolsCount():
     deleteToolByPos(0)
 
-proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID, label: string = nil,
-    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil,
-    kind: int = wItemNormal) {.validate.} =
-  ## Inserts the tool with the specified attributes into the toolbar at the given position.
-  var button = TBBUTTON(fsState: TBSTATE_ENABLED, fsStyle: byte kind, idCommand: int32 toolId)
+proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID,
+    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
+    longHelp: string = nil, kind: int = wTbNormal) {.validate.} =
+  ## Inserts the tool with the specified attributes into the toolbar at the
+  ## given position.
+  var button = TBBUTTON(fsState: TBSTATE_ENABLED, fsStyle: byte kind,
+    idCommand: int32 toolId)
 
   if label != nil:
     button.iString = cast[INT_PTR](&T(label))
@@ -111,36 +120,66 @@ proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID, label: string = n
 
 proc insertSeparator*(self: wToolBar, pos: int) {.validate, inline.} =
   ## Inserts the separator into the toolbar at the given position.
-  insertTool(pos=pos, toolId=0, kind=wItemSeparator)
+  insertTool(pos, toolId=0, kind=wTbSeparator)
 
-proc addTool*(self: wToolBar, toolId: wCommandID, label: string = nil, bitmap: wBitmap = nil,
-    shortHelp: string = nil, longHelp: string = nil, kind: int = wItemNormal) {.validate, inline.} =
+proc insertCheckTool*(self: wToolBar, pos: int, toolId: wCommandID,
+    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
+    longHelp: string = nil) {.validate, inline.} =
+  ## Insert the check (or toggle) tool into the toolbar at the given position.
+  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
+
+proc insertRadioTool*(self: wToolBar, pos: int, toolId: wCommandID,
+    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
+    longHelp: string = nil) {.validate, inline.} =
+  ## Insert the radio tool into the toolbar at the given position.
+  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
+
+proc insertDropDownTool*(self: wToolBar, pos: int, toolId: wCommandID,
+    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
+    longHelp: string = nil) {.validate, inline.} =
+  ## Insert the drowdown tool into the toolbar at the given position.
+  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
+
+proc addTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
+    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil,
+    kind: int = wTbNormal) {.validate, inline.} =
   ## Adds a tool to the toolbar.
   insertTool(getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind)
 
 proc addSeparator*(self: wToolBar) {.validate, inline.} =
   ## Adds a separator for spacing groups of tools.
-  insertTool(pos=getToolsCount(), toolId=0, kind=BTNS_SEP)
+  addTool(toolId=0, kind=wTbSeparator)
 
-proc addCheckTool*(self: wToolBar, toolId: wCommandID, label: string = nil, bitmap: wBitmap = nil,
-    shortHelp: string = nil, longHelp: string = nil) {.validate, inline.} =
+proc addCheckTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
+    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
+    {.validate, inline.} =
   ## Adds a new check (or toggle) tool to the toolbar.
-  insertTool(getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind=wItemCheck)
+  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
 
-proc addRadioTool*(self: wToolBar, toolId: wCommandID, label: string = nil, bitmap: wBitmap = nil,
-    shortHelp: string = nil, longHelp: string = nil) {.validate, inline.} =
+proc addRadioTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
+    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
+    {.validate, inline.} =
   ## Adds a new radio tool to the toolbar.
-  insertTool(getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind=wItemRadio)
+  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
 
-proc enableTool*(self: wToolBar, toolId: wCommandID, enable = true) {.validate, inline.} =
+proc addDropDownTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
+    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
+    {.validate, inline.} =
+  ## Adds a new drowdown tool to the toolbar.
+  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
+
+proc enableTool*(self: wToolBar, toolId: wCommandID, enable = true)
+    {.validate, inline.} =
   ## Enables or disables the tool.
   SendMessage(mHwnd, TB_ENABLEBUTTON, toolId, enable)
 
-proc disableTool*(self: wToolBar, toolId: wCommandID, enable = true) {.validate, inline.} =
+proc disableTool*(self: wToolBar, toolId: wCommandID, enable = true)
+    {.validate, inline.} =
   ## Disables the tool.
   enableTool(toolId, false)
 
-proc getToolEnabled*(self: wToolBar, toolId: wCommandID): bool {.validate, property, inline.} =
+proc getToolEnabled*(self: wToolBar, toolId: wCommandID): bool
+    {.validate, property, inline.} =
   ## Called to determine whether a tool is enabled (responds to user input).
   result = (SendMessage(mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_ENABLED) != 0
 
@@ -153,47 +192,55 @@ proc toggleTool*(self: wToolBar, toolId: wCommandID, toggle = true) {.validate.}
     state = state and (not TBSTATE_CHECKED.WORD)
   SendMessage(mHwnd, TB_SETSTATE, toolId, state)
 
-proc getToolState*(self: wToolBar, toolId: wCommandID): bool {.validate, property, inline.} =
+proc getToolState*(self: wToolBar, toolId: wCommandID): bool
+    {.validate, property, inline.} =
   ## Gets the on/off state of a toggle tool.
   result = (SendMessage(mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_CHECKED) != 0
 
-proc getToolShortHelp*(self: wToolBar, toolId: wCommandID): string {.validate, property, inline.} =
+proc getToolShortHelp*(self: wToolBar, toolId: wCommandID): string
+    {.validate, property, inline.} =
   ## Returns the short help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
     result = tool.mShortHelp
 
-proc setToolShortHelp*(self: wToolBar, toolId: wCommandID, shortHelp: string = nil) {.validate, property, inline.} =
+proc setToolShortHelp*(self: wToolBar, toolId: wCommandID,
+    shortHelp: string = nil) {.validate, property, inline.} =
   ## Sets the short help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
     tool.mShortHelp = shortHelp
 
-proc getToolLongHelp*(self: wToolBar, toolId: wCommandID): string {.validate, property, inline.} =
+proc getToolLongHelp*(self: wToolBar, toolId: wCommandID): string
+    {.validate, property, inline.} =
   ## Returns the long help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
     result = tool.mLongHelp
 
-proc setToolLongHelp*(self: wToolBar, toolId: wCommandID, longHelp: string = nil) {.validate, property, inline.} =
+proc setToolLongHelp*(self: wToolBar, toolId: wCommandID,
+    longHelp: string = nil) {.validate, property, inline.} =
   ## Sets the long help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
     tool.mLongHelp = longHelp
 
-proc getDropdownMenu*(self: wToolBar, toolId: wCommandID): wMenu {.validate, property, inline.} =
+proc getDropdownMenu*(self: wToolBar, toolId: wCommandID): wMenu
+    {.validate, property, inline.} =
   ## Returns the dropdown menu for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
     result = tool.mMenu
 
-proc setDropdownMenu*(self: wToolBar, toolId: wCommandID, menu: wMenu = nil) {.validate, property, inline.} =
+proc setDropdownMenu*(self: wToolBar, toolId: wCommandID, menu: wMenu = nil)
+    {.validate, property, inline.} =
   ## Sets the dropdown menu for the tool given by its id.
   let tool = getToolById(toolId)
   if tool != nil:
     tool.mMenu = menu
 
-proc getToolLabel*(self: wToolBar, toolId: wCommandID): string {.validate, property.} =
+proc getToolLabel*(self: wToolBar, toolId: wCommandID): string
+    {.validate, property.} =
   ## Returns the label for the given tool.
   var buffer = T(65536)
   var buttonInfo = TBBUTTONINFO(
@@ -205,7 +252,8 @@ proc getToolLabel*(self: wToolBar, toolId: wCommandID): string {.validate, prope
   buffer.nullTerminate
   result = $buffer
 
-proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string) {.validate, property.} =
+proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
+    {.validate, property.} =
   ## Sets the label for the tool given by its id.
   # need to recreate a button so that TB_AUTOSIZE works
   let pos = getToolPos(toolId)
@@ -228,7 +276,9 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string) {.validate
     SendMessage(mHwnd, TB_INSERTBUTTON, pos, &button)
     SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
 
-method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool =
+
   case code
   of TTN_GETDISPINFO:
     # show the tip (short help)

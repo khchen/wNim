@@ -11,8 +11,9 @@ proc getMenu*(self: wMenuItem): wMenu {.validate, property, inline.} =
   ## Returns the menu this item is in, or NULL if this item is not attached.
   result = mParentMenu
 
-proc getKind*(self: wMenuItem): int {.validate, property, inline.} =
-  ## Returns the item kind, one of wItemNormal, wItemCheck,  wItemRadio, wItemSeparator, or wItemSubMenu.
+proc getKind*(self: wMenuItem): wMenuItemKind {.validate, property, inline.} =
+  ## Returns the item kind, one of wMenuItemNormal, wMenuItemCheck,
+  ## wMenuItemRadio, wMenuItemSeparator, or wMenuItemSubMenu.
   result = mKind
 
 proc getSubMenu*(self: wMenuItem): wMenu {.validate, property, inline.} =
@@ -70,15 +71,15 @@ proc setId*(self: wMenuItem, id: wCommandID) {.validate, property.} =
 
 proc isCheck*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of check item.
-  result = mKind == wItemCheck
+  result = mKind == wMenuItemCheck
 
 proc isRadio*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of radio item.
-  result = mKind == wItemRadio
+  result = mKind == wMenuItemRadio
 
 proc isSeparator*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of separator.
-  result = mKind == wItemSeparator
+  result = mKind == wMenuItemSeparator
 
 proc isSubMenu*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of submenu.
@@ -114,7 +115,8 @@ proc toggle*(self: wMenuItem) {.validate.} =
     mParentMenu.toggle(pos)
 
 proc MenuItem*(id: wCommandID = 0, text: string = nil, help: string = nil,
-  kind: int = wItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil): wMenuItem =
+    kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil): wMenuItem
+    {.inline.} =
   ## Constructor.
   result = wMenuItem(mId: id, mText: text, mHelp: help, mKind: kind,
     mBitmap: bitmap, mSubmenu: submenu)

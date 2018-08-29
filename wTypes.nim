@@ -60,6 +60,25 @@ const
     ## Used in wNim as default time.
   wDefaultID*: wCommandID = wCommandID(-1)
     ## Used in wNim as default command ID.
+  wNotFound* = -1
+
+  # Direction
+  wLeft* = 0x0010
+  wRight* = 0x0020
+  wUp* = 0x0040
+  wDown* = 0x0080
+  wTop* = wUp
+  wBottom* = wDown
+  wNorth* = wUp
+  wSouth* = wDown
+  wWest* = wLeft
+  wEast* = wRight
+  wHorizontal* = wLeft
+  wVertical* = wUp
+  wBoth* = wHorizontal or wVertical
+  wCenter* = wLeft or wRight
+  wMiddle* = wUp or wDown
+
 
 converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
   ## We usually use the enum for where need a command ID. see the examples.
@@ -213,6 +232,11 @@ when not defined(wnimdoc):
       mMenuBar: wMenuBar
       mIcon: wIcon
       mDisableList: seq[wWindow]
+      mTrayIcon: wIcon
+      mTrayToolTip: string
+      mTrayIconAdded: bool
+      mTrayConn: wEventConnection
+      mCreateConn: wEventConnection
 
     wPanel* = ref object of wWindow
 
@@ -355,9 +379,16 @@ when not defined(wnimdoc):
       mMenuList: seq[wMenu]
       mParentFrameSet: HashSet[wFrame]
 
+    wMenuItemKind* = enum
+      wMenuItemNormal
+      wMenuItemSeparator
+      wMenuItemCheck
+      wMenuItemRadio
+      wMenuItemSubMenu
+
     wMenuItem* = ref object of RootObj
       mId: wCommandID
-      mKind: int
+      mKind: wMenuItemKind
       mText: string
       mHelp: string
       mBitmap: wBitmap
@@ -369,13 +400,6 @@ when not defined(wnimdoc):
 
     wImageList* = ref object of RootObj
       mHandle: HIMAGELIST
-
-    wTrayIcon* = ref object of RootObj
-      mWindow: wWindow
-      mIcon: wIcon
-      mToolTip: string
-      mIconAdded: bool
-      mRestartTaskbar: UINT
 
     wGdiObject* = ref object of RootObj
       mHandle: HANDLE
@@ -412,6 +436,7 @@ when not defined(wnimdoc):
       mIconResource: bool
 
     # device context type is "object" not "ref object"
+
     wDC* = object of RootObj
       mHdc: HDC
       mTextBackgroundColor: wColor

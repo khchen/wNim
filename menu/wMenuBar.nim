@@ -38,7 +38,8 @@ proc isAttached*(self: wMenuBar, frame: wFrame): bool {.validate.} =
   wValidate(frame)
   result = frame in mParentFrameSet
 
-proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string, bitmap: wBitmap = nil) {.validate.} =
+proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
+    bitmap: wBitmap = nil) {.validate.} =
   ## Inserts the menu at the given position into the menubar.
   wValidate(menu, text)
   var
@@ -61,14 +62,22 @@ proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string, bitmap: wBitma
   if bitmap != nil:
     menu.mBitmap = bitmap
     menuItemInfo.fMask = menuItemInfo.fMask or MIIM_BITMAP
-    menuItemInfo.hbmpItem = (if wGetWinVersion() > 6.0: bitmap.mHandle else: HBMMENU_CALLBACK)
+
+    when defined(useWinXP):
+      menuItemInfo.hbmpItem = HBMMENU_CALLBACK
+      # don't use callback if windows version is vista or latter
+      if wGetWinVersion() > 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
+
+    else:
+      menuItemInfo.hbmpItem = bitmap.mHandle
 
   if InsertMenuItem(mHmenu, pos, true, menuItemInfo) != 0:
     mMenuList.insert(menu, pos)
     menu.mParentMenuCountTable.inc(self, 1)
     refresh()
 
-proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil) {.validate, inline.} =
+proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil)
+    {.validate, inline.} =
   ## Adds the menu to the end of the menubar.
   wValidate(menu, text)
   insert(pos = -1, menu=menu, text=text, bitmap=bitmap)
@@ -103,7 +112,8 @@ proc find*(self: wMenuBar, menu: wMenu): int {.validate.} =
 
 iterator find*(self: wMenuBar, text: string): int {.validate.} =
   ## Iterates over each index with the given title.
-  # don's use mTitle here, because a menu may be attach a frame twice, or different frame?
+  # don's use mTitle here, because a menu may be attach a frame twice,
+  # or different frame?
   wValidate(text)
   var buffer = T(65536)
   for i in 0..<GetMenuItemCount(mHmenu):
@@ -131,7 +141,8 @@ proc findMenu*(self: wMenuBar, text: string): wMenu {.validate.} =
     return menu
 
 iterator findText*(self: wMenuBar, text: string): int {.validate.} =
-  ## Iterates over each index with the given title (not include any accelerator characters).
+  ## Iterates over each index with the given title (not include any accelerator
+  ## characters).
   wValidate(text)
   var buffer = T(65536)
   for i in 0..<GetMenuItemCount(mHmenu):
@@ -140,22 +151,23 @@ iterator findText*(self: wMenuBar, text: string): int {.validate.} =
       yield i
 
 proc findText*(self: wMenuBar, text: string): int {.validate.} =
-  ## Find the first index with the given title (not include any accelerator characters),
-  ## wNotFound(-1) if not found.
+  ## Find the first index with the given title (not include any accelerator
+  ## characters), wNotFound(-1) if not found.
   wValidate(text)
   for i in findText(text):
     return i
   result = wNotFound
 
 iterator findMenuText*(self: wMenuBar, text: string): wMenu {.validate.} =
-  ## Iterates over each wMenu object with the given title (not include any accelerator characters).
+  ## Iterates over each wMenu object with the given title (not include any
+  ## accelerator characters).
   wValidate(text)
   for i in findText(text):
     yield mMenuList[i]
 
 proc findMenuText*(self: wMenuBar, text: string): wMenu {.validate.} =
-  ## Find the first wMenu object with the given title (not include any accelerator characters),
-  ## nil if not found.
+  ## Find the first wMenu object with the given title (not include any
+  ## accelerator characters), nil if not found.
   wValidate(text)
   for menu in findMenuText(text):
     return menu
@@ -207,7 +219,8 @@ proc remove*(self: wMenuBar, menu: wMenu) {.validate.} =
     if pos == wNotFound: break
     remove(pos)
 
-proc replace*(self: wMenuBar, pos: int, menu: wMenu, text: string, bitmap: wBitmap = nil): wMenu {.validate, discardable.} =
+proc replace*(self: wMenuBar, pos: int, menu: wMenu, text: string,
+    bitmap: wBitmap = nil): wMenu {.validate, discardable.} =
   ## Replaces the menu at the given position with another one.
   ## Return the old menu object.
   wValidate(menu)
@@ -219,7 +232,8 @@ proc delete*(self: wMenuBar) {.validate.} =
   ## Delete the menubar.
   detach()
   if mHmenu != 0:
-    # use GetMenuItemCount(mHmenu) instead of mMenuList.len to ensure we remove all menu.
+    # use GetMenuItemCount(mHmenu) instead of mMenuList.len to ensure we
+    # remove all menu.
     for i in 0..<GetMenuItemCount(mHmenu):
       RemoveMenu(mHmenu, 0, MF_BYPOSITION)
     DestroyMenu(mHmenu)
@@ -287,12 +301,14 @@ proc MenuBar*(menus: openarray[(wMenu, string)]): wMenuBar {.inline.} =
   new(result, final)
   result.init(menus)
 
-proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = []) {.validate.} =
+proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = [])
+    {.validate.} =
   wValidate(frame)
   init(menus)
   attach(frame)
 
-proc MenuBar*(frame: wFrame, menus: openarray[(wMenu, string)] = []): wMenuBar {.inline.} =
+proc MenuBar*(frame: wFrame, menus: openarray[(wMenu, string)] = []): wMenuBar
+    {.inline.} =
   ## Construct a menubar from arrays of menus and titles, and attach it to frame window.
   wValidate(frame)
   new(result, final)

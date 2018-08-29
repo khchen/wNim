@@ -1,8 +1,10 @@
 ## wMenuBase is the super class of wMenuBar and wMenu.
-## It means the functions here work for menubar and menu.
+## It means the functions here work for both menubar and menu.
 
-proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int] {.validate.} =
-  ## Return the tuple (menu, pos) indicate a item with the given id, (nil, wNotFound(-1)) if not found.
+proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int]
+    {.validate.} =
+  ## Return the tuple (menu, pos) indicate a item with the given id,
+  ## (nil, wNotFound(-1)) if not found.
   if self of wMenuBar:
     let menuBar = wMenuBar(self)
     for topMenu in menuBar.mMenuList:
@@ -50,9 +52,10 @@ proc destroy*(self: wMenuBase, id: wCommandID) {.validate.} =
   if menu != nil:
     menu.destroy(pos)
 
-proc getKind*(self: wMenuBase, id: wCommandID): int {.validate, property.} =
+proc getKind*(self: wMenuBase, id: wCommandID): wMenuItemKind
+    {.validate, property.} =
   ## Returns the item kind,
-  ## one of wItemNormal, wItemCheck,  wItemRadio, wItemSeparator, or wItemSubMenu.
+  ## one of wMenuItemNormal, wMenuItemCheck,  wMenuItemRadio, wMenuItemSeparator, or wMenuItemSubMenu.
   let (menu, pos) = find(id)
   if menu != nil:
     result = menu.getKind(pos)
@@ -115,13 +118,15 @@ proc getBitmap*(self: wMenuBase, id: wCommandID): wBitmap {.validate, property.}
   if menu != nil:
     result = menu.getBitmap(pos)
 
-proc setBitmap*(self: wMenuBase, id: wCommandID, bitmap: wBitmap = nil) {.validate, property.} =
+proc setBitmap*(self: wMenuBase, id: wCommandID, bitmap: wBitmap = nil)
+    {.validate, property.} =
   ## Sets the bitmap for the menu item, nil for clear the bitmap.
   let (menu, pos) = find(id)
   if menu != nil:
     menu.setBitmap(pos, bitmap)
 
-proc setId*(self: wMenuBase, id: wCommandID, newid: wCommandID) {.validate, property.} =
+proc setId*(self: wMenuBase, id: wCommandID, newid: wCommandID)
+    {.validate, property.} =
   ## Sets the id for the menu item.
   let (menu, pos) = find(id)
   if menu != nil:
@@ -129,14 +134,15 @@ proc setId*(self: wMenuBase, id: wCommandID, newid: wCommandID) {.validate, prop
 
 proc replace*(self: wMenuBase, id: wCommandID, text: string = nil,
     help: string = nil, bitmap: wBitmap = nil, submenu: wMenu = nil,
-    kind: int = wItemNormal): wMenuItem {.validate, discardable.} =
+    kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Replaces the menu item with another one.
   ## Return the new menu item object.
   let (menu, pos) = find(id)
   if menu != nil:
     result = menu.replace(pos, id, text, help, bitmap, submenu, kind)
 
-proc replace*(self: wMenuBase, id: wCommandID, item: wMenuItem): wMenuItem {.validate, discardable.} =
+proc replace*(self: wMenuBase, id: wCommandID, item: wMenuItem): wMenuItem
+    {.validate, discardable.} =
   ## Replaces the menu item with another one.
   ## Return the new menu item object.
   wValidate(item)

@@ -848,7 +848,10 @@ proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint) {.valid
   if pos.x == wDefault or pos.y == wDefault:
     pos = wGetMousePosition()
 
+  # Q135788, so when you click outside the popup menu, the popup menu disappears correctly.
+  SetForegroundWindow(mHwnd)
   TrackPopupMenu(menu.mHmenu, TPM_RECURSE or TPM_RIGHTBUTTON, pos.x, pos.y, 0, mHwnd, nil)
+  PostMessage(mHwnd, WM_NULL, 0, 0)
 
 proc popupMenu*(self: wWindow, menu: wMenu, x, y: int) {.validate, inline.} =
   ## Pops up the given menu at the specified coordinates.

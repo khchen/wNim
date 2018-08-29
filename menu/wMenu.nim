@@ -3,6 +3,14 @@
 # forward declarations
 proc remove*(self: wMenu, submenu: wMenu)
 
+# const
+#   wMenuItemNormal* = TBSTYLE_BUTTON
+#   wMenuItemSeparator* = TBSTYLE_SEP
+#   wMenuItemCheck* = TBSTYLE_CHECK
+#   wMenuItemRadio* = TBSTYLE_CHECKGROUP
+#   wItemDropDown* = BTNS_WHOLEDROPDOWN
+#   wMenuItemSubMenu* = wItemDropDown
+
 proc detach*(self: wMenu, menuBar: wMenuBar) {.validate.} =
   ## Detach a menu from a menubar.
   wValidate(menuBar)
@@ -40,12 +48,14 @@ proc delete*(self: wMenu) {.validate.} =
 
 proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string = nil,
     help: string = nil, bitmap: wBitmap = nil, submenu: wMenu = nil,
-    kind: int = wItemNormal): wMenuItem {.validate, discardable.} =
+    kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Inserts the given item before the position.
-  ## Kind is one of wItemNormal, wItemCheck, wItemRadio, or wItemSeparator.
+  ## Kind is one of wMenuItemNormal, wMenuItemCheck, wMenuItemRadio
+  ## or wMenuItemSeparator.
   var
     pos = pos
-    item = wMenuItem(mId: id, mText: text, mHelp: help, mKind: kind, mBitmap: bitmap, mSubmenu: submenu)
+    item = wMenuItem(mId: id, mText: text, mHelp: help, mKind: kind,
+      mBitmap: bitmap, mSubmenu: submenu)
     count = mItemList.len
 
   if pos < 0: pos = count
@@ -58,22 +68,29 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string = nil,
     dwItemData: cast[ULONG_PTR](item),
     wID: UINT id)
 
-  if kind == wItemSeparator or text == nil:
-    item.mKind = wItemSeparator
+  if kind == wMenuItemSeparator or text == nil:
+    item.mKind = wMenuItemSeparator
     menuItemInfo.fType = MFT_SEPARATOR
+
   else:
-    item.mKind = if kind == wItemCheck or kind == wItemRadio: kind else: wItemNormal
+    item.mKind = if kind in {wMenuItemCheck, wMenuItemRadio}: kind else: wMenuItemNormal
     menuItemInfo.fType = MFT_STRING
     menuItemInfo.fMask = menuItemInfo.fMask or MIIM_STRING
     menuItemInfo.dwTypeData = T(text)
 
   if bitmap != nil:
     menuItemInfo.fMask = menuItemInfo.fMask or MIIM_BITMAP
-    # don't use callback if windows version is vista or latter
-    menuItemInfo.hbmpItem = (if wGetWinVersion() > 6.0: bitmap.mHandle else: HBMMENU_CALLBACK)
+
+    when defined(useWinXP):
+      menuItemInfo.hbmpItem = HBMMENU_CALLBACK
+      # don't use callback if windows version is vista or latter
+      if wGetWinVersion() > 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
+
+    else:
+      menuItemInfo.hbmpItem = bitmap.mHandle
 
   if submenu != nil:
-    item.mKind = wItemSubMenu
+    item.mKind = wMenuItemSubMenu
     menuItemInfo.fMask = menuItemInfo.fMask or MIIM_SUBMENU
     menuItemInfo.hSubMenu = submenu.mHmenu
 
@@ -83,68 +100,82 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string = nil,
       submenu.mParentMenuCountTable.inc(self, 1)
     result = item
 
-proc insert*(self: wMenu, pos: int = -1, item: wMenuItem): wMenuItem {.validate, discardable.} =
+proc insert*(self: wMenu, pos: int = -1, item: wMenuItem): wMenuItem
+    {.validate, discardable.} =
   ## Inserts the given item before the position.
   ## The given wMenuItem object will be copied internally.
   wValidate(item)
   if item != nil:
-    result = insert(pos=pos, id=item.mId, text=item.mText, help=item.mHelp, kind=item.mKind,
-      bitmap=item.mBitmap, submenu=item.mSubmenu)
+    result = insert(pos=pos, id=item.mId, text=item.mText, help=item.mHelp,
+      kind=item.mKind, bitmap=item.mBitmap, submenu=item.mSubmenu)
 
 proc insertSubMenu*(self: wMenu, pos: int = -1, submenu: wMenu, text: string,
-    help: string = nil, bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem {.validate, inline, discardable.} =
+    help: string = nil, bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem
+    {.validate, inline, discardable.} =
   ## Inserts the given submenu before the position.
   wValidate(submenu, text)
   result = insert(pos=pos, submenu=submenu, text=text, help=help, bitmap=bitmap)
 
-proc insertSeparator*(self: wMenu, pos: int = -1): wMenuItem {.validate, inline, discardable.} =
+proc insertSeparator*(self: wMenu, pos: int = -1): wMenuItem
+    {.validate, inline, discardable.} =
   ## Inserts a separator at the given position.
   result = insert(pos=pos)
 
-proc insertCheckItem*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string,
-    help: string = nil, bitmap: wBitmap = nil): wMenuItem {.validate, inline, discardable.} =
+proc insertCheckItem*(self: wMenu, pos: int = -1, id: wCommandID = 0,
+    text: string, help: string = nil, bitmap: wBitmap = nil): wMenuItem
+    {.validate, inline, discardable.} =
   ## Inserts a checkable item at the given position.
   wValidate(text)
-  result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap, kind=wItemCheck)
+  result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap,
+    kind=wMenuItemCheck)
 
-proc insertRadioItem*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string,
-    help: string = nil, bitmap: wBitmap = nil): wMenuItem {.validate, inline, discardable.} =
+proc insertRadioItem*(self: wMenu, pos: int = -1, id: wCommandID = 0,
+    text: string, help: string = nil, bitmap: wBitmap = nil): wMenuItem
+    {.validate, inline, discardable.} =
   ## Inserts a radio item at the given position.
   wValidate(text)
-  result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap, kind=wItemRadio)
+  result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap,
+    kind=wMenuItemRadio)
 
 proc append*(self: wMenu, id: wCommandID = 0, text: string, help: string = nil,
-  bitmap: wBitmap = nil, submenu: wMenu = nil, kind: int = 0): wMenuItem {.validate, inline, discardable.} =
+  bitmap: wBitmap = nil, submenu: wMenu = nil, kind = wMenuItemNormal): wMenuItem
+  {.validate, inline, discardable.} =
   ## Adds a menu item.
   wValidate(text)
-  result = insert(id=id, text=text, help=help, bitmap=bitmap, submenu=submenu, kind=kind)
+  result = insert(id=id, text=text, help=help, bitmap=bitmap, submenu=submenu,
+    kind=kind)
 
-proc append*(self: wMenu, item: wMenuItem): wMenuItem {.validate, inline, discardable.} =
+proc append*(self: wMenu, item: wMenuItem): wMenuItem
+    {.validate, inline, discardable.} =
   ## Adds a menu item.
   wValidate(item)
   result = insert(item=item)
 
 proc appendSubMenu*(self: wMenu, submenu: wMenu, text: string,
-    help: string = nil, bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem {.validate, inline, discardable.} =
+    help: string = nil, bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem
+    {.validate, inline, discardable.} =
   ## Adds a submenu.
   wValidate(text)
   result = insert(submenu=submenu, text=text, help=help, bitmap=bitmap)
 
-proc appendSeparator*(self: wMenu): wMenuItem {.validate, inline, discardable.} =
+proc appendSeparator*(self: wMenu): wMenuItem
+    {.validate, inline, discardable.} =
   ## Adds a separator.
   result = insert()
 
 proc appendCheckItem*(self: wMenu, id: wCommandID = 0, text: string,
-    help: string = nil, bitmap: wBitmap = nil): wMenuItem {.validate, inline, discardable.} =
+    help: string = nil, bitmap: wBitmap = nil): wMenuItem
+    {.validate, inline, discardable.} =
   ## Adds a checkable item.
   wValidate(text)
-  result = insert(id=id, text=text, help=help, bitmap=bitmap, kind=wItemCheck)
+  result = insert(id=id, text=text, help=help, bitmap=bitmap, kind=wMenuItemCheck)
 
 proc appendRadioItem*(self: wMenu, id: wCommandID = 0, text: string,
-    help: string = nil, bitmap: wBitmap = nil): wMenuItem {.validate, inline, discardable.} =
+    help: string = nil, bitmap: wBitmap = nil): wMenuItem
+    {.validate, inline, discardable.} =
   ## Adds a radio item.
   wValidate(text)
-  result = insert(id=id, text=text, help=help, bitmap=bitmap, kind=wItemRadio)
+  result = insert(id=id, text=text, help=help, bitmap=bitmap, kind=wMenuItemRadio)
 
 proc find*(self: wMenu, item: wMenuItem): int {.validate.} =
   ## Find the index of the item or wNotFound(-1) if not found.
@@ -196,29 +227,31 @@ proc findItem*(self: wMenu, text: string): wMenuItem {.validate.} =
     return item
 
 iterator findText*(self: wMenu, text: string): int {.validate.} =
-  ## Iterates over each index with the given text (not include any accelerator characters),
+  ## Iterates over each index with the given text (not include any accelerator
+  ## characters),
   wValidate(text)
   for i, item in mItemList:
     if item.mText != nil and item.mText.replace("&", "") == text:
       yield i
 
 proc findText*(self: wMenu, text: string): int {.validate.} =
-  ## Find the first index with the given text (not include any accelerator characters),
-  ## wNotFound(-1) if not found.
+  ## Find the first index with the given text (not include any accelerator
+  ## characters), wNotFound(-1) if not found.
   wValidate(text)
   for i in findText(text):
     return i
   result = wNotFound
 
 iterator findItemText*(self: wMenu, text: string): wMenuItem {.validate.} =
-  ## Iterates over each wMenuItem object with the given text (not include any accelerator characters).
+  ## Iterates over each wMenuItem object with the given text (not include any
+  ## accelerator characters).
   wValidate(text)
   for i in findText(text):
     yield mItemList[i]
 
 proc findItemText*(self: wMenu, text: string): wMenuItem {.validate.} =
-  ## Find the first wMenuItem object with the given text (not include any accelerator characters),
-  ## nil if not found.
+  ## Find the first wMenuItem object with the given text (not include any
+  ## accelerator characters), nil if not found.
   wValidate(text)
   for item in findItemText(text):
     return item
@@ -255,9 +288,9 @@ proc destroy*(self: wMenu, pos: int) {.validate.} =
         mItemList[pos].mSubmenu.delete()
       mItemList.delete(pos)
 
-proc getKind*(self: wMenu, pos: int): int {.validate, property.} =
-  ## Returns the item kind at the position,
-  ## one of wItemNormal, wItemCheck,  wItemRadio, wItemSeparator, or wItemSubMenu.
+proc getKind*(self: wMenu, pos: int): wMenuItemKind {.validate, property.} =
+  ## Returns the item kind at the position, one of wMenuItemNormal,
+  ## wMenuItemCheck,  wMenuItemRadio, wMenuItemSeparator, or wMenuItemSubMenu.
   if pos >= 0 and pos < mItemList.len:
     result = mItemList[pos].mKind
 
@@ -280,7 +313,7 @@ proc setText*(self: wMenu, pos: int, text: string) {.validate, property.} =
   wValidate(text)
   if pos >= 0 and pos < mItemList.len and text != nil:
     let item = mItemList[pos]
-    if item.mKind != wItemSeparator:
+    if item.mKind != wMenuItemSeparator:
       var menuItemInfo = MENUITEMINFO(
         cbSize: sizeof(MENUITEMINFO),
         fMask: MIIM_STRING,
@@ -317,7 +350,7 @@ proc setBitmap*(self: wMenu, pos: int, bitmap: wBitmap = nil) {.validate, proper
   ## Sets the bitmap for the menu item at the position. nil for clear the bitmap.
   if pos >= 0 and pos < mItemList.len:
     let item = mItemList[pos]
-    if item.mKind != wItemSeparator:
+    if item.mKind != wMenuItemSeparator:
       var hbmp = 0
       if bitmap != nil:
         hbmp = (if wGetWinVersion() > 6.0: bitmap.mHandle else: HBMMENU_CALLBACK)
@@ -333,7 +366,7 @@ proc setId*(self: wMenu, pos: int, id: wCommandID) {.validate, property.} =
   ## Sets the id for the menu item at the position.
   if pos >= 0 and pos < mItemList.len:
     let item = mItemList[pos]
-    if item.mKind != wItemSeparator:
+    if item.mKind != wMenuItemSeparator:
       var menuItemInfo = MENUITEMINFO(
         cbSize: sizeof(MENUITEMINFO),
         fMask: MIIM_ID,
@@ -343,14 +376,16 @@ proc setId*(self: wMenu, pos: int, id: wCommandID) {.validate, property.} =
 
 proc replace*(self: wMenu, pos: int, id: wCommandID = 0, text: string = nil,
     help: string = nil, bitmap: wBitmap = nil, submenu: wMenu = nil,
-    kind: int = wItemNormal): wMenuItem {.validate, discardable.} =
+    kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Replaces the menu item at the given position with another one.
   ## Return the new menu item object.
   if pos >= 0 and pos < mItemList.len:
     remove(pos)
-    result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap, submenu=submenu, kind=kind)
+    result = insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap,
+      submenu=submenu, kind=kind)
 
-proc replace*(self: wMenu, pos: int, item: wMenuItem): wMenuItem {.validate, discardable.} =
+proc replace*(self: wMenu, pos: int, item: wMenuItem): wMenuItem
+    {.validate, discardable.} =
   ## Replaces the menu item at the given position with another one.
   ## Return the new menu item object.
   wValidate(item)
@@ -361,17 +396,17 @@ proc replace*(self: wMenu, pos: int, item: wMenuItem): wMenuItem {.validate, dis
 proc isCheck*(self: wMenu, pos: int): bool {.validate.} =
   ## Determines whether a menu item is a kind of check item.
   if pos >= 0 and pos < mItemList.len:
-    result = (mItemList[pos].mKind == wItemCheck)
+    result = (mItemList[pos].mKind == wMenuItemCheck)
 
 proc isRadio*(self: wMenu, pos: int): bool {.validate.} =
   ## Determines whether a menu item is a kind of radio item.
   if pos >= 0 and pos < mItemList.len:
-    result = (mItemList[pos].mKind == wItemRadio)
+    result = (mItemList[pos].mKind == wMenuItemRadio)
 
 proc isSeparator*(self: wMenu, pos: int): bool {.validate.} =
   ## Determines whether a menu item is a kind of separator.
   if pos >= 0 and pos < mItemList.len:
-    result = (mItemList[pos].mKind == wItemSeparator)
+    result = (mItemList[pos].mKind == wMenuItemSeparator)
 
 proc isSubMenu*(self: wMenu, pos: int): bool {.validate.} =
   ## Determines whether a menu item is a kind of submenu.
@@ -417,14 +452,14 @@ proc disable*(self: wMenu) {.validate, inline.} =
 proc check*(self: wMenu, pos: int, flag = true) {.validate.} =
   ## Checks or unchecks the menu item.
   if pos >= 0 and pos < mItemList.len:
-    if flag and mItemList[pos].mKind == wItemRadio:
+    if flag and mItemList[pos].mKind == wMenuItemRadio:
       var first, last: int
       for i in pos..<mItemList.len:
-        if mItemList[i].mKind != wItemRadio: break
+        if mItemList[i].mKind != wMenuItemRadio: break
         last = i
 
       for i in countdown(pos, 0):
-        if mItemList[i].mKind != wItemRadio: break
+        if mItemList[i].mKind != wMenuItemRadio: break
         first = i
 
       CheckMenuRadioItem(mHmenu, first, last, pos, MF_BYPOSITION)
@@ -503,7 +538,8 @@ proc init*(self: wMenu, menuBar: wMenuBar, text: string,
   init()
   menuBar.append(self, text, bitmap)
 
-proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu {.inline.} =
+proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu
+    {.inline.} =
   ## Construct an empty menu and append to menubar.
   wValidate(menuBar, text)
   new(result, final)
