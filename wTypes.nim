@@ -125,6 +125,7 @@ when not defined(wnimdoc):
     wCommandEvent* = ref object of wEvent
     wNavigationEvent* = ref object of wEvent
     wSetCursorEvent* = ref object of wEvent
+    wTrayEvent* = ref object of wEvent
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
       mIndex: int
@@ -368,6 +369,13 @@ when not defined(wnimdoc):
 
     wImageList* = ref object of RootObj
       mHandle: HIMAGELIST
+
+    wTrayIcon* = ref object of RootObj
+      mWindow: wWindow
+      mIcon: wIcon
+      mToolTip: string
+      mIconAdded: bool
+      mRestartTaskbar: UINT
 
     wGdiObject* = ref object of RootObj
       mHandle: HANDLE

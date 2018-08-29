@@ -2,8 +2,6 @@
 const
   wNotFound* = -1
 
-
-
   # ToolBar or Menuitem kind
   wItemNormal* = TBSTYLE_BUTTON
   wItemSeparator* = TBSTYLE_SEP
@@ -11,13 +9,6 @@ const
   wItemRadio* = TBSTYLE_CHECKGROUP
   wItemDropDown* = BTNS_WHOLEDROPDOWN
   wItemSubMenu* = wItemDropDown
-
-
-
-
-
-
-
 
   # Direction
   wLeft* = 0x0010

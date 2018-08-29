@@ -5,6 +5,7 @@ proc isSizeEvent(msg: UINT): bool {.inline.}
 proc isMoveEvent(msg: UINT): bool {.inline.}
 proc isContextMenuEvent(msg: UINT): bool {.inline.}
 proc isScrollWinEvent(msg: UINT): bool {.inline.}
+proc isTrayEvent(msg: UINT): bool {.inline.}
 proc isNavigationEvent(msg: UINT): bool {.inline.}
 proc isSetCursorEvent(msg: UINT): bool {.inline.}
 proc isCommandEvent(msg: UINT): bool {.inline.}
@@ -27,8 +28,6 @@ const
   wEvent_Vertical* = WM_VSCROLL
   wEvent_Activate* = WM_ACTIVATE
   wEvent_Destroy* = WM_DESTROY
-  wEvent_CloseWindow* = WM_CLOSE
-  wEvent_Close* = WM_CLOSE
   wEvent_Timer* = WM_TIMER
   wEvent_InitDialog* = WM_INITDIALOG
   wEvent_MenuHighlight* = WM_MENUSELECT
@@ -39,6 +38,8 @@ const
   # wEvent_AppQuit = WM_APP + 1
   # wEvent_Navigation* = WM_APP + 2
   # wEvent_SetCursor* = WM_APP + 3
+  wEvent_Close* = WM_APP + 4
+
   # wEvent_MouseEnter* = WM_APP + 51
   # wEvent_Size* = WM_APP + 52
   # wEvent_Iconize* = WM_APP + 53
@@ -47,16 +48,16 @@ const
   # wEvent_Sizing* = WM_APP + 55
   # wEvent_Dragging* = WM_APP + 56
   # wEvent_Splitter* = WM_APP + 57
-
   wEvent_ScrollWinFirst = WM_APP + 100
-  wEvent_CommandFirst = WM_APP + 150
-  wEvent_StatusBarFirst = WM_APP + 200
-  wEvent_ScrollFirst = WM_APP + 250
-  wEvent_ListFirst = WM_APP + 300
-  wEvent_TreeFirst = WM_APP + 350
-  wEvent_SpinFirst = WM_APP + 400
-  wEvent_HyperLinkFirst = WM_APP + 450
-  wEvent_CommandLast = WM_APP + 500
+  wEvent_TrayFirst = WM_APP + 150
+  wEvent_CommandFirst = WM_APP + 200
+  wEvent_StatusBarFirst = WM_APP + 250
+  wEvent_ScrollFirst = WM_APP + 300
+  wEvent_ListFirst = WM_APP + 350
+  wEvent_TreeFirst = WM_APP + 400
+  wEvent_SpinFirst = WM_APP + 450
+  wEvent_HyperLinkFirst = WM_APP + 500
+  wEvent_CommandLast = WM_APP + 550
   wEvent_App* = wEvent_CommandLast + 1
 
 proc defaultPropagationLevel(msg: UINT): int =
@@ -90,6 +91,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LP
 
   elif msg.isScrollWinEvent():
     result = CreateEvent(wScrollWinEvent)
+
+  elif msg.isTrayEvent():
+    result = CreateEvent(wTrayEvent)
 
   elif msg.isNavigationEvent():
     result = CreateEvent(wNavigationEvent)

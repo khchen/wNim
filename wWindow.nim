@@ -1513,6 +1513,13 @@ proc wWindow_OnNotify(event: wEvent) =
 
   processed = win.processNotify(cast[INT](pNMHDR.code), pNMHDR.idFrom, event.mLparam, event.mResult)
 
+proc wWindow_OnClose(event: wEvent) =
+  let self = event.mWindow
+  let closeEvent = Event(window=self, msg=wEvent_Close)
+  if not self.processEvent(closeEvent) or closeEvent.isAllowed:
+    # DefWindowProc for this event just a DestroyWindow()
+    self.delete()
+
 proc wWindow_OnCtlColor(event: wEvent) =
   var processed = false
   defer: event.skip(if processed: false else: true)
@@ -1751,6 +1758,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
 
   hardConnect(WM_COMMAND, wWindow_OnCommand)
   hardConnect(WM_NOTIFY, wWindow_OnNotify)
+  hardConnect(WM_CLOSE, wWindow_OnClose)
   hardConnect(WM_CTLCOLORBTN, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)
   hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
