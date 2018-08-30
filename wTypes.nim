@@ -170,15 +170,15 @@ when not defined(wnimdoc):
       kind: int
       orientation: int
 
-    wView* = ref object of RootObj
+    wResizable* = ref object of RootObj
       mLeft: Variable
       mRight: Variable
       mTop: Variable
       mBottom: Variable
 
-    wViewSolver* = ref object of RootObj
+    wResizer* = ref object of RootObj
       mSolver: Solver
-      mViews: HashSet[wView]
+      mObjects: HashSet[wResizable]
 
     wEventConnection = tuple
       msg: UINT
@@ -208,7 +208,7 @@ when not defined(wnimdoc):
       startPos: wPoint
       connection: tuple[move, down, up: wEventConnection]
 
-    wWindow* = ref object of wView
+    wWindow* = ref object of wResizable
       mHwnd: HWND
       mParent: wWindow
       mChildren: seq[wWindow]

@@ -1,4 +1,4 @@
-## wViewSolver is the class for wView layout constraint solver.
+## wResizer is the class for wResizable layout constraint solver.
 ##
 ## :Consts:
 ##   The strength of the constraint.
@@ -32,22 +32,18 @@ proc `|`*(strength: float, constraint: Constraint): Constraint {.inline.} =
   ## Modify a constraint by specified strength
   constraint | strength
 
-proc init(self: wViewSolver) =
-  mSolver = newSolver()
-  mViews = initSet[wView]()
-
-proc addConstraint*(self: wViewSolver, constraint: Constraint) {.validate, inline.} =
+proc addConstraint*(self: wResizer, constraint: Constraint) {.validate, inline.} =
   ## Add a constraint to the solver.
   mSolver.addConstraint(constraint)
 
-proc addView*(self: wViewSolver, view: wView) {.validate, inline.} =
-  ## Add an associated view to the solver.
-  mViews.incl view
+proc addObject*(self: wResizer, obj: wResizable) {.validate, inline.} =
+  ## Add an associated resizable object to the solver.
+  mObjects.incl obj
 
-proc resolve*(self: wViewSolver) {.validate.} =
-  ## Count the layout of the associated view.
+proc resolve*(self: wResizer) {.validate.} =
+  ## Count the layout of the associated object.
   # window's current layout as default, size should stronger than position
-  for child in mViews:
+  for child in mObjects:
     if child of wWindow:
       let rect = child.wWindow.getRect()
       mSolver.addConstraint((child.mLeft == rect.x.float) | WEAKEST)
@@ -57,22 +53,30 @@ proc resolve*(self: wViewSolver) {.validate.} =
 
   mSolver.updateVariables()
 
-proc rearrange*(self: wViewSolver) {.validate.} =
-  ## Rearrange the layout of the associated view by the result.
-  for view in mViews:
-    if view of wWindow:
-      let x = round(view.mLeft.value).int
-      let y = round(view.mTop.value).int
-      let width = round(view.mRight.value - view.mLeft.value).int
-      let height = round(view.mBottom.value - view.mTop.value).int
-      view.wWindow.setSize(x, y, width, height)
+proc rearrange*(self: wResizer) {.validate.} =
+  ## Rearrange the layout of the associated window.
+  for obj in mObjects:
+    if obj of wWindow:
+      let x = round(obj.mLeft.value).int
+      let y = round(obj.mTop.value).int
+      let width = round(obj.mRight.value - obj.mLeft.value).int
+      let height = round(obj.mBottom.value - obj.mTop.value).int
+      obj.wWindow.setSize(x, y, width, height)
 
-iterator items*(self: wViewSolver): wView {.validate.} =
-  ## Iterates over each associated view.
-  for view in mViews:
-    yield view
+iterator items*(self: wResizer): wResizable {.validate.} =
+  ## Iterates over each associated object.
+  for obj in mObjects:
+    yield obj
 
-proc ViewSolver*(): wViewSolver =
+proc final*(self: wResizer) =
+  ## Default finalizer for wResizer.
+  discard
+
+proc init*(self: wResizer) =
+  mSolver = newSolver()
+  mObjects = initSet[wResizable]()
+
+proc Resizer*(): wResizer {.inline.} =
   ## Constructor.
-  new(result)
+  new(result, final)
   result.init()

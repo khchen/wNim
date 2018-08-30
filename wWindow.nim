@@ -1,7 +1,7 @@
 ## wWindow is the base for all windows and represents any visible object on screen.
 ##
 ## :Superclass:
-##    wView
+##    wResizable
 ## :Styles:
 ##    ==============================  =============================================================
 ##    Styles                          Description
@@ -1618,7 +1618,7 @@ proc final*(self: wWindow) =
   discard
 
 proc initBase(self: wWindow) =
-  self.wView.init()
+  self.wResizable.init()
   mConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
   mSystemConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
   mChildren = @[]
