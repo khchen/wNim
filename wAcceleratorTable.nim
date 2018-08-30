@@ -4,9 +4,9 @@
 ##
 ## .. code-block:: Nim
 ##   var accel = AcceleratorTable()
-##   accel.add(wAccelCtrl, wKey_S, wID_SAVE)
-##   accel.add(wAccelNormal, wKey_F1, wID_HELP)
-##   accel.add('o', wID_OPEN)
+##   accel.add(wAccelCtrl, wKey_S, wIdSave)
+##   accel.add(wAccelNormal, wKey_F1, wIdHelp)
+##   accel.add('o', wIdOpen)
 ##   frame.acceleratorTable = accel
 
 const

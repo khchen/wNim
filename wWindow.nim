@@ -815,23 +815,17 @@ proc getScrollPos*(self: wWindow, orientation: int): int {.validate, property, i
   result = int info.nPos
 
 proc center*(self: wWindow, direction = wBoth) {.validate.} =
-  ## Centers the window..
-  var rect = getWindowRect()
+  ## Centers the window. *direction* is a bitwise combination of
+  ## wHorizontal and wVertical.
+  if (direction and wBoth) == 0: return # nothing to do
 
   if mParent == nil:
-    var r: RECT
-    GetClientRect(GetDesktopWindow(), r)
-
-    if (direction and wHorizontal) != 0:
-      rect.x = (int(r.right - r.left) - rect.width) div 2
-
-    if (direction and wVertical) != 0:
-      rect.y = (int(r.bottom - r.top) - rect.height) div 2
+    centerWindow(mHwnd, inScreen=false, direction=direction)
 
   else:
-    let
-      size = mParent.getClientSize()
-      point = mParent.getClientAreaOrigin()
+    var rect = getWindowRect()
+    let size = mParent.getClientSize()
+    let point = mParent.getClientAreaOrigin()
 
     if (direction and wHorizontal) != 0:
       rect.x = (size.width - rect.width) div 2 + point.x
@@ -839,7 +833,7 @@ proc center*(self: wWindow, direction = wBoth) {.validate.} =
     if (direction and wVertical) != 0:
       rect.y = (size.height - rect.height) div 2 + point.y
 
-  setWindowPos(rect.x, rect.y)
+    setWindowPos(rect.x, rect.y)
 
 proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint) {.validate.} =
   ## Pops up the given menu at the specified coordinates.
@@ -1498,7 +1492,7 @@ proc wWindow_OnCommand(event: wEvent) =
   # wParam (high word) == 0: menu, == 1: accelerator
   # we only handle accelerator here.
   # typically, a accelerator table is associated with a frame.
-  # however, there maybe some exception (editor?)
+  # however, maybe there is some exception (editor?)
   # So we handle this at wWindow level.
   if event.lParam == 0 and HIWORD(event.wParam) == 1:
     let id = LOWORD(event.wParam)

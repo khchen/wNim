@@ -1,4 +1,5 @@
-## A dialog that shows a single or multi-line message, with a choice of OK, Yes, No and Cancel buttons.
+## A dialog that shows a single or multi-line message, with a choice of OK, Yes,
+## No and Cancel buttons.
 ##
 ## :Styles:
 ##    ==============================  =============================================================
@@ -26,7 +27,7 @@
 ##    wStayOnTop                      The message box will stay on top of all other windows.
 ##    ==============================  =============================================================
 
-var wMessageDialogPtr {.threadvar.}: ptr wMessageDialog
+var gMessageDialog {.threadvar.}: wMessageDialog
 
 const
   # MessageDialog styles
@@ -52,103 +53,112 @@ const
   # defined in wFrame.nim
   # wStayOnTop* = WS_EX_TOPMOST shl 32
 
+proc final*(self: wMessageDialog) =
+  ## Default finalizer for wMessageDialog.
+  discard
+
+proc init*(self: wMessageDialog, parent: wWindow = nil, message: string = "" ,
+    caption: string = "", style: wStyle = wOK) {.validate.} =
+
+  wValidate(message, caption)
+  mParent = parent
+  mMessage = message
+  mCaption = caption
+  mStyle = style
+  mLabelText = initTable[INT, string]()
+
 proc MessageDialog*(parent: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK): wMessageDialog =
   ## Constructor specifying the message box properties.
   wValidate(message, caption)
-  result.mParent = parent
-  result.mMessage = message
-  result.mCaption = caption
-  result.mStyle = style
+  new(result, final)
+  result.init(parent, message, caption, style)
 
-  # must use ref type here so that we can write MessageDialog().ShowModal()
-  # and also let dlg = MessageDialog()
-  result.mLabelText = newTable[INT, string]()
-  new(result.mHookRef)
+proc getMessage*(self: wMessageDialog): string {.validate, property, inline.} =
+  ## Returns the message that will be displayed on the dialog.
+  result = mMessage
 
-proc setMessage*(self: var wMessageDialog, message: string) {.property, inline.} =
+proc getCaption*(self: wMessageDialog): string {.validate, property, inline.} =
+  ## Gets the caption that will be displayed on the dialog.
+  result = mCaption
+
+proc getStyle*(self: wMessageDialog): wStyle {.validate, property, inline.} =
+  ## Gets the style.
+  result = mStyle
+
+proc setMessage*(self: var wMessageDialog, message: string) {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
   wValidate(message)
   mMessage = message
 
-proc setCaption*(self: var wMessageDialog, caption: string) {.property, inline.} =
+proc setCaption*(self: var wMessageDialog, caption: string) {.validate, property, inline.} =
   ## Sets the caption that will be displayed on the dialog.
   wValidate(caption)
   mCaption = caption
 
-proc setStyle*(self: var wMessageDialog, style: wStyle) {.property, inline.} =
+proc setStyle*(self: var wMessageDialog, style: wStyle) {.validate, property, inline.} =
   ## Sets the style of the dialog.
   mStyle = style
 
-proc getMessage*(self: wMessageDialog): string {.property, inline.} =
-  ## Returns the message that will be displayed on the dialog.
-  result = mMessage
-
-proc getCaption*(self: wMessageDialog): string {.property, inline.} =
-  ## Gets the caption that will be displayed on the dialog.
-  result = mCaption
-
-proc getStyle*(self: wMessageDialog): wStyle {.property, inline.} =
-  ## Gets the style.
-  result = mStyle
-
-proc setOKLabel*(self: wMessageDialog, ok: string) {.property, inline.} =
+proc setOKLabel*(self: wMessageDialog, ok: string) {.validate, property, inline.} =
   ## Overrides the default labels of the OK button.
   wValidate(ok)
-  self.mLabelText[IDOK] = ok
+  mLabelText[IDOK] = ok
 
-proc setOKCancelLabels*(self: wMessageDialog, ok: string,
-    cancel: string) {.property, inline.} =
+proc setOKCancelLabels*(self: wMessageDialog, ok: string, cancel: string)
+    {.validate, property, inline.} =
   ## Overrides the default labels of the OK and Cancel buttons.
   wValidate(ok, cancel)
-  self.mLabelText[IDOK] = ok
-  self.mLabelText[IDCANCEL] = cancel
+  mLabelText[IDOK] = ok
+  mLabelText[IDCANCEL] = cancel
 
 proc setYesNoCancelLabels*(self: wMessageDialog, yes: string, no: string,
-    cancel: string) {.property, inline.} =
+    cancel: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Yes, No and Cancel buttons.
   wValidate(yes, no, cancel)
-  self.mLabelText[IDYES] = yes
-  self.mLabelText[IDNO] = no
-  self.mLabelText[IDCANCEL] = cancel
+  mLabelText[IDYES] = yes
+  mLabelText[IDNO] = no
+  mLabelText[IDCANCEL] = cancel
 
-proc setYesNoLabels*(self: wMessageDialog, yes: string,
-    no: string) {.property, inline.} =
+proc setYesNoLabels*(self: wMessageDialog, yes: string, no: string)
+    {.validate, property, inline.} =
   ## Overrides the default labels of the Yes and No buttons.
   wValidate(yes, no)
-  self.mLabelText[IDYES] = yes
-  self.mLabelText[IDNO] = no
+  mLabelText[IDYES] = yes
+  mLabelText[IDNO] = no
 
-proc setRetryCancelLabels*(self: wMessageDialog, retry: string,
-    cancel: string) {.property, inline.} =
+proc setRetryCancelLabels*(self: wMessageDialog, retry: string, cancel: string)
+    {.validate, property, inline.} =
   ## Overrides the default labels of the Retry and Cancel buttons.
   wValidate(retry, cancel)
-  self.mLabelText[IDRETRY] = retry
-  self.mLabelText[IDCANCEL] = cancel
+  mLabelText[IDRETRY] = retry
+  mLabelText[IDCANCEL] = cancel
 
 proc setAbortRetryIgnoreLabels*(self: wMessageDialog, abort: string,
-    retry: string, ignore: string) {.property, inline.} =
+    retry: string, ignore: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Abort, Retry and Ignore buttons.
   wValidate(abort, retry, ignore)
-  self.mLabelText[IDABORT] = abort
-  self.mLabelText[IDRETRY] = retry
-  self.mLabelText[IDIGNORE] = ignore
+  mLabelText[IDABORT] = abort
+  mLabelText[IDRETRY] = retry
+  mLabelText[IDIGNORE] = ignore
 
 proc setCancelTryContinueLabels*(self: wMessageDialog, cancel: string,
-    tryagain: string, cont: string) {.property, inline.} =
+    tryagain: string, cont: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Cancel, Try Again and Continue buttons.
   wValidate(cancel, tryagain, cont)
-  self.mLabelText[IDCANCEL] = cancel
-  self.mLabelText[IDTRYAGAIN] = tryagain
-  self.mLabelText[IDCONTINUE] = cont
+  mLabelText[IDCANCEL] = cancel
+  mLabelText[IDTRYAGAIN] = tryagain
+  mLabelText[IDCONTINUE] = cont
 
-proc wMessageDialog_CBTProc(nCode: INT, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} =
+proc wMessageDialog_CBTProc(nCode: INT, wParam: WPARAM, lParam: LPARAM): LRESULT
+    {.stdcall.} =
+
   let ret = CallNextHookEx(0, nCode, wParam, lParam)
   defer: result = ret # avoid contaminate result
 
   if nCode == HCBT_ACTIVATE:
-    let self = wMessageDialogPtr[]
-    UnhookWindowsHookEx(self.mHookRef[])
+    let self = gMessageDialog
+    UnhookWindowsHookEx(self.mHook)
 
     for key, value in self.mLabelText:
       let buttonHwnd = GetDlgItem(HWND wParam, key)
@@ -159,8 +169,8 @@ proc wMessageDialog_CBTProc(nCode: INT, wParam: WPARAM, lParam: LPARAM): LRESULT
     # let win = Window(HWND wParam)
 
 proc showModal*(self: wMessageDialog): wId {.discardable.} =
-  ## Shows the dialog, returning one of wID_OK, wID_YES, wID_NO, wID_CANCEL,
-  ## wID_TRYAGAIN, wID_CONTINUE, wID_ABORT, wID_RETRY or wID_IGNORE.
+  ## Shows the dialog, returning one of wIdOk, wIdYes, wIdNo, wIdCancel,
+  ## wIdTryAgain, wIdContinue, wIdAbort, wIdRetry or wIdIgnore.
   var
     hParent: HWND
     mbStyle = cast[DWORD](mStyle and 0xFFFFFFFF)
@@ -174,18 +184,21 @@ proc showModal*(self: wMessageDialog): wId {.discardable.} =
   if (mStyle and wStayOnTop) != 0:
     mbStyle = mbStyle or MB_TOPMOST
 
-  mHookRef[] = SetWindowsHookEx(WH_CBT, wMessageDialog_CBTProc, 0, GetCurrentThreadId())
-  wMessageDialogPtr = &self
+  gMessageDialog = self
+  defer: gMessageDialog = nil
+
+  mHook = SetWindowsHookEx(WH_CBT, wMessageDialog_CBTProc, 0, GetCurrentThreadId())
   result = case MessageBox(hParent, mMessage, mCaption, mbStyle)
-  of IDABORT: wID_ABORT
-  of IDCANCEL: wID_CANCEL
-  of IDCONTINUE: wID_CONTINUE
-  of IDIGNORE: wID_IGNORE
-  of IDNO: wID_NO
-  of IDRETRY: wID_RETRY
-  of IDTRYAGAIN: wID_TRYAGAIN
-  of IDYES: wID_YES
-  else: wID_OK
+  of IDABORT: wIdAbort
+  of IDCANCEL: wIdCancel
+  of IDCONTINUE: wIdContinue
+  of IDIGNORE: wIdIgnore
+  of IDNO: wIdNo
+  of IDRETRY: wIdRetry
+  of IDTRYAGAIN: wIdTryAgain
+  of IDYES: wIdYes
+  else: wIdOk
+
 
 proc show*(self: wMessageDialog): wId {.inline, discardable.} =
   ## The same as ShowModal().

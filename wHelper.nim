@@ -50,6 +50,34 @@ proc wGetWinVersion(): float =
   GetVersionEx(osv)
   result = osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
 
+proc centerWindow(hwnd: HWND, inScreen = false, direction = wBoth) =
+  # this works on top level window only
+  var rect: RECT
+  var rectOwner: RECT
+
+  GetWindowRect(hwnd, rect)
+  let owner = GetParent(hwnd)
+  if owner == 0 or inScreen:
+    GetClientRect(GetDesktopWindow(), &rectOwner)
+  else:
+    GetWindowRect(owner, &rectOwner)
+
+  let width = rect.right - rect.left
+  let height = rect.bottom - rect.top
+  let ownerWidth = rectOwner.right - rectOwner.left
+  let ownerHeight = rectOwner.bottom - rectOwner.top
+
+  if (direction and wHorizontal) != 0:
+    rect.left = (rectOwner.left + (ownerWidth - width) div 2)
+      .clamp(0, GetSystemMetrics(SM_CXSCREEN) - width)
+
+  if (direction and wVertical) != 0:
+    rect.top = (rectOwner.top + (ownerHeight - height) div 2)
+      .clamp(0, GetSystemMetrics(SM_CYSCREEN) - height)
+
+  SetWindowPos(hwnd, 0, rect.left, rect.top, 0, 0,
+    SWP_NOSIZE or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE)
+
 proc isVaildPath(str: string): bool =
   if str.len <= MAX_PATH and PathFileExists(str) != 0:
     result = true

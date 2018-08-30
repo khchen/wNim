@@ -86,20 +86,26 @@ converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
 type
   wId* = enum
     ## Predefined names to use as menus or controls ID.
-    wID_LOWEST = 4999, wID_OPEN, wID_CLOSE, wID_NEW, wID_SAVE, wID_SAVEAS, wID_REVERT, wID_EXIT, wID_UNDO,
-      wID_REDO, wID_HELP, wID_PRINT, wID_PRINT_SETUP, wID_PREVIEW, wID_ABOUT, wID_HELP_CONTENTS, wID_HELP_COMMANDS
-      wID_HELP_PROCEDURES, wID_HELP_CONTEXT, wID_CLOSE_ALL, wID_DELETE, wID_PROPERTIES, wID_REPLACE
+    wIdLowest = 4999, wIdOpen, wIdClose, wIdNew, wIdSave, wIdSaveAS, wIdRevert,
+      wIdExit, wIdUndo, wIdRedo, wIdHelp, wIdPrint, wIdPrintSetup, wIdPreview,
+      wIdAbout, wIdHelpContents, wIdHelpCommands, wIdHelpProcedures, wIdCloseAll,
+      wIdDelete, wIdProperties, wIdReplace
 
-    wID_CUT = 5030, wID_COPY, wID_PASTE, wID_CLEAR, wID_FIND, wID_DUPLICATE, wID_SELECTALL
-    wID_FILE1 = 5050, wID_FILE2, wID_FILE3, wID_FILE4, wID_FILE5, wID_FILE6, wID_FILE7, wID_FILE8, wID_FILE9
-    wID_OK = 5100, wID_CANCEL, wID_APPLY, wID_YES, wID_NO, wID_STATIC, wID_FORWARD, wID_BACKWARD, wID_DEFAULT
-      wID_MORE, wID_SETUP, wID_RESET, wID_CONTEXT_HELP, wID_YESTOALL, wID_NOTOALL, wID_ABORT, wID_RETRY, wID_IGNORE
-      wID_CONTINUE, wID_TRYAGAIN
+    wIdCut = 5030, wIdCopy, wIdPaste, wIdClear, wIdFind, wIdDuplicate,
+      wIdSelectAll
 
-    wID_SYSTEM_MENU = 5200, wID_CLOSE_FRAME, wID_MOVE_FRAME, wID_RESIZE_FRAME, wID_MAXIMIZE_FRAME,
-    wID_ICONIZE_FRAME, wID_RESTORE_FRAME
-    wID_HIGHEST = 5999
-    wID_USER
+    wIdFile1 = 5050, wIdFile2, wIdFile3, wIdFile4, wIdFile5, wIdFile6, wIdFile7,
+      wIdFile8, wIdFile9
+
+    wIdOk = 5100, wIdCancel, wIdApply, wIdYes, wIdNo, wIdStatic, wIdForward,
+      wIdBackward, wIdDefault, wIdMore, wIdSetup, wIdReset, wIdContextHelp,
+      wIdYesToAll, wIdNoToAll, wIdAbort, wIdRetry, wIdIgnore, wIdContinue,
+      wIdTryAgain
+
+    wIdSystemMenu = 5200, wIdCloseFrame, wIdMoveFrame, wIdResizeFrame,
+      wIdMaximizeFrame, wIdIconizeFrame, wIdRestoreFrame
+
+    wIdHighest = 5999, wIdUser
 
 when not defined(wnimdoc):
   # Mutually recursive types are only possible within a single type section.
@@ -463,19 +469,19 @@ when not defined(wnimdoc):
     wPaintDC* = object of wDC
       mPs: PAINTSTRUCT
 
-    wMessageDialog* = object of RootObj
-      mHookRef: ref HHOOK
+    wMessageDialog* = ref object of RootObj
+      mHook: HHOOK
       mParent: wWindow
       mMessage: string
       mCaption: string
       mStyle: wStyle
-      mLabelText: TableRef[INT, string]
+      mLabelText: Table[INT, string]
 
-    wDirDialog* = object of RootObj
+    wDirDialog* = ref object of RootObj
       mParent: wWindow
       mMessage: string
+      mPath: string
       mStyle: wStyle
-      mPath: ref string
 
     wFileDialog* = ref object of RootObj
       mParent: wWindow
@@ -484,10 +490,15 @@ when not defined(wnimdoc):
       mDefaultFile: string
       mWildcard: string
       mStyle: wStyle
-      mPos: wPoint
-      mSize: wSize
+      mFilterIndex: int
+      mPath: string
+      mPaths: seq[string]
 
-    wColorDialog* = object of RootObj
+    wColorDialog* = ref object of RootObj
+      mParent: wWindow
+      mColor: wColor
+      mStyle: wStyle
+      mCustomColor: array[16, wColor]
 
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}
   proc `$`*(x: wCommandID): string {.borrow.}
