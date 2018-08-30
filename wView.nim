@@ -25,7 +25,7 @@ proc right*(self: wView): Variable {.inline.} = mRight
 proc top*(self: wView): Variable {.inline.} = mTop
 proc bottom*(self: wView): Variable {.inline.} = mBottom
 
-proc layoutDsl(parent, x: NimNode): NimNode =
+proc dslParser(parent, x: NimNode): NimNode =
   var code = "{.push hint[XDeclaredButNotUsed]: off.}\n"
   code &= "when not declaredInScope(wView_Solver):\n"
   code &= "  var wView_Solver = ViewSolver()\n"
@@ -53,10 +53,15 @@ proc layoutDsl(parent, x: NimNode): NimNode =
   code &= "  template innerWidth(name: wView): untyped = (name.innerRight - name.innerLeft)\n"
   code &= "  template innerHeight(name: wView): untyped = (name.innerBottom - name.innerTop)\n"
 
-  const attributes = ["width", "height", "left", "top", "right", "bottom", "up", "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "innerLeft", "innerTop", "innerRight", "innerBottom", "innerUp", "innerDown", "innerWidth", "innerHeight"]
+  const attributes = ["width", "height", "left", "top", "right", "bottom", "up",
+    "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "innerLeft",
+    "innerTop", "innerRight", "innerBottom", "innerUp", "innerDown", "innerWidth",
+    "innerHeight"]
+
   const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "WEAKER", "WEAKEST"]
 
   proc addSelfDot(x: NimNode): NimNode =
+    # Find all ident recursively, add "self." if the ident is a attribute
     if x.kind == nnkIdent and $x in attributes:
       result = newDotExpr(newIdentNode("self"), x)
     else:
@@ -81,6 +86,7 @@ proc layoutDsl(parent, x: NimNode): NimNode =
 
   proc addConstraint(code: var string, x: NimNode, strength: string = nil) =
     if x.kind == nnkInfix:
+      ## enconter infix operator  a == b, a < b, etc.
       if strength.len == 0:
         code &= "  solver.addConstraint(" & x.int2float.repr & ")\n"
       else:
@@ -90,7 +96,15 @@ proc layoutDsl(parent, x: NimNode): NimNode =
       for item in x:
         code.addConstraint(item, strength)
 
+    if x.kind == nnkAsgn:
+      ## enconter a = b, we should parse as a == b
+      echo x.repr
+      echo infix(x[0], "==", x[1]).repr
+      code.addConstraint(infix(x[0], "==", x[1]), strength)
+
     elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
+      # enconter name: stmtlist
+      # if name is not strength, it should be a view object.
       if $x[0] in strengthes:
         for item in x[1]:
           code.addConstraint(item, $x[0])
@@ -117,15 +131,19 @@ proc layoutDsl(parent, x: NimNode): NimNode =
   parseStmt(code)
 
 macro plan*(parent: wView, x: untyped): untyped =
-  result = parent.layoutDsl(x)
+  ## Parses the layout DSL and return the wViewSolver object.
+  ## Use wViewSolver.resolve() and wViewSolver.rearrange() to do the change.
+  result = parent.dslParser(x)
   result.add newIdentNode("wView_Solver")
 
 macro layout*(parent: wView, x: untyped): untyped =
-  result = parent.layoutDsl(x)
+  ## Parses the layout DSL and rearrange the object.
+  result = parent.dslParser(x)
   result.add newCall(newDotExpr(newIdentNode("wView_Solver"), newIdentNode("resolve")))
   result.add newCall(newDotExpr(newIdentNode("wView_Solver"), newIdentNode("rearrange")))
 
 macro debug*(parent: wView, x: untyped): untyped =
-  result = parent.layoutDsl(x)
+  ## Output the parsing result for debugging.
+  result = parent.dslParser(x)
   echo result.repr
 
