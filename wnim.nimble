@@ -4,7 +4,7 @@ version       = "0.1.0"
 author        = "Ward"
 description   = "wNim - Nim\'s Windows GUI framework"
 license       = "MIT"
-skipDirs      = @["examples", "tests"]
+skipDirs      = @["examples", "docs"]
 
 # Dependencies
 
