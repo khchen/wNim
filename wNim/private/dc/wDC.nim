@@ -1,20 +1,35 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A wDC is a "device context" onto which graphics and text can be drawn.
 ## wDC is an abstract base class and cannot be created directly.
 ## Use **wPaintDC, wClientDC, wWindowDC, wScreenDC, or wMemoryDC**.
+##
 ## Notice that device contexts which are associated with windows
-## (i.e. wClientDC, wWindowDC and wPaintDC) use the window font and colors by default.
-## but the other device context classes use system-default values
+## (i.e. wClientDC, wWindowDC and wPaintDC) use the window font and colors by
+## default. But the other device context classes use system-default values
 ## so you always must set the appropriate fonts and colours before using them.
 ##
+## In wNim, wDC and it's subclasses are defined as **object** instead
+## **ref object**. So they need nim's destructors to release the resource.
+## For nim version 0.18.0, you must compile with --newruntime option to get
+## destructor works.
+#
+## :Subclasses:
+##   `wPaintDC <wPaintDC.html>`_
+##   `wClientDC <wClientDC.html>`_
+##   `wWindowDC <wWindowDC.html>`_
+##   `wScreenDC <wScreenDC.html>`_
+##   `wMemoryDC <wMemoryDC.html>`_
+#
+## :Seealso:
+##   `wGdiObject <wGdiObject.html>`_
+#
 ## :Consts:
-##
 ##   Used in logical function and blit.
 ##   ==============================  =============================================================
 ##   Consts                          Description
@@ -163,18 +178,21 @@ proc drawTextWithDeg(self: wDC, text: string, x, y: int = 0, deg: float) =
 proc drawText*(self: wDC, text: string, x, y: int = 0) =
   ## Draws a text string at the specified point, using the current text font,
   ## and the current text foreground and background colors.
-  ## The text can contain multiple lines separated by the new line ('\n') characters.
+  ## The text can contain multiple lines separated by the new line ('\n')
+  ## characters.
   drawTextWithDeg(text, x, y, 0.0)
 
 proc drawText*(self: wDC, text: string, point: wPoint) =
   ## Draws a text string at the specified point, using the current text font,
   ## and the current text foreground and background colors.
-  ## The text can contain multiple lines separated by the new line ('\n') characters.
+  ## The text can contain multiple lines separated by the new line ('\n')
+  ## characters.
   drawText(text, point.x, point.y)
 
 proc drawRotatedText*(self: wDC, text: string, x, y: int = 0, angle: float = 0) =
-  ## Draws the text rotated by angle degrees (positive angles are counterclockwise; the full angle is 360 degrees).
-  ## The text can contain multiple lines separated by the new line ('\n') characters.
+  ## Draws the text rotated by angle degrees (positive angles are counterclockwise;
+  ## the full angle is 360 degrees). The text can contain multiple lines separated
+  ## by the new line ('\n') characters.
   if angle == 0:
     drawText(text, x, y)
   else:
@@ -188,8 +206,9 @@ proc drawRotatedText*(self: wDC, text: string, x, y: int = 0, angle: float = 0) 
     SelectObject(mHdc, prev)
 
 proc drawRotatedText*(self: wDC, text: string, point: wPoint, angle: float = 0) =
-  ## Draws the text rotated by angle degrees (positive angles are counterclockwise; the full angle is 360 degrees).
-  ## The text can contain multiple lines separated by the new line ('\n') characters.
+  ## Draws the text rotated by angle degrees (positive angles are counterclockwise;
+  ## the full angle is 360 degrees). The text can contain multiple lines separated
+  ## by the new line ('\n') characters.
   drawRotatedText(text, point.x, point.y, angle)
 
 proc drawCheckMark*(self: wDC, x, y, width, height: int) =
@@ -259,11 +278,14 @@ proc drawRoundedRectangle*(self: wDC, rect: wRect, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
   drawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, radius)
 
-proc addPoints(pseq: var seq[POINT], points: openarray[wPoint], xoffset: int = 0, yoffset: int = 0) =
+proc addPoints(pseq: var seq[POINT], points: openarray[wPoint], xoffset: int = 0,
+    yoffset: int = 0) =
+
   for point in points:
     pseq.add POINT(x: point.x + xoffset, y: point.y + yoffset)
 
-proc drawLines*(self: wDC, points: openarray[wPoint], xoffset: int = 0, yoffset: int = 0) =
+proc drawLines*(self: wDC, points: openarray[wPoint], xoffset: int = 0,
+    yoffset: int = 0) =
   ## Draws lines using an array of points, adding the optional offset coordinate.
   var pseq = newSeqOfCap[POINT](points.len)
   pseq.addPoints(points, xoffset, yoffset)
@@ -274,8 +296,10 @@ proc drawLines*(self: wDC, xoffset: int, yoffset: int, points: varargs[wPoint]) 
   ## Varargs version.
   drawLines(points, xoffset, yoffset)
 
-proc drawPolygon*(self: wDC, points: openarray[wPoint], xoffset: int = 0, yoffset: int = 0, style=wOddevenRule) =
-  ## Draws a filled polygon using an array of points, adding the optional offset coordinate.
+proc drawPolygon*(self: wDC, points: openarray[wPoint], xoffset: int = 0,
+    yoffset: int = 0, style = wOddevenRule) =
+  ## Draws a filled polygon using an array of points, adding the optional offset
+  ## coordinate.
   let prev = SetPolyFillMode(mHdc, style)
   defer: SetPolyFillMode(mHdc, prev)
 
@@ -283,13 +307,16 @@ proc drawPolygon*(self: wDC, points: openarray[wPoint], xoffset: int = 0, yoffse
   pseq.addPoints(points, xoffset, yoffset)
   Polygon(mHdc, addr pseq[0], pseq.len)
 
-proc drawPolygon*(self: wDC, xoffset: int, yoffset: int, style: int, points: varargs[wPoint]) =
-  ## Draws a filled polygon using an array of points, adding the optional offset coordinate.
-  ## Varargs version.
+proc drawPolygon*(self: wDC, xoffset: int, yoffset: int, style: int,
+    points: varargs[wPoint]) =
+  ## Draws a filled polygon using an array of points, adding the optional offset
+  ## coordinate. Varargs version.
   drawPolygon(points, xoffset, yoffset, style)
 
-proc drawPolyPolygon*(self: wDC, counts: openarray[int], points: openarray[wPoint], xoffset: int = 0, yoffset: int = 0, style=wOddevenRule) =
-  ## Draws two or more filled polygons using an array of points, adding the optional offset coordinates.
+proc drawPolyPolygon*(self: wDC, counts: openarray[int], points: openarray[wPoint],
+    xoffset: int = 0, yoffset: int = 0, style=wOddevenRule) =
+  ## Draws two or more filled polygons using an array of points, adding the
+  ## optional offset coordinates.
   let prev = SetPolyFillMode(mHdc, style)
   defer: SetPolyFillMode(mHdc, prev)
 
@@ -299,8 +326,10 @@ proc drawPolyPolygon*(self: wDC, counts: openarray[int], points: openarray[wPoin
   pseq.addPoints(points, xoffset, yoffset)
   PolyPolygon(mHdc, addr pseq[0], addr iseq[0], counts.len)
 
-proc drawPolyPolygon*(self: wDC, points: openarray[seq[wPoint]], xoffset: int = 0, yoffset: int = 0, style=wOddevenRule) =
-  ## Draws two or more filled polygons using an array of points, adding the optional offset coordinates.
+proc drawPolyPolygon*(self: wDC, points: openarray[seq[wPoint]], xoffset: int = 0,
+    yoffset: int = 0, style=wOddevenRule) =
+  ## Draws two or more filled polygons using an array of points, adding the
+  ## optional offset coordinates.
   let prev = SetPolyFillMode(mHdc, style)
   defer: SetPolyFillMode(mHdc, prev)
 
@@ -311,9 +340,10 @@ proc drawPolyPolygon*(self: wDC, points: openarray[seq[wPoint]], xoffset: int = 
     pseq.addPoints(wpseq, xoffset, yoffset)
   PolyPolygon(mHdc, addr pseq[0], addr iseq[0], iseq.len)
 
-proc drawPolyPolygon*(self: wDC, xoffset: int, yoffset: int, style: int, points: varargs[seq[wPoint], `@`]) =
-  ## Draws two or more filled polygons using an array of points, adding the optional offset coordinates.
-  ## Varargs version.
+proc drawPolyPolygon*(self: wDC, xoffset: int, yoffset: int, style: int,
+    points: varargs[seq[wPoint], `@`]) =
+  ## Draws two or more filled polygons using an array of points, adding the
+  ## optional offset coordinates. Varargs version.
   drawPolyPolygon(points, xoffset, yoffset, style)
 
 proc drawSpline*(self: wDC, points: varargs[wPoint]) =
@@ -353,9 +383,11 @@ proc drawSpline*(self: wDC, points: varargs[wPoint]) =
 
   PolyBezier(mHdc, addr pseq[0], pseq.len)
 
-proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor, destColor: wColor, direction = wRight) =
-  ## Fill the area specified by rect with a linear gradient, starting from initialColor and eventually fading to destColor.
-  ## The direction can be one of wUp, wDown, wLeft, wRight.
+proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor,
+    destColor: wColor, direction = wRight) =
+  ## Fill the area specified by rect with a linear gradient, starting from
+  ## initialColor and eventually fading to destColor. The direction can be one
+  ## of wUp, wDown, wLeft, wRight.
   let
     nr1 = int initialColor.GetRValue()
     ng1 = int initialColor.GetGValue()
@@ -401,16 +433,18 @@ proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor, destColor
     newPen.delete
     newBrush.delete
 
-proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor, destColor: wColor, center: wPoint) =
-  ## Fill the area specified by rect with a radial gradient,
-  ## starting from initialColor at the center of the circle and fading to destColor on the circle outside.
+proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor,
+    destColor: wColor, center: wPoint) =
+  ## Fill the area specified by rect with a radial gradient, starting from
+  ## initialColor at the center of the circle and fading to destColor on the
+  ## circle outside.
   let
-    nr1 = float initialColor.GetRValue()
-    ng1 = float initialColor.GetGValue()
-    nb1 = float initialColor.GetBValue()
-    nr2 = float destColor.GetRValue()
-    ng2 = float destColor.GetGValue()
-    nb2 = float destColor.GetBValue()
+    nr1 = float destColor.GetRValue()
+    ng1 = float destColor.GetGValue()
+    nb1 = float destColor.GetBValue()
+    nr2 = float initialColor.GetRValue()
+    ng2 = float initialColor.GetGValue()
+    nb2 = float initialColor.GetBValue()
     cx: float = rect.width / 2
     cy: float = rect.height / 2
     radius: float = if cx < cy: cx else: cy
@@ -432,11 +466,13 @@ proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor, destC
         nb = byte(nb1 + ((nb2 - nb1) * gradient / 100))
       SetPixel(mHdc, x + rect.x, y + rect.y, RGB(nr, ng, nb))
 
-proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor, destColor: wColor) =
-  ## Fill the area specified by rect with a radial gradient,
-  ## starting from initialColor at the center of the circle and fading to destColor on the circle outside.
-  ## The circle is placed at the center of rect.
-  gradientFillConcentric(rect, initialColor, destColor, (rect.width div 2, rect.height div 2))
+proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor,
+    destColor: wColor) =
+  ## Fill the area specified by rect with a radial gradient, starting from
+  ## initialColor at the center of the circle and fading to destColor on the
+  ## circle outside. The circle is placed at the center of rect.
+  gradientFillConcentric(rect, initialColor, destColor,
+    (rect.width div 2, rect.height div 2))
 
 proc getHandle*(self: wDC): HANDLE {.inline, property.} =
   ## Returns a value that can be used as a handle to the native drawing context.
@@ -559,16 +595,18 @@ proc setBackground*(self: var wDC, brush: wBrush) {.inline, property.} =
   SetBkColor(mHdc, brush.mColor)
 
 proc setBackground*(self: var wDC, color: wColor) {.inline, property.} =
-  ## Sets the current background brush for the DC, use the color to create the brush.
+  ## Sets the current background brush for the DC, use the color to create the
+  ## brush.
   setBackground(Brush(color=color))
 
 proc setBackgroundMode*(self: var wDC, mode: int) {.inline, property.} =
-  ## mode may be one of wPenStyleSolid and wPenStyleTransparent.
-  ## This setting determines whether text will be drawn with a background color or not.
+  ## *mode* may be one of wPenStyleSolid and wPenStyleTransparent. This setting
+  ## determines whether text will be drawn with a background color or not.
   SetBkMode(mHdc, (if mode == wPenStyleTransparent: TRANSPARENT else: OPAQUE))
 
 proc setBackgroundTransparent*(self: var wDC, flag: bool) {.inline, property.} =
-  ## This setting determines whether text will be drawn with a background color or not.
+  ## This setting determines whether text will be drawn with a background color
+  ## or not.
   SetBkMode(mHdc, (if flag: TRANSPARENT else: OPAQUE))
 
 proc setOrigin*(self: var wDC, x: int, y: int) {.inline, property.} =
@@ -644,30 +682,38 @@ proc clear*(self: var wDC) =
   if prev != MM_TEXT:
     self.setScale(mScale)
 
-proc blit*(self: wDC, xdest, ydest, width, height: int = 0, source: wDC, xsrc, ysrc: int = 0, rop: int = wCopy) =
-  ## Copy from a source DC to this DC. Rop is the raster operation.
+proc blit*(self: wDC, xdest, ydest, width, height: int = 0, source: wDC,
+    xsrc, ysrc: int = 0, rop: int = wCopy) =
+  ## Copy from a source DC to this DC. *rop* is the raster operation.
   BitBlt(mHdc, xdest, ydest, width, height, source.mHdc, xsrc, ysrc, rop.dwRop)
 
-proc stretchBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0, source: wDC,
-  xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
-  ## Copy from a source DC to this DC possibly changing the scale. Rop is the raster operation.
-  StretchBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc, srcWidth, srcHeight, rop.dwRop)
+proc stretchBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
+    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
+  ## Copy from a source DC to this DC possibly changing the scale.
+  ## *rop* is the raster operation.
+  StretchBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
+    srcWidth, srcHeight, rop.dwRop)
 
-proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0, source: wDC,
-  xsrc, ysrc, srcWidth, srcHeight: int = 0, alpha: int = 255) =
+proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
+    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, alpha: int = 255) =
   ## Copy from a source DC to this DC transparently.
   ## The bitmap selected in the source DC must have a transparency mask.
-  var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: alpha.byte, AlphaFormat: AC_SRC_ALPHA)
-  AlphaBlend(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc, srcWidth, srcHeight, bf)
+  var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: alpha.byte,
+    AlphaFormat: AC_SRC_ALPHA)
 
-proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0, source: wDC,
-  xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent: wColor = wWHITE) =
+  AlphaBlend(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
+    srcWidth, srcHeight, bf)
+
+proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
+    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent = wWHITE) =
   ## Copy from a source DC to this DC and treat a RGB color as transparent.
-  TransparentBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc, srcWidth, srcHeight, transparent)
+  TransparentBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc,
+    xsrc, ysrc, srcWidth, srcHeight, transparent)
 
 proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
-  ## Draw a bitmap on the device context at the specified point.
-  ## If transparent is true and the bitmap has a transparency mask, the bitmap will be drawn transparently.
+  ## Draw a bitmap on the device context at the specified point. If *transparent*
+  ## is true and the bitmap has a transparency mask, the bitmap will be drawn
+  ## transparently.
   wValidate(bmp)
   let
     memdc = CreateCompatibleDC(0)
@@ -677,8 +723,12 @@ proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
     DeleteDC(memdc)
 
   if transparent:
-    var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255, AlphaFormat: AC_SRC_ALPHA)
-    AlphaBlend(mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0, bmp.mWidth, bmp.mHeight, bf)
+    var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255,
+      AlphaFormat: AC_SRC_ALPHA)
+
+    AlphaBlend(mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0,
+      bmp.mWidth, bmp.mHeight, bf)
+
   else:
     BitBlt(mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0, SRCCOPY)
 
@@ -702,9 +752,10 @@ proc drawIcon*(self: wDC, icon: wIcon, x, y: int = 0) =
   wValidate(icon)
   DrawIconEx(mHdc, x, y, icon.mHandle, icon.mWidth, icon.mHeight, 0, 0, DI_NORMAL)
 
-proc init(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE, font = wDefaultFont,
-  pen = wDefaultPen, brush = wDefaultBrush, background = wDefaultBrush) =
-
+proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
+    font = wDefaultFont, pen = wDefaultPen, brush = wDefaultBrush,
+    background = wDefaultBrush) =
+  ## Initializer.
   self.setTextForeground(fgColor)
   self.setTextBackground(bgColor)
   self.setFont(if font != nil: font else: wDefaultFont)
@@ -712,7 +763,8 @@ proc init(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE, fon
   self.setBrush(if brush != nil: brush else: wDefaultBrush)
   self.setBackground(if background != nil: background else: wDefaultBrush)
 
-proc final(self: var wDC) =
+proc final*(self: var wDC) =
+  ## Default finalizer for wDC.
   if mhOldFont != 0:
     SelectObject(mHdc, mhOldFont)
     mhOldFont = 0

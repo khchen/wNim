@@ -1391,7 +1391,24 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"></p>
+  <p class="module-desc"><p><em>wEvent</em> is an abstract base class for other event classes. They hold information about an event passed to a event handler. However, the user may still define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
+<p>There are also some basic window events not belong to any subclass listed here.</p>
+<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wEvent</th><th>Description</th></tr>
+<tr><td>wEvent_SetFocus</td><td>A window has gained the keyboard focus.</td></tr>
+<tr><td>wEvent_KillFocus</td><td>A window is about to loses the keyboard focus.</td></tr>
+<tr><td>wEvent_Show</td><td>A window is about to be hidden or shown.</td></tr>
+<tr><td>wEvent_Activate</td><td>A window being activated or deactivated.</td></tr>
+<tr><td>wEvent_Timer</td><td>A timer expires.</td></tr>
+<tr><td>wEvent_Paint</td><td>A window's client area must be painted.</td></tr>
+<tr><td>wEvent_NcPaint</td><td>A window's frame must be painted.</td></tr>
+<tr><td>wEvent_HotKey</td><td>The user presses the registered hotkey.</td></tr>
+<tr><td>wEvent_Close</td><td>The user has tried to close a window. This event can be vetoed.</td></tr>
+<tr><td>wEvent_MenuHighlight</td><td>The user selects a menu item (not clicks).</td></tr>
+<tr><td>wEvent_Destroy</td><td>A window is being destroyed.</td></tr>
+<tr><td>wEvent_App</td><td>Used to define private event type, usually of the form wEvent_App+x.</td></tr>
+</table></td></tr>
+</tbody></table></p>
   <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
@@ -1480,7 +1497,7 @@ Set the userdata associated with a event.
 </dd>
 <dt id="skip"><a name="skip,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">skip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-This proc can be used inside an event handler to control whether further event handlers bound to this event will be called after the current one returns.
+This proc can be used inside an event handler to control whether further event handlers bound to this event will be called after the current one returns. It sometimes means skip the default behavior for a event.
 
 </dd>
 <dt id="skip="><a name="skip=,wEvent,bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">skip=</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1641,7 +1658,7 @@ Return an bool array with all the pressed keys. Using const defined in wKeyCodes
 <dl class="item">
 <dt id="shouldPropagate"><a name="shouldPropagate.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0. This method can be override, for example: .. code-block:: Nim<blockquote><p><dl class="docutils"><dt>method shouldPropagate*(event: wKeyEvent): bool =</dt>
+Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example: .. code-block:: Nim<blockquote><p><dl class="docutils"><dt>method shouldPropagate*(event: wKeyEvent): bool =</dt>
 <dd><dl class="docutils"><dt>if event.eventType == wEvent_Char:</dt>
 <dd>result = true</dd>
 <dt>else:</dt>
@@ -1788,7 +1805,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:53:20 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:00:59 UTC</small>
       </div>
     </div>
   </div>

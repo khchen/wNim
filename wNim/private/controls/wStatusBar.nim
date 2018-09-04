@@ -1,25 +1,18 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A status bar is a narrow window that can be placed along the bottom of a frame
 ## to give small amounts of status information.
-##
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Events:
-##    ================================  =============================================================
-##    wStatusBarEvent                   Description
-##    ================================  =============================================================
-##    wEvent_StatusBarLeftClick         Clicked the left mouse button within the control.
-##    wEvent_StatusBarLeftDoubleClick   Double-clicked the left mouse button within the control.
-##    wEvent_StatusBarRightClick        Clicked the right mouse button within the control.
-##    wEvent_StatusBarRightDoubleClick  Double-clicked the right mouse button within the control.
-##    ================================  =============================================================
+##   `wStatusBarEvent <wStatusBarEvent.html>`_
 
 # statusbar's best size and default size are current size
 method getBestSize*(self: wStatusBar): wSize {.property, inline.} =

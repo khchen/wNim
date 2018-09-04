@@ -1,12 +1,19 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
 import wNim
 
 var app = App()
 var frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)
 
-const image = staticRead(r"images\logo.png")
 frame.size = (800, 600)
 frame.minSize = (500, 500)
-frame.icon = Icon(Icon(image))
+frame.icon = Icon("", 0) # load icon from exe file.
 
 var statusBar = StatusBar(frame)
 var panel = Panel(frame)
@@ -24,7 +31,7 @@ var staticline = StaticLine(panel)
 
 var datepickerctrl = DatePickerCtrl(panel)
 var timepickerctrl = TimePickerCtrl(panel)
-var calendarctrl = CalendarCtrl(panel)
+var calendarctrl = CalendarCtrl(panel, style=wCalNoToday)
 
 var spinctrl = SpinCtrl(panel, value=50, style=wSpArrowKeys)
 var slider = Slider(panel, value=50)
@@ -47,11 +54,11 @@ notebook.addPage("Page1")
 notebook.addPage("Page2")
 notebook.addPage("Page3")
 
-const nimpng = staticRead(r"images\nim.png")
-notebook.page(0).backgroundColor = wGrey
+const logo = staticRead(r"images\logo.png")
+notebook.page(0).backgroundColor = panel.backgroundColor
 notebook.page(1).backgroundColor = wGrey
 
-var staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bmp(nimpng), style=wSbFit)
+var staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bmp(logo), style=wSbFit)
 
 notebook.page(1).wEvent_Paint do (event: wEvent):
   var size = event.window.clientSize

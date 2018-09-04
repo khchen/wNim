@@ -1,7 +1,16 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
 import wNim
 
 let app = App()
 let frame = Frame(title="Hello World", size=(350, 200))
+frame.icon = Icon("", 0) # load icon from exe file.
 
 frame.wEvent_Destroy do ():
   MessageDialog(frame, "wMyFrame is about to destroy.",

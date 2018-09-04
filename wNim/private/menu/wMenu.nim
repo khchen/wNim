@@ -1,14 +1,24 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A menu is a popup (or pull down) list of items.
+#
+## :Superclass:
+##   `wMenuBase <wMenuBase.html>`_
+#
+## :Seealso:
+##   `wMenuBar <wMenuBar.html>`_
+##   `wMenuItem <wMenuItem.html>`_
 
 # forward declarations
 proc remove*(self: wMenu, submenu: wMenu)
+proc MenuItem*(id: wCommandID = 0, text: string = nil,
+    help: string = nil, kind = wMenuItemNormal, bitmap: wBitmap = nil,
+    submenu: wMenu = nil): wMenuItem {.inline.}
 
 # const
 #   wMenuItemNormal* = TBSTYLE_BUTTON
@@ -61,8 +71,8 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text: string = nil,
   ## or wMenuItemSeparator.
   var
     pos = pos
-    item = wMenuItem(mId: id, mText: text, mHelp: help, mKind: kind,
-      mBitmap: bitmap, mSubmenu: submenu)
+    item = MenuItem(id=id, text=text, help=help, kind=kind, bitmap=bitmap,
+      submenu=submenu)
     count = mItemList.len
 
   if pos < 0: pos = count
@@ -524,6 +534,7 @@ proc final*(self: wMenu) =
   delete()
 
 proc init*(self: wMenu) {.validate.} =
+  ## Initializer.
   mHmenu = CreatePopupMenu()
   var menuInfo = MENUINFO(
     cbSize: sizeof(MENUINFO),
@@ -541,6 +552,7 @@ proc Menu*(): wMenu {.inline.} =
 
 proc init*(self: wMenu, menuBar: wMenuBar, text: string,
     bitmap: wBitmap = nil) {.validate.} =
+  ## Initializer.
   wValidate(menuBar, text)
   init()
   menuBar.append(self, text, bitmap)

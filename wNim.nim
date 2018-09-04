@@ -73,7 +73,7 @@
 ##
 ##  GDI Objects
 ##  -----------
-##  - `wGDIObject <wGDIObject.html>`_
+##  - `wGdiObject <wGdiObject.html>`_
 ##  - `wFont <wFont.html>`_
 ##  - `wPen <wPen.html>`_
 ##  - `wBrush <wBrush.html>`_
@@ -153,7 +153,7 @@ when not defined(wnimdoc):
   include wNim/private/events/wListEvent
   include wNim/private/events/wTreeEvent
   include wNim/private/wImage
-  include wNim/private/gdiobjects/wGDIObject
+  include wNim/private/gdiobjects/wGdiObject
   include wNim/private/gdiobjects/wFont
   include wNim/private/gdiobjects/wPen
   include wNim/private/gdiobjects/wBrush
@@ -200,7 +200,7 @@ when not defined(wnimdoc):
   include wNim/private/controls/wListBox
   include wNim/private/controls/wListCtrl
   include wNim/private/controls/wTreeCtrl
-  include wNim/private/controls/wHyperlinkCtrl
+  include wNim/private/controls/wHyperLinkCtrl
   include wNim/private/controls/wSplitter
   include wNim/private/wFrame
   include wNim/private/dialogs/wMessageDialog

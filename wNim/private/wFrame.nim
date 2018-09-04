@@ -1,39 +1,49 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A frame is a top-level window whose size and position can (usually) be changed by the user.
+## A frame is a top-level window in wNim. Since it is a top-level window,
+## it cannot have a parent. However, it can has an owner. The frame will be
+## minimized when its owner is minimized and restored when it is restored.
 ##
+## A dialog is also a top-level window with the owner. So it can be designed
+## in wNim by using a frame with a owner (another main frame), put a panel in it,
+## and then adding some contorls inside.
+##
+## Notice that if a frame has exactly one child window, not counting the status
+## and toolbar, this child is resized to take the entire frame client area.
+## If two or more windows are present, they should be laid out explicitly by
+## manually.
+#
 ## :Superclass:
-##    wWindow
-##
+##   `wWindow <wWindow.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wIconize                        Display the frame iconized (minimized).
-##    wCaption                        Puts a caption on the frame.
-##    wMinimize                       Identical to wICONIZE.
-##    wMinimizeBox                    Displays a minimize box on the frame
-##    wMaximize                       Displays the frame maximized
-##    wMaximize_BOX                   Displays a maximize box on the frame
-##    wSystemMenu                     Displays a system menu containing the list of various windows commands in the window title bar.
-##    wResizeBorder                   Displays a resizable border around the window.
-##    wStayOnTop                      Stay on top of all other windows.
-##    wModalFrame                     Creates a frame with a modal dialog-box style.
-##    wFrameToolWindow                Causes a frame with a small title bar to be created; the frame does not appear in the taskbar.
-##    wDefaultFrameStyle              The default style for a frame.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wIconize                        Display the frame iconized (minimized).
+##   wCaption                        Puts a caption on the frame.
+##   wMinimize                       Identical to wIconize.
+##   wMinimizeBox                    Displays a minimize box on the frame
+##   wMaximize                       Displays the frame maximized
+##   wMaximizeBox                    Displays a maximize box on the frame
+##   wSystemMenu                     Displays a system menu containing the list of various windows
+##                                   commands in the window title bar.
+##   wResizeBorder                   Displays a resizable border around the window.
+##   wStayOnTop                      Stay on top of all other windows.
+##   wModalFrame                     Creates a frame with a modal dialog-box style.
+##   wFrameToolWindow                Causes a frame with a small title bar to be created; the frame
+##                                   does not appear in the taskbar.
+##   wDefaultFrameStyle              The default style for a frame.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_Menu                     A menu item is selected.
-##    ==============================  =============================================================
+##   - `wTrayEvent <wTrayEvent.html>`_
+##   - `wCommandEvent <wCommandEvent.html>`_  - wEvent_Menu
 
 const
   # frame styles
@@ -42,13 +52,14 @@ const
   wMinimize* = WS_MINIMIZE
   wMinimizeBox* = WS_MINIMIZEBOX
   wMaximize* = WS_MAXIMIZE
-  wMaximize_BOX* = WS_MAXIMIZEBOX
+  wMaximizeBox* = WS_MAXIMIZEBOX
   wSystemMenu* = WS_SYSMENU
   wResizeBorder* = WS_SIZEBOX
   wStayOnTop* = WS_EX_TOPMOST shl 32
   wModalFrame* = DS_MODALFRAME
   wFrameToolWindow* = WS_EX_TOOLWINDOW shl 32
-  wDefaultFrameStyle* = wMinimizeBox or wMaximize_BOX or wResizeBorder or wSystemMenu or wCaption
+  wDefaultFrameStyle* = wMinimizeBox or wMaximizeBox or wResizeBorder or
+    wSystemMenu or wCaption
   # balloon icon
   wBallonNone* = NIIF_NONE
   wBallonInfo* = NIIF_INFO
@@ -186,9 +197,11 @@ proc showModal*(self: wFrame): int {.validate, discardable.} =
   result = MessageLoop(isMainLoop=false)
 
 proc endModal*(self: wFrame, retCode: int = 0) =
-  ## Ends a modal dialog, passing a value to be returned from the ShowModal() invocation.
+  ## Ends a modal dialog, passing a value to be returned from the showModal()
+  ## invocation.
 
-  # MSDN: the application must enable the main window before destroying the dialog box
+  # MSDN: the application must enable the main window before destroying the
+  # dialog box
   for topwin in mDisableList:
     topwin.enable()
   mDisableList = nil
@@ -292,12 +305,6 @@ proc wFrame_DoSize(event: wEvent) =
     let clientSize = self.getClientSize()
     childOne.setSize(0, 0, clientSize.width, clientSize.height)
 
-  # if self.mChildren.len > 0:
-  #   let clientSize = self.getClientSize()
-  #   for child in self.mChildren:
-  #     if (not (child of wStatusBar)) and (not (child of wToolBar)):
-  #       child.setSize(0, 0, clientSize.width, clientSize.height)
-
 proc findFocusableChild(self: wWindow): wWindow =
   for win in mChildren:
     if win.isFocusable():
@@ -307,7 +314,8 @@ proc findFocusableChild(self: wWindow): wWindow =
       if result != nil: return
 
 proc wFrame_OnSetFocus(event: wEvent) =
-  # when a frame got focus, try to pass focus to mSaveFocus or first focusable control
+  # when a frame got focus, try to pass focus to mSaveFocus or first focusable
+  # control
   let self = event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
@@ -325,7 +333,8 @@ proc wFrame_OnSetFocus(event: wEvent) =
       processed = true
 
 proc wFrame_OnMenuHighlight(event: wEvent) =
-  # The default handler for wEvent_MenuHighlight in wFrame displays help text in the status bar.
+  # The default handler for wEvent_MenuHighlight in wFrame displays help text
+  # in the status bar.
   let self = wFrame event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
@@ -378,7 +387,8 @@ proc wFrame_OnMenuCommand(event: wEvent) =
       menu.check(pos)
 
     # convet to wEvent_Menu message.
-    processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId), 0, event.mResult)
+    processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId), 0,
+      event.mResult)
 
 when defined(useWinXP):
   # under Windows XP, menu icon must draw by outself
@@ -420,7 +430,9 @@ when defined(useWinXP):
           x = (pStruct.rcItem.right - pStruct.rcItem.left - width) div 2
           y = (pStruct.rcItem.bottom - pStruct.rcItem.top - height) div 2
 
-        var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255, AlphaFormat: AC_SRC_ALPHA)
+        var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255,
+          AlphaFormat: AC_SRC_ALPHA)
+
         AlphaBlend(pStruct.hDC, x, y, width, height, memdc, 0, 0, width, height, bf)
 
         SelectObject(memdc, prev)
@@ -457,8 +469,6 @@ proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
 proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
     className = "wFrame"): wFrame {.inline, discardable.} =
-  ## Constructor, creating the frame. A frame is the top-level window so it cannot have a parent.
-  ## However, it can has an owner. The frame will be minimized when its owner is minimized and
-  ## restored when it is restored.
+  ## Constructor, creating the frame.
   new(result, final)
   result.init(owner, title, pos, size, style, className)

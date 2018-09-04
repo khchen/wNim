@@ -1,38 +1,28 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A wScrollBar is a control that represents a horizontal or vertical scrollbar.
-##
+#
+## :Appearance:
+##   .. image:: images/wScrollBar.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSbHorizontal                   Specifies a horizontal scrollbar.
-##    wSbVertical                     Specifies a vertical scrollbar.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSbHorizontal                   Specifies a horizontal scrollbar.
+##   wSbVertical                     Specifies a vertical scrollbar.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wScrollEvent                    Description
-##    ==============================  =============================================================
-##    wEvent_ScrollBar                Sent before all of following event. Use event.getKind to know what kind of type it is.
-##    wEvent_ScrollTop                Scroll to top or leftmost.
-##    wEvent_ScrollBottom             Scroll to bottom or rightmost.
-##    wEvent_ScrollLineUp             Scroll line up or left
-##    wEvent_ScrollLineDown           Scroll line down or right.
-##    wEvent_ScrollPageUp             Scroll page up or left.
-##    wEvent_ScrollPageDown           Scroll page down or right.
-##    wEvent_ScrollThumbTrack         Frequent events sent as the user drags the thumbtrack.
-##    wEvent_ScrollThumbRelease       Thumb release events.
-##    wEvent_ScrollChanged            End of scrolling events
-##    ==============================  =============================================================
+##   `wScrollEvent <wScrollEvent.html>`_
 
 const
   # ScrollBar styles

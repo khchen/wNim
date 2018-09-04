@@ -1,15 +1,26 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
 import wNim
 
 var app = App()
 var frame = Frame(title="wNim Layout Example", size=(400, 300))
+frame.icon = Icon("", 0) # load icon from exe file.
+
 var statusbar = StatusBar(frame)
 var panel = Panel(frame)
 
-var text1 = StaticText(panel, label="Text1", style=wAlignCentre or wAlignMiddle or wBorderSimple)
-var text2 = StaticText(panel, label="Text2", style=wAlignCentre or wAlignMiddle or wBorderSimple)
-var text3 = StaticText(panel, label="Text3", style=wAlignCentre or wAlignMiddle or wBorderSimple)
-var text4 = StaticText(panel, label="Text4", style=wAlignCentre or wAlignMiddle or wBorderSimple)
-var text5 = StaticText(panel, label="Text5", style=wAlignCentre or wAlignMiddle or wBorderSimple)
+let style = wAlignCentre or wAlignMiddle or wBorderSimple
+var text1 = StaticText(panel, label="Text1", style=style)
+var text2 = StaticText(panel, label="Text2", style=style)
+var text3 = StaticText(panel, label="Text3", style=style)
+var text4 = StaticText(panel, label="Text4", style=style)
+var text5 = StaticText(panel, label="Text5", style=style)
 
 proc layout1() =
   panel.layout:

@@ -1,29 +1,28 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This control shows a static text which links to one or more link.
-##
+#
+## :Appearance:
+##   .. image:: images/wHyperLinkCtrl.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wHlAlignLeft                    Align the text to the left.
-##    wHlAlignRight                   Align the text to the right.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wHlAlignLeft                    Align the text to the left.
+##   wHlAlignRight                   Align the text to the right.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wHyperLinkEvent                 Description
-##    ==============================  =============================================================
-##    wEvent_HyperLink                The hyperlink was clicked.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_HyperLink
 
 const
   wHlAlignLeft* = 0
@@ -84,7 +83,7 @@ proc setFocused*(self: wHyperLinkCtrl, index: int) {.validate, property.} =
   addWindowStyle(WS_TABSTOP)
   refresh()
 
-proc getILink(self: wHyperlinkCtrl, index: int): int =
+proc getILink(self: wHyperLinkCtrl, index: int): int =
   # if index == -1: get focused item
   # if focused item == -1: get first item
   if index >= 0: result = index

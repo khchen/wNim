@@ -1,9 +1,12 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
+
+## The key-code used in wNim functions. These constants are in fact
+## Windows' virtual-key codes.
 
 const
   wKey_None* = 0

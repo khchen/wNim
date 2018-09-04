@@ -1,11 +1,12 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## The wApp object represents the application itself. It allow only one instance for a thread.
+## The wApp object represents the application itself. It allow only one instance
+## for a thread.
 
 const
   wEvent_AppQuit = WM_APP + 1

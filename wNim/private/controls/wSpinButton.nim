@@ -1,33 +1,28 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A wSpinButton has two small up and down (or left and right) arrow buttons.
-##
+#
+## :Appearance:
+##   .. image:: images/wSpinButton.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSpVertical                     Specifies a vertical spin button.
-##    wSpHorizontal                   Specifies a horizontal spin button.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSpVertical                     Specifies a vertical spin button.
+##   wSpHorizontal                   Specifies a horizontal spin button.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wSpinEvent                      Description
-##    ==============================  =============================================================
-##    wEvent_Spin                     Pressing an arrow.
-##    wEvent_SpinUp                   Pressing up arrow.
-##    wEvent_SpinDown                 Pressing down arrow.
-##    wEvent_SpinLeft                 Pressing left arrow.
-##    wEvent_SpinRight                Pressing right arrow.
-##    ==============================  =============================================================
+##   `wSpinEvent <wSpinEvent.html>`_
 
 const
   wSpVertical* = 0

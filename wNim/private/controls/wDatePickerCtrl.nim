@@ -1,34 +1,30 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This control allows the user to select a date.
-##
-## :Superclass:
-##    wControl
-##
+#
 ## :Appearance:
-##    .. image:: images/wDatePickerCtrl.png
-##
+##   .. image:: images/wDatePickerCtrl.png
+#
+## :Superclass:
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wDpDropDown                     Show drop-down part from which the user can select a date (Default).
-##    wDpSpin                         Show spin-control-like arrows to change individual date components.
-##    wDpAllowNone                    The control allows the user to not enter any valid date at all.
-##    wDpShowCentury                  Forces display of the century in the default date format.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wDpDropDown                     Show drop-down part from which the user can select a date (Default).
+##   wDpSpin                         Show spin-control-like arrows to change individual date components.
+##   wDpAllowNone                    The control allows the user to not enter any valid date at all.
+##   wDpShowCentury                  Forces display of the century in the default date format.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    Events                          Description
-##    ==============================  =============================================================
-##    wEvent_DateChanged              The selected date changed.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_DateChanged
 
 const
   wDpDropDown*: wStyle = 0

@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wGDIObject</title>
+<title>Module wGdiObject</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -1213,7 +1213,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wGDIObject</h1>
+    <h1 class="title">Module wGdiObject</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1245,6 +1245,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#getHandle,wGdiObject"
     title="getHandle(self: wGdiObject): HANDLE"><wbr />get<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wGdiObject"
+    title="init(self: wGdiObject)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1262,7 +1264,9 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">wGdiObject is the superclasses of all the GDI objects, such as wPen, wBrush and wFont.</p>
+  <p class="module-desc">wGdiObject is the superclasses of all the GDI objects, such as wPen, wBrush and wFont.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wPen.html">wPen</a> <a class="reference external" href="wBrusn.html">wBrusn</a> <a class="reference external" href="wFont.html">wFont</a> <a class="reference external" href="wBitmap.html">wBitmap</a> <a class="reference external" href="wIcon.html">wIcon</a> <a class="reference external" href="wCursor.html">wCursor</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wDC.html">wDC</a> <a class="reference external" href="wPredefined.html">wPredefined</a></td></tr>
+</tbody></table></p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
@@ -1279,7 +1283,12 @@ function main() {
 <dt id="getHandle"><a name="getHandle,wGdiObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHandle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wGdiObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HANDLE</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Gets the real resource handle of windows system.
+Gets the real resource handle in system.
+
+</dd>
+<dt id="init"><a name="init,wGdiObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wGdiObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Initializer.
 
 </dd>
 
@@ -1287,7 +1296,7 @@ Gets the real resource handle of windows system.
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<dt id="delete"><a name="delete.e,wGdiObject"></a><pre><span class="Keyword">method</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wGdiObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="delete"><a name="delete.e,wGdiObject"></a><pre><span class="Keyword">method</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wGdiObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Nim's garbage collector will delete this object by default. However, sometimes you maybe want do that by yourself.
 
@@ -1302,7 +1311,7 @@ Nim's garbage collector will delete this object by default. However, sometimes y
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:53:15 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:00:55 UTC</small>
       </div>
     </div>
   </div>

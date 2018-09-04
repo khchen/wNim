@@ -1,61 +1,40 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A list control presents lists in a number of formats: list view, report view,
 ## icon view and small icon view.
-##
+#
+## :Appearance:
+##   .. image:: images/wListCtrl.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wLcIcon                         Multicolumn list view.
-##    wLcReport                       Single or multicolumn report view, with optional header.
-##    wLcIcon                         Large icon view, with optional labels.
-##    wLcSmallIcon                    Small icon view, with optional labels.
-##    wLcAlignTop                     Icons align to the top. Win32 default, Win32 only.
-##    wLcAlignLeft                    Icons align to the left.
-##    wLcAutoArrange                  Icons arrange themselves. Win32 only.
-##    wLcNoSortHeader                 Column headers do not work like buttons.
-##    wLcNoHeader                     No header in report mode.
-##    wLcEditLabels                   Labels are editable.
-##    wLcSingleSel                    Single selection (default is multiple).
-##    wLcSortAscending                Sort in ascending order.
-##    wLcSortDescending               Sort in descending order.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wLcIcon                         Multicolumn list view.
+##   wLcReport                       Single or multicolumn report view, with optional header.
+##   wLcIcon                         Large icon view, with optional labels.
+##   wLcSmallIcon                    Small icon view, with optional labels.
+##   wLcAlignTop                     Icons align to the top. Win32 default, Win32 only.
+##   wLcAlignLeft                    Icons align to the left.
+##   wLcAutoArrange                  Icons arrange themselves. Win32 only.
+##   wLcNoSortHeader                 Column headers do not work like buttons.
+##   wLcNoHeader                     No header in report mode.
+##   wLcEditLabels                   Labels are editable.
+##   wLcSingleSel                    Single selection (default is multiple).
+##   wLcSortAscending                Sort in ascending order.
+##   wLcSortDescending               Sort in descending order.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wListEvent                      Description
-##    ==============================  =============================================================
-#     wEvent_ListBeginDrag            Begin dragging with the left mouse button.
-#     wEvent_ListBeginRightDrag       Begin dragging with the right mouse button.
-#     wEvent_ListBeginLabelEdit       Begin editing a label. This can be prevented by calling veto().
-#     wEvent_ListEndLabelEdit         Finish editing a label. This can be prevented by calling veto().
-#     wEvent_ListDeleteItem           An item was deleted.
-#     wEvent_ListDeleteAllItems       All items were deleted.
-#     wEvent_ListItemFocused          The currently focused item has changed.
-#     wEvent_ListItemSelected         The item has been selected.
-#     wEvent_ListItemDeselected       The item has been deselected.
-#     wEvent_ListItemActivated        The item has been activated (ENTER or double click).
-#     wEvent_ListItemRightClick       The right mouse button has been clicked on an item.
-#     wEvent_ListInsertItem           An item has been inserted.
-#     wEvent_ListColClick             A column has been left-clicked.
-#     wEvent_ListColRightClick        A column has been right-clicked.
-#     wEvent_ListColBeginDrag         The user started resizing a column, can be vetoed.
-#     wEvent_ListColDragging          The divider between columns is being dragged.
-#     wEvent_ListColEndDrag           A column has been resized by the user.
-#     wEvent_ListColBeginMove         The user started moving a column.
-#     wEvent_ListColEndMove           A column has been moved by the user.
-#     wEvent_ListitemChecked          The item has been checked.
-#     wEvent_ListitemUnchecked        The item has been unchecked.
-##    ==============================  =============================================================
+##   `wListEvent <wListEvent.html>`_
 
 const
   # ListCtrl styles

@@ -1,25 +1,28 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A gauge is a horizontal or vertical bar which shows a quantity.
 ## wGauge supports two working modes: determinate and indeterminate progress.
-##
+#
+## :Appearance:
+##   .. image:: images/wGauge.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wGaHorizontal                   Creates a horizontal gauge.
-##    wGaVertical                     Creates a vertical gauge.
-##    wGaSmooth                       Creates smooth progress bar with one pixel wide update step.
-##    wGaProgress                     Reflect the value of gauge in the taskbar button under Windows 7 and later.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wGaHorizontal                   Creates a horizontal gauge.
+##   wGaVertical                     Creates a vertical gauge.
+##   wGaSmooth                       Creates smooth progress bar with one pixel wide update step.
+##   wGaProgress                     Reflect the value of gauge in the taskbar button under Windows 7 and later.
+##   ==============================  =============================================================
 
 const
   # Gauge styles

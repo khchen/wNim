@@ -1,6 +1,19 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
 {.this: self.}
 
 # Here we develop a wHyperLink GUI control as custom control example.
+
+# wNim's class/object use following naming convention.
+# 1. Class name starts with 'w' and define as ref object. e.g. wObject.
+# 2. Every class have init(self: wObject) and final(self: wObject)
+#    as initializer and finalizer.
+# 3. Provides an Object() proc to quickly get the ref object.
 
 import wNim
 import winim/inc/shellapi # for ShellExecute()
@@ -145,23 +158,31 @@ proc init*(self: wHyperLink, parent: wWindow, id = wDefaultID, label: string,
       mIsVisited = true
 
 proc HyperLink*(parent: wWindow, id = wDefaultID, label: string, url: string,
-  pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLink {.discardable.} =
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLink
+    {.discardable.} =
+
   new(result, final)
   result.init(parent, id, label, url, pos, size, style)
 
 when isMainModule:
+  {.passL: "wNim.res".}
 
   var app = App()
   var frame = Frame()
+  frame.icon = Icon("", 0) # load icon from exe file.
+
+  var statusBar = StatusBar(frame)
   var panel = Panel(frame)
-  var hyperlink = HyperLink(panel, label="Google", url="https://www.google.com", pos=(20, 20))
+  var hyperlink = HyperLink(panel, label="Google", url="https://www.google.com",
+    pos=(20, 20))
+
   hyperlink.font = Font(18)
   hyperlink.hoverFont = Font(18, weight=wFontWeightBold, underline=true)
 
   hyperlink.wEvent_OpenUrl do (event: wEvent):
     if not event.ctrlDown:
       event.veto
-      echo "press ctrl key and then click to open the url."
+      statusBar.setStatusText("press ctrl key and then click to open the url.")
 
   frame.show()
   app.mainLoop()

@@ -1,37 +1,32 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A toolbar is a bar of buttons and/or other controls usually placed below the menu bar in a wFrame.
-##
+## A toolbar is a bar of buttons and/or other controls usually placed below the
+## menu bar in a wFrame.
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wTbFlat                         Gives the toolbar a flat and transparent look.
-##    wTbNoDivider                    Specifies no divider (border) above the toolbar.
-##    wTbhorizontal                   Specifies horizontal layout (default).
-##    wTbVertical                     Specifies vertical layout.
-##    wTbBottom                       Align the toolbar at the bottom of parent window.
-##    wTbRight                        Align the toolbar at the right side of parent window.
-##    wTbDefaultStyle                 Combination of wxTB_HORIZONTAL and wxTB_FLAT
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wTbFlat                         Gives the toolbar a flat and transparent look.
+##   wTbNoDivider                    Specifies no divider (border) above the toolbar.
+##   wTbHorizontal                   Specifies horizontal layout (default).
+##   wTbVertical                     Specifies vertical layout.
+##   wTbBottom                       Align the toolbar at the bottom of parent window.
+##   wTbRight                        Align the toolbar at the right side of parent window.
+##   wTbDefaultStyle                 Combination of wTbHorizontal and wTbFlat
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    Events                          Description
-##    ==============================  =============================================================
-##    wEvent_Tool                     Click left mouse button on the tool bar. Same as wEvent_Menu.
-##    wEvent_ToolRightClick           Click right mouse button on the tool bar.
-##    wEvent_ToolDropDown             Drop down menu selected. If unhandled, displays the default dropdown menu.
-##    wEvent_ToolEnter                The mouse cursor has moved into or moved off a tool.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Tool, wEvent_ToolRightClick, wEvent_ToolDropDown
+##   wEvent_ToolEnter
 
 const
   # ToolBar styles
@@ -377,9 +372,9 @@ proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
     SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
 
   parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    # translate WM_COMMAND to wEventTool
+    # translate WM_COMMAND to wEvent_Tool
     if event.mLparam == mHwnd and HIWORD(event.mWparam) == 0:
-      self.processMessage(wEventTool, event.mWparam, event.mLparam)
+      self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
   # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)

@@ -1,35 +1,33 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A listbox is used to select one or more of a list of strings.
-##
+#
+## :Appearance:
+##   .. image:: images/wListBox.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wLbSingle                       Single-selection list.
-##    wLbMultiple                     Multiple-selection list.
-##    wLbExtended                     Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse.
-##    wLbNeededScroll                 Only create a vertical scrollbar if needed.
-##    wLbAlwaysScroll                 Always show a vertical scrollbar.
-##    wLbSort                         The listbox contents are sorted in alphabetical order.
-##    wLbNoSel                        Specifies that the list box contains items that can be viewed but not selected.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wLbSingle                       Single-selection list.
+##   wLbMultiple                     Multiple-selection list.
+##   wLbExtended                     Extended-selection list: the user can extend the selection by using SHIFT or CTRL keys together with the cursor movement keys or the mouse.
+##   wLbNeededScroll                 Only create a vertical scrollbar if needed.
+##   wLbAlwaysScroll                 Always show a vertical scrollbar.
+##   wLbSort                         The listbox contents are sorted in alphabetical order.
+##   wLbNoSel                        Specifies that the list box contains items that can be viewed but not selected.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_ListBox                  When an item on the list is selected or the selection changes.
-##    wEvent_ListBoxDoubleClick       When the listbox is double-clicked.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_ListBox, wEvent_ListBoxDoubleClick
 
 const
   # ListBox styles

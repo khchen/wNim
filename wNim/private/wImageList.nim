@@ -1,12 +1,17 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A wImageList contains a list of images.
 ## It is used principally in conjunction with wTreeCtrl and wListCtrl.
+#
+## :Seealso:
+##   `wImageList <wImageList.html>`_
+##   `wBitmap <wBitmap.html>`_
+##   `wIcon <wIcon.html>`_
 
 proc add*(self: wImageList, icon: wIcon): int {.validate, discardable.} =
   ## Adds a new image using an icon.

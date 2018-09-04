@@ -1,12 +1,16 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## wMenuBase is the super class of wMenuBar and wMenu.
-## It means the functions here work for both menubar and menu.
+## It means the functions here work with both menubar and menu.
+#
+## :Subclasses:
+##   `wMenuBar <wMenuBar.html>`_
+##   `wMenu <wMenu.html>`_
 
 proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int]
     {.validate.} =

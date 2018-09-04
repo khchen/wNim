@@ -1,20 +1,25 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This class represents the color chooser dialog.
-##
+#
+## :Seealso:
+##   `wMessageDialog <wMessageDialog.html>`_
+##   `wFileDialog <wFileDialog.html>`_
+##   `wDirDialog <wDirDialog.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wCdFullOpen                     Displays the full dialog with custom color selection controls.
-##    wCdCenter                       Centers the window relative to it's owner.
-##    wCdScreenCenter                 Centers the window on screen.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wCdFullOpen                     Displays the full dialog with custom color selection controls.
+##   wCdCenter                       Centers the window relative to it's owner.
+##   wCdScreenCenter                 Centers the window on screen.
+##   ==============================  =============================================================
 
 const
   wCdFullOpen* = CC_FULLOPEN
@@ -27,14 +32,14 @@ proc final*(self: wColorDialog) =
 
 proc init*(self: wColorDialog, parent: wWindow = nil, defaultColor = wBlack,
     style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   mParent = parent
   mColor = defaultColor
   mStyle = style
 
 proc ColorDialog*(parent: wWindow = nil, defaultColor = wBlack,
     style: wStyle = 0): wColorDialog {.inline.} =
-
+  ## Constructor.
   new(result, final)
   result.init(parent, defaultColor, style)
 

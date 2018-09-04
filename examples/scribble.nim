@@ -1,4 +1,12 @@
-{.this: self.}
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.this: self, passL: "wNim.res".}
+import strutils
 import wNim
 
 type
@@ -6,29 +14,35 @@ type
     mMemDc: wMemoryDC
     mPen: wPen
     mLastPos: wPoint
+    mBmp: wBitmap
 
 proc final(self: wScribble) =
   wFrame(self).final()
 
 proc init(self: wScribble, title: string, size: wSize) =
   wFrame(self).init(title=title, size=size)
+  setIcon(Icon("", 0))
 
   mPen = Pen(color=wBlack, width=5)
+  mBmp = Bmp(wGetScreenSize())
   mMemDc = MemoryDC()
-  mMemDc.selectObject(Bmp(wGetScreenSize()))
+  mMemDc.selectObject(mBmp)
   mMemDc.setBackground(wWhiteBrush)
   mMemDc.setBrush(wWhiteBrush)
   mMemDc.setPen(mPen)
   mMemDc.clear()
   mLastPos = wDefaultPoint
 
-  const penResource = staticRead(r"images\3.png")
+  # const iconResource = staticRead(r"images\1.ico")
+  #
+
+  const penResource = staticRead(r"images\pen.png")
   let penImage = Image(penResource)
   penImage.rescale(24, 24)
   penImage.rotateFlip(wImageRotateNoneFlipY)
   setCursor(Cursor(penImage, hotSpot=(0, 0)))
 
-  connect(wEvent_Paint) do ():
+  self.wEvent_Paint do ():
     var dc = PaintDC(self)
     let size = dc.size
     dc.blit(source=mMemDc, width=size.width, height=size.height)
@@ -50,9 +64,10 @@ proc init(self: wScribble, title: string, size: wSize) =
 
   connect(wEvent_LeftDown, onLeftDown)
   connect(wEvent_RightDown, onRightDown)
-  connect(wEvent_MouseLeave) do (): mLastPos = wDefaultPoint
-  connect(wEvent_LeftUp) do (): mLastPos = wDefaultPoint
-  connect(wEvent_MouseMove) do (event: wEvent):
+
+  self.wEvent_MouseLeave do (): mLastPos = wDefaultPoint
+  self.wEvent_LeftUp do (): mLastPos = wDefaultPoint
+  self.wEvent_MouseMove do (event: wEvent):
     if event.leftDown(): onLeftDown(event)
     elif event.rightDown(): onRightDown(event)
 
@@ -72,10 +87,29 @@ proc setWidth(self: wScribble, width: int) =
   mPen.setWidth(width)
   mMemDc.setPen(mPen)
 
+proc loadFile(self: wScribble, filename: string) =
+  var image = Image(filename)
+  mMemDc.clear()
+  mMemDc.drawImage(image)
+  setClientSize(image.size)
+  refresh(eraseBackground=false)
+
+proc saveFile(self: wScribble, filename: string) =
+  var size = getClientSize()
+  var bmp = Bmp(size)
+  var dc = self.ClientDC()
+  var memdc = MemoryDC()
+  memdc.selectObject(bmp)
+  memdc.blit(0, 0, size.width, size.height, dc)
+  memdc.selectObject(wNilBitmap)
+
+  var image = Image(bmp)
+  image.saveFile(filename)
+
 when isMainModule:
   type
     MenuId = enum
-      idNew = 100, idExit, idAbout, idOther
+      idNew = 100, idExit, idAbout, idOther, idLoad, idSave
       idBlack, idRed, idOrange, idYellow, idGreen, idBlue, idPurple
       idString, idThin, idNormal, idThick, idSuper
 
@@ -96,6 +130,8 @@ when isMainModule:
 
   let menuFile = Menu(menuBar, "&File")
   menuFile.append(idNew, "&New")
+  menuFile.append(idLoad, "&Load")
+  menuFile.append(idSave, "&Save As...")
   menuFile.appendSeparator()
   menuFile.append(idExit, "E&xit", "Exit the program.")
 
@@ -124,6 +160,29 @@ when isMainModule:
 
   scribble.idExit do ():
     scribble.delete()
+
+  scribble.idLoad do ():
+    let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
+    let dlg = FileDialog(wildcard=wildcard, style=wFdOpen or wFdFileMustExist)
+    if dlg.show() == wIdOk:
+      try:
+        scribble.loadFile(dlg.path)
+        statusBar.setStatusText(dlg.path & " loaded.")
+      except: discard
+
+  scribble.idSave do ():
+    let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
+    let dlg = FileDialog(wildcard=wildcard, style=wFdSave or wFdOverwritePrompt)
+    if dlg.show() == wIdOk:
+      var path = dlg.path
+      if dlg.filterIndex == 1 and not path.toLowerAscii.endsWith(".png"):
+        path.add ".png"
+      elif dlg.filterIndex == 2 and not path.toLowerAscii.endsWith(".bmp"):
+        path.add ".bmp"
+      try:
+        scribble.saveFile(path)
+        statusBar.setStatusText(path & " saved.")
+      except: discard
 
   scribble.idAbout do ():
     MessageDialog(scribble, caption="About...",

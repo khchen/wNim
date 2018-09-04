@@ -1,33 +1,31 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A static text control displays one or more lines of read-only text.
-##
+#
+## :Appearance:
+##   .. image:: images/wStaticText.png
+#
 ## :Superclass:
-##    wControl
+##   `wControl <wControl.html>`_
 ##
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wAlignLeft                      Align the text to the left.
-##    wAlignRight                     Align the text to the right.
-##    wAlignCentre                    Center the text (horizontally).
-##    wAlignMiddle                    Center the text (vertically).
-##    wAlignLeftNoWordWrap            Align the text to the left, but words are not wrapped
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wAlignLeft                      Align the text to the left.
+##   wAlignRight                     Align the text to the right.
+##   wAlignCentre                    Center the text (horizontally).
+##   wAlignMiddle                    Center the text (vertically).
+##   wAlignLeftNoWordWrap            Align the text to the left, but words are not wrapped
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_CommandLeftClick         Clicked the left mouse button within the control.
-##    wEvent_CommandLeftDoubleClick   Double-clicked the left mouse button within the control.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_CommandLeftClick, wEvent_CommandLeftDoubleClick
 
 const
   wAlignLeft* = SS_LEFT

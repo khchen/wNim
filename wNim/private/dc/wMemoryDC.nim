@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
@@ -15,7 +15,11 @@
 ##   temp_dc.selectObject(wNilBitmap) # here wNilBitmap is a predefined bitmap
 ##
 ## Like other DC object, wMemoryDC need nim's destructors to release the resource.
-## For nim version 0.18.0, you must compile with --newruntime option to get destructor works.
+## For nim version 0.18.0, you must compile with --newruntime option to get
+## destructor works.
+#
+## :Superclass:
+##   `wDC <wDC.html>`_
 
 proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   ## Selects the given bitmap into the device context, to use as the memory bitmap.
@@ -33,7 +37,6 @@ proc delete*(self: var wMemoryDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
-
   if mHdc != 0:
     self.wDC.final()
     DeleteDC(mHdc)

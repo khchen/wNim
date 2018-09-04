@@ -1,12 +1,17 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## wResizer is the class for wResizable layout constraint solver.
-##
+## *wResizer* is the class for *wResizable* layout constraint solver.
+## It is based on yglukhov's constraint solving library -
+## `kiwi <https://github.com/yglukhov/kiwi>`_.
+#
+## :Seealso:
+##   `wResizable <wResizable.html>`_
+#
 ## :Consts:
 ##   The strength of the constraint.
 ##   ==============================  =============================================================

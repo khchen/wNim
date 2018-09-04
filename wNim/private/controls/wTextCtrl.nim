@@ -1,39 +1,36 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A text control allows text to be displayed and edited.
-##
+#
+## :Appearance:
+##   .. image:: images/wTextCtrl.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wTeMultiLine                    The text control allows multiple lines.
-##    wTePassword                     The text will be echoed as asterisks.
-##    wTeReadOnly                     The text will not be user-editable.
-##    wTeNoHideSel                    Show the selection event when it doesn't have focus.
-##    wTeLeft                         The text in the control will be left-justified (default).
-##    wTeCentre                       The text in the control will be centered.
-##    wTeRight                        The text in the control will be right-justified.
-##    wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
-##    wTeRich                         Use rich text control under, this allows to have more than 64KB of text in the control.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wTeMultiLine                    The text control allows multiple lines.
+##   wTePassword                     The text will be echoed as asterisks.
+##   wTeReadOnly                     The text will not be user-editable.
+##   wTeNoHideSel                    Show the selection event when it doesn't have focus.
+##   wTeLeft                         The text in the control will be left-justified (default).
+##   wTeCentre                       The text in the control will be centered.
+##   wTeRight                        The text in the control will be right-justified.
+##   wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
+##   wTeRich                         Use rich text control under, this allows to have more than 64KB of text in the control.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_Text                     When the text changes.
-##    wEvent_TextUpdate               When the control is about to redraw itself.
-##    wEvent_TextEnter                When pressing Enter key.
-##    wEvent_TextMaxlen               When the user tries to enter more text into the control than the limit.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Text, wEvent_TextUpdate, wEvent_TextEnter
+##   wEvent_TextMaxlen
 
 const
   # TextCtrl styles
@@ -388,7 +385,7 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, r
   if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
     mBestSize.width = int(requestSize.rc.right - requestSize.rc.left)
-    mBestSize.height = int(requestSize.rc.bottom  - requestSize.rc.top)
+    mBestSize.height = int(requestSize.rc.bottom - requestSize.rc.top)
     return true
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)

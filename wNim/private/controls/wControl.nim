@@ -1,12 +1,41 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This is the base class for a GUI controls.
-## Here have no any public proc or method.
+#
+## :Superclass:
+##   `wWindow <wWindow.html>`_
+#
+## :Subclasses:
+##   `wStatusBar <wStatusBar.html>`_
+##   `wToolBar <wToolBar.html>`_
+##   `wButton <wButton.html>`_
+##   `wCheckBox <wCheckBox.html>`_
+##   `wRadioButton <wRadioButton.html>`_
+##   `wStaticBox <wStaticBox.html>`_
+##   `wTextCtrl <wTextCtrl.html>`_
+##   `wComboBox <wComboBox.html>`_
+##   `wStaticText <wStaticText.html>`_
+##   `wStaticBitmap <wStaticBitmap.html>`_
+##   `wStaticLine <wStaticLine.html>`_
+##   `wNoteBook <wNoteBook.html>`_
+##   `wSpinCtrl <wSpinCtrl.html>`_
+##   `wSpinButton <wSpinButton.html>`_
+##   `wSlider <wSlider.html>`_
+##   `wScrollBar <wScrollBar.html>`_
+##   `wGauge <wGauge.html>`_
+##   `wCalendarCtrl <wCalendarCtrl.html>`_
+##   `wDatePickerCtrl <wDatePickerCtrl.html>`_
+##   `wTimePickerCtrl <wTimePickerCtrl.html>`_
+##   `wListBox <wListBox.html>`_
+##   `wListCtrl <wListCtrl.html>`_
+##   `wTreeCtrl <wTreeCtrl.html>`_
+##   `wHyperLinkCtrl <wHyperLinkCtrl.html>`_
+##   `wSplitter <wSplitter.html>`_
 
 # forward declaration
 proc click*(self: wButton) {.inline.}
@@ -16,12 +45,14 @@ proc focusPrev(self: wNoteBook): bool
 # GUI controls by default don't apply the window margin setting,
 # (except wStaticBox and wNoteBook, however they have their own override)
 method getClientSize*(self: wControl): wSize {.property.} =
+  ## Returns the size of the control 'client area' in pixels.
   var r: RECT
   GetClientRect(mHwnd, r)
   result.width = r.right - r.left
   result.height = r.bottom - r.top
 
 method getClientAreaOrigin*(self: wControl): wPoint {.property.} =
+  ## Gets the origin of the client area of the control.
   result = (0, 0)
 
 proc wControl_DoMenuCommand(event: wEvent) =

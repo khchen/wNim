@@ -1,12 +1,20 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## Here are some predefined objects ready to be use.
 ## These objects share there handle globally, **don't delete it**.
+#
+## :Seealso:
+##   `wPen <wPen.html>`_
+##   `wBrusn <wBrusn.html>`_
+##   `wFont <wFont.html>`_
+##   `wBitmap <wBitmap.html>`_
+##   `wIcon <wIcon.html>`_
+##   `wCursor <wCursor.html>`_
 
 DefineIncrement(0):
   NormalFont
@@ -84,11 +92,11 @@ template wRedPen*(): untyped =
   wAppGDIStock(wPen, RedPen):
     Pen(color=wRED)
 
-template wCYAN_PEN*(): untyped =
+template wCyanPen*(): untyped =
   wAppGDIStock(wPen, CyanPen):
     Pen(color=wCYAN)
 
-template wGREEN_PEN*(): untyped =
+template wGreenPen*(): untyped =
   wAppGDIStock(wPen, GreenPen):
     Pen(color=wGREEN)
 

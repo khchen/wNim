@@ -1280,7 +1280,8 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class represents the directory chooser dialog.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
+  <p class="module-desc">This class represents the directory chooser dialog.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wDdDirMustExist</td><td>The dialog will allow the user to choose only an existing folder.</td></tr>
 <tr><td>wDdChangeDir</td><td>Change the current working directory to the directory chosen by the user.</td></tr>
 <tr><td>wDdXpCompatible</td><td>Use the Windows XP compatible UI as the dialog.</td></tr>
@@ -1317,13 +1318,13 @@ Default finalizer for wDirDialog.
 <dt id="init"><a name="init,wDirDialog,wWindow,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
          <span class="Identifier">defaultPath</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="DirDialog"><a name="DirDialog,wWindow,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DirDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultPath</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
               <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Constructor.
 
 </dd>
 <dt id="getPath"><a name="getPath,wDirDialog"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getPath</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1381,7 +1382,7 @@ The same as showModalResult().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:53:31 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:01:08 UTC</small>
       </div>
     </div>
   </div>

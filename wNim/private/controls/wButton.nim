@@ -1,32 +1,30 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A button is a control that contains a text string, and is one of the most common elements of a GUI.
-##
+## A button is a control that contains a text string, and is one of the most
+## common elements of a GUI.
+#
+## :Appearance:
+##   .. image:: images/wButton.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSbAuto                         Automatically sizes the control to accommodate the bitmap.
-##    wSbFit                          Stretch or shrink the bitmap to fit the size.
-##    wSbCenter                       Center the bitmap and clip if needed.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSbAuto                         Automatically sizes the control to accommodate the bitmap.
+##   wSbFit                          Stretch or shrink the bitmap to fit the size.
+##   wSbCenter                       Center the bitmap and clip if needed.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_Button                   The button is clicked.
-##    wEvent_ButtonEnter              The mouse is entering the button.
-##    wEvent_ButtonLeave              The mouse is leaving the button.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Button, wEvent_ButtonEnter, wEvent_ButtonLeave
 
 const
   # Button styles

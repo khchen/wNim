@@ -1,11 +1,32 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## wResizable is the superclass of wWindow to handle layout DSL.
+## *wResizable* is the superclass of *wWindow* to handle layout DSL.
+## It is based on yglukhov's constraint solving library -
+## `kiwi <https://github.com/yglukhov/kiwi>`_.
+##
+## wNim's layout DSL looking like this:
+##
+## .. code-block:: Nim
+##   panel.layout:
+##     button1:
+##       top = panel.top
+##       left = panel.left
+##     button2:
+##       centerX = panel.centerX
+##       centerY = panel.centerY
+##       height = panel.height / 2
+##       width = panel.width / 2
+#
+## :Subclass:
+##   `wWindow <wWindow.html>`_
+#
+## :Seealso:
+##   `wResizer <wResizer.html>`_
 
 proc getSize*(self: wResizable): wSize {.validate, property.} =
   ## Returns the current size.

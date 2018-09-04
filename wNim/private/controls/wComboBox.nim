@@ -1,40 +1,34 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A combobox is like a combination of an edit control and a listbox.
-##
+#
+## :Appearance:
+##   .. image:: images/wComboBox.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wCbSimple                       Creates a combobox with a permanently displayed list.
-##    wCbDropDown                     Creates a combobox with a drop-down list.
-##    wCbReadOnly                     Allows the user to choose from the list but doesn't allow to enter a value.
-##    wCbSort                         Sorts the entries in the list alphabetically.
-##    wCbNeededScroll                 Only create a vertical scrollbar if needed.
-##    wCbAlwaysScroll                 Always show a vertical scrollbar.
-##    wCbAutoHScroll                  Automatically scrolls the text in an edit control to the right when the user types a character at the end of the line.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wCbSimple                       Creates a combobox with a permanently displayed list.
+##   wCbDropDown                     Creates a combobox with a drop-down list.
+##   wCbReadOnly                     Allows the user to choose from the list but doesn't allow to enter a value.
+##   wCbSort                         Sorts the entries in the list alphabetically.
+##   wCbNeededScroll                 Only create a vertical scrollbar if needed.
+##   wCbAlwaysScroll                 Always show a vertical scrollbar.
+##   wCbAutoHScroll                  Automatically scrolls the text in an edit control to the right when the user types a character at the end of the line.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wScrollEvent                    Description
-##    ==============================  =============================================================
-##    wEvent_ComboBox                 When an item on the list is selected, Calling GetValue() returns the new value of selection.
-##    wEvent_TextEnter                When pressing Enter key. If the event is skipped, combobox do it's default behavior.
-##    wEvent_ComboBoxCloseUp          When the list box of the combo box disappears.
-##    wEvent_ComboBoxDropDown         When the list box part of the combo box is shown.
-##    wEvent_CommandSetFocus          When the combobox receives the keyboard focus.
-##    wEvent_CommandKillFocus         When the combobox loses the keyboard focus.
-##    wEvent_CommandLeftDoubleClick   When the user double-clicks a string in the list, wCbSimple only.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_ComboBox, wEvent_TextEnter, wEvent_ComboBoxCloseUp
+##   wEvent_ComboBoxDropDown, wEvent_CommandSetFocus, wEvent_CommandKillFocus, wEvent_CommandLeftDoubleClick
 
 const
   # ComboBox styles

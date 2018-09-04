@@ -1,11 +1,18 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A menubar is a series of menus accessible from the top of a frame.
+#
+## :Superclass:
+##   `wMenuBase <wMenuBase.html>`_
+#
+## :Seealso:
+##   `wMenu <wMenu.html>`_
+##   `wMenuItem <wMenuItem.html>`_
 
 proc refresh*(self: wMenuBar) {.validate.} =
   ## Redraw the menubar.
@@ -310,6 +317,7 @@ proc MenuBar*(menus: openarray[(wMenu, string)]): wMenuBar {.inline.} =
 
 proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = [])
     {.validate.} =
+  ## Initializer.
   wValidate(frame)
   init(menus)
   attach(frame)

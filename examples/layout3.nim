@@ -1,7 +1,17 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
 import wNim
 
 var app = App()
 var frame = Frame(title="wNim Layout Example", size=(400, 300))
+frame.icon = Icon("", 0) # load icon from exe file.
+
 var statusbar = StatusBar(frame)
 var panel = Panel(frame)
 panel.margin = 40

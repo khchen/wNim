@@ -1,3 +1,11 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
 import strformat
 import wNim
 
@@ -19,6 +27,8 @@ const resources: array[idIcon1..idIcon6, string] = [
 
 var app = App()
 var frame = Frame()
+frame.icon = Icon("", 0) # load icon from exe file.
+
 var statusBar = StatusBar(frame)
 var menuBar = MenuBar(frame)
 
@@ -77,7 +87,8 @@ frame.wEvent_Menu do (event: wEvent):
 
 frame.connect(wEvent_ContextMenu) do (event: wEvent):
   frame.popupMenu(menuTest, event.getMousePos())
-  # or just frame.popupMenu(menuTest) in order to use the current mouse pointer position.
+  # Or just frame.popupMenu(menuTest) in order to use the current
+  # mouse pointer position.
 
 frame.show()
 app.mainLoop()

@@ -1,38 +1,43 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A dialog that shows a single or multi-line message, with a choice of OK, Yes,
 ## No and Cancel buttons.
-##
+#
+## :Seealso:
+##   `wFileDialog <wFileDialog.html>`_
+##   `wDirDialog <wDirDialog.html>`_
+##   `wColorDialog <wColorDialog.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wOk                             The message box contains one push button: OK. This is the default.
-##    wYesNo                          The message box contains two push buttons: Yes and No.
-##    wOkCancel                       The message box contains two push buttons: OK and Cancel.
-##    wYesNoCancel                    The message box contains three push buttons: Yes, No, and Cancel.
-##    wRetryCancel                    The message box contains two push buttons: Retry and Cancel.
-##    wAbortRetryIgnore               The message box contains three push buttons: Abort, Retry, and Ignore.
-##    wCancelTryContinue              The message box contains three push buttons: Cancel, Try Again, Continue.
-##    wIconHand                       A stop-sign icon appears in the message box.
-##    wIconErr                        A stop-sign icon appears in the message box.
-##    wIconStop                       A stop-sign icon appears in the message box.
-##    wIconQuestion                   A question-mark icon appears in the message box.
-##    wIconExclamation                An exclamation-point icon appears in the message box.
-##    wIconWarning                    An exclamation-point icon appears in the message box.
-##    wIconInformation                An icon consisting of a lowercase letter i in a circle appears in the message box.
-##    wIconAsterisk                   An icon consisting of a lowercase letter i in a circle appears in the message box.
-##    wButton1_Default                The first button is the default button. This is the default.
-##    wButton2_Default                The second button is the default button.
-##    wButton3_Default                The third button is the default button.
-##    wButton4_Default                The fourth button is the default button.
-##    wStayOnTop                      The message box will stay on top of all other windows.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wOk                             The message box contains one push button: OK. This is the default.
+##   wYesNo                          The message box contains two push buttons: Yes and No.
+##   wOkCancel                       The message box contains two push buttons: OK and Cancel.
+##   wYesNoCancel                    The message box contains three push buttons: Yes, No, and Cancel.
+##   wRetryCancel                    The message box contains two push buttons: Retry and Cancel.
+##   wAbortRetryIgnore               The message box contains three push buttons: Abort, Retry, and Ignore.
+##   wCancelTryContinue              The message box contains three push buttons: Cancel, Try Again, Continue.
+##   wIconHand                       A stop-sign icon appears in the message box.
+##   wIconErr                        A stop-sign icon appears in the message box.
+##   wIconStop                       A stop-sign icon appears in the message box.
+##   wIconQuestion                   A question-mark icon appears in the message box.
+##   wIconExclamation                An exclamation-point icon appears in the message box.
+##   wIconWarning                    An exclamation-point icon appears in the message box.
+##   wIconInformation                An icon consisting of a lowercase letter i in a circle appears in the message box.
+##   wIconAsterisk                   An icon consisting of a lowercase letter i in a circle appears in the message box.
+##   wButton1_Default                The first button is the default button. This is the default.
+##   wButton2_Default                The second button is the default button.
+##   wButton3_Default                The third button is the default button.
+##   wButton4_Default                The fourth button is the default button.
+##   wStayOnTop                      The message box will stay on top of all other windows.
+##   ==============================  =============================================================
 
 var gMessageDialog {.threadvar.}: wMessageDialog
 
@@ -66,7 +71,7 @@ proc final*(self: wMessageDialog) =
 
 proc init*(self: wMessageDialog, parent: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK) {.validate.} =
-
+  ## Initializer.
   wValidate(message, caption)
   mParent = parent
   mMessage = message
@@ -75,7 +80,7 @@ proc init*(self: wMessageDialog, parent: wWindow = nil, message: string = "" ,
   mLabelText = initTable[INT, string]()
 
 proc MessageDialog*(parent: wWindow = nil, message: string = "" ,
-    caption: string = "", style: wStyle = wOK): wMessageDialog =
+    caption: string = "", style: wStyle = wOK): wMessageDialog {.inline.} =
   ## Constructor specifying the message box properties.
   wValidate(message, caption)
   new(result, final)
@@ -205,7 +210,6 @@ proc showModal*(self: wMessageDialog): wId {.discardable.} =
   of IDTRYAGAIN: wIdTryAgain
   of IDYES: wIdYes
   else: wIdOk
-
 
 proc show*(self: wMessageDialog): wId {.inline, discardable.} =
   ## The same as ShowModal().

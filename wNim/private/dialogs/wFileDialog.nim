@@ -1,24 +1,29 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This class represents the file chooser dialog.
-##
+#
+## :Seealso:
+##   `wMessageDialog <wMessageDialog.html>`_
+##   `wDirDialog <wDirDialog.html>`_
+##   `wColorDialog <wColorDialog.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wFdOpen                         This is an open dialog.
-##    wFdSave                         This is a save dialog.
-##    wFdOverwritePrompt              Pprompt for a confirmation if a file will be overwritten.
-##    wFdCreatePrompt                 Pprompt for a confirmation if a file will be create.
-##    wFdNoFollow                     Directs the dialog to return the path and file name of the selected shortcut file, not its target as it does by default.
-##    wFdFileMustExist                The user may only select files that actually exist.
-##    wFdMultiple                     Allows selecting multiple files.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wFdOpen                         This is an open dialog.
+##   wFdSave                         This is a save dialog.
+##   wFdOverwritePrompt              Pprompt for a confirmation if a file will be overwritten.
+##   wFdCreatePrompt                 Pprompt for a confirmation if a file will be create.
+##   wFdNoFollow                     Directs the dialog to return the path and file name of the selected shortcut file, not its target as it does by default.
+##   wFdFileMustExist                The user may only select files that actually exist.
+##   wFdMultiple                     Allows selecting multiple files.
+##   ==============================  =============================================================
 
 const
   wFdOpen* = 0
@@ -37,7 +42,7 @@ proc final*(self: wFileDialog) =
 proc init*(self: wFileDialog, parent: wWindow = nil, message: string = nil,
     defaultDir: string = nil, defaultFile: string = nil, wildcard = "*.*",
     style: wStyle = wFdOpen) {.validate.} =
-
+  ## Initializer.
   mParent = parent
   mMessage = message
   mDefaultDir = defaultDir
@@ -49,7 +54,7 @@ proc FileDialog*(parent: wWindow = nil, message: string = nil,
     defaultDir: string = nil, defaultFile: string = nil, wildcard = "*.*",
     style: wStyle = wFdOpen): wFileDialog
     {.inline.} =
-
+  ## Constructor.
   new(result, final)
   result.init(parent, message, defaultDir, defaultFile, wildcard, style)
 

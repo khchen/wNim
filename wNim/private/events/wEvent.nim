@@ -1,9 +1,47 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
+
+## *wEvent* is an abstract base class for other event classes. They hold
+## information about an event passed to a event handler. However, the user may
+## still define their own event type, create the event object, and pass to
+## a window by wWindow.processEvent().
+##
+## There are also some basic window events not belong to any subclass listed
+## here.
+#
+## :Subclasses:
+##   `wMouseEvent <wMouseEvent.html>`_
+##   `wKeyEvent <wKeyEvent.html>`_
+##   `wSizeEvent <wSizeEvent.html>`_
+##   `wMoveEvent <wMoveEvent.html>`_
+##   `wTrayEvent <wTrayEvent.html>`_
+##   `wSetCursorEvent <wSetCursorEvent.html>`_
+##   `wContextMenuEvent <wContextMenuEvent.html>`_
+##   `wScrollWinEvent <wScrollWinEvent.html>`_
+##   `wNavigationEvent <wNavigationEvent.html>`_
+##   `wCommandEvent <wCommandEvent.html>`_
+#
+## :Events:
+##   ================================  =============================================================
+##   wEvent                            Description
+##   ================================  =============================================================
+##   wEvent_SetFocus                   A window has gained the keyboard focus.
+##   wEvent_KillFocus                  A window is about to loses the keyboard focus.
+##   wEvent_Show                       A window is about to be hidden or shown.
+##   wEvent_Activate                   A window being activated or deactivated.
+##   wEvent_Timer                      A timer expires.
+##   wEvent_Paint                      A window's client area must be painted.
+##   wEvent_NcPaint                    A window's frame must be painted.
+##   wEvent_HotKey                     The user presses the registered hotkey.
+##   wEvent_Close                      The user has tried to close a window. This event can be vetoed.
+##   wEvent_MenuHighlight              The user selects a menu item (not clicks).
+##   wEvent_Destroy                    A window is being destroyed.
+##   wEvent_App                        Used to define private event type, usually of the form wEvent_App+x.
+##   ================================  =============================================================
 
 # forward declaration
 proc isMouseEvent(msg: UINT): bool {.inline.}
@@ -29,13 +67,10 @@ const
   wEvent_PropagateNone* = 0
 
   wEvent_SetFocus* = WM_SETFOCUS
-  wEvent_Show* = WM_SHOWWINDOW
   wEvent_KillFocus* = WM_KILLFOCUS
-  wEvent_Horizontal* = WM_HSCROLL
-  wEvent_Vertical* = WM_VSCROLL
+  wEvent_Show* = WM_SHOWWINDOW
   wEvent_Activate* = WM_ACTIVATE
   wEvent_Timer* = WM_TIMER
-  wEvent_InitDialog* = WM_INITDIALOG
   wEvent_MenuHighlight* = WM_MENUSELECT
   wEvent_Paint* = WM_PAINT
   wEvent_NcPaint* = WM_NCPAINT
@@ -73,8 +108,8 @@ proc defaultPropagationLevel(msg: UINT): int =
   else:
     result = 0
 
-proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0, lParam: LPARAM = 0,
-    origin: HWND = 0, userData: int = 0): wEvent =
+proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
+    lParam: LPARAM = 0, origin: HWND = 0, userData: int = 0): wEvent =
   ## Constructor.
 
   template CreateEvent(Constructor: untyped): untyped =
@@ -147,7 +182,8 @@ proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   result = mWindow
 
 proc getWindow*(self: wEvent): wWindow {.validate, property, inline.} =
-  ## Returns the window associated with the event. This proc is equal to getEventObject.
+  ## Returns the window associated with the event. This proc is equal to
+  ## getEventObject.
   result = mWindow
 
 proc getEventType*(self: wEvent): UINT {.validate, property, inline.} =
@@ -195,8 +231,9 @@ proc setUserData*(self: wEvent, userData: int) {.validate, property, inline.} =
   mUserData = userData
 
 proc skip*(self: wEvent, skip = true) {.validate, inline.} =
-  ## This proc can be used inside an event handler to control whether
-  ## further event handlers bound to this event will be called after the current one returns.
+  ## This proc can be used inside an event handler to control whether further
+  ## event handlers bound to this event will be called after the current one
+  ## returns. It sometimes means skip the default behavior for a event.
   mSkip = skip
 
 proc `skip=`*(self: wEvent, skip: bool) {.validate, inline.} =
@@ -205,8 +242,9 @@ proc `skip=`*(self: wEvent, skip: bool) {.validate, inline.} =
 
 proc veto*(self: wEvent) {.validate, inline.} =
   ## Prevents the change announced by this event from happening.
-  #todo: most windows's message return non-zero value to veto.
-  #however, is it need more judgment?
+  # Most windows's message return non-zero value to "veto". So for convenience,
+  # here just set mResult to TRUE. If somewhere the logic is inverted, deal with
+  # the value clearly in the event handler.
   mResult = TRUE
 
 proc deny*(self: wEvent) {.validate, inline.} =
@@ -214,11 +252,13 @@ proc deny*(self: wEvent) {.validate, inline.} =
   veto()
 
 proc allow*(self: wEvent) {.validate, inline.} =
-  ## This is the opposite of veto(): it explicitly allows the event to be processed.
+  ## This is the opposite of veto(): it explicitly allows the event to be
+  ## processed.
   mResult = FALSE
 
 proc isAllowed*(self: wEvent): bool {.validate, inline.} =
-  ## Returns true if the change is allowed (veto() hasn't been called) or false otherwise (if it was).
+  ## Returns true if the change is allowed (veto() hasn't been called) or false
+  ## otherwise (if it was).
   result = mResult != TRUE
 
 proc stopPropagation*(self: wEvent): int {.validate, inline, discardable.} =
@@ -226,13 +266,14 @@ proc stopPropagation*(self: wEvent): int {.validate, inline, discardable.} =
   result = mPropagationLevel
   mPropagationLevel = 0
 
-proc resumePropagation*(self: wEvent, propagationLevel = wEvent_PropagateMax) {.validate, inline.} =
+proc resumePropagation*(self: wEvent, propagationLevel = wEvent_PropagateMax)
+    {.validate, inline.} =
   ## Sets the propagation level to the given value.
   mPropagationLevel = propagationLevel
 
 method shouldPropagate*(self: wEvent): bool {.base.} = mPropagationLevel > 0
-  ## Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.
-  ## This method can be override, for example:
+  ## Test if this event should be propagated or not, i.e. if the propagation
+  ## level is currently greater than 0.This method can be override, for example:
   ## .. code-block:: Nim
   ##   method shouldPropagate*(event: wKeyEvent): bool =
   ##     if event.eventType == wEvent_Char:
@@ -244,7 +285,8 @@ proc getPropagationLevel*(self: wEvent): int {.validate, property, inline.} =
   ## Get how many levels the event can propagate.
   result = mPropagationLevel
 
-proc setPropagationLevel*(self: wEvent, propagationLevel: int) {.validate, property, inline.}  =
+proc setPropagationLevel*(self: wEvent, propagationLevel: int)
+    {.validate, property, inline.}  =
   ## Set how many levels the event can propagate.
   mPropagationLevel = propagationLevel
 

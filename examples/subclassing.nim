@@ -1,11 +1,18 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
 {.this: self.}
 import wNim
 
 # wNim's class/object use following naming convention.
-# 1. Class name starts with w and define as ref object. e.g. wObject.
+# 1. Class name starts with 'w' and define as ref object. e.g. wObject.
 # 2. Every class have init(self: wObject) and final(self: wObject)
-#    as initiator and finalizer.
-# 3. Provides a Object() proc to quickly get the ref object.
+#    as initializer and finalizer.
+# 3. Provides na Object() proc to quickly get the ref object.
 
 type
   wMyFrame = ref object of wFrame
@@ -17,11 +24,11 @@ proc init(self: wMyFrame, title: string) =
   wFrame(self).init(title=title, size=(350, 200))
   center()
 
-  connect(wEvent_Destroy) do ():
+  self.wEvent_Destroy do ():
     MessageDialog(self, "wMyFrame is about to destroy.",
       "wEvent_Destroy", wOk or wStayOnTop).showModal()
 
-  connect(wEvent_Close) do (event: wEvent):
+  self.wEvent_Close do (event: wEvent):
     let dlg = MessageDialog(self, "Do you really want to close this application?",
       "Confirm Exit", wOkCancel or wIconQuestion)
 
@@ -33,7 +40,10 @@ proc MyFrame(title: string): wMyFrame {.inline.} =
   result.init(title)
 
 when isMainModule:
+  {.passL: "wNim.res".}
   let app = App()
   let frame = MyFrame("Hello World")
+  frame.icon = Icon("", 0) # load icon from exe file.
+
   frame.show()
   app.mainLoop()

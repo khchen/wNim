@@ -1,28 +1,28 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A radio button item is a button which usually denotes one of several mutually exclusive options.
-##
+## A radio button item is a button which usually denotes one of several mutually
+## exclusive options.
+#
+## :Appearance:
+##   .. image:: images/wRadioButton.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wRbGroup                        Marks the beginning of a new group of radio buttons.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wRbGroup                        Marks the beginning of a new group of radio buttons.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_RadioButton              The radiobutton  is clicked.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_RadioButton
 
 const
   # RadioButton styles

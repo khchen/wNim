@@ -1290,7 +1290,8 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">An icon is a small rectangular bitmap usually used for denoting a minimized application.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td>wGdiObject</td></tr>
+  <p class="module-desc">An icon is a small rectangular bitmap usually used for denoting a minimized application.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wGdiObject.html">wGdiObject</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wDC.html">wDC</a> <a class="reference external" href="wPredefined.html">wPredefined</a></td></tr>
 </tbody></table></p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -1324,7 +1325,7 @@ Default finalizer for wIcon.
 <dt id="init"><a name="init,wIcon,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1335,7 +1336,7 @@ Creates an icon from the given wImage object.
 <dt id="init"><a name="init,wIcon,ptr.byte,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">byte</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,ptr.byte,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">byte</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1347,7 +1348,7 @@ Creates an icon from binary data of image file format. Supports .ico, .cur (choo
 <dt id="init"><a name="init,wIcon,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
@@ -1359,18 +1360,18 @@ Creates an icon from a image file. If str is not a valid file path, it will be r
 <dt id="init"><a name="init,wIcon,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Creates an icon from a PE file (.exe or .dll). Empty string indicates the current executable file. Positive index indicates the icon position, and negative value for icon ID.
+Creates an icon from a PE file (.exe or .dll). Empty string indicates the current executable file. Positive index indicates the icon position, and negative value indicates the icon ID.
 
 </dd>
 <dt id="init"><a name="init,wIcon,HICON"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">hIcon</span><span class="Other">:</span> <span class="Identifier">HICON</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,HICON"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">hIcon</span><span class="Other">:</span> <span class="Identifier">HICON</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1380,7 +1381,7 @@ Creates an icon from Windows icon handle. If copy is false, this only wrap it to
 </dd>
 <dt id="init"><a name="init,wIcon,wIcon"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Icon"><a name="Icon,wIcon"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Icon</span><span class="Other">(</span><span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1408,7 +1409,7 @@ Nim's garbage collector will delete this object by default. However, sometimes y
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:53:16 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:00:56 UTC</small>
       </div>
     </div>
   </div>

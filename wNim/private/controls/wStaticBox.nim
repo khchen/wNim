@@ -1,14 +1,18 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A static box is a rectangle drawn around other windows to denote a logical grouping of items.
-##
+## A static box is a rectangle drawn around other windows to denote a logical
+## grouping of items.
+#
+## :Appearance:
+##   .. image:: images/wStaticBox.png
+#
 ## :Superclass:
-##    wControl
+##   `wControl <wControl.html>`_
 
 proc getLabelSize(self: wStaticBox): wSize {.property.} =
   result = getTextFontSize(getLabel() & "  ", mFont.mHandle)

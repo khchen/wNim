@@ -1,9 +1,11 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
+
+## The commonly used color value.
 
 const
   wAquamarine*: wColor = 0x093DB70

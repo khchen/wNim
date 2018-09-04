@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
@@ -102,7 +102,8 @@ proc getTextFontSize(text: string, hFont: HANDLE): wSize =
   result.width = size.cx
 
 proc getAverageASCIILetterSize(hFont: HANDLE): wSize =
-  result = getTextFontSize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", hFont)
+  result = getTextFontSize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    hFont)
   result.width = (result.width div 26 + 1) div 2
 
 var hwndComboBoxForCountSize {.threadvar.}: HWND
@@ -111,7 +112,8 @@ proc getLineControlDefaultHeight(hFont: HANDLE): int =
   # a hack way to get default height from autosize combobox
   # is there a correct way to calculate it?
   if hwndComboBoxForCountSize == 0:
-    hwndComboBoxForCountSize = CreateWindowEx(0, WC_COMBOBOX, "", CBS_DROPDOWN, 0, 0, 0, 0, 0, 0, 0, nil)
+    hwndComboBoxForCountSize = CreateWindowEx(0, WC_COMBOBOX, "", CBS_DROPDOWN,
+      0, 0, 0, 0, 0, 0, 0, nil)
 
   var r: RECT
   SendMessage(hwndComboBoxForCountSize, WM_SETFONT, hFont, 0)
@@ -134,7 +136,8 @@ proc getTextFontSizeWithCheckMark(text: string, hFont: HANDLE): wSize =
   if result.width < checkHeight: result.width = checkHeight
 
 proc toDateTime(st: SYSTEMTIME): DateTime =
-  initDateTime(st.wDay, Month st.wMonth, st.wYear.int, st.wHour, st.wMinute, st.wSecond)
+  initDateTime(st.wDay, Month st.wMonth, st.wYear.int, st.wHour, st.wMinute,
+    st.wSecond)
 
 proc toSystemTime(dateTime: DateTime): SYSTEMTIME =
   result.wSecond = WORD dateTime.second
@@ -208,10 +211,13 @@ proc getThemeBackgroundColor*(hWnd: HWND): wColor =
     return gResult
 
   type
-    GetCurrentThemeName = proc (pszThemeFileName: LPWSTR, dwMaxNameChars: int32, pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR, cchMaxSizeChars: int32): HRESULT {.stdcall.}
+    GetCurrentThemeName = proc (pszThemeFileName: LPWSTR, dwMaxNameChars: int32,
+      pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR,
+      cchMaxSizeChars: int32): HRESULT {.stdcall.}
     OpenThemeData = proc (hwnd: HWND, pszClassList: LPCWSTR): HANDLE {.stdcall.}
     CloseThemeData = proc (hTheme: HANDLE): HRESULT {.stdcall.}
-    GetThemeColor = proc (hTheme: HANDLE, iPartId, iStateId, iPropId: int32, pColor: ptr wColor): HRESULT {.stdcall.}
+    GetThemeColor = proc (hTheme: HANDLE, iPartId, iStateId, iPropId: int32,
+      pColor: ptr wColor): HRESULT {.stdcall.}
     IsAppThemed = proc (): BOOL {.stdcall.}
     IsThemeActive = proc (): BOOL {.stdcall.}
 
@@ -285,7 +291,8 @@ proc getIconSize(icon: HICON): wSize =
     if GetObject(iconInfo.hbmColor, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
       result = (int bitmapInfo.bmWidth, int bitmapInfo.bmHeight)
 
-proc createIconFromMemory(data: ptr byte, length: int, width = -1, height = -1, isIcon = true): HICON =
+proc createIconFromMemory(data: ptr byte, length: int, width = -1, height = -1,
+    isIcon = true): HICON =
   type
     ICONDIRENTRY {.pure, packed.} = object
       bWidth: BYTE
@@ -385,7 +392,8 @@ proc createIconFromMemory(data: ptr byte, length: int, width = -1, height = -1, 
         hotSpot[0] = pIconDir.idEntries[index].bWidth div 2
         hotSpot[1] = pIconDir.idEntries[index].bHeight div 2
 
-    result = CreateIconFromResourceEx(cast[PBYTE](offset), size, isIcon, 0x30000, width, height, 0)
+    result = CreateIconFromResourceEx(cast[PBYTE](offset), size, isIcon, 0x30000,
+      width, height, 0)
 
 proc createIconFromHIcon(icon: HICON, isIcon = true, hotSpot = wDefaultPoint): HICON =
   var iconInfo: ICONINFO
@@ -408,14 +416,17 @@ proc createIconFromPE(filename: string, index = 0, width = -1, height = -1): HIC
     var handle = LoadResource(module, resource)
     var resourcePtr = LockResource(handle)
     if resource != 0 and handle != 0 and resourcePtr != nil:
-      let id = LookupIconIdFromDirectoryEx(cast[PBYTE](resourcePtr), TRUE, width, height, 0)
+      let id = LookupIconIdFromDirectoryEx(cast[PBYTE](resourcePtr), TRUE,
+        width, height, 0)
       var resource = FindResource(module, MAKEINTRESOURCE(id), RT_ICON)
       var handle = LoadResource(module, resource)
       var resourcePtr = LockResource(handle)
       var size = SizeofResource(module, resource)
-      result = CreateIconFromResourceEx(cast[PBYTE](resourcePtr), size, TRUE, 0x30000, width, height, 0)
+      result = CreateIconFromResourceEx(cast[PBYTE](resourcePtr), size, TRUE,
+        0x30000, width, height, 0)
 
-  proc enumFunc(module: HMODULE, typ: LPTSTR, name: LPTSTR, lParam: LONG_PTR): WINBOOL {.stdcall.} =
+  proc enumFunc(module: HMODULE, typ: LPTSTR, name: LPTSTR, lParam: LONG_PTR): WINBOOL
+      {.stdcall.} =
     let pInfo = cast[ptr EnumInfo](lParam)
     if pInfo.index == 0:
       pInfo.handle = fromGroupId(module, name, pInfo.width, pInfo.height)

@@ -1,9 +1,11 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
+
+## Some macros used in wNim.
 
 proc wnimRename(x: NimNode, old, new: string): NimNode =
   result = x
@@ -17,11 +19,17 @@ proc wnimRename(x: NimNode, old, new: string): NimNode =
       x.del(i)
       x.insert(i, node)
 
-proc wnimAdd(list: var NimNode, x: NimNode, parent: string, grandfather: string, count: var int) =
-  if (x.kind == nnkCall and x.len == 2 and x[0].kind == nnkIdent and x[1].kind == nnkStmtList) or (x.kind == nnkIdent):
+proc wnimAdd(list: var NimNode, x: NimNode, parent: string, grand: string,
+    count: var int) =
+
+  if (x.kind == nnkCall and x.len == 2 and
+      x[0].kind == nnkIdent and
+      x[1].kind == nnkStmtList) or
+      (x.kind == nnkIdent):
+
     let class = (if x.kind == nnkIdent: $x else: $x[0])
     var name = "anonymous_" & class.toLowerAscii() & $count
-    var param = (if parent == nil: "" else: "parent = " & parent)
+    var param = (if parent == nil: "" else: parent)
     count.inc
 
     if x.kind == nnkCall:
@@ -41,15 +49,23 @@ proc wnimAdd(list: var NimNode, x: NimNode, parent: string, grandfather: string,
           list.wnimAdd(node, name, parent, count)
 
   else:
-    list.add(x.wnimRename("this", parent).wnimRename("super", grandfather))
+    list.add(x.wnimRename("this", parent).wnimRename("super", grand))
 
-macro wnim*(x: untyped): untyped =
+macro wNim*(x: untyped): untyped =
+  ## An experimental DSL for creation wNim GUI app.
   result = newStmtList()
   var count = 1
   for node in x:
     result.wnimAdd(node, nil, nil, count)
 
-  # echo result.repr
+macro wNim_Debug*(x: untyped): untyped =
+  ## Debug the wNim DSL.
+  result = newStmtList()
+  var count = 1
+  for node in x:
+    result.wnimAdd(node, nil, nil, count)
+
+  echo result.repr
 
 macro DefineIncrement(start: int, x: untyped): untyped =
   var index = int start.intVal
@@ -59,6 +75,8 @@ macro DefineIncrement(start: int, x: untyped): untyped =
     index.inc
 
 macro property*(x: untyped): untyped =
+  ## Add property macro to proc as pragma so that getters/setters can access
+  ## as nim's style.
   when defined(wnimdoc):
     result = x
   else:
@@ -103,6 +121,7 @@ macro property*(x: untyped): untyped =
       result = x
 
 macro validate*(x: untyped): untyped =
+  ## Add validate macro to a proc as pragma to ensure *self* is not nil.
   when defined(wnimdoc):
     result = x
   else:

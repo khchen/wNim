@@ -1,11 +1,15 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A menu item represents an item in a menu.
+#
+## :Seealso:
+##   `wMenu <wMenu.html>`_
+##   `wMenuBar <wMenuBar.html>`_
 
 template withPosAtParentMenu(body: untyped) =
   mixin self
@@ -121,9 +125,24 @@ proc toggle*(self: wMenuItem) {.validate.} =
   withPosAtParentMenu:
     mParentMenu.toggle(pos)
 
-proc MenuItem*(id: wCommandID = 0, text: string = nil, help: string = nil,
-    kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil): wMenuItem
-    {.inline.} =
+proc final*(self: wMenuItem) {.validate.} =
+  ## Default finalizer for wMenuItem.
+  discard
+
+proc init*(self: wMenuItem, id: wCommandID = 0, text: string = nil,
+    help: string = nil, kind = wMenuItemNormal, bitmap: wBitmap = nil,
+    submenu: wMenu = nil) {.validate.} =
+  ## Initializer.
+  mId = id
+  mText = text
+  mHelp = help
+  mKind = kind
+  mBitmap = bitmap
+  mSubmenu = submenu
+
+proc MenuItem*(id: wCommandID = 0, text: string = nil,
+    help: string = nil, kind = wMenuItemNormal, bitmap: wBitmap = nil,
+    submenu: wMenu = nil): wMenuItem {.inline.} =
   ## Constructor.
-  result = wMenuItem(mId: id, mText: text, mHelp: help, mKind: kind,
-    mBitmap: bitmap, mSubmenu: submenu)
+  new(result, final)
+  result.init(id, text, help, kind, bitmap, submenu)

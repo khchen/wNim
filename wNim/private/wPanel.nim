@@ -1,15 +1,18 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A panel is a window on which controls are placed. It is usually placed within a frame.
-## Its main feature over its parent class wWindow is code for handling child windows and TAB traversal.
-##
+## A panel is a window on which controls are placed. It is usually placed within
+## a frame.
+#
 ## :Superclass:
-##    wWindow
+##   `wWindow <wWindow.html>`_
+#
+## :Seealso:
+##   `wControl <wControl.html>`_
 
 proc final*(self: wPanel) =
   ## Default finalizer for wPanel.

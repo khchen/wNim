@@ -1,22 +1,26 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A static line is just a line which may be used to separate the groups of controls.
-##
+## A static line is just a line which may be used to separate the groups of
+## controls.
+#
+## :Appearance:
+##   .. image:: images/wStaticLine.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wLiHorizontal                   Creates a horizontal line.
-##    wLiVertical                     Creates a vertical line.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wLiHorizontal                   Creates a horizontal line.
+##   wLiVertical                     Creates a vertical line.
+##   ==============================  =============================================================
 
 const
   wLiHorizontal* = SS_LEFT # 0
@@ -49,7 +53,7 @@ proc final*(self: wStaticLine) =
   discard
 
 proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    size = wDefaultSize, style: wStyle = wLiHorizontal) {.validate.} =
 
   wValidate(parent)
   var size = size
@@ -65,7 +69,8 @@ proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPo
   mFocusable = false
 
 proc StaticLine*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wStaticLine {.inline, discardable.} =
+    size = wDefaultSize, style: wStyle = wLiHorizontal): wStaticLine
+    {.inline, discardable.} =
   ## Constructor, creating and showing a static line.
   wValidate(parent)
   new(result, final)

@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## An accelerator table allows the application to specify a table of keyboard shortcuts
-## for menu or button commands.The accelerator key can be either a virtual-key code or
-## a character code. Example:
+## An accelerator table allows the application to specify a table of keyboard
+## shortcuts for menu or button commands.The accelerator key can be either
+## a virtual-key code or a character code. Example:
 ##
 ## .. code-block:: Nim
 ##   var accel = AcceleratorTable()
@@ -15,6 +15,9 @@
 ##   accel.add(wAccelNormal, wKey_F1, wIdHelp)
 ##   accel.add('o', wIdOpen)
 ##   frame.acceleratorTable = accel
+#
+## :Seealso:
+##   `wFrame <wFrame.html>`_
 
 # forward declarations
 proc setAcceleratorTable*(self: wWindow, accel: wAcceleratorTable) {.inline.}

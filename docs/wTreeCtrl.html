@@ -1464,7 +1464,23 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"></p>
+  <p class="module-desc">A tree control presents information as a hierarchy, with items that may be expanded to show further items. Items in a tree control are referenced by wTreeItem handles, which may be tested for validity by calling wTreeItem.isOk().<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Appearance:</th><td><img src="images/wTreeCtrl.png" /></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
+<tr><td>wTrNoButtons</td><td>For convenience to document that no buttons are to be drawn.</td></tr>
+<tr><td>wTrHasButtons</td><td>Use this style to show + and - buttons to the left of parent items.</td></tr>
+<tr><td>wTrHasLines</td><td>Use this style to show vertical level connectors.</td></tr>
+<tr><td>wTrEditLabels</td><td>Use this style if you wish the user to be able to edit labels in the tree control.</td></tr>
+<tr><td>wTrFullRowHighLight</td><td>Use this style to have the background colour and the selection highlight extend over the entire horizontal row of the tree control window. Cannot use with wTrHasLines.</td></tr>
+<tr><td>wTrLinesAtRoot</td><td>Use this style to show lines between root nodes.</td></tr>
+<tr><td>wTrCheckBox</td><td>Enables check boxes for items.</td></tr>
+<tr><td>wTrTwistButtons</td><td>Selects alternative style of +/- buttons and shows rotating (&quot;twisting&quot;) arrows instead. Windows vista later.</td></tr>
+<tr><td>wTrNoHScroll</td><td>Disables horizontal scrolling.</td></tr>
+<tr><td>wTrNoScroll</td><td>Disables both horizontal and vertical scrolling.</td></tr>
+<tr><td>wTrSingleExpand</td><td>Causes the item being selected to expand and the item being unselected to collapse upon selection in the tree view.</td></tr>
+</table></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wTreeEvent.html">wTreeEvent</a></td></tr>
+</tbody></table></p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
@@ -2019,7 +2035,7 @@ Iterate each child in this control, including all descendants.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:54:04 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:01:38 UTC</small>
       </div>
     </div>
   </div>

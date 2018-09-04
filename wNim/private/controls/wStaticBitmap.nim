@@ -1,31 +1,29 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A static bitmap control displays a bitmap.
-##
+#
+## :Appearance:
+##   .. image:: images/wStaticBitmap.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSbAuto                         Automatically sizes the control to accommodate the bitmap.
-##    wSbFit                          Stretch or shrink the bitmap to fit the size.
-##    wSbCenter                       Center the bitmap and clip if needed.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSbAuto                         Automatically sizes the control to accommodate the bitmap.
+##   wSbFit                          Stretch or shrink the bitmap to fit the size.
+##   wSbCenter                       Center the bitmap and clip if needed.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_CommandLeftClick         Clicked the left mouse button within the control.
-##    wEvent_CommandLeftDoubleClick   Double-clicked the left mouse button within the control.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_CommandLeftClick, wEvent_CommandLeftDoubleClick
 
 const
   # StaticBitmap styles

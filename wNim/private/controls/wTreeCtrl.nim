@@ -1,9 +1,44 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
+
+## A tree control presents information as a hierarchy, with items that may be
+## expanded to show further items. Items in a tree control are referenced by
+## wTreeItem handles, which may be tested for validity by calling
+## wTreeItem.isOk().
+#
+## :Appearance:
+##   .. image:: images/wTreeCtrl.png
+#
+## :Superclass:
+##   `wControl <wControl.html>`_
+#
+## :Styles:
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wTrNoButtons                    For convenience to document that no buttons are to be drawn.
+##   wTrHasButtons                   Use this style to show + and - buttons to the left of parent items.
+##   wTrHasLines                     Use this style to show vertical level connectors.
+##   wTrEditLabels                   Use this style if you wish the user to be able to edit labels in the tree control.
+##   wTrFullRowHighLight             Use this style to have the background colour and the selection
+##                                   highlight extend over the entire horizontal row of the tree control
+##                                   window. Cannot use with wTrHasLines.
+##   wTrLinesAtRoot                  Use this style to show lines between root nodes.
+##   wTrCheckBox                     Enables check boxes for items.
+##   wTrTwistButtons                 Selects alternative style of +/- buttons and shows rotating ("twisting") arrows instead.
+##                                   Windows vista later.
+##   wTrNoHScroll                    Disables horizontal scrolling.
+##   wTrNoScroll                     Disables both horizontal and vertical scrolling.
+##   wTrSingleExpand                 Causes the item being selected to expand and the item being unselected
+##                                   to collapse upon selection in the tree view.
+##   ==============================  =============================================================
+#
+## :Events:
+##   `wTreeEvent <wTreeEvent.html>`_
 
 const
   # TreeCtrl styles and consts

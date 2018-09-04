@@ -1,29 +1,34 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A brush is a drawing tool for filling in areas.
-##
+#
 ## :Superclass:
-##    wGdiObject
+##   `wGdiObject <wGdiObject.html>`_
+#
+## :Seealso:
+##   `wDC <wDC.html>`_
+##   `wPredefined <wPredefined.html>`_
+#
 ## :Consts:
-##    ==============================  =============================================================
-##    Font Family                     Description
-##    ==============================  =============================================================
-##    wBrushStyleSolid                Solid.
-##    wBrushStyleTransparent          Transparent (no fill).
-##    wBrushStyleMask                 Brush style mask.
-##    wBrushStyleBdiagonalHatch       Backward diagonal hatch.
-##    wBrushStyleCrossdiagHatch       Cross-diagonal hatch.
-##    wBrushStyleFdiagonalHatch       Forward diagonal hatch.
-##    wBrushStyleCrossHatch           Cross hatch.
-##    wBrushStyleHorizontalHatch      Horizontal hatch.
-##    wBrushStyleVerticalHatch        Vertical hatch.
-##    wBrushStyleMaskHatch            Brush hatch style mask.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Font Family                     Description
+##   ==============================  =============================================================
+##   wBrushStyleSolid                Solid.
+##   wBrushStyleTransparent          Transparent (no fill).
+##   wBrushStyleMask                 Brush style mask.
+##   wBrushStyleBdiagonalHatch       Backward diagonal hatch.
+##   wBrushStyleCrossdiagHatch       Cross-diagonal hatch.
+##   wBrushStyleFdiagonalHatch       Forward diagonal hatch.
+##   wBrushStyleCrossHatch           Cross hatch.
+##   wBrushStyleHorizontalHatch      Horizontal hatch.
+##   wBrushStyleVerticalHatch        Vertical hatch.
+##   wBrushStyleMaskHatch            Brush hatch style mask.
+##   ==============================  =============================================================
 
 type
   wBrushError* = object of wGdiObjectError
@@ -41,6 +46,10 @@ const
   wBrushStyleVerticalHatch* = HS_VERTICAL shl 16
   wBrushStyleMaskHatch* = 0x00ff0000
 
+proc final*(self: wBrush) =
+  ## Default finalizer for wBrush.
+  delete()
+
 proc initFromNative(self: wBrush, lb: var LOGBRUSH) =
   self.wGdiObject.init()
 
@@ -51,7 +60,8 @@ proc initFromNative(self: wBrush, lb: var LOGBRUSH) =
   mColor = lb.lbColor
   mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)
 
-proc init(self: wBrush, color: wColor, style: DWORD) =
+proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.validate.} =
+  ## Initializer.
   let hatch = style shr 16
   var lb: LOGBRUSH
   lb.lbColor = color
@@ -66,8 +76,31 @@ proc init(self: wBrush, color: wColor, style: DWORD) =
 
   initFromNative(lb)
 
-proc final(self: wBrush) =
-  delete()
+proc Brush*(color: wColor = wWHITE, style = wBrushStyleSolid): wBrush {.inline.} =
+  ## Constructs a brush from a color and style.
+  new(result, final)
+  result.init(color, style)
+
+proc init*(self: wBrush, hBrush: HANDLE) {.validate.} =
+  ## Initializer.
+  var lb: LOGBRUSH
+  GetObject(hBrush, sizeof(lb), &lb)
+  initFromNative(lb)
+
+proc Brush*(hBrush: HANDLE): wBrush {.inline.} =
+  ## Construct wBrush object from a system brush handle.
+  new(result, final)
+  result.init(hBrush)
+
+proc init*(self: wBrush, brush: wBrush) {.validate.} =
+  ## Initializer.
+  init(brush.mHandle)
+
+proc Brush*(brush: wBrush): wBrush {.inline.} =
+  ## Copy constructor
+  wValidate(brush)
+  new(result, final)
+  result.init(brush)
 
 proc getColor*(self: wBrush): wColor {.validate, property, inline.} =
   ## Returns a reference to the brush color.
@@ -86,20 +119,3 @@ proc setStyle*(self: wBrush, style: DWORD) {.validate, property.} =
   ## Sets the brush style.
   DeleteObject(mHandle)
   init(color=mColor, style=style)
-
-proc Brush*(color: wColor = wWHITE , style: DWORD = wBrushStyleSolid): wBrush =
-  ## Constructs a brush from a color and style.
-  new(result, final)
-  result.init(color=color, style=style)
-
-proc Brush*(hBrush: HANDLE): wBrush =
-  ## Construct wBrush object from a system brush handle.
-  new(result, final)
-  var lb: LOGBRUSH
-  GetObject(hBrush, sizeof(lb), addr lb)
-  result.initFromNative(lb)
-
-proc Brush*(brush: wBrush): wBrush {.inline.} =
-  ## Copy constructor
-  wValidate(brush)
-  result = Brush(brush.mHandle)

@@ -1,29 +1,27 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A wNoteBook control manages multiple windows with associated tabs.
-##
+#
+## :Appearance:
+##   .. image:: images/wNoteBook.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wNbIconLeft                     Icons are aligned with the left edge.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wNbIconLeft                     Icons are aligned with the left edge.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_NoteBookPageChanged      The page selection was changed.
-##    wEvent_NoteBookPageChanging     The page selection is about to be changed. This event can be vetoed.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_NoteBookPageChanged, wEvent_NoteBookPageChanging
 
 const
   wNbIconLeft* = TCS_FORCEICONLEFT

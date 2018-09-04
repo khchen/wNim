@@ -1,35 +1,38 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## wSpinCtrl combines wTextCtrl and wSpinButton in one control.
-##
+#
+## :Appearance:
+##   .. image:: images/wSpinCtrl.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSpReadOnly                     The value will not be user-editable.
-##    wSpLeft                         The text is left aligned (this is the default).
-##    wSpCenter                       The text is centered.
-##    wSpRight                        The text is right aligned.
-##    wSpArrowKeys                    The value wraps at the minimum and maximum.
-##    wSpWrap                         The user can use arrow keys to change the value.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSpReadOnly                     The value will not be user-editable.
+##   wSpLeft                         The text is left aligned (this is the default).
+##   wSpCenter                       The text is centered.
+##   wSpRight                        The text is right aligned.
+##   wSpArrowKeys                    The value wraps at the minimum and maximum.
+##   wSpWrap                         The user can use arrow keys to change the value.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wSpinEvent                      Description
-##    ==============================  =============================================================
-##    wEvent_Spin                     Pressing an arrow changed the spin button value. This event can be vetoed.
-##    wEvent_SpinUp                   Pressing up/right arrow changed the spin button value. This event can be vetoed.
-##    wEvent_SpinDown                 Pressing down/left arrow changed the spin button value. This event can be vetoed.
-##    ==============================  =============================================================
+##    ===============================  =============================================================
+##    `wSpinEvent <wSpinEvent.html>`_  Description
+##    ===============================  =============================================================
+##    wEvent_Spin                      Pressing an arrow changed the spin button value. This event can be vetoed.
+##    wEvent_SpinUp                    Pressing up/right arrow changed the spin button value. This event can be vetoed.
+##    wEvent_SpinDown                  Pressing down/left arrow changed the spin button value. This event can be vetoed.
+##    ===============================  =============================================================
 
 const
   # SpinCtrl styles

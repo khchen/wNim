@@ -1,24 +1,20 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This control allows the user to enter time.
-##
-## :Superclass:
-##    wDatePickerCtrl
-##
+#
 ## :Appearance:
-##    .. image:: images/wTimePickerCtrl.png
-##
+##   .. image:: images/wTimePickerCtrl.png
+#
+## :Superclass:
+##   `wControl <wControl.html>`_
+#
 ## :Events:
-##    ==============================  =============================================================
-##    Events                          Description
-##    ==============================  =============================================================
-##    wEvent_TimeChanged              The selected time changed.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_TimeChanged
 
 proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int] {.validate, property.} =
   ## Returns the currently entered time as hours, minutes and seconds

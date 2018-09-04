@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
@@ -63,12 +63,20 @@ const
     ## Used in wNim as default size.
   wDefaultRect*: wRect = (wDefault, wDefault, wDefault, wDefault)
     ## Used in wNim as default rect.
-  wDefaultTime*: wTime = wTime int64.low
-    ## Used in wNim as default time.
   wDefaultID*: wCommandID = wCommandID(-1)
     ## Used in wNim as default command ID.
   wNotFound* = -1
 
+when Time is object: # in devel
+  const
+    wDefaultTime*: wTime = initTime(int64.low, 0)
+    ## Used in wNim as default time.
+else:
+  const
+    wDefaultTime*: wTime = Time int64.low
+    ## Used in wNim as default time.
+
+const
   # Direction
   wLeft* = 0x0010
   wRight* = 0x0020
@@ -362,6 +370,7 @@ when not defined(wnimdoc):
 
     wSplitter* = ref object of wControl
       mIsVertical: bool
+      mIsDrawButton: bool
       mSize: int
       mDragging: bool
       mResizing: bool

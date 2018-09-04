@@ -1,30 +1,30 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A checkbox is a labelled box which by default is either on (checkmark is visible) or off (no checkmark).
-##
+## A checkbox is a labelled box which by default is either on
+## (checkmark is visible) or off (no checkmark).
+#
+## :Appearance:
+##   .. image:: images/wCheckBox.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wChk2State                      Create a 2-state checkbox. This is the default.
-##    wChk3State                      Create a 3-state checkbox.
-##    wChkAlignRight                  Makes the text appear on the left of the checkbox.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wChk2State                      Create a 2-state checkbox. This is the default.
+##   wChk3State                      Create a 3-state checkbox.
+##   wChkAlignRight                  Makes the text appear on the left of the checkbox.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wCommandEvent                   Description
-##    ==============================  =============================================================
-##    wEvent_Checkbox                 The checkbox is clicked.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Checkbox
 
 const
   # CheckBox styles and state

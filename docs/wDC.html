@@ -1383,9 +1383,9 @@ function main() {
   <li><a class="reference" href="#alphaBlit,wDC,int,int,int,int,wDC,int,int,int,int,int"
     title="alphaBlit(self: wDC; xdest, ydest, dstWidth, dstHeight: int = 0; source: wDC;
           xsrc, ysrc, srcWidth, srcHeight: int = 0; alpha: int = 255)"><wbr />alpha<wbr />Blit<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#transparentBlit,wDC,int,int,int,int,wDC,int,int,int,int,wColor"
+  <li><a class="reference" href="#transparentBlit,wDC,int,int,int,int,wDC,int,int,int,int"
     title="transparentBlit(self: wDC; xdest, ydest, dstWidth, dstHeight: int = 0; source: wDC;
-                xsrc, ysrc, srcWidth, srcHeight: int = 0; transparent: wColor = wWHITE)"><wbr />transparent<wbr />Blit<span class="attachedType" style="visibility:hidden"></span></a></li>
+                xsrc, ysrc, srcWidth, srcHeight: int = 0; transparent = wWHITE)"><wbr />transparent<wbr />Blit<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawBitmap,wDC,wBitmap,int,int"
     title="drawBitmap(self: wDC; bmp: wBitmap; x, y: int = 0; transparent = true)"><wbr />draw<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawBitmap,wDC,wBitmap,wPoint"
@@ -1396,6 +1396,12 @@ function main() {
     title="drawImage(self: wDC; image: wImage; pos: wPoint)"><wbr />draw<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawIcon,wDC,wIcon,int,int"
     title="drawIcon(self: wDC; icon: wIcon; x, y: int = 0)"><wbr />draw<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wDC,wColor,wColor"
+    title="init(self: var wDC; fgColor: wColor = wBLACK; bgColor: wColor = wWHITE;
+     font = wDefaultFont; pen = wDefaultPen; brush = wDefaultBrush;
+     background = wDefaultBrush)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#final,wDC"
+    title="final(self: var wDC)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1405,7 +1411,12 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">A wDC is a &quot;device context&quot; onto which graphics and text can be drawn. wDC is an abstract base class and cannot be created directly. Use <strong>wPaintDC, wClientDC, wWindowDC, wScreenDC, or wMemoryDC</strong>. Notice that device contexts which are associated with windows (i.e. wClientDC, wWindowDC and wPaintDC) use the window font and colors by default. but the other device context classes use system-default values so you always must set the appropriate fonts and colours before using them.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td>Used in logical function and blit.<table border="1" class="docutils"><tr><th>Consts</th><th>Description</th></tr>
+  <p class="module-desc"><p>A wDC is a &quot;device context&quot; onto which graphics and text can be drawn. wDC is an abstract base class and cannot be created directly. Use <strong>wPaintDC, wClientDC, wWindowDC, wScreenDC, or wMemoryDC</strong>.</p>
+<p>Notice that device contexts which are associated with windows (i.e. wClientDC, wWindowDC and wPaintDC) use the window font and colors by default. But the other device context classes use system-default values so you always must set the appropriate fonts and colours before using them.</p>
+<p>In wNim, wDC and it's subclasses are defined as <strong>object</strong> instead <strong>ref object</strong>. So they need nim's destructors to release the resource. For nim version 0.18.0, you must compile with --newruntime option to get destructor works.</p>
+<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wPaintDC.html">wPaintDC</a> <a class="reference external" href="wClientDC.html">wClientDC</a> <a class="reference external" href="wWindowDC.html">wWindowDC</a> <a class="reference external" href="wScreenDC.html">wScreenDC</a> <a class="reference external" href="wMemoryDC.html">wMemoryDC</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wGdiObject.html">wGdiObject</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td>Used in logical function and blit.<table border="1" class="docutils"><tr><th>Consts</th><th>Description</th></tr>
 <tr><td>wClear</td><td>0</td></tr>
 <tr><td>wXor</td><td>src XOR dst</td></tr>
 <tr><td>wInvert</td><td>NOT dst</td></tr>
@@ -1744,7 +1755,7 @@ Sets the current background brush for the DC, use the color to create the brush.
 <dt id="setBackgroundMode"><a name="setBackgroundMode,wDC,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setBackgroundMode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">mode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-mode may be one of wPenStyleSolid and wPenStyleTransparent. This setting determines whether text will be drawn with a background color or not.
+<em>mode</em> may be one of wPenStyleSolid and wPenStyleTransparent. This setting determines whether text will be drawn with a background color or not.
 
 </dd>
 <dt id="setBackgroundTransparent"><a name="setBackgroundTransparent,wDC,bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setBackgroundTransparent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
@@ -1792,14 +1803,14 @@ Clears the device context using the current background brush.
 <dt id="blit"><a name="blit,wDC,int,int,int,int,wDC,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">blit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xdest</span><span class="Other">,</span> <span class="Identifier">ydest</span><span class="Other">,</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xsrc</span><span class="Other">,</span> <span class="Identifier">ysrc</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
          <span class="Identifier">rop</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Identifier">wCopy</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Copy from a source DC to this DC. Rop is the raster operation.
+Copy from a source DC to this DC. <em>rop</em> is the raster operation.
 
 </dd>
 <dt id="stretchBlit"><a name="stretchBlit,wDC,int,int,int,int,wDC,int,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">stretchBlit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xdest</span><span class="Other">,</span> <span class="Identifier">ydest</span><span class="Other">,</span> <span class="Identifier">dstWidth</span><span class="Other">,</span> <span class="Identifier">dstHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span>
                 <span class="Identifier">xsrc</span><span class="Other">,</span> <span class="Identifier">ysrc</span><span class="Other">,</span> <span class="Identifier">srcWidth</span><span class="Other">,</span> <span class="Identifier">srcHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">rop</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Identifier">wCopy</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Copy from a source DC to this DC possibly changing the scale. Rop is the raster operation.
+Copy from a source DC to this DC possibly changing the scale. <em>rop</em> is the raster operation.
 
 </dd>
 <dt id="alphaBlit"><a name="alphaBlit,wDC,int,int,int,int,wDC,int,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">alphaBlit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xdest</span><span class="Other">,</span> <span class="Identifier">ydest</span><span class="Other">,</span> <span class="Identifier">dstWidth</span><span class="Other">,</span> <span class="Identifier">dstHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span>
@@ -1809,9 +1820,9 @@ Copy from a source DC to this DC possibly changing the scale. Rop is the raster 
 Copy from a source DC to this DC transparently. The bitmap selected in the source DC must have a transparency mask.
 
 </dd>
-<dt id="transparentBlit"><a name="transparentBlit,wDC,int,int,int,int,wDC,int,int,int,int,wColor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">transparentBlit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xdest</span><span class="Other">,</span> <span class="Identifier">ydest</span><span class="Other">,</span> <span class="Identifier">dstWidth</span><span class="Other">,</span> <span class="Identifier">dstHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span>
-                    <span class="Identifier">xsrc</span><span class="Other">,</span> <span class="Identifier">ysrc</span><span class="Other">,</span> <span class="Identifier">srcWidth</span><span class="Other">,</span> <span class="Identifier">srcHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                    <span class="Identifier">transparent</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="transparentBlit"><a name="transparentBlit,wDC,int,int,int,int,wDC,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">transparentBlit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xdest</span><span class="Other">,</span> <span class="Identifier">ydest</span><span class="Other">,</span> <span class="Identifier">dstWidth</span><span class="Other">,</span> <span class="Identifier">dstHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span>
+                    <span class="Identifier">xsrc</span><span class="Other">,</span> <span class="Identifier">ysrc</span><span class="Other">,</span> <span class="Identifier">srcWidth</span><span class="Other">,</span> <span class="Identifier">srcHeight</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">transparent</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Copy from a source DC to this DC and treat a RGB color as transparent.
 
@@ -1819,7 +1830,7 @@ Copy from a source DC to this DC and treat a RGB color as transparent.
 <dt id="drawBitmap"><a name="drawBitmap,wDC,wBitmap,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">drawBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">transparent</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Draw a bitmap on the device context at the specified point. If transparent is true and the bitmap has a transparency mask, the bitmap will be drawn transparently.
+Draw a bitmap on the device context at the specified point. If <em>transparent</em> is true and the bitmap has a transparency mask, the bitmap will be drawn transparently.
 
 </dd>
 <dt id="drawBitmap"><a name="drawBitmap,wDC,wBitmap,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">drawBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">;</span> <span class="Identifier">transparent</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1843,6 +1854,18 @@ Draw a image on the device context at the specified point.
 Draw an icon at the specified point.
 
 </dd>
+<dt id="init"><a name="init,wDC,wColor,wColor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">fgColor</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wBLACK</span><span class="Other">;</span> <span class="Identifier">bgColor</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">;</span>
+         <span class="Identifier">font</span> <span class="Other">=</span> <span class="Identifier">wDefaultFont</span><span class="Other">;</span> <span class="Identifier">pen</span> <span class="Other">=</span> <span class="Identifier">wDefaultPen</span><span class="Other">;</span> <span class="Identifier">brush</span> <span class="Other">=</span> <span class="Identifier">wDefaultBrush</span><span class="Other">;</span>
+         <span class="Identifier">background</span> <span class="Other">=</span> <span class="Identifier">wDefaultBrush</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
+<dt id="final"><a name="final,wDC"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Default finalizer for wDC.
+
+</dd>
 
 </dl></div>
 
@@ -1853,7 +1876,7 @@ Draw an icon at the specified point.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:53:35 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-02 09:01:12 UTC</small>
       </div>
     </div>
   </div>

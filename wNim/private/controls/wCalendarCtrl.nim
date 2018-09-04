@@ -1,37 +1,32 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## The calendar control allows the user to pick a date.
-##
-## :Superclass:
-##    wControl
-##
+#
 ## :Appearance:
-##    .. image:: images/wCalendarCtrl.png
-##
+##   .. image:: images/wCalendarCtrl.png
+#
+## :Superclass:
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wCalSundayFirst                 Show Sunday as the first day in the week.
-##    wCalMondayFirst                 Show Monday as the first day in the week.
-##    wCalNoToday                     Does not display the "today" date at the bottom of the control.
-##    wCalNoMonthChange               Disable the month (and, implicitly, the year) changing.
-##    wCalShowWeekNumbers             Show week numbers on the left side of the calendar.
-##    wCalMultiSelect                 Enables the user to select a range of dates within the control.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wCalSundayFirst                 Show Sunday as the first day in the week.
+##   wCalMondayFirst                 Show Monday as the first day in the week.
+##   wCalNoToday                     Does not display the "today" date at the bottom of the control.
+##   wCalNoMonthChange               Disable the month (and, implicitly, the year) changing.
+##   wCalShowWeekNumbers             Show week numbers on the left side of the calendar.
+##   wCalMultiSelect                 Enables the user to select a range of dates within the control.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    Events                          Description
-##    ==============================  =============================================================
-##    wEvent_CalendarSelChanged        The selected date changed.
-##    wEvent_CalendarViewChanged       The control view changed.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_CalendarSelChanged, wEvent_CalendarViewChanged
 
 const
   wCalSundayFirst* = 0

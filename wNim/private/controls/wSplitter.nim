@@ -1,46 +1,45 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## wSplitter control is used to split a window into two resizable panel.
-## The panels size and position can be changed by users or by setSize()/setPosition()
-## programmatically.
+## *wSplitter* control is used to split a window into two resizable panel.
+## The panels size and position can be changed by users or by
+## setSize()/setPosition() programmatically.
 ##
 ## A splitter can also attach to one or both panel so that the panel's margin
 ## become draggable. Of course it only works if the margin size near to the splitter
 ## is not zero.
 ##
-## Notice: wSplitter turns on double buffering of the both panels by default to avoid flicker.
-## However, a few controls don't suppoort it, for example, report view mode of wListCtrl.
-## You muse turn off it if you want to use these controls.
-##
+## Notice: wSplitter turns on double buffering of the both panels by default to
+## avoid flicker during resizing. However, a few controls don't suppoort it,
+## for example, report view mode of wListCtrl. You muse turn off it if you want
+## to use these controls.
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSpNoBorder                     No border (default).
-##    wSpBorder                       Draws a standard border.
-##    wSp3dBorder                     Draws a 3D effect border around splitter.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSpNoBorder                     No border (default).
+##   wSpButton                       Draws the splitter button style.
+##   wSpBorder                       Draws a standard border.
+##   wSp3dBorder                     Draws a 3D effect border around splitter.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wMoveEvent                      Description
-##    ==============================  =============================================================
-##    wEvent_Splitter                 The position is dragging by user. This event can be vetoed.
-##    ==============================  =============================================================
+##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Splitter
 
 const
   # use the same define as wSpinButton
   # wSpHorizontal*
   # wSpVertical*
   wSpNoBorder* = 0
+  wSpButton* = 0x10000000 shl 32
   wSpBorder* = wBorderSimple
   wSp3dBorder* = wBorderStatic
 
@@ -179,6 +178,9 @@ proc reattach(self: wSplitter) =
   if mAttach1: bindEventHandle(1)
   if mAttach2: bindEventHandle(2)
 
+proc isVertical*(self: wSplitter): bool {.validate, inline.} =
+  result = mIsVertical
+
 proc getPanel1*(self: wSplitter): wPanel {.validate, property, inline.} =
   ## Returns the left/top panel.
   result = mPanel1
@@ -264,6 +266,32 @@ proc setSplitMode*(self: wSplitter, mode: int) {.validate, property, inline.} =
       splitterResize()
       splitterResetCursor()
 
+proc wSplitter_DoPaint(event: wEvent) =
+  let self = wSplitter event.window
+  let size = self.getClientSize()
+  let bkColor = self.getBackgroundColor()
+
+  var dc = PaintDC(self)
+  defer: dc.delete()
+
+  if self.isVertical():
+    let dot = (size.width - 4).clamp(4, 8)
+    let x = size.width div 2 - dot div 4
+    let y = size.height div 2 - dot div 2 - dot
+
+    for i in 0..3:
+      dc.gradientFillConcentric((x, y + dot * i, dot, dot),
+        wDarkGrey, bkColor, (0, 0))
+
+  else:
+    let dot = (size.height - 4).clamp(4, 8)
+    let x = size.width div 2 - dot div 2 - dot
+    let y = size.height div 2 - dot div 4
+
+    for i in 0..3:
+      dc.gradientFillConcentric((x + dot * i, y, dot, dot),
+        wDarkGrey, bkColor, (0, 0))
+
 proc final*(self: wSplitter) =
   ## Default finalizer for wSplitter.
   discard
@@ -286,6 +314,9 @@ proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
   else:
     if size.height != wDefault:
       mSize = size.height
+
+  if (style and wSpButton) != 0:
+    mIsDrawButton = true
 
   self.wWindow.initVerbosely(parent=parent, id=id, style=style and wInvisible,
     className=className, bgColor=GetSysColor(COLOR_ACTIVEBORDER))
@@ -317,6 +348,8 @@ proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
     if not mResizing:
       mSize = if mIsVertical: winpos.cx else: winpos.cy
       self.splitterResize()
+
+  systemConnect(wEvent_Paint, wSplitter_DoPaint)
 
 proc Splitter*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wSpVertical,

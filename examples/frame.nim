@@ -1,7 +1,16 @@
-import ../wNim
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2018 Ward
+#
+#====================================================================
+
+{.passL: "wNim.res".}
+import wNim
 
 let app = App()
 let frame = Frame(title="Hello World", size=(350, 200))
+frame.icon = Icon("", 0) # load icon from exe file.
 frame.minSize = (300, 200)
 
 let menuBar = MenuBar(frame)
@@ -17,7 +26,7 @@ let panel = Panel(frame)
 let staticText = StaticText(panel, label="Hello World!")
 staticText.font = Font(14, family=wFontFamilySwiss, weight=wFontWeightBold)
 
-let button = Button(panel, wIdClose, "Close")
+let button = Button(panel, label="Close")
 
 proc layout() =
   panel.layout:
@@ -28,7 +37,7 @@ proc layout() =
       right + 10 = panel.right
       bottom + 10 = panel.bottom
 
-button.wIdClose do ():
+button.wEvent_Button do ():
   frame.delete()
 
 frame.wIdExit do ():

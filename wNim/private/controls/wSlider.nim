@@ -1,46 +1,37 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## A slider is a control with a handle which can be pulled back and forth to change the value.
-##
+## A slider is a control with a handle which can be pulled back and forth to
+## change the value.
+#
+## :Appearance:
+##   .. image:: images/wSlider.png
+#
 ## :Superclass:
-##    wControl
-##
+##   `wControl <wControl.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wSlHorizontal                   Displays the slider horizontally (this is the default).
-##    wSlVertical                     Displays the slider vertically.
-##    wSlAutoTicks                    Displays tick marks.
-##    wSlLeft                         Displays ticks on the left and forces the slider to be vertical.
-##    wSlRight                        Displays ticks on the right and forces the slider to be vertical.
-##    wSlTop                          Displays ticks on the top.
-##    wSlBottom                       Displays ticks on the bottom
-##    wSlSelRange                     Allows the user to select a range on the slider.
-##    wSlNoTicks                      Does not display any tick marks.
-##    wSlNoThumb                      Does not display a thumb.
-##    ==============================  =============================================================
-##
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wSlHorizontal                   Displays the slider horizontally (this is the default).
+##   wSlVertical                     Displays the slider vertically.
+##   wSlAutoTicks                    Displays tick marks.
+##   wSlLeft                         Displays ticks on the left and forces the slider to be vertical.
+##   wSlRight                        Displays ticks on the right and forces the slider to be vertical.
+##   wSlTop                          Displays ticks on the top.
+##   wSlBottom                       Displays ticks on the bottom
+##   wSlSelRange                     Allows the user to select a range on the slider.
+##   wSlNoTicks                      Does not display any tick marks.
+##   wSlNoThumb                      Does not display a thumb.
+##   ==============================  =============================================================
+#
 ## :Events:
-##    ==============================  =============================================================
-##    wScrollEvent                    Description
-##    ==============================  =============================================================
-##    wEvent_Slider                   Sent before all of following event. Use event.getKind to know what kind of type it is.
-##    wEvent_ScrollTop                Scroll to top or leftmost.
-##    wEvent_ScrollBottom             Scroll to bottom or rightmost.
-##    wEvent_ScrollLineUp             Scroll line up or left
-##    wEvent_ScrollLineDown           Scroll line down or right.
-##    wEvent_ScrollPageUp             Scroll page up or left.
-##    wEvent_ScrollPageDown           Scroll page down or right.
-##    wEvent_ScrollThumbTrack         Frequent events sent as the user drags the thumbtrack.
-##    wEvent_ScrollThumbRelease       Thumb release events.
-##    wEvent_ScrollChanged            End of scrolling events
-##    ==============================  =============================================================
+##   `wScrollEvent <wScrollEvent.html>`_
 
 const
   # Slider styles
@@ -198,8 +189,8 @@ proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
     size = wDefaultSize, style: wStyle = wSlHorizontal) {.validate.} =
 
   wValidate(parent)
-  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos, size=size,
-    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or TBS_FIXEDLENGTH)
+  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos,
+    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or TBS_FIXEDLENGTH)
   # TBS_FIXEDLENGTH is need so that TBM_SETTHUMBLENGTH works
 
   setValue(value)

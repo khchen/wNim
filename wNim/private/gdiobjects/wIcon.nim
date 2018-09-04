@@ -1,14 +1,19 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
-## An icon is a small rectangular bitmap usually used for denoting a minimized application.
-##
+## An icon is a small rectangular bitmap usually used for denoting a minimized
+## application.
+#
 ## :Superclass:
-##    wGdiObject
+##   `wGdiObject <wGdiObject.html>`_
+#
+## :Seealso:
+##   `wDC <wDC.html>`_
+##   `wPredefined <wPredefined.html>`_
 
 type
   wIconError* = object of wGdiObjectError
@@ -41,7 +46,7 @@ proc final*(self: wIcon) =
   delete()
 
 proc wIcon_FromImage(self: wIcon, image: wImage, size = wDefaultSize) =
-  # todo: GdipCreateHICONFromBitmap don't hanlde alpha channel very well
+  # todo: GdipCreateHICONFromBitmap don't hanlde alpha channel very well.
 
   var image = image
   var imgSize = image.getSize()
@@ -66,6 +71,7 @@ proc wIcon_FromImage(self: wIcon, image: wImage, size = wDefaultSize) =
     error()
 
 proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate, inline.} =
+  ## Initializer.
   wValidate(image)
   self.wGdiObject.init()
   wIcon_FromImage(image, size)
@@ -77,6 +83,7 @@ proc Icon*(image: wImage, size = wDefaultSize): wIcon {.inline.} =
   result.init(image, size)
 
 proc init*(self: wIcon, data: ptr byte, length: int, size = wDefaultSize) {.validate.} =
+  ## Initializer.
   wValidate(data)
   self.wGdiObject.init()
   # createIconFromMemory better than Image() becasue it choose
@@ -98,6 +105,7 @@ proc Icon*(data: ptr byte, length: int, size = wDefaultSize): wIcon {.inline.} =
   result.init(data, length, size)
 
 proc init*(self: wIcon, str: string, size = wDefaultSize) {.validate.} =
+  ## Initializer.
   wValidate(str)
   var
     buffer: ptr byte
@@ -122,6 +130,7 @@ proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
   result.init(str, size)
 
 proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) {.validate.} =
+  ## Initializer.
   wValidate(file)
   self.wGdiObject.init()
   mHandle = createIconFromPE(file, index, size.width, size.height)
@@ -133,12 +142,14 @@ proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) {.validat
 proc Icon*(file: string, index: int, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from a PE file (.exe or .dll).
   ## Empty string indicates the current executable file.
-  ## Positive index indicates the icon position, and negative value for icon ID.
+  ## Positive index indicates the icon position, and negative value indicates the
+  ## icon ID.
   wValidate(file)
   new(result, final)
   result.init(file, index, size)
 
 proc init*(self: wIcon, hIcon: HICON, copy = true) {.validate.} =
+  ## Initializer.
   self.wGdiObject.init()
   if copy:
     mHandle = createIconFromHIcon(hIcon, isIcon=true)
@@ -158,6 +169,7 @@ proc Icon*(hIcon: HICON, copy = true): wIcon {.inline.} =
   result.init(hIcon, copy)
 
 proc init*(self: wIcon, icon: wIcon) {.validate.} =
+  ## Initializer.
   wValidate(icon)
   init(icon.mHandle)
 

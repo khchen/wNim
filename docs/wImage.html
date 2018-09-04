@@ -1290,6 +1290,10 @@ function main() {
     title="init(self: wImage; image: wImage)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Image,wImage"
     title="Image(image: wImage): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wImage,wBitmap"
+    title="init(self: wImage; bmp: wBitmap)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Image,wBitmap"
+    title="Image(bmp: wBitmap): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wImage,ptr.byte,int"
     title="init(self: wImage; data: ptr byte; length: int)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Image,ptr.byte,int"
@@ -1374,7 +1378,8 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class encapsulates a platform-independent image. In wNim, wImage is a wrap of gdiplus image object.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td>The quality used in scale, rescale, transform, and retransform.<table border="1" class="docutils"><tr><th>Consts</th><th>Description</th></tr>
+  <p class="module-desc">This class encapsulates a platform-independent image. In wNim, wImage is a wrap of gdiplus image object.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wImageList.html">wImageList</a> <a class="reference external" href="wBitmap.html">wBitmap</a> <a class="reference external" href="wIcon.html">wIcon</a> <a class="reference external" href="wCursor.html">wCursor</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td>The quality used in scale, rescale, transform, and retransform.<table border="1" class="docutils"><tr><th>Consts</th><th>Description</th></tr>
 <tr><td>wImageQualityNearest</td><td>Specifies nearest-neighbor interpolation.</td></tr>
 <tr><td>wImageQualityBilinear</td><td>Specifies high-quality, bilinear interpolation.</td></tr>
 <tr><td>wImageQualityBicubic</td><td>Specifies high-quality, bicubic interpolation.</td></tr>
@@ -1529,7 +1534,7 @@ Saves an image into binary data (stored as string). Use getEncoders iterator to 
 </dd>
 <dt id="init"><a name="init,wImage,ptr.GpBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,ptr.GpBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1539,7 +1544,7 @@ Creates an image from a gdiplus bitmap handle. If copy is false, this only wrap 
 </dd>
 <dt id="init"><a name="init,wImage,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1547,10 +1552,20 @@ Creates an image from a gdiplus bitmap handle. If copy is false, this only wrap 
 Creates an image from wImage object, aka. copy constructors.
 
 </dd>
+<dt id="init"><a name="init,wImage,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
+<dt id="Image"><a name="Image,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Creates an image from wBitmap object.
+
+</dd>
 <dt id="init"><a name="init,wImage,ptr.byte,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">byte</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,ptr.byte,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">byte</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
@@ -1561,7 +1576,7 @@ Creates an image from binary image data. Use getDecoders iterator to list the su
 </dd>
 <dt id="init"><a name="init,wImage,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1572,7 +1587,7 @@ Creates an image from a file. Use getDecoders iterator to list the supported for
 </dd>
 <dt id="init"><a name="init,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1582,7 +1597,7 @@ Creates an empty image with the given size.
 </dd>
 <dt id="init"><a name="init,wImage,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="Image"><a name="Image,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1751,7 +1766,7 @@ Iterates over each available image decoder on system.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-08-31 10:52:55 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-05 05:29:50 UTC</small>
       </div>
     </div>
   </div>

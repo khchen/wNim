@@ -1,20 +1,25 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## This class represents the directory chooser dialog.
-##
+#
+## :Seealso:
+##   `wMessageDialog <wMessageDialog.html>`_
+##   `wFileDialog <wFileDialog.html>`_
+##   `wColorDialog <wColorDialog.html>`_
+#
 ## :Styles:
-##    ==============================  =============================================================
-##    Styles                          Description
-##    ==============================  =============================================================
-##    wDdDirMustExist                 The dialog will allow the user to choose only an existing folder.
-##    wDdChangeDir                    Change the current working directory to the directory chosen by the user.
-##    wDdXpCompatible                 Use the Windows XP compatible UI as the dialog.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Styles                          Description
+##   ==============================  =============================================================
+##   wDdDirMustExist                 The dialog will allow the user to choose only an existing folder.
+##   wDdChangeDir                    Change the current working directory to the directory chosen by the user.
+##   wDdXpCompatible                 Use the Windows XP compatible UI as the dialog.
+##   ==============================  =============================================================
 
 const
   wDdDirMustExist* = 1
@@ -27,7 +32,7 @@ proc final*(self: wDirDialog) =
 
 proc init*(self: wDirDialog, parent: wWindow = nil, message: string = nil,
     defaultPath: string = nil, style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   mParent = parent
   mMessage = message
   mPath = defaultPath
@@ -35,7 +40,7 @@ proc init*(self: wDirDialog, parent: wWindow = nil, message: string = nil,
 
 proc DirDialog*(parent: wWindow = nil, message: string = nil,
     defaultPath: string = nil, style: wStyle = 0): wDirDialog {.inline.} =
-
+  ## Constructor.
   new(result, final)
   result.init(parent, message, defaultPath, style)
 
@@ -55,7 +60,6 @@ proc setMessage*(self: var wDirDialog, message: string)
     {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
   mMessage = message
-
 
 when not defined(useWinXP):
   proc showModal_VistaLaster(self: wDirDialog): wId =

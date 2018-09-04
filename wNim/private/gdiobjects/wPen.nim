@@ -1,40 +1,45 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2018 Ward
 #
 #====================================================================
 
 ## A pen is a drawing tool for drawing outlines.
-##
+#
 ## :Superclass:
-##    wGdiObject
+##   `wGdiObject <wGdiObject.html>`_
+#
+## :Seealso:
+##   `wDC <wDC.html>`_
+##   `wPredefined <wPredefined.html>`_
+#
 ## :Consts:
-##    ==============================  =============================================================
-##    Pen Styles                      Description
-##    ==============================  =============================================================
-##    wPenJoinBevel                   PS_JOIN_BEVEL
-##    wPenJoinMiter                   PS_JOIN_MITER
-##    wPenJoinRound                   PS_JOIN_ROUND
-##    wPenJoinMask                    PS_JOIN_MASK
-##    wPenCapRound                    PS_ENDCAP_ROUND
-##    wPenCapProjecting               PS_ENDCAP_SQUARE
-##    wPenCapButt                     PS_ENDCAP_FLAT
-##    wPenCapMask                     PS_ENDCAP_MASK
-##    wPenStyleSolid                  Solid style.
-##    wPenStyleDot                    Dotted style.
-##    wPenStyleDash                   Dashed style.
-##    wPenStyleDot_DASH               Dot and dash style.
-##    wPenStyleTransparent            No pen is used.
-##    wPenStyleMask                   Pen style mask.
-##    wPenStyleBdiagonalHatch         Backward diagonal hatch.
-##    wPenStyleCrossdiagHatch         Cross-diagonal hatch.
-##    wPenStyleFdiagonalHatch         Forward diagonal hatch.
-##    wPenStyleCrossHatch             Cross hatch.
-##    wPenStyleHorizontalHatch        Horizontal hatch.
-##    wPenStyleVerticalHatch          Vertical hatch.
-##    wPenStyleMaskHatch              Hatch style mask.
-##    ==============================  =============================================================
+##   ==============================  =============================================================
+##   Pen Styles                      Description
+##   ==============================  =============================================================
+##   wPenJoinBevel                   PS_JOIN_BEVEL
+##   wPenJoinMiter                   PS_JOIN_MITER
+##   wPenJoinRound                   PS_JOIN_ROUND
+##   wPenJoinMask                    PS_JOIN_MASK
+##   wPenCapRound                    PS_ENDCAP_ROUND
+##   wPenCapProjecting               PS_ENDCAP_SQUARE
+##   wPenCapButt                     PS_ENDCAP_FLAT
+##   wPenCapMask                     PS_ENDCAP_MASK
+##   wPenStyleSolid                  Solid style.
+##   wPenStyleDot                    Dotted style.
+##   wPenStyleDash                   Dashed style.
+##   wPenStyleDot_DASH               Dot and dash style.
+##   wPenStyleTransparent            No pen is used.
+##   wPenStyleMask                   Pen style mask.
+##   wPenStyleBdiagonalHatch         Backward diagonal hatch.
+##   wPenStyleCrossdiagHatch         Cross-diagonal hatch.
+##   wPenStyleFdiagonalHatch         Forward diagonal hatch.
+##   wPenStyleCrossHatch             Cross hatch.
+##   wPenStyleHorizontalHatch        Horizontal hatch.
+##   wPenStyleVerticalHatch          Vertical hatch.
+##   wPenStyleMaskHatch              Hatch style mask.
+##   ==============================  =============================================================
 
 type
   wPenError* = object of wGdiObjectError
@@ -66,6 +71,10 @@ const
   wPenStyleVerticalHatch* = HS_VERTICAL shl 16
   wPenStyleMaskHatch* = 0x00ff0000
 
+proc final*(self: wPen) =
+  ## Default finalizer for wPen.
+  delete()
+
 proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   self.wGdiObject.init()
 
@@ -73,7 +82,9 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   lb.lbStyle = elp.elpBrushStyle
   lb.lbColor = elp.elpColor
   lb.lbHatch = elp.elpHatch
-  mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC, elp.elpWidth, lb, 0, nil)
+  mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC,
+    elp.elpWidth, lb, 0, nil)
+
   if mHandle == 0:
     raise newException(wFontError, "wPen creation failure")
 
@@ -81,7 +92,9 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   mStyle = elp.elpPenStyle or (DWORD elp.elpHatch shl 16)
   mWidth = elp.elpWidth
 
-proc init(self: wPen, color: wColor = wBLACK, style: DWORD = wPenStyleSolid, width: int = 1) =
+proc init*(self: wPen, color = wBlack, style = wPenStyleSolid or wPenCapRound,
+    width = 1) {.validate.} =
+  ## Initializer.
   let hatch = style shr 16
   var elp: EXTLOGPEN
   elp.elpPenStyle = style and 0xFFFF
@@ -98,8 +111,32 @@ proc init(self: wPen, color: wColor = wBLACK, style: DWORD = wPenStyleSolid, wid
 
   initFromNative(elp)
 
-proc final(self: wPen) =
-  delete()
+proc Pen*(color = wBlack, style = wPenStyleSolid or wPenCapRound, width = 1): wPen
+    {.inline.} =
+  ## Constructs a pen from color, width, and style.
+  new(result, final)
+  result.init(color, style, width)
+
+proc init*(self: wPen, hPen: HANDLE) {.validate.} =
+  ## Initializer.
+  var elp: EXTLOGPEN
+  GetObject(hPen, sizeof(elp), &elp)
+  initFromNative(elp)
+
+proc Pen*(hPen: HANDLE): wPen {.inline.} =
+  ## Construct wPen object from a system pen handle.
+  new(result, final)
+  result.init(hPen)
+
+proc init*(self: wPen, pen: wPen) {.validate.} =
+  ## Initializer.
+  wValidate(pen)
+  init(pen.mHandle)
+
+proc Pen*(pen: wPen): wPen {.inline.} =
+  ## Copy constructor
+  wValidate(pen)
+  result.init(pen)
 
 proc getColor*(self: wPen): wColor {.validate, property, inline.} =
   ## Returns a reference to the pen color.
@@ -127,20 +164,3 @@ proc setWidth*(self: wPen, width: int) {.validate, property.} =
   ## Sets the pen width.
   DeleteObject(mHandle)
   init(color=mColor, style=mStyle, width=width)
-
-proc Pen*(color: wColor = wBlack, style: DWORD = wPenStyleSolid or wPenCapRound, width: int = 1): wPen =
-  ## Constructs a pen from color, width, and style.
-  new(result, final)
-  result.init(color=color, style=style, width=width)
-
-proc Pen*(hPen: HANDLE): wPen =
-  ## Construct wPen object from a system pen handle.
-  new(result, final)
-  var elp: EXTLOGPEN
-  GetObject(hPen, sizeof(elp), addr elp)
-  result.initFromNative(elp)
-
-proc Pen*(pen: wPen): wPen {.inline.} =
-  ## Copy constructor
-  wValidate(pen)
-  result = Pen(pen.mHandle)
