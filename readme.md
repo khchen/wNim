@@ -40,6 +40,7 @@ panel.layout:
 ```
 
 ## Screenshots
+![demo.nim](https://github.com/khchen/wNim/blob/master/examples/images/screenshot.png)
 
 ## Q & A
 ### Q: Why start this project?
