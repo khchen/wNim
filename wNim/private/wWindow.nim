@@ -16,6 +16,9 @@
 ##   `wPanel <wPanel.html>`_
 ##   `wControl <wControl.html>`_
 #
+## :Seealso:
+##   `wEvent <wEvent.html>`_
+#
 ## :Styles:
 ##   ==============================  =============================================================
 ##   Styles                          Description
@@ -672,6 +675,8 @@ proc setParent*(self: wWindow, parent: wWindow): bool
     {.validate, property, discardable.} =
   ## Set the window's parent, i.e. the window will be removed from its current
   ## parent window and then re-inserted into another.
+  ## Warning: this is a dangerous action and some control may work incorrectly
+  ## after changing the parent.
   wValidate(parent)
   if mParent != nil and SetParent(mHwnd, parent.mHwnd) != 0:
     let index = mParent.mChildren.find(self)
@@ -1841,6 +1846,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   hardConnect(WM_SETCURSOR, wWindow_OnSetCursor)
 
 proc init*(self: wWindow, hWnd: HWND) {.validate.} =
+  ## Initializer.
   initBase()
   mHwnd = hWnd
   mParent = wAppWindowFindByHwnd(GetParent(hwnd))
@@ -1875,6 +1881,7 @@ proc Window*(hWnd: HWND): wWindow {.discardable.} =
 proc init*(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
     className = "wWindow") {.validate, inline.} =
+  ## Initializer.
   initVerbosely(parent=parent, id=id, pos=pos, size=size, style=style,
     className=className)
 

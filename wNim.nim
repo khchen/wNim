@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-##  wNim is Nim's Windows gui framework.
+##  wNim is Nim's Windows GUI framework.
 ##
 ##  Reference
 ##  =========

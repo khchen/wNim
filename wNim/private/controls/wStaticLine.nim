@@ -54,7 +54,7 @@ proc final*(self: wStaticLine) =
 
 proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wLiHorizontal) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   var size = size
   if size != wDefaultSize:

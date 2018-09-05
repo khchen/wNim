@@ -348,13 +348,17 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
     self.popupMenu(menu, rect.left, rect.bottom)
     processed = true
 
+method release(self: wToolBar) =
+  mParent.systemDisconnect(mSizeConn)
+  mParent.systemDisconnect(mCommandConn)
+
 proc final*(self: wToolBar) =
   ## Default finalizer for wToolBar.
   discard
 
 proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
     style: wStyle = wTbDefaultStyle) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   mTools = @[]
 
@@ -368,16 +372,17 @@ proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
   mFocusable = false
   # todo: handle key navigation by TB_SETHOTITEM?
 
-  parent.systemConnect(WM_SIZE) do (event: wEvent):
+  mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
     SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     # translate WM_COMMAND to wEvent_Tool
     if event.mLparam == mHwnd and HIWORD(event.mWparam) == 0:
       self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
   # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
+  # this already be done in wControl
 
   # show the popupmenu is a default behavior, but can be overridden.
   hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)

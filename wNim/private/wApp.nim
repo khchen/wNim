@@ -39,6 +39,7 @@ proc App*(): wApp =
   wTheApp = result
 
 proc wAppGetCurrentApp*(): wApp {.inline.} =
+  ## Gets the current wApp instance.
   result = wTheApp
 
 proc wAppGetInstance(): HANDLE {.inline.} =

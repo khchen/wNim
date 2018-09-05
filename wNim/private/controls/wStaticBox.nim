@@ -47,7 +47,7 @@ proc final*(self: wStaticBox) =
 
 proc init*(self: wStaticBox, parent: wWindow, id = wDefaultID, label: string = "",
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent, label)
   # staticbox need WS_CLIPSIBLINGS
   self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos, size=size,

@@ -1218,13 +1218,15 @@ function main() {
   <div class="three columns">
   <div id="global-links">
     <ul class="simple">
+      <li>
+        <a href="https://github.com/khchen/wNim">Github Project</a>
+      </li>
+      <li>
+        <a href="wNim.html">Main Page</a>
+      </li>
     </ul>
   </div>
-  <div id="searchInput">
-    Search: <input type="text" id="searchInput"
-      onkeyup="search()" />
-  </div>
-  <div>
+  <div class="search-groupby">
     Group by:
     <select onchange="groupBy(this.value)">
       <option value="section">Section</option>
@@ -1282,7 +1284,31 @@ function main() {
     <span class="Identifier">centerX</span> <span class="Operator">=</span> <span class="Identifier">panel</span><span class="Operator">.</span><span class="Identifier">centerX</span>
     <span class="Identifier">centerY</span> <span class="Operator">=</span> <span class="Identifier">panel</span><span class="Operator">.</span><span class="Identifier">centerY</span>
     <span class="Identifier">height</span> <span class="Operator">=</span> <span class="Identifier">panel</span><span class="Operator">.</span><span class="Identifier">height</span> <span class="Operator">/</span> <span class="DecNumber">2</span>
-    <span class="Identifier">width</span> <span class="Operator">=</span> <span class="Identifier">panel</span><span class="Operator">.</span><span class="Identifier">width</span> <span class="Operator">/</span> <span class="DecNumber">2</span></pre><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclass:</th><td><a class="reference external" href="wWindow.html">wWindow</a></td></tr>
+    <span class="Identifier">width</span> <span class="Operator">=</span> <span class="Identifier">panel</span><span class="Operator">.</span><span class="Identifier">width</span> <span class="Operator">/</span> <span class="DecNumber">2</span></pre><p>Following identifiers can be used in the layout DSL:</p>
+<table border="1" class="docutils"><tr><th>Identifiers</th><th>Description</th></tr>
+<tr><td>left</td><td>Left margin.</td></tr>
+<tr><td>right</td><td>Right margin.</td></tr>
+<tr><td>top</td><td>Top margin.</td></tr>
+<tr><td>bottom</td><td>Bottom margin.</td></tr>
+<tr><td>width</td><td>Width of object.</td></tr>
+<tr><td>height</td><td>Height of object.</td></tr>
+<tr><td>up</td><td>Alias for top.</td></tr>
+<tr><td>down</td><td>Alias for bottom.</td></tr>
+<tr><td>centerX</td><td>Center of X-axis.</td></tr>
+<tr><td>centerY</td><td>Center of Y-axis.</td></tr>
+<tr><td>defaultWidth</td><td>Default width of object.</td></tr>
+<tr><td>defaultHeight</td><td>Default height of object.</td></tr>
+<tr><td>bestWidth</td><td>Best width of object.</td></tr>
+<tr><td>bestHeight</td><td>Best height of object.</td></tr>
+<tr><td>innerLeft</td><td>Left margin of sibling's client area.</td></tr>
+<tr><td>innerTop</td><td>Top margin of sibling's client area.</td></tr>
+<tr><td>innerRight</td><td>Right margin of sibling's client area.</td></tr>
+<tr><td>innerBottom</td><td>Bottom margin of sibling's client area.</td></tr>
+<tr><td>innerUp</td><td>Alias for innerTop.</td></tr>
+<tr><td>innerDown</td><td>Alias for innerBottom.</td></tr>
+<tr><td>innerWidth</td><td>Width of sibling's client area.</td></tr>
+<tr><td>innerHeight</td><td>Height of sibling's client area.</td></tr>
+</table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclass:</th><td><a class="reference external" href="wWindow.html">wWindow</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wResizer.html">wResizer</a></td></tr>
 </tbody></table></p>
   <div class="section" id="12">
@@ -1358,7 +1384,7 @@ Output the parsing result for debugging.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-05 05:29:53 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-06 02:36:02 UTC</small>
       </div>
     </div>
   </div>

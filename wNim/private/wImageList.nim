@@ -87,6 +87,7 @@ proc final*(self: wImageList) {.validate.} =
 
 proc init*(self: wImageList, width: int, height: int, mask = false,
     initialCount = 1) {.validate, inline.} =
+  ## Initializer.
   let flag = if mask: ILC_COLOR32 or ILC_MASK else: ILC_COLOR32
   mHandle = ImageList_Create(width, height, flag, initialCount, 1)
 
@@ -99,6 +100,7 @@ proc ImageList*(width: int, height: int, mask = false,
 
 proc init*(self: wImageList, size: wSize, mask = false,
     initialCount = 1) {.validate, inline.} =
+  ## Initializer.
   init(size.width, size.height, mask, initialCount)
 
 proc ImageList*(size: wSize, mask = false,

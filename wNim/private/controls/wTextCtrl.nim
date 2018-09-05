@@ -412,7 +412,7 @@ proc final*(self: wTextCtrl) =
 proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
     value: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wTeLeft) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   mRich = ((style and wTeRich) != 0)
   mDisableTextEvent = false

@@ -1191,7 +1191,7 @@ method release(self: wTreeCtrl) =
 
 proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTrNoButtons) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   # for TVS_HASBUTTONS, TVS_LINESATROOT must also be specified.
   var style = style

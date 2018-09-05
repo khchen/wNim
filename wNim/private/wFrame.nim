@@ -451,7 +451,7 @@ method release(self: wFrame) =
 proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
     className = "wFrame") {.validate.} =
-
+  ## Initializer.
   self.wWindow.initVerbosely(title=title, pos=pos, size=size,
     style=style or WS_CLIPCHILDREN, owner=owner, className=className,
     bgColor=GetSysColor(COLOR_APPWORKSPACE))

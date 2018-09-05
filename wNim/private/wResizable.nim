@@ -21,6 +21,34 @@
 ##       centerY = panel.centerY
 ##       height = panel.height / 2
 ##       width = panel.width / 2
+##
+## Following identifiers can be used in the layout DSL:
+## ================================  =============================================================
+## Identifiers                       Description
+## ================================  =============================================================
+## left                              Left margin.
+## right                             Right margin.
+## top                               Top margin.
+## bottom                            Bottom margin.
+## width                             Width of object.
+## height                            Height of object.
+## up                                Alias for top.
+## down                              Alias for bottom.
+## centerX                           Center of X-axis.
+## centerY                           Center of Y-axis.
+## defaultWidth                      Default width of object.
+## defaultHeight                     Default height of object.
+## bestWidth                         Best width of object.
+## bestHeight                        Best height of object.
+## innerLeft                         Left margin of sibling's client area.
+## innerTop                          Top margin of sibling's client area.
+## innerRight                        Right margin of sibling's client area.
+## innerBottom                       Bottom margin of sibling's client area.
+## innerUp                           Alias for innerTop.
+## innerDown                         Alias for innerBottom.
+## innerWidth                        Width of sibling's client area.
+## innerHeight                       Height of sibling's client area.
+## ================================  =============================================================
 #
 ## :Subclass:
 ##   `wWindow <wWindow.html>`_
@@ -78,6 +106,8 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
     code &= "  template centerY(name: wResizable): untyped = ((name.bottom - name.top) / 2 + name.top)\n"
     code &= "  template defaultWidth(name: wResizable): untyped = name.wWindow.defaultSize.width.float\n"
     code &= "  template defaultHeight(name: wResizable): untyped = name.wWindow.defaultSize.height.float\n"
+    code &= "  template bestWidth(name: wResizable): untyped = name.wWindow.bestSize.width.float\n"
+    code &= "  template bestHeight(name: wResizable): untyped = name.wWindow.bestSize.height.float\n"
 
     # for align between siblings only, for example: StaticBox
     code &= "  template innerLeft(name: wResizable): untyped = name.left + name.wWindow.clientMargin(wLeft).float\n"
@@ -90,9 +120,9 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
     code &= "  template innerHeight(name: wResizable): untyped = (name.innerBottom - name.innerTop)\n"
 
     const attributes = ["width", "height", "left", "top", "right", "bottom", "up",
-      "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "innerLeft",
-      "innerTop", "innerRight", "innerBottom", "innerUp", "innerDown", "innerWidth",
-      "innerHeight"]
+      "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "bestWidth",
+      "bestHeight", "innerLeft", "innerTop", "innerRight", "innerBottom",
+      "innerUp", "innerDown", "innerWidth", "innerHeight"]
 
     const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "WEAKER", "WEAKEST"]
 

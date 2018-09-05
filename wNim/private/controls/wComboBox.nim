@@ -227,6 +227,9 @@ method trigger(self: wComboBox) =
     let text = mInitData[i]
     SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
 
+method release(self: wComboBox) =
+  mParent.systemDisconnect(mCommandConn)
+
 proc final*(self: wComboBox) =
   ## Default finalizer for wComboBox.
   discard
@@ -234,7 +237,7 @@ proc final*(self: wComboBox) =
 proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
     value: string = "", pos = wDefaultPoint, size = wDefaultSize,
     choices: openarray[string] = [], style: wStyle = wCbDropDown) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   mInitData = cast[ptr UncheckedArray[string]](choices)
   mInitCount = choices.len
@@ -286,7 +289,7 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
 
   setValue(value)
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
       let cmdEvent = case HIWORD(event.mWparam)
         of CBN_SELENDOK:

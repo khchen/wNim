@@ -18,6 +18,9 @@
 ## for example, report view mode of wListCtrl. You muse turn off it if you want
 ## to use these controls.
 #
+## :Appearance:
+##   .. image:: images/wSplitter.png
+#
 ## :Superclass:
 ##   `wControl <wControl.html>`_
 #
@@ -268,6 +271,10 @@ proc setSplitMode*(self: wSplitter, mode: int) {.validate, property, inline.} =
 
 proc wSplitter_DoPaint(event: wEvent) =
   let self = wSplitter event.window
+  if not self.mIsDrawButton:
+    event.skip
+    return
+
   let size = self.getClientSize()
   let bkColor = self.getBackgroundColor()
 
@@ -292,6 +299,9 @@ proc wSplitter_DoPaint(event: wEvent) =
       dc.gradientFillConcentric((x + dot * i, y, dot, dot),
         wDarkGrey, bkColor, (0, 0))
 
+method release(self: wSplitter) =
+  mParent.systemDisconnect(mSizeConn)
+
 proc final*(self: wSplitter) =
   ## Default finalizer for wSplitter.
   discard
@@ -299,7 +309,7 @@ proc final*(self: wSplitter) =
 proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical,
     className = "wSplitter") {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   mSize = 6
   mMin1 = 0
@@ -338,7 +348,7 @@ proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
 
   bindEventHandle(0)
 
-  parent.systemConnect(wEvent_Size) do (event: wEvent):
+  mSizeConn = parent.systemConnect(wEvent_Size) do (event: wEvent):
     self.splitterResize()
 
   # handle this message so that setPosition() works to change

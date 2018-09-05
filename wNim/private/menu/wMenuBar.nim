@@ -291,6 +291,7 @@ proc final*(self: wMenuBar) =
   delete()
 
 proc init*(self: wMenuBar) {.validate.} =
+  ## Initializer.
   mHmenu = CreateMenu()
   var menuInfo = MENUINFO(
     cbSize: sizeof(MENUINFO),
@@ -306,6 +307,7 @@ proc MenuBar*(): wMenuBar {.inline.} =
   result.init()
 
 proc init*(self: wMenuBar, menus: openarray[(wMenu, string)]) {.validate.} =
+  ## Initializer.
   init()
   for menu in menus:
     append(menu[0], menu[1])

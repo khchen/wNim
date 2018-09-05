@@ -171,6 +171,7 @@ proc click*(self: wButton) {.validate, inline.} =
   SendMessage(mHwnd, BM_CLICK, 0, 0)
 
 method release(self: wButton) =
+  mParent.systemDisconnect(mCommandConn)
   if mImgData.himl != 0:
     ImageList_Destroy(mImgData.himl)
     mImgData.himl = 0
@@ -202,7 +203,7 @@ proc final*(self: wButton) =
 proc init*(self: wButton, parent: wWindow, id = wDefaultID,
     label: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = style and (not 0xF)
@@ -213,7 +214,7 @@ proc init*(self: wButton, parent: wWindow, id = wDefaultID,
   # default value of bitmap direction
   mImgData.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_Button, event.mWparam, event.mLparam)
 

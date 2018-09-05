@@ -278,6 +278,9 @@ method getBestSize*(self: wListBox): wSize =
   ## Returns the best acceptable minimal size for the control.
   result = countSize(1, 1.0)
 
+method release(self: wListBox) =
+  mParent.systemDisconnect(mCommandConn)
+
 method trigger(self: wListBox) =
   for i in 0..<mInitCount:
     let text = mInitData[i]
@@ -290,7 +293,7 @@ proc final*(self: wListBox) =
 proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
     style: wStyle = wLbSingle) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   mInitData = cast[ptr UncheckedArray[string]](choices)
   mInitCount = choices.len
@@ -304,7 +307,7 @@ proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
   if (style and wLbNoSel) != 0:
     mFocusable = false
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd:
       case HIWORD(event.mWparam):
       of LBN_SELCHANGE:

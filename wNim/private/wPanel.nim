@@ -20,6 +20,7 @@ proc final*(self: wPanel) =
 
 proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0, className = "wPanel") {.validate, inline.} =
+  ## Initializer.
   wValidate(parent)
 
   self.wWindow.initVerbosely(parent=parent, pos=pos, size=size,

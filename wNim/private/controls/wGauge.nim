@@ -74,14 +74,13 @@ proc setValue*(self: wGauge, value: int) {.validate, property.} =
   SendMessage(mHwnd, PBM_SETPOS, value, 0)
 
   if mTaskBar != nil:
-    let
-      range = getRange()
-      topParentHwnd = getTopParent().mHwnd
+    let range = getRange()
+    let topParentHwnd = getTopParent().mHwnd
 
     if value >= range:
       mTaskBar.SetProgressState(topParentHwnd, TBPF_NOPROGRESS)
     else:
-      echo mTaskBar.SetProgressValue(topParentHwnd, value.ULONGLONG, range.ULONGLONG)
+      mTaskBar.SetProgressValue(topParentHwnd, ULONGLONG value, ULONGLONG range)
 
 proc getValue*(self: wGauge): int {.validate, property, inline.} =
   ## Returns the current position of the gauge
@@ -106,6 +105,18 @@ proc isVertical*(self: wGauge): bool {.validate, inline.} =
   ## Returns true if the gauge is vertical and false otherwise.
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and PBS_VERTICAL) != 0
 
+proc getTaskBar(self: wGauge) =
+  if CoCreateInstance(&CLSID_TaskbarList, nil, CLSCTX_INPROC_SERVER,
+      &IID_ITaskbarList3, cast[ptr pointer](&mTaskBar)).SUCCEEDED:
+
+    mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_NORMAL)
+
+method release(self: wGauge) =
+  getTopParent().systemDisconnect(mTaskBarCreatedConn)
+
+  if mTaskBar != nil:
+    mTaskBar.Release()
+
 proc final*(self: wGauge) =
   ## Default finalizer for wGauge.
   discard
@@ -113,11 +124,8 @@ proc final*(self: wGauge) =
 proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
     range = 100, value = 0, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wGaHorizontal) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
-  let
-    taskBarProgress = ((style and wGaProgress) != 0)
-    style = style and (not wGaProgress)
 
   self.wControl.init(className=PROGRESS_CLASS, parent=parent, id=id, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE)
@@ -126,19 +134,14 @@ proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
   setRange(range)
   setValue(value)
 
-  if taskBarProgress:
-    let
-      messageId = RegisterWindowMessage("TaskbarButtonCreated")
-      topParent = getTopParent()
-
-    topParent.systemConnect(messageId) do (event: wEvent):
-      if CoCreateInstance(&CLSID_TaskbarList, nil, CLSCTX_INPROC_SERVER,
-          &IID_ITaskbarList3, cast[ptr pointer](&mTaskBar)).SUCCEEDED:
-        mTaskBar.SetProgressState(topParent.mHwnd, TBPF_NORMAL)
-
-    systemConnect(WM_NCDESTROY) do (event: wEvent):
-      if mTaskBar != nil:
-        mTaskBar.Release()
+  if (style and wGaProgress) != 0:
+    # try to get task bar (save in mTaskBar) first
+    # if fail, maybe the task bar not yet created, try to get it latter
+    getTaskBar()
+    if mTaskBar == nil:
+      let messageId = RegisterWindowMessage("TaskbarButtonCreated")
+      mTaskBarCreatedConn = getTopParent().systemConnect(messageId) do (event: wEvent):
+        self.getTaskBar()
 
 proc Gauge*(parent: wWindow, id = wDefaultID, range = 100,
     value = 0, pos = wDefaultPoint, size = wDefaultSize,

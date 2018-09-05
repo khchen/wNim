@@ -50,6 +50,9 @@ proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
   ## Returns the bitmap currently used in the control.
   result = mBitmap
 
+method release(self: wStaticBitmap) =
+  mParent.systemDisconnect(mCommandConn)
+
 proc final*(self: wStaticBitmap) =
   ## Default finalizer for wStaticBitmap.
   discard
@@ -57,7 +60,7 @@ proc final*(self: wStaticBitmap) =
 proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
     bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wSbAuto) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
@@ -66,7 +69,7 @@ proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
   mFocusable = false
 
   # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
-  parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+  mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
 
 proc StaticBitmap*(parent: wWindow, id = wDefaultID,
     bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,

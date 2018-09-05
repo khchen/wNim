@@ -75,6 +75,9 @@ proc setValue*(self: wCheckBox, state: bool) {.validate, property, inline.} =
   ## Sets the checkbox to the given state.
   SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
+method release(self: wCheckBox) =
+  mParent.systemDisconnect(mCommandConn)
+
 proc final*(self: wCheckBox) =
   ## Default finalizer for wCheckBox.
   discard
@@ -82,7 +85,7 @@ proc final*(self: wCheckBox) =
 proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
     label: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wChk2State) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   let checkType = if (style and wChk3State) != 0: BS_AUTO3STATE else: BS_AUTOCHECKBOX
 
@@ -92,7 +95,7 @@ proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
   self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_CheckBox, event.mWparam, event.mLparam)
 

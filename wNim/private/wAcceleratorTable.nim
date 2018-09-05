@@ -15,6 +15,9 @@
 ##   accel.add(wAccelNormal, wKey_F1, wIdHelp)
 ##   accel.add('o', wIdOpen)
 ##   frame.acceleratorTable = accel
+##
+## There is also a *wFrame.shortcut()* function can quickly bind a keyboard
+## shortcut to an event handler.
 #
 ## :Seealso:
 ##   `wFrame <wFrame.html>`_
@@ -59,7 +62,8 @@ proc AcceleratorEntry*(ch: char, id: wCommandID): wAcceleratorEntry {.inline.} =
   ## Constructor for character code accelerator object.
   result = wAcceleratorEntry(keyCode: ch.ord, id: id, isChar: true)
 
-proc set*(self: var wAcceleratorEntry, flag: int, keyCode: int, id: wCommandID) {.inline.} =
+proc set*(self: var wAcceleratorEntry, flag: int, keyCode: int, id: wCommandID)
+    {.inline.} =
   ## Sets the virtual-key code accelerator. This proc exists for backward compatibility.
   self = AcceleratorEntry(flag, keyCode, id)
 
@@ -67,11 +71,13 @@ proc set*(self: var wAcceleratorEntry, ch: char, id: wCommandID) {.inline.} =
   ## Sets the character code accelerator. This proc exists for backward compatibility.
   self = AcceleratorEntry(ch, id)
 
-converter tupleTowAcceleratorEntry1*[T: enum|wCommandID](x: (int, int, T)): wAcceleratorEntry {.inline.} =
+converter tupleTowAcceleratorEntry1*[T: enum|wCommandID](x: (int, int, T)):
+    wAcceleratorEntry {.inline.} =
   ## Convert tuple to virtual-key code accelerator object.
   result = AcceleratorEntry(x[0], x[1], wCommandID x[2])
 
-converter tupleTowAcceleratorEntry2*[T: enum|wCommandID](x: (char, T)): wAcceleratorEntry {.inline.} =
+converter tupleTowAcceleratorEntry2*[T: enum|wCommandID](x: (char, T)):
+    wAcceleratorEntry {.inline.} =
   ## Convert tuple to character code accelerator object.
   result = AcceleratorEntry(x[0], wCommandID x[1])
 
@@ -89,21 +95,25 @@ proc getHandle(self: wAcceleratorTable): HACCEL =
 
   result = mHandle
 
-proc add*(self: wAcceleratorTable, entry: wAcceleratorEntry) {.validate, inline.} =
+proc add*(self: wAcceleratorTable, entry: wAcceleratorEntry)
+    {.validate, inline.} =
   ## Adds an accelerator object to the table.
   mAccels.add(ACCEL entry)
   mModified = true
 
-proc add*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
+proc add*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry])
+    {.validate, inline.} =
   ## Adds multiple accelerator objects to the table.
   for entry in entries:
     add(entry)
 
-proc add*(self: wAcceleratorTable, flag: int, keyCode: int, id: wCommandID) {.validate, inline.} =
+proc add*(self: wAcceleratorTable, flag: int, keyCode: int, id: wCommandID)
+    {.validate, inline.} =
   ## Adds a virtual-key code accelerator object to the table.
   add(AcceleratorEntry(flag, keyCode, id))
 
-proc add*(self: wAcceleratorTable, ch: char, id: wCommandID) {.validate, inline.} =
+proc add*(self: wAcceleratorTable, ch: char, id: wCommandID)
+    {.validate, inline.} =
   ## Adds a character code accelerator object to the table.
   add(AcceleratorEntry(ch, id))
 
@@ -130,6 +140,7 @@ proc final*(self: wAcceleratorTable) =
   mHandle = 0
 
 proc init*(self: wAcceleratorTable) {.validate, inline.} =
+  ## Initializer.
   mAccels = @[]
 
 proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
@@ -138,17 +149,20 @@ proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
   result.init()
 
 proc init*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
+  ## Initializer.
   mAccels = newSeqOfCap[ACCEL](entries.len)
   for entry in entries:
     mAccels.add(ACCEL entry)
   mModified = true
 
-proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]): wAcceleratorTable {.inline.} =
+proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]):
+    wAcceleratorTable {.inline.} =
   ## Construct a accelerator table from an openarray of wAcceleratorEntry.
   new(result, final)
   result.init(entries)
 
 proc init*(self: wAcceleratorTable, window: wWindow) {.validate, inline.} =
+  ## Initializer.
   init()
   window.setAcceleratorTable(self)
 
@@ -157,11 +171,14 @@ proc AcceleratorTable*(window: wWindow): wAcceleratorTable {.inline.} =
   new(result, final)
   result.init(window)
 
-proc init*(self: wAcceleratorTable, window: wWindow, entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
+proc init*(self: wAcceleratorTable, window: wWindow,
+    entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
+  ## Initializer.
   init(entries)
   window.setAcceleratorTable(self)
 
-proc AcceleratorTable*(window: wWindow, entries: openarray[wAcceleratorEntry]): wAcceleratorTable {.inline.} =
+proc AcceleratorTable*(window: wWindow, entries: openarray[wAcceleratorEntry]):
+    wAcceleratorTable {.inline.} =
   ## Construct an accelerator table from an openarray of
   ## wAcceleratorEntry, and attach it to *window*.
   new(result, final)

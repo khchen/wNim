@@ -314,7 +314,7 @@ proc final*(self: wNoteBook) =
 
 proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   # don't allow TCS_MULTILINE -> too many windows system bug to hack away
   # don't allow TCS_BUTTONS style -> it have different behavior with normal style, it's hard to deal with

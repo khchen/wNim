@@ -1218,13 +1218,15 @@ function main() {
   <div class="three columns">
   <div id="global-links">
     <ul class="simple">
+      <li>
+        <a href="https://github.com/khchen/wNim">Github Project</a>
+      </li>
+      <li>
+        <a href="wNim.html">Main Page</a>
+      </li>
     </ul>
   </div>
-  <div id="searchInput">
-    Search: <input type="text" id="searchInput"
-      onkeyup="search()" />
-  </div>
-  <div>
+  <div class="search-groupby">
     Group by:
     <select onchange="groupBy(this.value)">
       <option value="section">Section</option>
@@ -1391,8 +1393,18 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"><p><em>wEvent</em> is an abstract base class for other event classes. They hold information about an event passed to a event handler. However, the user may still define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
-<p>There are also some basic window events not belong to any subclass listed here.</p>
+  <p class="module-desc"><em>wEvent</em> and it's subclass hold information about an event passed to a event handler. A object of wWindow can be bound to an event handler by <tt class="docutils literal"><span class="pre">connect</span></tt> proc. For example:<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">button</span> <span class="Operator">=</span> <span class="Identifier">Button</span><span class="Punctuation">(</span><span class="Identifier">panel</span><span class="Punctuation">,</span> <span class="Identifier">label</span><span class="Operator">=</span><span class="StringLit">&quot;Button&quot;</span><span class="Punctuation">)</span>
+<span class="Identifier">button</span><span class="Operator">.</span><span class="Identifier">connect</span><span class="Punctuation">(</span><span class="Identifier">wEvent_Button</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Keyword">discard</span></pre><p>If an event is generated from a control or menu, it may also associated with a wCommandID:</p>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">frame</span> <span class="Operator">=</span> <span class="Identifier">Frame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">connect</span><span class="Punctuation">(</span><span class="Identifier">wEvent_Menu</span><span class="Punctuation">,</span> <span class="Identifier">wIdExit</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Keyword">discard</span></pre><p>For frame, button, and toolbar, you can also simply connect to a wCommandID:</p>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">frame</span> <span class="Operator">=</span> <span class="Identifier">Frame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">connect</span><span class="Punctuation">(</span><span class="Identifier">wIdExit</span><span class="Punctuation">)</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Keyword">discard</span></pre><p>If the event object is not used in the handler, it can be omitted. Moreover, dot is a symbol alias for <tt class="docutils literal"><span class="pre">connect</span></tt>, so following is the simplest code:</p>
+<pre class="listing"><span class="Keyword">var</span> <span class="Identifier">frame</span> <span class="Operator">=</span> <span class="Identifier">Frame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">wIdExit</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Keyword">discard</span></pre><p>An event is usually generated from system. However, the user may define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wEvent</th><th>Description</th></tr>
 <tr><td>wEvent_SetFocus</td><td>A window has gained the keyboard focus.</td></tr>
@@ -1434,7 +1446,7 @@ Returns the window associated with the event. This proc is equal to getEventObje
 <dt id="getEventType"><a name="getEventType,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getEventType</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Returns the type of the given event, such as wxEVT_BUTTON, aka message code.
+Returns the type of the given event, such as wEvent_Button, aka message code.
 
 </dd>
 <dt id="getEventMessage"><a name="getEventMessage,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getEventMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
@@ -1648,7 +1660,7 @@ Returns true if the middle mouse button is currently down.
 <dt id="getKeyStatus"><a name="getKeyStatus,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getKeyStatus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">bool</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Return an bool array with all the pressed keys. Using const defined in wKeyCodes.nim as the index. For exampel, echo event.keyStauts[wKeyCtrl]
+Return an bool array with all the pressed keys. Using const defined in wKeyCodes.nim as the index. For example:<pre class="listing"><span class="Identifier">echo</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">keyStauts</span><span class="Punctuation">[</span><span class="Identifier">wKeyCtrl</span><span class="Punctuation">]</span></pre>
 
 </dd>
 
@@ -1658,16 +1670,11 @@ Return an bool array with all the pressed keys. Using const defined in wKeyCodes
 <dl class="item">
 <dt id="shouldPropagate"><a name="shouldPropagate.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example: .. code-block:: Nim<blockquote><p><dl class="docutils"><dt>method shouldPropagate*(event: wKeyEvent): bool =</dt>
-<dd><dl class="docutils"><dt>if event.eventType == wEvent_Char:</dt>
-<dd>result = true</dd>
-<dt>else:</dt>
-<dd>result = procCall wEvent(event).shouldPropagate()</dd>
-</dl>
-</dd>
-</dl>
-</p></blockquote>
-
+Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
+  <span class="Keyword">if</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">eventType</span> <span class="Operator">==</span> <span class="Identifier">wEvent_Char</span><span class="Punctuation">:</span>
+    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">true</span>
+  <span class="Keyword">else</span><span class="Punctuation">:</span>
+    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">procCall</span> <span class="Identifier">wEvent</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
 <dt id="getIndex"><a name="getIndex.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getIndex</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1805,7 +1812,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-02 09:00:59 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-06 02:36:18 UTC</small>
       </div>
     </div>
   </div>

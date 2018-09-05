@@ -1218,13 +1218,15 @@ function main() {
   <div class="three columns">
   <div id="global-links">
     <ul class="simple">
+      <li>
+        <a href="https://github.com/khchen/wNim">Github Project</a>
+      </li>
+      <li>
+        <a href="wNim.html">Main Page</a>
+      </li>
     </ul>
   </div>
-  <div id="searchInput">
-    Search: <input type="text" id="searchInput"
-      onkeyup="search()" />
-  </div>
-  <div>
+  <div class="search-groupby">
     Group by:
     <select onchange="groupBy(this.value)">
       <option value="section">Section</option>
@@ -1366,7 +1368,7 @@ Default finalizer for wImageList.
 <dt id="init"><a name="init,wImageList,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">initialCount</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
     <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="ImageList"><a name="ImageList,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ImageList</span><span class="Other">(</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">initialCount</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImageList</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1378,7 +1380,7 @@ Constructor specifying the image size, whether image masks should be created, an
 <dt id="init"><a name="init,wImageList,wSize,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">initialCount</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
     <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
 <dt id="ImageList"><a name="ImageList,wSize,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ImageList</span><span class="Other">(</span><span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">mask</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">initialCount</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImageList</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
@@ -1397,7 +1399,7 @@ Constructor specifying the image size, whether image masks should be created, an
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-05 05:29:51 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-06 02:36:00 UTC</small>
       </div>
     </div>
   </div>

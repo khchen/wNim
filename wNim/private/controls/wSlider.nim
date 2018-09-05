@@ -180,6 +180,10 @@ proc clearTicks*(self: wSlider, ) {.validate, property, inline.} =
   ## Clears the ticks.
   SendMessage(mHwnd, TBM_CLEARTICS, TRUE, 0)
 
+method release(self: wSlider) =
+  mParent.systemDisconnect(mHScrollConn)
+  mParent.systemDisconnect(mVScrollConn)
+
 proc final*(self: wSlider) =
   ## Default finalizer for wSlider.
   discard
@@ -187,7 +191,7 @@ proc final*(self: wSlider) =
 proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
     value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wSlHorizontal) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or TBS_FIXEDLENGTH)
@@ -232,8 +236,8 @@ proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
       if not self.processMessage(wEvent_Slider, event.mWparam, dataPtr):
         self.processMessage(eventKind, event.mWparam, dataPtr)
 
-  parent.systemConnect(WM_HSCROLL, scrollEventHandler)
-  parent.systemConnect(WM_VSCROLL, scrollEventHandler)
+  mHScrollConn = parent.systemConnect(WM_HSCROLL, scrollEventHandler)
+  mVScrollConn = parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
   hardConnect(wEvent_Navigation) do (event: wEvent):
     if self.isVertical():

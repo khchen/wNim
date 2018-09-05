@@ -265,6 +265,7 @@ when not defined(wnimdoc):
     wStatusBar* = ref object of wControl
       mFiledNumbers: int
       mWidths: array[256, int32]
+      mSizeConn: wEventConnection
 
     wToolBarTool* = ref object of RootObj
       mBitmap: wBitmap
@@ -274,22 +275,29 @@ when not defined(wnimdoc):
 
     wToolBar* = ref object of wControl
       mTools: seq[wToolBarTool]
+      mSizeConn: wEventConnection
+      mCommandConn: wEventConnection
 
     wButton* = ref object of wControl
       mImgData: BUTTON_IMAGELIST
       mDefault: bool
       mMenu: wMenu
+      mCommandConn: wEventConnection
 
     wStaticText* = ref object of wControl
+      mCommandConn: wEventConnection
 
     wStaticBitmap* = ref object of wControl
       mBitmap: wBitmap
+      mCommandConn: wEventConnection
 
     wStaticLine* = ref object of wControl
 
     wCheckBox* = ref object of wControl
+      mCommandConn: wEventConnection
 
     wRadioButton* = ref object of wControl
+      mCommandConn: wEventConnection
 
     wStaticBox* = ref object of wControl
 
@@ -299,6 +307,7 @@ when not defined(wnimdoc):
       mOldEditProc: WNDPROC
       mInitData: ptr UncheckedArray[string]
       mInitCount: int
+      mCommandConn: wEventConnection
 
     wTextCtrl* = ref object of wControl
       mRich: bool
@@ -314,6 +323,8 @@ when not defined(wnimdoc):
     wSpinCtrl* = ref object of wControl
       mUpdownHwnd: HWND
       mUpdownWidth: int
+      mCommandConn: wEventConnection
+      mNotifyConn: wEventConnection
 
     wSpinButton* = ref object of wControl
 
@@ -322,13 +333,18 @@ when not defined(wnimdoc):
       mMax: int
       mMin: int
       mDragging: bool
+      mHScrollConn: wEventConnection
+      mVScrollConn: wEventConnection
 
     wScrollBar* = ref object of wControl
       mPageSize: int
       mRange: int
+      mHScrollConn: wEventConnection
+      mVScrollConn: wEventConnection
 
     wGauge* = ref object of wControl
       mTaskBar: ptr ITaskbarList3
+      mTaskBarCreatedConn: wEventConnection
 
     wCalendarCtrl* = ref object of wControl
 
@@ -339,6 +355,7 @@ when not defined(wnimdoc):
     wListBox* = ref object of wControl
       mInitData: ptr UncheckedArray[string]
       mInitCount: int
+      mCommandConn: wEventConnection
 
     wListCtrl* = ref object of wControl
       mColCount: int
@@ -382,6 +399,7 @@ when not defined(wnimdoc):
       mInPanelMargin: bool
       mSystemConnections: seq[tuple[win: wWindow, conn: wEventConnection]]
       mConnections: seq[tuple[win: wWindow, conn: wEventConnection]]
+      mSizeConn: wEventConnection
       mAttach1: bool
       mAttach2: bool
 

@@ -56,6 +56,9 @@ proc wStaticText_DoCommand(event: wEvent) =
       self.processMessage(wEvent_CommandLeftDoubleClick, event.mWparam, event.mLparam)
     else: discard
 
+method release(self: wStaticText) =
+  mParent.systemDisconnect(mCommandConn)
+
 proc final*(self: wStaticText) =
   ## Default finalizer for wStaticText.
   discard
@@ -63,14 +66,14 @@ proc final*(self: wStaticText) =
 proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
     label: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wAlignLeft) {.validate.} =
-
+  ## Initializer.
   wValidate(parent, label)
   self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label, pos=pos, size=size,
     style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
 
   mFocusable = false
 
-  parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+  mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
   systemConnect(WM_SIZE) do (event: wEvent):
     # when size change, StaticText should refresh itself, but windows system don't do it
     self.refresh()

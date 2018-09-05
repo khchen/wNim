@@ -96,7 +96,7 @@ proc final*(self: wDatePickerCtrl) =
 proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
     date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wDpDropDown) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)

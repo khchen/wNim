@@ -154,7 +154,7 @@ proc final*(self: wHyperLinkCtrl) =
 proc init*(self: wHyperLinkCtrl, parent: wWindow, id = wDefaultID,
     label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)

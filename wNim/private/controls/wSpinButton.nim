@@ -80,7 +80,7 @@ proc final*(self: wSpinButton) =
 
 proc init*(self: wSpinButton, parent: wWindow, id = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   # up-down control without buddy window cannot have a focus
   # (in fact, it do have a focus but without any visual change)

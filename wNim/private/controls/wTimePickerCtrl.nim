@@ -43,7 +43,7 @@ proc final*(self: wTimePickerCtrl) =
 
 proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID, time = wDefaultTime,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos,
     size=size, style=style or DTS_TIMEFORMAT)

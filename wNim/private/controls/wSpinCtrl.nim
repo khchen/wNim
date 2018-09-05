@@ -192,6 +192,12 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
       # Return nonzero to prevent the change, or zero to allow the change, same as our mResult
       event.result = spinEvent.result
 
+method release(self: wSpinCtrl) =
+  mParent.systemDisconnect(mCommandConn)
+  mParent.disconnect(mNotifyConn)
+  DestroyWindow(mUpdownHwnd)
+  mUpdownHwnd = 0
+
 proc final*(self: wSpinCtrl) =
   ## Default finalizer for wSpinCtrl.
   discard
@@ -199,7 +205,7 @@ proc final*(self: wSpinCtrl) =
 proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
     value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = wSpLeft) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   var
     textStyle = style and (not (wSpArrowKeys or wSpWrap)) or ES_AUTOHSCROLL or wBorderSunken
@@ -230,16 +236,12 @@ proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
   setBackgroundColor(wWhite)
   setRange(0, 100) # the default value is 100~0 ?
 
-  systemConnect(WM_NCDESTROY) do (event: wEvent):
-    DestroyWindow(mUpdownHwnd)
-    mUpdownHwnd = 0
-
-  parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     if event.lParam == mHwnd and HIWORD(event.wParam) == EN_CHANGE:
       self.processMessage(wEvent_Text, 0, 0)
 
   # cannot use processNotify method becasue the notify sent to updown's parent
-  parent.hardConnect(WM_NOTIFY) do (event: wEvent):
+  mNotifyConn = parent.hardConnect(WM_NOTIFY) do (event: wEvent):
     wSpinCtrl_OnNotify(self, event)
 
   hardConnect(wEvent_Navigation) do (event: wEvent):

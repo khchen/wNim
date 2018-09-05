@@ -5,13 +5,41 @@
 #
 #====================================================================
 
-## *wEvent* is an abstract base class for other event classes. They hold
-## information about an event passed to a event handler. However, the user may
-## still define their own event type, create the event object, and pass to
-## a window by wWindow.processEvent().
+## *wEvent* and it's subclass hold information about an event passed to
+## a event handler. A object of wWindow can be bound to an event handler
+## by ``connect`` proc. For example:
 ##
-## There are also some basic window events not belong to any subclass listed
-## here.
+## .. code-block:: Nim
+##   var button = Button(panel, label="Button")
+##   button.connect(wEvent_Button) do (event: wEvent):
+##     discard
+##
+## If an event is generated from a control or menu, it may also associated with
+## a wCommandID:
+##
+## .. code-block:: Nim
+##   var frame = Frame()
+##   frame.connect(wEvent_Menu, wIdExit) do (event: wEvent):
+##     discard
+##
+## For frame, button, and toolbar, you can also simply connect to a wCommandID:
+##
+## .. code-block:: Nim
+##   var frame = Frame()
+##   frame.connect(wIdExit) do (event: wEvent):
+##     discard
+##
+## If the event object is not used in the handler, it can be omitted. Moreover,
+## dot is a symbol alias for ``connect``, so following is the simplest code:
+##
+## .. code-block:: Nim
+##   var frame = Frame()
+##   frame.wIdExit do ():
+##     discard
+##
+## An event is usually generated from system. However, the user may define their
+## own event type, create the event object, and pass to a window by
+## wWindow.processEvent().
 #
 ## :Subclasses:
 ##   `wMouseEvent <wMouseEvent.html>`_
@@ -187,7 +215,7 @@ proc getWindow*(self: wEvent): wWindow {.validate, property, inline.} =
   result = mWindow
 
 proc getEventType*(self: wEvent): UINT {.validate, property, inline.} =
-  ## Returns the type of the given event, such as wxEVT_BUTTON, aka message code.
+  ## Returns the type of the given event, such as wEvent_Button, aka message code.
   result = mMsg
 
 proc getEventMessage*(self: wEvent): UINT {.validate, property, inline.} =
@@ -274,12 +302,14 @@ proc resumePropagation*(self: wEvent, propagationLevel = wEvent_PropagateMax)
 method shouldPropagate*(self: wEvent): bool {.base.} = mPropagationLevel > 0
   ## Test if this event should be propagated or not, i.e. if the propagation
   ## level is currently greater than 0.This method can be override, for example:
+  ##
   ## .. code-block:: Nim
-  ##   method shouldPropagate*(event: wKeyEvent): bool =
+  ##   method shouldPropagate(event: wKeyEvent): bool =
   ##     if event.eventType == wEvent_Char:
   ##       result = true
   ##     else:
   ##       result = procCall wEvent(event).shouldPropagate()
+
 
 proc getPropagationLevel*(self: wEvent): int {.validate, property, inline.} =
   ## Get how many levels the event can propagate.
@@ -376,7 +406,10 @@ proc middleDown*(self: wEvent): bool {.validate, inline.} =
 proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.} =
   ## Return an bool array with all the pressed keys.
   ## Using const defined in wKeyCodes.nim as the index.
-  ## For exampel, echo event.keyStauts[wKeyCtrl]
+  ## For example:
+  ##
+  ## .. code-block:: Nim
+  ##   echo event.keyStauts[wKeyCtrl]
   for key, val in mKeyStatus:
     result[key] = val < 0
 

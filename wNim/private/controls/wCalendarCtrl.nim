@@ -153,7 +153,7 @@ proc final*(self: wCalendarCtrl) =
 proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
     date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=MONTHCAL_CLASS, parent=parent, id=id, label="",
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)

@@ -120,13 +120,16 @@ method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM, 
   else: return false
   return self.processMessage(eventKind, cast[WPARAM](id), lparam)
 
+method release(self: wStatusBar) =
+  mParent.systemDisconnect(mSizeConn)
+
 proc final*(self: wStatusBar) =
   ## Default finalizer for wStatusBar.
   discard
 
 proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
     style: wStyle = 0) {.validate.} =
-
+  ## Initializer.
   wValidate(parent)
   self.wControl.init(className=STATUSCLASSNAME, parent=parent, id=id, pos=(0, 0),
     size=(0, 0), style=style or WS_CHILD or WS_VISIBLE)
@@ -136,7 +139,7 @@ proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
   mFocusable = false
 
   parent.mStatusBar = self
-  parent.systemConnect(WM_SIZE) do (event: wEvent):
+  mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
     # send WM_SIZE to statubar to resize itself
     SendMessage(self.mHwnd, WM_SIZE, 0, 0)
     # then recount the width of fields

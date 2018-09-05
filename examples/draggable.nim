@@ -30,7 +30,7 @@ menu.append(idExit, "E&xit", "Exit the program.")
 var splitter1 = Splitter(frame, style=wSpVertical,
   pos=(100, 0), size=(10, 0))
 
-var splitter2 = Splitter(splitter1.panel1, style=wSpHorizontal,
+var splitter2 = Splitter(splitter1.panel1, style=wSpHorizontal or wSpButton,
   pos=(0, 100), size=(0, 10))
 
 var panel1 = splitter2.getPanel1

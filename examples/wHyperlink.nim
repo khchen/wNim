@@ -37,7 +37,7 @@ type
 
 # Add validate macro to ensure self is not nil.
 # Add property macro so that getters/setters can access as nim's style.
-# For example, if we have setFont(sefl: wHyperLink, font: wFont) {.property.},
+# For example, if we have setFont(self: wHyperLink, font: wFont) {.property.},
 # then we can just write self.font = Font(10)
 
 proc setFont*(self: wHyperLink, font: wFont) {.validate, property.} =

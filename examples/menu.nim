@@ -58,7 +58,7 @@ menuTest.appendSubMenu(menuIcon, "&Icon", "Icon menu here.").disable()
 var menuAbout = Menu(menuBar, "&About")
 var itemAbout = menuAbout.append(idAbout, "About", "About")
 
-# frame.connect(idExit) is syntax sugar.for frame.connect(wEvent_Menu, idExit)
+# frame.connect(idExit) is syntax sugar for frame.connect(wEvent_Menu, idExit)
 # frame.idExit is syntax sugar for frame.connect(idExit)
 
 frame.idExit do ():
