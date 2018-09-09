@@ -1478,6 +1478,15 @@ function main() {
     title="`.`(self: wWindow; id: wCommandID; handler: wEventHandler): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDraggable,wWindow"
     title="setDraggable(self: wWindow; flag = true; inClient = true)"><wbr />set<wbr />Draggable<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setDropTarget,wWindow"
+    title="setDropTarget(self: wWindow; flag = true)"><wbr />set<wbr />Drop<wbr />Target<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setToolTip,wWindow,string"
+    title="setToolTip(self: wWindow; tip: string)"><wbr />set<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#unsetToolTip,wWindow"
+    title="unsetToolTip(self: wWindow)"><wbr />unset<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setToolTip,wWindow"
+    title="setToolTip(self: wWindow; maxWidth = wDefault; autoPop = wDefault; delay = wDefault;
+           reshow = wDefault)"><wbr />set<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final,wWindow"
     title="final(self: wWindow)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wWindow,HWND"
@@ -1551,6 +1560,7 @@ function main() {
 <li><a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a></li>
 <li><a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a></li>
 <li><a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a></li>
+<li><a class="reference external" href="wDragDropEvent.html">wDragDropEvent</a></li>
 </ul>
 </td></tr>
 </tbody></table></p>
@@ -2239,6 +2249,29 @@ Symbol alias for connect.
 Allow a child window to be moved using the mouse. If inClient is true, the window is limited inside the client area. When a window is dragging by user, it receive wEvent_Dragging event.
 
 </dd>
+<dt id="setDropTarget"><a name="setDropTarget,wWindow"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setDropTarget</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Register the window as a drop target, or revoke it. The window will recieve wDragDropEvent during a drag-and-drop operation.
+
+</dd>
+<dt id="setToolTip"><a name="setToolTip,wWindow,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setToolTip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">tip</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Attach a tooltip to the window.
+
+</dd>
+<dt id="unsetToolTip"><a name="unsetToolTip,wWindow"></a><pre><span class="Keyword">proc</span> <span class="Identifier">unsetToolTip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Unset any existing tooltip.
+
+</dd>
+<dt id="setToolTip"><a name="setToolTip,wWindow"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setToolTip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">maxWidth</span> <span class="Other">=</span> <span class="Identifier">wDefault</span><span class="Other">;</span> <span class="Identifier">autoPop</span> <span class="Other">=</span> <span class="Identifier">wDefault</span><span class="Other">;</span> <span class="Identifier">delay</span> <span class="Other">=</span> <span class="Identifier">wDefault</span><span class="Other">;</span>
+               <span class="Identifier">reshow</span> <span class="Other">=</span> <span class="Identifier">wDefault</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the parameters of the associated tooltip. -1 to restore the default.
+
+</dd>
 <dt id="final"><a name="final,wWindow"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Default finalizer for wWindow.
@@ -2326,7 +2359,7 @@ Iterates over each window's sibling.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-06 02:36:07 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-09 17:05:14 UTC</small>
       </div>
     </div>
   </div>

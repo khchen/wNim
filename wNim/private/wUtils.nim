@@ -7,6 +7,9 @@
 
 ## wNim's utilities and convenience functions.
 
+# forward declaration
+proc DataObject*(dataObj: ptr IDataObject): wDataObject {.inline.}
+
 proc wGetMousePosition*(): wPoint =
   ## Returns the mouse position in screen coordinates.
   var mousePos: POINT
@@ -54,3 +57,24 @@ proc wGetScreenSize*(): wSize =
   ## Gets the screen size.
   result.width = GetSystemMetrics(SM_CXSCREEN)
   result.height = GetSystemMetrics(SM_CYSCREEN)
+
+proc wSetClipboard*(dataObject: wDataObject): bool {.discardable.} =
+  ## Places a specific data object onto the clipboard.
+  wValidate(dataObject)
+  OleSetClipboard(dataObject.mObj)
+
+proc wGetClipboard*(): wDataObject =
+  ## Retrieves a data object that you can use to access the contents of the
+  ## clipboard.
+  var pDataObj: ptr IDataObject
+  if OleGetClipboard(&pDataObj) == S_OK:
+    result = DataObject(pDataObj)
+
+proc wClearClipboard*() =
+  ## Clears the clipboard.
+  OleSetClipboard(nil)
+
+proc wFlushClipboard*() =
+  ## Flushes the clipboard: this means that the data which is currently on
+  ## clipboard will stay available even after the application exits.
+  OleFlushClipboard()

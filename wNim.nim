@@ -18,6 +18,7 @@
 ##  - `wImageList <wImageList.html>`_
 ##  - `wResizer <wResizer.html>`_
 ##  - `wResizable <wResizable.html>`_
+##  - `wDataObject <wDataObject.html>`_
 ##  - `wAcceleratorTable <wAcceleratorTable.html>`_
 ##
 ##  Windows
@@ -99,6 +100,7 @@
 ##  - `wContextMenuEvent <wContextMenuEvent.html>`_
 ##  - `wScrollWinEvent <wScrollWinEvent.html>`_
 ##  - `wTrayEvent <wTrayEvent.html>`_
+##  - `wDragDropEvent <wDragDropEvent.html>`_
 ##  - `wNavigationEvent <wNavigationEvent.html>`_
 ##  - `wSetCursorEvent <wSetCursorEvent.html>`_
 ##  - `wStatusBarEvent <wStatusBarEvent.html>`_
@@ -152,6 +154,7 @@ when not defined(wnimdoc):
   include wNim/private/events/wHyperLinkEvent
   include wNim/private/events/wListEvent
   include wNim/private/events/wTreeEvent
+  include wNim/private/events/wDragDropEvent
   include wNim/private/wImage
   include wNim/private/gdiobjects/wGdiObject
   include wNim/private/gdiobjects/wFont
@@ -162,6 +165,7 @@ when not defined(wnimdoc):
   include wNim/private/gdiobjects/wCursor
   include wNim/private/gdiobjects/wPredefined
   include wNim/private/wImageList
+  include wNim/private/wDataObject
   include wNim/private/wResizer
   include wNim/private/wResizable
   include wNim/private/wWindow

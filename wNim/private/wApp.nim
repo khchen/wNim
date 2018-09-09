@@ -21,11 +21,7 @@ proc App*(): wApp =
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES)
   InitCommonControlsEx(ctrl)
-
-  when compileOption("threads"):
-    discard CoInitializeEx(nil, COINIT_APARTMENTTHREADED)
-  else:
-    discard CoInitialize(nil)
+  OleInitialize(nil)
 
   new(result)
   result.mInstance = GetModuleHandle(nil)

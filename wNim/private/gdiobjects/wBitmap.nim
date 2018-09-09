@@ -121,7 +121,7 @@ proc Bmp*(data: ptr byte, length: int): wBitmap {.inline.} =
 proc init*(self: wBitmap, handle: HBITMAP, copy = true) {.validate.} =
   ## Initializer.
   var bm: BITMAP
-  if GetObject(handle, sizeof(BITMAP), addr bm) == 0:
+  if GetObject(handle, sizeof(BITMAP), &bm) == 0:
     error()
 
   if copy:
@@ -162,6 +162,7 @@ proc init*(self: wBitmap, bmp: wBitmap) {.validate.} =
 proc Bmp*(bmp: wBitmap): wBitmap {.inline.} =
   ## Copy constructor
   wValidate(bmp)
+  new(result, final)
   result.init(bmp)
 
 proc getSize*(self: wBitmap): wSize {.validate, property, inline.} =

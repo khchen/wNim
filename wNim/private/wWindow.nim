@@ -47,6 +47,7 @@
 ##   - `wSetCursorEvent <wSetCursorEvent.html>`_
 ##   - `wContextMenuEvent <wContextMenuEvent.html>`_
 ##   - `wScrollWinEvent <wScrollWinEvent.html>`_
+##   - `wDragDropEvent <wDragDropEvent.html>`_
 
 # forward declarations
 proc getScrollInfo(self: wScrollBar): SCROLLINFO
@@ -942,6 +943,7 @@ proc getDoubleBuffered*(self: wWindow): bool {.validate, property.} =
   ## Returns true if the window contents is double-buffered by the system
   result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and WS_EX_COMPOSITED) != 0
 
+
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterates over each window's child.
   for child in mChildren:
@@ -963,15 +965,33 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
   var processed = false
   defer: result = processed
 
+  proc errorHandler() =
+    let err = getCurrentException()
+    var caption = "Error: unhandled exception"
+    var msg = ""
+    when not defined(release):
+      msg.add(getStackTrace())
+      msg.add "\n"
+    msg.add(err.msg)
+    msg.add " ["
+    msg.add(err.name)
+    msg.add "]"
+    MessageBox(self.mHwnd, msg, caption, MB_OK or MB_ICONSTOP)
+
   proc callHandler(connection: wEventConnection) =
     if connection.id == 0 or connection.id == id:
-      if not connection.handler.isNil:
-        connection.handler(event)
-        processed = not event.mSkip
+      try:
+        if not connection.handler.isNil:
+          connection.handler(event)
+          processed = not event.mSkip
 
-      elif not connection.neatHandler.isNil:
-        connection.neatHandler()
-        processed = true
+        elif not connection.neatHandler.isNil:
+          connection.neatHandler()
+          processed = true
+
+      except:
+        errorHandler()
+        processed = false
 
   mSystemConnectionTable.withValue(msg, list):
     # always invoke every system event handler
@@ -1479,6 +1499,123 @@ proc setSizingBorder*(self: wWindow, direction: wDirection)
       self.releaseMouse()
       processed = true
 
+proc setDropTarget*(self: wWindow, flag = true) {.validate, property.} =
+  ## Register the window as a drop target, or revoke it. The window will recieve
+  ## wDragDropEvent during a drag-and-drop operation.
+  if mDropTarget.lpVtbl != nil:
+    RevokeDragDrop(mHwnd)
+    mDropTarget.lpVtbl = nil
+
+  if flag:
+    mDropTarget.lpVtbl = &mDropTarget.vtbl
+    mDropTarget.self = self
+
+    let pDropTarget = cast[LPDROPTARGET](&mDropTarget)
+
+    mDropTarget.vtbl.AddRef = proc(self: ptr IUnknown): ULONG {.stdcall.} =
+      discard
+
+    mDropTarget.vtbl.Release = proc(self: ptr IUnknown): ULONG {.stdcall.} =
+      discard
+
+    mDropTarget.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID,
+        ppvObject: ptr pointer): HRESULT {.stdcall.} =
+      return E_NOINTERFACE
+
+    mDropTarget.vtbl.DragEnter = proc(self: ptr IDropTarget,
+        pDataObj: ptr IDataObject, grfKeyState: DWORD, pt: POINTL,
+        pdwEffect: ptr DWORD): HRESULT {.stdcall.} =
+      let pDropTarget = cast[ptr wDropTarget](self)
+      pDropTarget.effect = DROPEFFECT_NONE
+      defer: pdwEffect[] = pDropTarget.effect
+
+      let win = pDropTarget.self
+      let event = wDragDropEvent Event(window=win, msg=wEvent_DragEnter)
+      event.mDataObject = DataObject(pDataObj)
+      event.mEffect = pDropTarget.effect
+
+      if win.processEvent(event):
+        pDropTarget.effect = event.mEffect
+
+    mDropTarget.vtbl.DragOver = proc(self: ptr IDropTarget, grfKeyState: DWORD,
+        pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.stdcall.} =
+      let pDropTarget = cast[ptr wDropTarget](self)
+      defer: pdwEffect[] = pDropTarget.effect
+
+      let win = pDropTarget.self
+      let event = wDragDropEvent Event(window=win, msg=wEvent_DragOver)
+      event.mEffect = pDropTarget.effect
+
+      if win.processEvent(event):
+        pDropTarget.effect = event.mEffect
+
+    mDropTarget.vtbl.DragLeave = proc(self: ptr IDropTarget): HRESULT {.stdcall.} =
+      let pDropTarget = cast[ptr wDropTarget](self)
+      let win = pDropTarget.self
+      win.processEvent(Event(window=win, msg=wEvent_DragLeave))
+
+    mDropTarget.vtbl.Drop = proc(self: ptr IDropTarget, pDataObj: ptr IDataObject,
+        grfKeyState: DWORD, pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.stdcall.} =
+      let pDropTarget = cast[ptr wDropTarget](self)
+      defer: pdwEffect[] = pDropTarget.effect
+
+      let win = pDropTarget.self
+      let event = wDragDropEvent Event(window=win, msg=wEvent_Drop)
+      event.mDataObject = DataObject(pDataObj)
+      event.mEffect = pDropTarget.effect
+
+      if win.processEvent(event):
+        pDropTarget.effect = event.mEffect
+
+    RegisterDragDrop(mHwnd, pDropTarget)
+
+
+proc setToolTip*(self: wWindow, tip: string) {.validate, property.} =
+  ## Attach a tooltip to the window.
+  if mTipHwnd != 0:
+    DestroyWindow(mTipHwnd)
+
+  if tip.len != 0:
+    mTipHwnd = CreateWindowEx(0, TOOLTIPS_CLASS, nil,
+      WS_POPUP or TTS_NOPREFIX or TTS_ALWAYSTIP, CW_USEDEFAULT, CW_USEDEFAULT,
+      CW_USEDEFAULT, CW_USEDEFAULT, mHwnd, 0, wAppGetInstance(), nil)
+
+    SetWindowPos(mTipHwnd, HWND_TOPMOST,0, 0, 0, 0,
+      SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE)
+
+    SendMessage(mTipHwnd, TTM_ACTIVATE, TRUE, 0)
+
+    var toolInfo = TOOLINFO(
+      cbSize: sizeof(TOOLINFO),
+      hwnd: mHwnd,
+      uFlags: TTF_IDISHWND or TTF_SUBCLASS,
+      uId: cast[UINT_PTR](mHwnd),
+      lpszText: T(tip))
+
+    SendMessage(mTipHwnd, TTM_ADDTOOL, 0, &toolInfo)
+
+proc unsetToolTip*(self: wWindow) {.validate, inline.} =
+  ## Unset any existing tooltip.
+  setToolTip(nil)
+
+proc setToolTip*(self: wWindow, maxWidth = wDefault, autoPop = wDefault,
+    delay = wDefault, reshow = wDefault) {.validate, property.} =
+  ## Sets the parameters of the associated tooltip. -1 to restore the default.
+  if mTipHwnd == 0: return
+
+  if maxWidth != wDefault:
+    SendMessage(mTipHwnd, TTM_SETMAXTIPWIDTH, 0, maxWidth)
+
+  if autoPop != wDefault:
+    SendMessage(mTipHwnd, TTM_SETDELAYTIME, TTDT_AUTOPOP, autoPop and 0xffff)
+
+  if delay != wDefault:
+    SendMessage(mTipHwnd, TTM_SETDELAYTIME, TTDT_INITIAL, delay and 0xffff)
+
+  if reshow != wDefault:
+    SendMessage(mTipHwnd, TTM_SETDELAYTIME, TTDT_RESHOW, reshow and 0xffff)
+
+
 proc wWindow_DoMouseMove(event: wEvent) =
   let self = event.mWindow
 
@@ -1556,6 +1693,10 @@ proc wWindow_DoNcDestroy(event: wEvent) =
     DestroyWindow(self.mDummyParent)
     self.mDummyParent = 0
 
+  if self.mTipHwnd != 0:
+    DestroyWindow(self.mTipHwnd)
+    self.mTipHwnd = 0
+
   self.release()
   wAppWindowDelete(self)
   if self.mParent != nil:
@@ -1575,7 +1716,7 @@ proc wWindow_OnCommand(event: wEvent) =
   # So we handle this at wWindow level.
   if event.lParam == 0 and HIWORD(event.wParam) == 1:
     let id = LOWORD(event.wParam)
-    processed = self.processMessage(wEvent_Menu, id, 0, event.mResult)
+    processed = self.processMessage(wEvent_Menu, WPARAM id, 0, event.mResult)
 
 proc wWindow_OnNotify(event: wEvent) =
   let self = event.mWindow

@@ -26,7 +26,7 @@ const resources: array[idIcon1..idIcon6, string] = [
   staticRead(r"images\6.png") ]
 
 var app = App()
-var frame = Frame()
+var frame = Frame(title="wNim Menu Demo")
 frame.icon = Icon("", 0) # load icon from exe file.
 
 var statusBar = StatusBar(frame)

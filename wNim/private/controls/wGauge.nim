@@ -107,7 +107,7 @@ proc isVertical*(self: wGauge): bool {.validate, inline.} =
 
 proc getTaskBar(self: wGauge) =
   if CoCreateInstance(&CLSID_TaskbarList, nil, CLSCTX_INPROC_SERVER,
-      &IID_ITaskbarList3, cast[ptr pointer](&mTaskBar)).SUCCEEDED:
+      &IID_ITaskbarList3, &mTaskBar) == S_OK:
 
     mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_NORMAL)
 

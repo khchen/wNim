@@ -42,9 +42,21 @@ panel.layout:
 ## Screenshots
 ![demo.nim](https://github.com/khchen/wNim/blob/master/examples/images/screenshot.png)
 
+## Install
+With git on windows:
+
+    nimble install wNim
+
+Without git:
+
+    1. Download and unzip this moudle (by click "Clone or download" button).
+    2. Start a console, change current dir to the folder which include "wNim.nimble" file.
+       (for example: C:\wNim-master\wNim-master>)
+    3. Run "nimble install"
+
 ## Q & A
 ### Q: Why I start this project?
-In the first, I just wanted to write some code to test and prove my winim library. 
+In the first, I just wanted to write some code to test and prove my winim library.
 I wrote some event handler, some GUI control class, more and more...Finally, it
 become a whole GUI framework now.
 
@@ -56,7 +68,7 @@ a function. So I borrow wxWidgets' names to develop my own framework.
 I start from winim. It is just a Windows API module.
 
 ### Q: How is wNim compare to nimx, libui, NiGui etc?
-They are all good GUI librarys. I think wNim is easier to use and produce smaller exe file. 
+They are all good GUI librarys. I think wNim is easier to use and produce smaller exe file.
 However, it only support Windows system.
 
 ## Docs

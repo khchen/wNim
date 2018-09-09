@@ -7,6 +7,7 @@
 
 converter DWORDToInt(x: DWORD): int = int x
 converter IntToDWORD(x: int): DWORD = DWORD x
+converter PtrPtrObjectToPtrPointer(x: ptr ptr object): ptr pointer = cast[ptr pointer](x)
 
 proc `-`(a, b: wPoint): wPoint =
   result = (a.x - b.x, a.y - b.y)

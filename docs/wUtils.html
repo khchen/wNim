@@ -1247,6 +1247,14 @@ function main() {
     title="wGetFocusWindow(): wWindow"><wbr />w<wbr />Get<wbr />Focus<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wGetScreenSize,"
     title="wGetScreenSize(): wSize"><wbr />w<wbr />Get<wbr />Screen<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSetClipboard,wDataObject"
+    title="wSetClipboard(dataObject: wDataObject): bool"><wbr />w<wbr />Set<wbr />Clipboard<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wGetClipboard,"
+    title="wGetClipboard(): wDataObject"><wbr />w<wbr />Get<wbr />Clipboard<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wClearClipboard,"
+    title="wClearClipboard()"><wbr />w<wbr />Clear<wbr />Clipboard<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wFlushClipboard,"
+    title="wFlushClipboard()"><wbr />w<wbr />Flush<wbr />Clipboard<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1285,6 +1293,26 @@ Gets the currently focus window.
 Gets the screen size.
 
 </dd>
+<dt id="wSetClipboard"><a name="wSetClipboard,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">wSetClipboard</span><span class="Other">(</span><span class="Identifier">dataObject</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Places a specific data object onto the clipboard.
+
+</dd>
+<dt id="wGetClipboard"><a name="wGetClipboard,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">wGetClipboard</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Retrieves a data object that you can use to access the contents of the clipboard.
+
+</dd>
+<dt id="wClearClipboard"><a name="wClearClipboard,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">wClearClipboard</span><span class="Other">(</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Clears the clipboard.
+
+</dd>
+<dt id="wFlushClipboard"><a name="wFlushClipboard,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">wFlushClipboard</span><span class="Other">(</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Flushes the clipboard: this means that the data which is currently on clipboard will stay available even after the application exits.
+
+</dd>
 
 </dl></div>
 
@@ -1295,7 +1323,7 @@ Gets the screen size.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-06 02:36:04 UTC</small>
+        <small>Made with Nim. Generated: 2018-09-09 17:05:11 UTC</small>
       </div>
     </div>
   </div>

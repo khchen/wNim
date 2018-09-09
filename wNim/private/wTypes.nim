@@ -165,6 +165,9 @@ when not defined(wnimdoc):
     wNavigationEvent* = ref object of wEvent
     wSetCursorEvent* = ref object of wEvent
     wTrayEvent* = ref object of wEvent
+    wDragDropEvent* = ref object of wEvent
+      mDataObject: wDataObject
+      mEffect: int
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
       mIndex: int
@@ -195,6 +198,11 @@ when not defined(wnimdoc):
       mSolver: Solver
       mObjects: HashSet[wResizable]
 
+    wDataObject* = ref object
+      mObj: ptr IDataObject
+      mBmp: wBitmap
+      mReleasable: bool
+
     wEventConnection = tuple
       msg: UINT
       id: wCommandID
@@ -223,6 +231,12 @@ when not defined(wnimdoc):
       startPos: wPoint
       connection: tuple[move, down, up: wEventConnection]
 
+    wDropTarget = object
+      lpVtbl: ptr IDropTargetVtbl
+      vtbl: IDropTargetVtbl
+      self: wWindow
+      effect: DWORD
+
     wWindow* = ref object of wResizable
       mHwnd: HWND
       mParent: wWindow
@@ -247,6 +261,8 @@ when not defined(wnimdoc):
       mMouseInWindow: bool
       mSizingInfo: wSizingInfo
       mDraggableInfo: wDraggableInfo
+      mDropTarget: wDropTarget
+      mTipHwnd: HWND
 
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar

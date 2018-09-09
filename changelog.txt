@@ -1,0 +1,13 @@
+====================================================================
+
+               wNim - Nim's Windows GUI Framework
+                 (c) Copyright 2017-2018 Ward
+
+====================================================================
+
+Version 0.1.2
+-------------
+# Catch unhandled exception in event handler to prevent crash.
+# Add wDataObject for drag-drop and clipboard support.
+# Add tooltip support.
+# Add example - dragdrop.nim
