@@ -89,6 +89,7 @@ proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
 proc isSpinEvent(msg: UINT): bool {.inline.}
 proc isHyperLinkEvent(msg: UINT): bool {.inline.}
+proc isIpEvent(msg: UINT): bool {.inline.}
 proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
 const
@@ -118,19 +119,20 @@ const
   # wEvent_Maximize* = WM_APP + 54
   # wEvent_Sizing* = WM_APP + 55
   # wEvent_Dragging* = WM_APP + 56
-  # wEvent_Splitter* = WM_APP + 57
+
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_TrayFirst = WM_APP + 150
   wEvent_DragDropFirst = WM_APP + 200
 
   wEvent_CommandFirst = WM_APP + 500
-  wEvent_StatusBarFirst = WM_APP + 550
-  wEvent_ScrollFirst = WM_APP + 600
-  wEvent_ListFirst = WM_APP + 650
-  wEvent_TreeFirst = WM_APP + 700
-  wEvent_SpinFirst = WM_APP + 750
-  wEvent_HyperLinkFirst = WM_APP + 800
-  wEvent_CommandLast = WM_APP + 850
+  wEvent_StatusBarFirst = WM_APP + 600
+  wEvent_ScrollFirst = WM_APP + 650
+  wEvent_ListFirst = WM_APP + 700
+  wEvent_TreeFirst = WM_APP + 750
+  wEvent_SpinFirst = WM_APP + 800
+  wEvent_HyperLinkFirst = WM_APP + 850
+  wEvent_IpFirst = WM_APP + 900
+  wEvent_CommandLast = WM_APP + 1000
   wEvent_App* = wEvent_CommandLast + 1
 
 proc defaultPropagationLevel(msg: UINT): int =
@@ -185,6 +187,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
 
   elif msg.isHyperLinkEvent():
     result = CreateEvent(wHyperLinkEvent)
+
+  elif msg.isIpEvent():
+    result = CreateEvent(wIpEvent)
 
   elif msg.isListEvent():
     result = CreateEvent(wListEvent)
@@ -474,4 +479,8 @@ method getDataObject*(self: wEvent): wDataObject {.base, property.} = discard
 method getEffect*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method setEffect*(self: wEvent, effect: int) {.base, property.} = discard
+  ## Method needs to be overridden.
+method getValue*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method setValue*(self: wEvent, value: int) {.base, property.} = discard
   ## Method needs to be overridden.

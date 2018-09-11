@@ -6,6 +6,11 @@
 #====================================================================
 
 ## A combobox is like a combination of an edit control and a listbox.
+##
+## Notice: a combobox may recieve events propagated from its child text
+## control. (wEvent_Text, wEvent_TextUpdate, wEvent_TextMaxlen etc.)
+## In these case, event.window should be the child text control, not combobox
+## itself.
 #
 ## :Appearance:
 ##   .. image:: images/wComboBox.png
@@ -27,8 +32,21 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_ComboBox, wEvent_TextEnter, wEvent_ComboBoxCloseUp
-##   wEvent_ComboBoxDropDown, wEvent_CommandSetFocus, wEvent_CommandKillFocus, wEvent_CommandLeftDoubleClick
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_ComboBox                  When an item on the list is selected, calling getValue() returns the new value of selection.
+##   wEvent_ComboBoxCloseUp           When the list box of the combo box disappears.
+##   wEvent_ComboBoxDropDown          When the list box part of the combo box is shown.
+##   wEvent_Text                      When the text changes.
+##   wEvent_TextUpdate                When the control is about to redraw itself.
+##   wEvent_TextMaxlen                When the user tries to enter more text into the control than the limit.
+##   wEvent_TextEnter                 When pressing Enter key.
+##   wEvent_CommandSetFocus           When the control receives the keyboard focus.
+##   wEvent_CommandKillFocus          When the control loses the keyboard focus.
+##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
+##   ===============================  =============================================================
 
 const
   # ComboBox styles
@@ -175,9 +193,13 @@ proc dismiss*(self: wComboBox) {.validate,  inline.} =
   SendMessage(mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
 
 proc getEditControl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
-  ## Returns the edit control part of this combobox, or nil if no such control.
-  ## Notice that the result is wWindow for event handler only, not a wTextCtrl.
+  ## Returns the text control part of this combobox, or nil if no such control.
   result = mEdit
+
+proc getTextCtrl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
+  ## Returns the text control part of this combobox, or nil if no such control.
+  ## The same as getEditControl().
+  result = getEditControl()
 
 proc getListControl*(self: wComboBox): wWindow {.validate, property, inline.} =
   ## Returns the list control part of this combobox, or nil if no such control.

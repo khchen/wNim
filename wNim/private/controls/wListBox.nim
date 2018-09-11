@@ -27,7 +27,13 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_ListBox, wEvent_ListBoxDoubleClick
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_ListBox                   When an item on the list is selected or the selection changes.
+##   wEvent_ListBoxDoubleClick        When the listbox is double-clicked.
+##   ===============================  =============================================================
 
 const
   # ListBox styles

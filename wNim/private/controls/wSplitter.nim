@@ -35,7 +35,12 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Splitter
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_Splitter                  The position is dragging by user. This event can be vetoed.
+##   ===============================  =============================================================
 
 const
   # use the same define as wSpinButton

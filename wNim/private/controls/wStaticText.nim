@@ -25,7 +25,13 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_CommandLeftClick, wEvent_CommandLeftDoubleClick
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_CommandLeftClick          Clicked the left mouse button within the control.
+##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
+##   ===============================  =============================================================
 
 const
   wAlignLeft* = SS_LEFT

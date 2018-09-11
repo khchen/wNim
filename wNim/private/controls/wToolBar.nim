@@ -25,8 +25,15 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Tool, wEvent_ToolRightClick, wEvent_ToolDropDown
-##   wEvent_ToolEnter
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_Tool                      Click left mouse button on the tool bar. Same as wEvent_Menu.
+##   wEvent_ToolRightClick            Click right mouse button on the tool bar.
+##   wEvent_ToolDropDown              Drop down menu selected. If unhandled, displays the default dropdown menu.
+##   wEvent_ToolEnter                 The mouse cursor has moved into or moved off a tool.
+##   ===============================  =============================================================
 
 const
   # ToolBar styles

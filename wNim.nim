@@ -62,6 +62,7 @@
 ##  - `wTreeCtrl <wTreeCtrl.html>`_
 ##  - `wHyperlinkCtrl <wHyperlinkCtrl.html>`_
 ##  - `wSplitter <wSplitter.html>`_
+##  - `wIpCtrl <wIpCtrl.html>`_
 ##
 ##  Device Contexts
 ##  ---------------
@@ -110,6 +111,7 @@
 ##  - `wHyperLinkEvent <wHyperLinkEvent.html>`_
 ##  - `wListEvent <wListEvent.html>`_
 ##  - `wTreeEvent <wTreeEvent.html>`_
+##  - `wIpEvent <wIpEvent.html>`_
 ##
 ##  Constants
 ##  ---------
@@ -122,7 +124,8 @@
 # import winim.lean, winim.inc/[commctrl, objbase, shellapi, richedit, gdiplus]
 # export lean
 when not defined(wnimdoc):
-  import tables, lists, math, strutils, dynlib, hashes, macros, times, sets, ospaths
+  import tables, lists, math, strutils, dynlib, hashes, macros, times, sets,
+    ospaths, net
   import kiwi
   import winim/winstr, winim/utils
   import winim/inc/[windef, winerror, winbase, winuser, wingdi]
@@ -152,6 +155,7 @@ when not defined(wnimdoc):
   include wNim/private/events/wScrollEvent
   include wNim/private/events/wSpinEvent
   include wNim/private/events/wHyperLinkEvent
+  include wNim/private/events/wIpEvent
   include wNim/private/events/wListEvent
   include wNim/private/events/wTreeEvent
   include wNim/private/events/wDragDropEvent
@@ -206,6 +210,7 @@ when not defined(wnimdoc):
   include wNim/private/controls/wTreeCtrl
   include wNim/private/controls/wHyperLinkCtrl
   include wNim/private/controls/wSplitter
+  include wNim/private/controls/wIpCtrl
   include wNim/private/wFrame
   include wNim/private/dialogs/wMessageDialog
   include wNim/private/dialogs/wDirDialog

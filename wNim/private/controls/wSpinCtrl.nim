@@ -26,13 +26,20 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##    ===============================  =============================================================
-##    `wSpinEvent <wSpinEvent.html>`_  Description
-##    ===============================  =============================================================
-##    wEvent_Spin                      Pressing an arrow changed the spin button value. This event can be vetoed.
-##    wEvent_SpinUp                    Pressing up/right arrow changed the spin button value. This event can be vetoed.
-##    wEvent_SpinDown                  Pressing down/left arrow changed the spin button value. This event can be vetoed.
-##    ===============================  =============================================================
+##   `wSpinEvent <wSpinEvent.html>`_
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ===============================  =============================================================
+##   wSpinEvent                       Description
+##   ===============================  =============================================================
+##   wEvent_Spin                      Pressing an arrow changed the spin button value. This event can be vetoed.
+##   wEvent_SpinUp                    Pressing up/right arrow changed the spin button value. This event can be vetoed.
+##   wEvent_SpinDown                  Pressing down/left arrow changed the spin button value. This event can be vetoed.
+##
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_Text                      When the text changes.
+##   wEvent_TextEnter                 When pressing Enter key.
+##   ===============================  =============================================================
 
 const
   # SpinCtrl styles
@@ -243,6 +250,13 @@ proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
   # cannot use processNotify method becasue the notify sent to updown's parent
   mNotifyConn = parent.hardConnect(WM_NOTIFY) do (event: wEvent):
     wSpinCtrl_OnNotify(self, event)
+
+  hardConnect(WM_CHAR) do (event: wEvent):
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    if event.keyCode == VK_RETURN:
+      processed = self.processMessage(wEvent_TextEnter, 0, 0)
 
   hardConnect(wEvent_Navigation) do (event: wEvent):
     if useArrowKeys:

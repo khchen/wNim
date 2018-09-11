@@ -36,6 +36,7 @@
 ##   `wTreeCtrl <wTreeCtrl.html>`_
 ##   `wHyperLinkCtrl <wHyperLinkCtrl.html>`_
 ##   `wSplitter <wSplitter.html>`_
+##   `wIpCtrl <wIpCtrl.html>`_
 
 # forward declaration
 proc click*(self: wButton) {.inline.}
@@ -150,7 +151,7 @@ proc wControl_DoKillFocus(event: wEvent) =
   self.getTopParent().mSaveFocus = self
 
   # who will get focus is not siblings => clear all default button
-  let winGotFocus = wAppWindowFindByHwnd(event.mWparam.HWND)
+  let winGotFocus = wAppWindowFindByHwnd(HWND event.mWparam)
   if winGotFocus == nil or winGotFocus.mParent != self.mParent:
     self.drawSiblingButtons() do (win: wWindow) -> bool: false
 

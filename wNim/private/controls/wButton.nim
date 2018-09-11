@@ -24,7 +24,14 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Button, wEvent_ButtonEnter, wEvent_ButtonLeave
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_Button                    The button is clicked.
+##   wEvent_ButtonEnter               The mouse is entering the button.
+##   wEvent_ButtonLeave               The mouse is leaving the button.
+##   ===============================  =============================================================
 
 const
   # Button styles

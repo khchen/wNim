@@ -6,6 +6,11 @@
 #====================================================================
 
 ## A text control allows text to be displayed and edited.
+##
+## If the user pressed Enter key inside the control, a wEvent_TextEnter event
+## will be generated. If this event is not processed, the default behavior of
+## text control will be doen. However, for read-only control, wEvent_TextEnter
+## will never be generated.
 #
 ## :Appearance:
 ##   .. image:: images/wTextCtrl.png
@@ -25,12 +30,22 @@
 ##   wTeCentre                       The text in the control will be centered.
 ##   wTeRight                        The text in the control will be right-justified.
 ##   wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
-##   wTeRich                         Use rich text control under, this allows to have more than 64KB of text in the control.
+##   wTeRich                         Use rich text control under, this allows to have more than 64KB
+##                                   of text in the control.
+##   wTeProcessTab                   With this style, press TAB key to insert a TAB character instead
+##                                   of switches focus to the next control. Only works with wTeMultiLine.
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_Text, wEvent_TextUpdate, wEvent_TextEnter
-##   wEvent_TextMaxlen
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_Text                      When the text changes.
+##   wEvent_TextUpdate                When the control is about to redraw itself.
+##   wEvent_TextMaxlen                When the user tries to enter more text into the control than the limit.
+##   wEvent_TextEnter                 When pressing Enter key.
+##   ===============================  =============================================================
 
 const
   # TextCtrl styles
@@ -43,6 +58,7 @@ const
   wTeRight* = ES_RIGHT
   wTeDontWrap* = WS_HSCROLL or ES_AUTOHSCROLL
   wTeRich* = 0x10000000 shl 32
+  wTeProcessTab* = 0x4000 # not used in ES_XXXX
 
 proc isMultiLine*(self: wTextCtrl): bool {.validate, inline.} =
   ## Returns true if this is a multi line edit control and false otherwise.
@@ -414,6 +430,7 @@ proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
     style: wStyle = wTeLeft) {.validate.} =
   ## Initializer.
   wValidate(parent)
+  var isProcessTab = ((style and wTeProcessTab) != 0)
   mRich = ((style and wTeRich) != 0)
   mDisableTextEvent = false
 
@@ -421,7 +438,7 @@ proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
     mRich = false
 
   var
-    style = style and (not wTeRich)
+    style = style and (not (wTeRich or wTeProcessTab))
     className = if mRich: MSFTEDIT_CLASS else: WC_EDIT
 
   if (style and wTeMultiLine) == 0:
@@ -446,17 +463,29 @@ proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
   mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     wTextCtrl_ParentOnCommand(self, event)
 
+  # for readonly control, don't generate wEvent_TextEnter event.
+  if (style and wTeReadOnly) == 0:
+    hardConnect(WM_CHAR) do (event: wEvent):
+      var processed = false
+      defer: event.skip(if processed: false else: true)
+
+      if event.keyCode == VK_RETURN:
+        processed = self.processMessage(wEvent_TextEnter, 0, 0)
+
   hardConnect(wEvent_Navigation) do (event: wEvent):
-    if (style and wTeReadOnly) != 0:
-      return
+    var vetoKeys = {wKey_Left, wKey_Right}
 
-    elif (style and wTeMultiLine) != 0:
-      if event.keyCode in {wKey_Tab, wKey_Enter, wKey_Left, wKey_Right, wKey_Up, wKey_Down}:
-        event.veto
+    if (style and wTeMultiLine) != 0:
+      vetoKeys.incl {wKey_Up, wKey_Down}
 
-    else:
-      if event.keyCode in {wKey_Left, wKey_Right}:
-        event.veto
+      if (style and wTeReadOnly) == 0:
+        vetoKeys.incl wKey_Enter
+
+        if isProcessTab:
+          vetoKeys.incl wKey_Tab
+
+    if event.keyCode in vetoKeys:
+      event.veto
 
 proc TextCtrl*(parent: wWindow, id = wDefaultID,
     value: string = "", pos = wDefaultPoint, size = wDefaultSize,
@@ -477,6 +506,18 @@ proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
   mDisableTextEvent = false
   mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     wTextCtrl_ParentOnCommand(self, event)
+
+  # add this so that the subcalssed control can get regain focus correctly
+  systemConnect(WM_KILLFOCUS) do (event: wEvent):
+    self.getTopParent().mSaveFocus = self
+
+  # add this so that the parent's sibling button can have "default button" style
+  systemConnect(WM_SETFOCUS) do (event: wEvent):
+    # Call wControl_DoSetFocus() on parent window.
+    # Don't use SendMessage(parent.mHwnd, WM_SETFOCUS...), because it let the
+    # default WndProc do some extra action.
+    var event = Event(parent, WM_SETFOCUS, event.wParam, event.lParam)
+    wControl_DoSetFocus(event)
 
 proc TextCtrl*(hWnd: HWND): wTextCtrl {.inline, discardable.} =
   ## A special constructor to subclass the textctrl of other contorls.

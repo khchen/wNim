@@ -55,8 +55,8 @@
 ##   wComboBox                       Description
 ##   ==============================  =============================================================
 ##   wEvent_ComboBox                 When an item on the list is selected, calling getValue() returns the new value of selection.
-##   wEvent_ComboBoxDropDown         When the list box part of the combo box is shown.
 ##   wEvent_ComboBoxCloseUp          When the list box of the combo box disappears.
+##   wEvent_ComboBoxDropDown         When the list box part of the combo box is shown.
 ##
 ##   wToolBar                        Description
 ##   ==============================  =============================================================
@@ -69,8 +69,8 @@
 ##   ==============================  =============================================================
 ##   wEvent_Text                     When the text changes.
 ##   wEvent_TextUpdate               When the control is about to redraw itself.
-##   wEvent_TextEnter                When pressing Enter key.
 ##   wEvent_TextMaxlen               When the user tries to enter more text into the control than the limit.
+##   wEvent_TextEnter                When pressing Enter key.
 ##
 ##   wNoteBook                       Description
 ##   ==============================  =============================================================
@@ -132,11 +132,11 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_CalendarSelChanged
   wEvent_CalendarViewChanged
   wEvent_DateChanged
+  wEvent_Splitter
 
 const
   wEvent_Tool* = wEvent_Menu
   wEvent_TimeChanged* = wEvent_DateChanged
-  wEvent_Splitter* = WM_APP + 57
 
 proc isCommandEvent(msg: UINT): bool {.inline.} =
-  msg in wEvent_CommandFirst..wEvent_CommandLast or msg == wEvent_Splitter
+  msg in wEvent_CommandFirst..wEvent_CommandLast

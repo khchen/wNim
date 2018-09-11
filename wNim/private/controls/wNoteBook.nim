@@ -21,7 +21,13 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_NoteBookPageChanged, wEvent_NoteBookPageChanging
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_NoteBookPageChanged       The page selection was changed.
+##   wEvent_NoteBookPageChanging      The page selection is about to be changed. This event can be vetoed.
+##   ===============================  =============================================================
 
 const
   wNbIconLeft* = TCS_FORCEICONLEFT

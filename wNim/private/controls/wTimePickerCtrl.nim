@@ -14,7 +14,12 @@
 ##   `wControl <wControl.html>`_
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_TimeChanged
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_TimeChanged               The selected time changed.
+##   ===============================  =============================================================
 
 proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int] {.validate, property.} =
   ## Returns the currently entered time as hours, minutes and seconds

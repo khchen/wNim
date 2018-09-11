@@ -183,6 +183,9 @@ when not defined(wnimdoc):
     wScrollEvent* = ref object of wCommandEvent
     wSpinEvent* = ref object of wCommandEvent
     wHyperLinkEvent* = ref object of wCommandEvent
+    wIpEvent* = ref object of wCommandEvent
+      mIndex: int
+      mValue: int
 
     wScrollData = object
       kind: int
@@ -308,6 +311,9 @@ when not defined(wnimdoc):
       mCommandConn: wEventConnection
 
     wStaticLine* = ref object of wControl
+
+    wIpCtrl* = ref object of wControl
+      mEdits: array[4, wTextCtrl]
 
     wCheckBox* = ref object of wControl
       mCommandConn: wEventConnection

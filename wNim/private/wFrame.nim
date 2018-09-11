@@ -321,7 +321,14 @@ proc wFrame_OnSetFocus(event: wEvent) =
   defer: event.skip(if processed: false else: true)
 
   if self.mSaveFocus != nil:
-    self.mSaveFocus.setFocus()
+    # sometimes, the saved focus window will not exist anymore
+    # for example: textctrl for treectrl's rename editor
+    var win = self.mSaveFocus
+    while IsWindow(win.mHwnd) == 0:
+      win = win.mParent
+      if win == nil: return
+
+    win.setFocus()
     processed = true
 
   else:

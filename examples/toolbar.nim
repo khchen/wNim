@@ -35,7 +35,7 @@ let img4 = Image(resource4).scale(36, 36)
 let img5 = Image(resource5).scale(36, 36)
 
 toolbar.addTool(idTool1, "Tool 1", Bmp(img1), "Tool1", "This is normal tool.")
-toolbar.addCheckTool(idTool2, "Tool 2", Bmp(img2), "Tool2", "This is check tool")
+toolbar.addCheckTool(idTool2, "Tool 2", Bmp(img2), "Tool2", "This is check tool.")
 toolBar.addSeparator()
 toolbar.addRadioTool(idTool3, "Tool 3", Bmp(img3), "Tool3", "This is radio tool.")
 toolbar.addRadioTool(idTool4, "Tool 4", Bmp(img4), "Tool4", "This is radio tool.")

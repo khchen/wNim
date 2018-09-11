@@ -26,7 +26,13 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_CalendarSelChanged, wEvent_CalendarViewChanged
+##   `wCommandEvent <wCommandEvent.html>`_
+##   ==============================   =============================================================
+##   wCommandEvent                    Description
+##   ==============================   =============================================================
+##   wEvent_CalendarSelChanged        The selected date changed.
+##   wEvent_CalendarViewChanged       The control view changed.
+##   ===============================  =============================================================
 
 const
   wCalSundayFirst* = 0

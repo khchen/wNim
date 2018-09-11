@@ -22,7 +22,7 @@
 ##   ==============================  =============================================================
 #
 ## :Events:
-##   `wCommandEvent <wCommandEvent.html>`_ - wEvent_HyperLink
+##   `wHyperLinkEvent <wHyperLinkEvent.html>`_
 
 const
   wHlAlignLeft* = 0

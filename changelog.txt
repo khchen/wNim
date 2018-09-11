@@ -5,6 +5,12 @@
 
 ====================================================================
 
+Version 0.1.3
+-------------
+# Add wIpCtrl class, the IP v4 address control.
+# Add wTeProcessTab style and wEvent_TextEnter event to wTextCtrl.
+# Add wEvent_TextEnter event to wSpinCtrl.
+
 Version 0.1.2
 -------------
 # Catch unhandled exception in event handler to prevent crash.

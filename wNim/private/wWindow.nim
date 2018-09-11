@@ -1935,8 +1935,11 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   if isInvisible:
     msStyle = msStyle and (not WS_VISIBLE)
 
-  mHwnd = CreateWindowEx(exStyle, className, title, msStyle, x, y, 0, 0,
-    parentHwnd, int id, wAppGetInstance(), cast[LPVOID](self))
+  var initWidth = if size.width != wDefault: size.width else: 0
+  var initHeight = if size.height != wDefault: size.height else: 0
+
+  mHwnd = CreateWindowEx(exStyle, className, title, msStyle, x, y,
+    initWidth, initHeight, parentHwnd, int id, wAppGetInstance(), cast[LPVOID](self))
 
   if mHwnd == 0:
     raise newException(wError, className & " window creation failure")
