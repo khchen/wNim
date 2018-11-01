@@ -247,6 +247,7 @@ when not defined(wnimdoc):
       mMargin: wDirection
       mStatusBar: wStatusBar
       mToolBar: wToolBar
+      mRebar: wRebar
       mFont: wFont
       mBackgroundColor: wColor
       mForegroundColor: wColor
@@ -296,6 +297,12 @@ when not defined(wnimdoc):
       mTools: seq[wToolBarTool]
       mSizeConn: wEventConnection
       mCommandConn: wEventConnection
+
+    wRebar* = ref object of wControl
+      mControls: seq[wControl]
+      mImageList: wImageList
+      mSizeConn: wEventConnection
+      mDragging: bool
 
     wButton* = ref object of wControl
       mImgData: BUTTON_IMAGELIST

@@ -5,8 +5,11 @@
 #
 #====================================================================
 
-{.passL: "wNim.res".}
 import wNim
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
 
 type
   MenuID = enum
@@ -17,10 +20,14 @@ let frame = Frame(title="Toolbar")
 frame.icon = Icon("", 0) # load icon from exe file.
 
 let statusbar = StatusBar(frame)
+let toolbar = ToolBar(frame)
 let panel = Panel(frame)
-let toolbar = ToolBar(panel)
-let listbox = ListBox(panel, style=wLbNeededScroll or wLbNoSel)
 panel.margin = 5
+
+# Toolbar has the transparent look by default.
+frame.backgroundColor = panel.backgroundColor
+
+let listbox = ListBox(panel, pos=(0, 0), style=wLbNeededScroll or wLbNoSel)
 
 const resource1 = staticRead(r"images\1.png")
 const resource2 = staticRead(r"images\2.png")
@@ -54,8 +61,6 @@ frame.wEvent_Tool do (event: wEvent):
 frame.wEvent_Size do ():
   panel.layout:
     listbox:
-      left = panel.left
-      top = panel.top
       width = panel.width
       height = panel.height
 

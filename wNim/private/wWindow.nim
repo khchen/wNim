@@ -122,6 +122,10 @@ method getClientSize*(self: wWindow): wSize {.base, property.} =
 
     else: discard
 
+  if mRebar != nil:
+    let rect = mRebar.getWindowRect()
+    result.height -= rect.height
+
   if mStatusBar != nil:
     let rect = mStatusBar.getWindowRect(sizeOnly=true)
     result.height -= rect.height
@@ -140,6 +144,10 @@ method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
     of wLeft:
       result.x += rect.width + rect.x
     else: discard
+
+  if mRebar != nil:
+    let rect = mRebar.getWindowRect()
+    result.y += rect.height + rect.y
 
 proc adjustForParentClientOriginAdd(self: wWindow, x, y: var int) =
   if mParent != nil:

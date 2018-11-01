@@ -295,7 +295,9 @@ proc wFrame_DoSize(event: wEvent) =
   var childOne: wWindow
 
   for child in self.mChildren:
-    if (not (child of wStatusBar)) and (not (child of wToolBar)):
+    if (not (child of wStatusBar)) and
+        (not (child of wToolBar)) and
+        (not (child of wRebar)):
       if childOne == nil:
         childOne = child
       else: # more the one child, nothing to do

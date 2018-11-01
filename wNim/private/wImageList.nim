@@ -9,9 +9,13 @@
 ## It is used principally in conjunction with wTreeCtrl and wListCtrl.
 #
 ## :Seealso:
-##   `wImageList <wImageList.html>`_
+##   `wImage <wImage.html>`_
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
+
+proc getHandle*(self: wImageList): HIMAGELIST {.validate, property, inline.} =
+  ## Gets the real resource handle in system.
+  result = mHandle
 
 proc add*(self: wImageList, icon: wIcon): int {.validate, discardable.} =
   ## Adds a new image using an icon.

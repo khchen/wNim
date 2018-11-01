@@ -79,6 +79,11 @@ proc getToolPos*(self: wToolBar, toolId: wCommandID): int {.validate, property.}
   var buttonInfo = TBBUTTONINFO(cbSize: sizeof(TBBUTTONINFO))
   result = int SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
 
+proc getToolSize*(self: wToolBar): wSize {.validate, property.} =
+  ## Returns the size of a whole button.
+  let ret = SendMessage(mHwnd, TB_GETBUTTONSIZE, 0, 0)
+  result = (int LOWORD(ret), int HIWORD(ret))
+
 proc deleteToolByPos*(self: wToolBar, pos: Natural) {.validate.} =
   ## This function behaves like deleteTool but it deletes the tool at the
   ## specified position.

@@ -144,7 +144,7 @@ when isMainModule:
   echo state.board.repr
 
   while state.getMoves().card != 0:
-    mcts(state, int.high, timeout=0.01)
+    mcts(state, int.high, timeout=1)
     echo "rounds: ", state.rounds
     state.doMove(state.move)
     echo state.board.repr

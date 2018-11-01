@@ -5,8 +5,12 @@
 #
 #====================================================================
 
-{.passL: "wNim.res".}
-import wNim
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
+import ../wNim
 
 var app = App()
 var frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)

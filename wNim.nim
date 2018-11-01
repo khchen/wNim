@@ -187,6 +187,7 @@ when not defined(wnimdoc):
   include wNim/private/controls/wControl
   include wNim/private/controls/wStatusBar
   include wNim/private/controls/wToolBar
+  include wNim/private/controls/wRebar
   include wNim/private/controls/wButton
   include wNim/private/controls/wCheckBox
   include wNim/private/controls/wRadioButton
