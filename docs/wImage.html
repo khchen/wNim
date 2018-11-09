@@ -1280,8 +1280,7 @@ function main() {
   <li><a class="reference" href="#getAlpha,wImage,wPoint"
     title="getAlpha(self: wImage; pos: wPoint): byte"><wbr />get<wbr />Alpha<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#saveFile,wImage,string,string,range[]"
-    title="saveFile(self: wImage; filename: string; fileType: string = nil;
-         quality: range[0 .. 100] = 90)"><wbr />save<wbr />File<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="saveFile(self: wImage; filename: string; fileType = &quot;&quot;; quality: range[0 .. 100] = 90)"><wbr />save<wbr />File<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#saveData,wImage,string,range[]"
     title="saveData(self: wImage; fileType: string; quality: range[0 .. 100] = 90): string"><wbr />save<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wImage,ptr.GpBitmap"
@@ -1522,10 +1521,10 @@ Return alpha value at given pixel location.
 Return alpha value at given pixel location.
 
 </dd>
-<dt id="saveFile"><a name="saveFile,wImage,string,string,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">saveFile</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">fileType</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
+<dt id="saveFile"><a name="saveFile,wImage,string,string,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">saveFile</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">fileType</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
              <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Saves an image into the file. If fileType is nil, use extension name as fileType. Use getEncoders iterator to list the supported format.
+Saves an image into the file. If fileType is empty, use extension name as fileType. Use getEncoders iterator to list the supported format.
 
 </dd>
 <dt id="saveData"><a name="saveData,wImage,string,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">saveData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">fileType</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma">
@@ -1768,7 +1767,7 @@ Iterates over each available image decoder on system.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:08 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:06 UTC</small>
       </div>
     </div>
   </div>

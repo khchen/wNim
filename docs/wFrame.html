@@ -1282,7 +1282,7 @@ function main() {
   <li><a class="reference" href="#endModal,wFrame,int"
     title="endModal(self: wFrame; retCode: int = 0)"><wbr />end<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTrayIcon,wFrame,wIcon,string"
-    title="setTrayIcon(self: wFrame; icon: wIcon; tooltip: string = nil)"><wbr />set<wbr />Tray<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="setTrayIcon(self: wFrame; icon: wIcon; tooltip = &quot;&quot;)"><wbr />set<wbr />Tray<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#removeTrayIcon,wFrame"
     title="removeTrayIcon(self: wFrame)"><wbr />remove<wbr />Tray<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showBalloon,wFrame,string,string,int"
@@ -1446,8 +1446,8 @@ Shows the frame as an application-modal dialog. Program flow does not return unt
 Ends a modal dialog, passing a value to be returned from the showModal() invocation.
 
 </dd>
-<dt id="setTrayIcon"><a name="setTrayIcon,wFrame,wIcon,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">tooltip</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="setTrayIcon"><a name="setTrayIcon,wFrame,wIcon,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">tooltip</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Creates the system tray icon.
 
@@ -1492,7 +1492,7 @@ Constructor, creating the frame.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:06 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:05 UTC</small>
       </div>
     </div>
   </div>

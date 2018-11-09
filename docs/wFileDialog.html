@@ -1240,12 +1240,11 @@ function main() {
       <li><a class="reference" href="#final,wFileDialog"
     title="final(self: wFileDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wFileDialog,wWindow,string,string,string,string,wStyle"
-    title="init(self: wFileDialog; parent: wWindow = nil; message: string = nil;
-     defaultDir: string = nil; defaultFile: string = nil; wildcard = &quot;*.*&quot;;
-     style: wStyle = wFdOpen)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="init(self: wFileDialog; parent: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;;
+     defaultFile = &quot;&quot;; wildcard = &quot;*.*&quot;; style: wStyle = wFdOpen)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#FileDialog,wWindow,string,string,string,string,wStyle"
-    title="FileDialog(parent: wWindow = nil; message: string = nil; defaultDir: string = nil;
-           defaultFile: string = nil; wildcard = &quot;*.*&quot;; style: wStyle = wFdOpen): wFileDialog"><wbr />File<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="FileDialog(parent: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;; defaultFile = &quot;&quot;;
+           wildcard = &quot;*.*&quot;; style: wStyle = wFdOpen): wFileDialog"><wbr />File<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMessage,wFileDialog"
     title="getMessage(self: wFileDialog): string"><wbr />get<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDirectory,wFileDialog"
@@ -1306,16 +1305,16 @@ function main() {
 Default finalizer for wFileDialog.
 
 </dd>
-<dt id="init"><a name="init,wFileDialog,wWindow,string,string,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
-         <span class="Identifier">defaultDir</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultFile</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span>
-         <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="init"><a name="init,wFileDialog,wWindow,string,string,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+         <span class="Identifier">defaultFile</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="FileDialog"><a name="FileDialog,wWindow,string,string,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">FileDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultDir</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
-               <span class="Identifier">defaultFile</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="FileDialog"><a name="FileDialog,wWindow,string,string,string,string,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">FileDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultFile</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+               <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Constructor.
 
@@ -1424,7 +1423,7 @@ The same as showModalResult().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:33 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:24 UTC</small>
       </div>
     </div>
   </div>

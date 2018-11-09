@@ -1246,7 +1246,7 @@ function main() {
   <li><a class="reference" href="#getStatusWidth,wStatusBar,int"
     title="getStatusWidth(self: wStatusBar; index: int): int"><wbr />get<wbr />Status<wbr />Width<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setStatusText,wStatusBar,string,int"
-    title="setStatusText(self: wStatusBar; text: string = nil; index = 0)"><wbr />set<wbr />Status<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="setStatusText(self: wStatusBar; text = &quot;&quot;; index = 0)"><wbr />set<wbr />Status<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getStatusText,wStatusBar,int"
     title="getStatusText(self: wStatusBar; index: int): string"><wbr />get<wbr />Status<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setStatusIcon,wStatusBar,wIcon,int"
@@ -1314,8 +1314,8 @@ Returns the number of fields in the status bar.
 Returns the width of the specified field.
 
 </dd>
-<dt id="setStatusText"><a name="setStatusText,wStatusBar,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setStatusText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">index</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="setStatusText"><a name="setStatusText,wStatusBar,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setStatusText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">index</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Sets the status text for the specified field.
 
@@ -1392,7 +1392,7 @@ Returns the default size for the status bar.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:53 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:38 UTC</small>
       </div>
     </div>
   </div>

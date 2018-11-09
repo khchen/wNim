@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wKeyCodes</title>
+<title>Module wRebar</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -1213,7 +1213,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wKeyCodes</h1>
+    <h1 class="title">Module wRebar</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1233,12 +1233,89 @@ function main() {
       <option value="type">Type</option>
     </select>
   </div>
-  
+  <ul class="simple simple-toc" id="toc-list">
+<li>
+  <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#setImageList,wRebar,wImageList"
+    title="setImageList(self: wRebar; imageList: wImageList)"><wbr />set<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getImageList,wRebar"
+    title="getImageList(self: wRebar): wImageList"><wbr />get<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getCount,wRebar"
+    title="getCount(self: wRebar): int"><wbr />get<wbr />Count<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#addControl,wRebar,wControl,string"
+    title="addControl(self: wRebar; control: wControl; image = -1; label = &quot;&quot;)"><wbr />add<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#len,wRebar"
+    title="len(self: wRebar): int"><wbr />len<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#final,wRebar"
+    title="final(self: wRebar)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wRebar,wWindow,wImageList,wStyle"
+    title="init(self: wRebar; parent: wWindow; id = wDefaultID; imageList: wImageList = nil;
+     style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Rebar,wWindow,wImageList,wStyle"
+    title="Rebar(parent: wWindow; id = wDefaultID; imageList: wImageList = nil; style: wStyle = 0): wRebar"><wbr />Rebar<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+
+</ul>
+
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">The key-code used in wNim functions. These constants are in fact Windows' virtual-key codes.</p>
-  
+  <p class="module-desc">A rebar control can contain one or more bands, and each band can have a gripper bar, a bitmap, a text label, and one child control. As you dynamically reposition a rebar control band, the rebar control manages the size and position of the child window assigned to that band.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
+</tbody></table></p>
+  <div class="section" id="12">
+<h1><a class="toc-backref" href="#12">Procs</a></h1>
+<dl class="item">
+<dt id="setImageList"><a name="setImageList,wRebar,wImageList"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setImageList</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">;</span> <span class="Identifier">imageList</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the image list associated with the rebar.
+
+</dd>
+<dt id="getImageList"><a name="getImageList,wRebar"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getImageList</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImageList</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Returns the specified image list.
+
+</dd>
+<dt id="getCount"><a name="getCount,wRebar"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getCount</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Returns the number of controls in the rebar.
+
+</dd>
+<dt id="addControl"><a name="addControl,wRebar,wControl,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">addControl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">;</span> <span class="Identifier">control</span><span class="Other">:</span> <span class="Identifier">wControl</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Adds a control to the rebar.
+
+</dd>
+<dt id="len"><a name="len,wRebar"></a><pre><span class="Keyword">proc</span> <span class="Identifier">len</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Returns the number of controls in the rebar.
+
+</dd>
+<dt id="final"><a name="final,wRebar"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Default finalizer for wRebar.
+
+</dd>
+<dt id="init"><a name="init,wRebar,wWindow,wImageList,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">imageList</span><span class="Other">:</span> <span class="Identifier">wImageList</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
+         <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
+<dt id="Rebar"><a name="Rebar,wWindow,wImageList,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Rebar</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">imageList</span><span class="Other">:</span> <span class="Identifier">wImageList</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
+          <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wRebar</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Constructs a rebar.
+
+</dd>
+
+</dl></div>
+
   </div>
 </div>
 
@@ -1246,7 +1323,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-11-09 12:29:42 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:34 UTC</small>
       </div>
     </div>
   </div>

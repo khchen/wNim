@@ -1249,12 +1249,11 @@ function main() {
     title="final(self: wFont)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wFont,float,string"
     title="init(self: wFont; pointSize: float = NaN; family = wFontFamilyDefault;
-     weight = wFontWeightNormal; italic = false; underline = false;
-     faceName: string = nil; encoding = wFontEncodingDefault)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+     weight = wFontWeightNormal; italic = false; underline = false; faceName = &quot;&quot;;
+     encoding = wFontEncodingDefault)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Font,float,string"
     title="Font(pointSize: float = NaN; family = wFontFamilyDefault; weight = wFontWeightNormal;
-     italic = false; underline = false; faceName: string = nil;
-     encoding = wFontEncodingDefault): wFont"><wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
+     italic = false; underline = false; faceName = &quot;&quot;; encoding = wFontEncodingDefault): wFont"><wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wFont,HANDLE"
     title="init(self: wFont; hFont: HANDLE)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Font,HANDLE"
@@ -1370,17 +1369,15 @@ Default finalizer for wFont.
 
 </dd>
 <dt id="init"><a name="init,wFont,float,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">;</span> <span class="Identifier">pointSize</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="Identifier">NaN</span><span class="Other">;</span> <span class="Identifier">family</span> <span class="Other">=</span> <span class="Identifier">wFontFamilyDefault</span><span class="Other">;</span>
-         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-         <span class="Identifier">faceName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+         <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
 <dt id="Font"><a name="Font,float,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Font</span><span class="Other">(</span><span class="Identifier">pointSize</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="Identifier">NaN</span><span class="Other">;</span> <span class="Identifier">family</span> <span class="Other">=</span> <span class="Identifier">wFontFamilyDefault</span><span class="Other">;</span>
-         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-         <span class="Identifier">faceName</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+         <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Creates a font object with the specified attributes.<table border="1" class="docutils"><tr><th>Parameters</th><th>Description</th></tr>
 <tr><td>pointSize</td><td>Size in points.</td></tr>
@@ -1500,7 +1497,7 @@ Sets the encoding for this font.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:20 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:16 UTC</small>
       </div>
     </div>
   </div>

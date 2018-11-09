@@ -1272,8 +1272,8 @@ function main() {
   <li><a class="reference" href="#setId,wMenuBase,wCommandID,wCommandID"
     title="setId(self: wMenuBase; id: wCommandID; newid: wCommandID)"><wbr />set<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#replace,wMenuBase,wCommandID,string,string,wBitmap,wMenu"
-    title="replace(self: wMenuBase; id: wCommandID; text: string = nil; help: string = nil;
-        bitmap: wBitmap = nil; submenu: wMenu = nil; kind = wMenuItemNormal): wMenuItem"><wbr />replace<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="replace(self: wMenuBase; id: wCommandID; text = &quot;&quot;; help = &quot;&quot;; bitmap: wBitmap = nil;
+        submenu: wMenu = nil; kind = wMenuItemNormal): wMenuItem"><wbr />replace<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#replace,wMenuBase,wCommandID,wMenuItem"
     title="replace(self: wMenuBase; id: wCommandID; item: wMenuItem): wMenuItem"><wbr />replace<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isCheck,wMenuBase,wCommandID"
@@ -1409,9 +1409,9 @@ Sets the bitmap for the menu item, nil for clear the bitmap.
 Sets the id for the menu item.
 
 </dd>
-<dt id="replace"><a name="replace,wMenuBase,wCommandID,string,string,wBitmap,wMenu"></a><pre><span class="Keyword">proc</span> <span class="Identifier">replace</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBase</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">help</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
-            <span class="Identifier">bitmap</span><span class="Other">:</span> <span class="Identifier">wBitmap</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">submenu</span><span class="Other">:</span> <span class="Identifier">wMenu</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">kind</span> <span class="Other">=</span> <span class="Identifier">wMenuItemNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="replace"><a name="replace,wMenuBase,wCommandID,string,string,wBitmap,wMenu"></a><pre><span class="Keyword">proc</span> <span class="Identifier">replace</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBase</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">help</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">bitmap</span><span class="Other">:</span> <span class="Identifier">wBitmap</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
+            <span class="Identifier">submenu</span><span class="Other">:</span> <span class="Identifier">wMenu</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">kind</span> <span class="Other">=</span> <span class="Identifier">wMenuItemNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Replaces the menu item with another one. Return the new menu item object.
 
@@ -1484,7 +1484,7 @@ Toggle the menu item.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:17 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:13 UTC</small>
       </div>
     </div>
   </div>

@@ -63,6 +63,7 @@
 ##  - `wHyperlinkCtrl <wHyperlinkCtrl.html>`_
 ##  - `wSplitter <wSplitter.html>`_
 ##  - `wIpCtrl <wIpCtrl.html>`_
+##  - `wRebar <wRebar.html>`_
 ##
 ##  Device Contexts
 ##  ---------------

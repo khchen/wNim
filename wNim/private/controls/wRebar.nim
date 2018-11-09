@@ -66,6 +66,7 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "") {.vali
   SendMessage(mHwnd, RB_INSERTBAND, -1, &rbBand)
 
 proc len*(self: wRebar): int {.validate, inline.} =
+  ## Returns the number of controls in the rebar.
   result = getCount()
 
 method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,

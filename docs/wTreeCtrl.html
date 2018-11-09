@@ -1276,8 +1276,8 @@ function main() {
   <li><a class="reference" href="#getAllChildren,wTreeItem"
     title="getAllChildren(self: wTreeItem): seq[wTreeItem]"><wbr />get<wbr />All<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#set,wTreeItem,string,int"
-    title="set(self: wTreeItem; text: string = nil; image = wTreeIgnore; selImage = wTreeIgnore;
-    state = 0; flag = true)"><wbr />set<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="set(self: wTreeItem; text = &quot;&quot;; image = wTreeIgnore; selImage = wTreeIgnore; state = 0;
+    flag = true)"><wbr />set<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setText,wTreeItem,string"
     title="setText(self: wTreeItem; text: string)"><wbr />set<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBold,wTreeItem"
@@ -1573,8 +1573,8 @@ Returns all children as a seq.
 Returns all children including descendants as a seq.
 
 </dd>
-<dt id="set"><a name="set,wTreeItem,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">set</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span>
-        <span class="Identifier">state</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="set"><a name="set,wTreeItem,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">set</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">state</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+        <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Sets the item attributes.
 
@@ -2037,7 +2037,7 @@ Iterate each child in this control, including all descendants.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-09-09 17:05:57 UTC</small>
+        <small>Made with Nim. Generated: 2018-11-09 12:29:42 UTC</small>
       </div>
     </div>
   </div>
