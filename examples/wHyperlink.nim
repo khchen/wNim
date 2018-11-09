@@ -150,7 +150,7 @@ proc init*(self: wHyperLink, parent: wWindow, id = wDefaultID, label: string,
     self.refresh()
 
     if mIsMouseHover and isPressed:
-      if mUrl != nil:
+      if mUrl.len != 0:
         # provide a chance let the user to veto the action.
         let event = Event(window=self, msg=wEvent_OpenUrl)
         if not self.processEvent(event) or event.isAllowed:
@@ -165,7 +165,10 @@ proc HyperLink*(parent: wWindow, id = wDefaultID, label: string, url: string,
   result.init(parent, id, label, url, pos, size, style)
 
 when isMainModule:
-  {.passL: "wNim.res".}
+  when defined(cpu64):
+    {.link: "wNim64.res".}
+  else:
+    {.link: "wNim32.res".}
 
   var app = App()
   var frame = Frame()

@@ -5,13 +5,19 @@
 #
 #====================================================================
 
-{.this: self, passL: "wNim.res".}
+{.this: self}
+
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
 import random, sets, strformat
 import mcts/[gamebase, engine_reversi]
 import wNim
 
 type
-  MenuId = enum idNew, idExit, idAi1, idAi2,
+  MenuId = enum idNew = 100, idExit, idAi1, idAi2,
     idAiTimeout1, idAiTimeout3, idAiTimeout5
 
   wBoard = ref object of wFrame

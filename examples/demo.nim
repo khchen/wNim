@@ -10,7 +10,7 @@ when defined(cpu64):
 else:
   {.link: "wNim32.res".}
 
-import ../wNim
+import wNim
 
 var app = App()
 var frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)

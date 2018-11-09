@@ -5,7 +5,11 @@
 #
 #====================================================================
 
-{.passL: "wNim.res".}
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
 import winim/lean
 import wNim
 
@@ -35,9 +39,9 @@ frame.WM_SYSCOMMAND do (event: wEvent):
   of SC_SIZE: "SC_SIZE"
   of SC_TASKLIST: "SC_TASKLIST"
   of SC_VSCROLL: "SC_VSCROLL"
-  else: nil
+  else: ""
 
-  if msg != nil:
+  if msg.len != 0:
     statusBar.setStatusText(msg)
 
   event.skip

@@ -5,7 +5,13 @@
 #
 #====================================================================
 
-{.this: self, passL: "wNim.res".}
+{.this: self.}
+
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
 import strutils
 import wNim
 
@@ -32,9 +38,6 @@ proc init(self: wScribble, title: string, size: wSize) =
   mMemDc.setPen(mPen)
   mMemDc.clear()
   mLastPos = wDefaultPoint
-
-  # const iconResource = staticRead(r"images\1.ico")
-  #
 
   const penResource = staticRead(r"images\pen.png")
   let penImage = Image(penResource)

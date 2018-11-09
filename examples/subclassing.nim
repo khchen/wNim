@@ -40,7 +40,11 @@ proc MyFrame(title: string): wMyFrame {.inline.} =
   result.init(title)
 
 when isMainModule:
-  {.passL: "wNim.res".}
+  when defined(cpu64):
+    {.link: "wNim64.res".}
+  else:
+    {.link: "wNim32.res".}
+
   let app = App()
   let frame = MyFrame("Hello World")
   frame.icon = Icon("", 0) # load icon from exe file.

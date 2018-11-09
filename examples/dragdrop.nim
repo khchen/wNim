@@ -5,9 +5,13 @@
 #
 #====================================================================
 
-{.passL: "wNim.res".}
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
 import strformat
-import ../wNim
+import wNim
 
 type
   MenuID = enum

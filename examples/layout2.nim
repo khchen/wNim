@@ -5,7 +5,11 @@
 #
 #====================================================================
 
-{.passL: "wNim.res".}
+when defined(cpu64):
+  {.link: "wNim64.res".}
+else:
+  {.link: "wNim32.res".}
+
 import wNim
 
 var app = App()
