@@ -39,9 +39,8 @@ proc final*(self: wFileDialog) =
   ## Default finalizer for wFileDialog.
   discard
 
-proc init*(self: wFileDialog, parent: wWindow = nil, message: string = nil,
-    defaultDir: string = nil, defaultFile: string = nil, wildcard = "*.*",
-    style: wStyle = wFdOpen) {.validate.} =
+proc init*(self: wFileDialog, parent: wWindow = nil, message = "", defaultDir = "",
+    defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
   ## Initializer.
   mParent = parent
   mMessage = message
@@ -50,9 +49,8 @@ proc init*(self: wFileDialog, parent: wWindow = nil, message: string = nil,
   mWildcard = wildcard
   mStyle = style
 
-proc FileDialog*(parent: wWindow = nil, message: string = nil,
-    defaultDir: string = nil, defaultFile: string = nil, wildcard = "*.*",
-    style: wStyle = wFdOpen): wFileDialog
+proc FileDialog*(parent: wWindow = nil, message = "", defaultDir = "",
+    defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen): wFileDialog
     {.inline.} =
   ## Constructor.
   new(result, final)
@@ -137,13 +135,13 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
   if mParent != nil:
     ofn.hwndOwner = mParent.mHwnd
 
-  if mDefaultDir != nil:
+  if mDefaultDir.len != 0:
     ofn.lpstrInitialDir = &T(mDefaultDir)
 
-  if mMessage != nil:
+  if mMessage.len != 0:
     ofn.lpstrTitle = &T(mMessage)
 
-  if mWildcard != nil:
+  if mWildcard.len != 0:
     ofn.lpstrFilter = &T(mWildcard.replace('|', '\0') & '\0')
 
   var isOk =
@@ -153,7 +151,7 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
       GetOpenFileName(&ofn)
 
   mPaths = @[]
-  mPath = nil
+  mPath = ""
   mFilterIndex = ofn.nFilterIndex
 
   if isOk:

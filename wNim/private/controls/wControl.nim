@@ -94,7 +94,7 @@ proc getNextTab(self: wControl, previous: bool): wControl =
 proc getNextMnemonic(self: wControl, letter: char, onlyone: var bool): wControl =
   # return control with specified letter,
   # however, click only there is one control with this letter
-  if mParent == nil or mParent.mChildren == nil: return
+  if mParent == nil or mParent.mChildren.len == 0: return
 
   let
     siblings = mParent.mChildren

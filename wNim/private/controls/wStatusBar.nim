@@ -81,7 +81,7 @@ proc getStatusWidth*(self: wStatusBar, index: int): int {.validate, property, in
   ## Returns the width of the specified field.
   result = mWidths[index]
 
-proc setStatusText*(self: wStatusBar, text: string = nil, index = 0) {.validate, property, inline.} =
+proc setStatusText*(self: wStatusBar, text = "", index = 0) {.validate, property, inline.} =
   ## Sets the status text for the specified field.
   SendMessage(mHwnd, SB_SETTEXT, index, &T(text))
 

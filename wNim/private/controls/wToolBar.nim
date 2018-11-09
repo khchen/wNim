@@ -104,15 +104,15 @@ proc clearTools*(self: wToolBar) {.validate.} =
   for i in 1..getToolsCount():
     deleteToolByPos(0)
 
-proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID,
-    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
-    longHelp: string = nil, kind: int = wTbNormal) {.validate.} =
+proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "", kind: int = wTbNormal)
+    {.validate.} =
   ## Inserts the tool with the specified attributes into the toolbar at the
   ## given position.
   var button = TBBUTTON(fsState: TBSTATE_ENABLED, fsStyle: byte kind,
     idCommand: int32 toolId)
 
-  if label != nil:
+  if label.len != 0:
     button.iString = cast[INT_PTR](&T(label))
 
   if (kind and TBSTYLE_SEP) != 0:
@@ -136,27 +136,24 @@ proc insertSeparator*(self: wToolBar, pos: int) {.validate, inline.} =
   ## Inserts the separator into the toolbar at the given position.
   insertTool(pos, toolId=0, kind=wTbSeparator)
 
-proc insertCheckTool*(self: wToolBar, pos: int, toolId: wCommandID,
-    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
-    longHelp: string = nil) {.validate, inline.} =
+proc insertCheckTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Insert the check (or toggle) tool into the toolbar at the given position.
   insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
 
-proc insertRadioTool*(self: wToolBar, pos: int, toolId: wCommandID,
-    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
-    longHelp: string = nil) {.validate, inline.} =
+proc insertRadioTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Insert the radio tool into the toolbar at the given position.
   insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
 
 proc insertDropDownTool*(self: wToolBar, pos: int, toolId: wCommandID,
-    label: string = nil, bitmap: wBitmap = nil, shortHelp: string = nil,
-    longHelp: string = nil) {.validate, inline.} =
+    label = "", bitmap: wBitmap = nil, shortHelp = "", longHelp = "")
+    {.validate, inline.} =
   ## Insert the drowdown tool into the toolbar at the given position.
   insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
 
-proc addTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
-    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil,
-    kind: int = wTbNormal) {.validate, inline.} =
+proc addTool*(self: wToolBar, toolId: wCommandID, label = "", bitmap: wBitmap = nil,
+    shortHelp = "", longHelp = "", kind: int = wTbNormal) {.validate, inline.} =
   ## Adds a tool to the toolbar.
   insertTool(getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind)
 
@@ -164,21 +161,18 @@ proc addSeparator*(self: wToolBar) {.validate, inline.} =
   ## Adds a separator for spacing groups of tools.
   addTool(toolId=0, kind=wTbSeparator)
 
-proc addCheckTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
-    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
-    {.validate, inline.} =
+proc addCheckTool*(self: wToolBar, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new check (or toggle) tool to the toolbar.
   addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
 
-proc addRadioTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
-    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
-    {.validate, inline.} =
+proc addRadioTool*(self: wToolBar, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new radio tool to the toolbar.
   addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
 
-proc addDropDownTool*(self: wToolBar, toolId: wCommandID, label: string = nil,
-    bitmap: wBitmap = nil, shortHelp: string = nil, longHelp: string = nil)
-    {.validate, inline.} =
+proc addDropDownTool*(self: wToolBar, toolId: wCommandID, label = "",
+    bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new drowdown tool to the toolbar.
   addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
 
@@ -219,7 +213,7 @@ proc getToolShortHelp*(self: wToolBar, toolId: wCommandID): string
     result = tool.mShortHelp
 
 proc setToolShortHelp*(self: wToolBar, toolId: wCommandID,
-    shortHelp: string = nil) {.validate, property, inline.} =
+    shortHelp = "") {.validate, property, inline.} =
   ## Sets the short help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
@@ -233,7 +227,7 @@ proc getToolLongHelp*(self: wToolBar, toolId: wCommandID): string
     result = tool.mLongHelp
 
 proc setToolLongHelp*(self: wToolBar, toolId: wCommandID,
-    longHelp: string = nil) {.validate, property, inline.} =
+    longHelp = "") {.validate, property, inline.} =
   ## Sets the long help for the given tool.
   let tool = getToolById(toolId)
   if tool != nil:
@@ -283,7 +277,7 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
       dwData: buttonInfo.lParam,
       idCommand: int32 toolId)
 
-    if label != nil:
+    if label.len != 0:
       button.iString = cast[INT_PTR](&T(label))
 
     SendMessage(mHwnd, TB_DELETEBUTTON, pos, 0)

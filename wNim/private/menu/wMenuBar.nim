@@ -209,7 +209,7 @@ proc getLabelText*(self: wMenuBar, pos: int): string {.validate, property.} =
 proc setLabel*(self: wMenuBar, pos: int, text: string) {.validate, property.} =
   ## Sets the label of a top-level menu.
   wValidate(text)
-  if pos >= 0 and pos < mMenuList.len and text != nil:
+  if pos >= 0 and pos < mMenuList.len and text.len != 0:
     var menuItemInfo = MENUITEMINFO(
       cbSize: sizeof(MENUITEMINFO),
       fMask: MIIM_STRING,

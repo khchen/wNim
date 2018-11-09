@@ -204,14 +204,13 @@ proc endModal*(self: wFrame, retCode: int = 0) =
   # dialog box
   for topwin in mDisableList:
     topwin.enable()
-  mDisableList = nil
+  mDisableList = @[]
 
   # use wEvent_AppQuit to end the loop in showModal
   PostMessage(0, wEvent_AppQuit, WPARAM retCode, 0)
   hide()
 
-proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip: string = nil)
-    {.validate, property.} =
+proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.} =
   ## Creates the system tray icon.
   wValidate(icon)
   if icon != nil:
@@ -260,7 +259,7 @@ proc removeTrayIcon*(self: wFrame) {.validate.} =
     Shell_NotifyIcon(NIM_DELETE, &nid)
     mTrayIconAdded = false
     mTrayIcon = nil
-    mTrayToolTip = nil
+    mTrayToolTip = ""
     systemDisconnect(mCreateConn)
     systemDisconnect(mTrayConn)
 

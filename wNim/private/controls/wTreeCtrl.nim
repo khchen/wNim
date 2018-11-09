@@ -215,13 +215,13 @@ proc getAllChildren*(self: wTreeItem): seq[wTreeItem] {.property.} =
   result = @[]
   addChildren(result, true)
 
-proc set*(self: wTreeItem, text: string = nil, image = wTreeIgnore,
+proc set*(self: wTreeItem, text = "", image = wTreeIgnore,
     selImage = wTreeIgnore, state = 0, flag = true) =
   ## Sets the item attributes.
   wValidate(mTreeCtrl)
   var tvitem = TVITEM(mask: TVIF_HANDLE, hItem: mHandle)
 
-  if text != nil:
+  if text.len != 0:
     tvitem.mask = tvitem.mask or TVIF_TEXT
     tvitem.pszText = &T(text)
 

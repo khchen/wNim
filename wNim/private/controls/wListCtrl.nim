@@ -111,7 +111,7 @@ proc setColumnWidth*(self: wListCtrl, col: int, width: int)
   ## For wLcList mode, col must be set to 0.
   SendMessage(mHwnd, LVM_SETCOLUMNWIDTH, col, width)
 
-proc insertColumn*(self: wListCtrl, col: int, text: string = nil,
+proc insertColumn*(self: wListCtrl, col: int, text = "",
     format = wListFormatLeft, width = wListAutosize,
     image = wListImageNone): int {.validate, discardable.} =
   ## For report view mode (only), inserts a column.
@@ -125,7 +125,7 @@ proc insertColumn*(self: wListCtrl, col: int, text: string = nil,
     fmt: format,
     cx: if width < 0: 80 else: width)
 
-  if text != nil:
+  if text.len != 0:
     lvcol.mask = lvcol.mask or LVCF_TEXT
     lvcol.pszText = &T(text)
 
@@ -136,13 +136,13 @@ proc insertColumn*(self: wListCtrl, col: int, text: string = nil,
     if width == wListAutosizeUseHeader:
       setColumnWidth(result, LVSCW_AUTOSIZE_USEHEADER)
 
-proc appendColumn*(self: wListCtrl, text: string = nil, format = wListFormatLeft,
+proc appendColumn*(self: wListCtrl, text = "", format = wListFormatLeft,
     width = wListAutosize, image = wListImageNone): int
     {.validate, inline, discardable.} =
   ## Adds a new column to the list control in report view mode.
   insertColumn(mColCount, text, format, width, image)
 
-proc setColumn*(self: wListCtrl, col: int, text: string = nil, format = wListIgnore,
+proc setColumn*(self: wListCtrl, col: int, text = "", format = wListIgnore,
     width = wListIgnore, image = wListIgnore) {.validate, property.} =
   ## Sets information about this column.
   ## ==========  ===============================================================
@@ -163,7 +163,7 @@ proc setColumn*(self: wListCtrl, col: int, text: string = nil, format = wListIgn
     setColumnWidth(col, width)
 
   var lvcol: LVCOLUMN
-  if text != nil:
+  if text.len != 0:
     lvcol.mask = lvcol.mask or LVCF_TEXT
     lvcol.pszText = &T(text)
 
@@ -238,13 +238,13 @@ proc deleteAllColumns*(self: wListCtrl) {.validate.} =
   while mColCount > 0:
     deleteColumn(0)
 
-proc insertItem*(self: wListCtrl, index: int, text: string = nil,
-    image = wListImageNone, data: int = 0): int {.validate, discardable.} =
+proc insertItem*(self: wListCtrl, index: int, text = "", image = wListImageNone,
+    data: int = 0): int {.validate, discardable.} =
   ## Inserts an item, returning the index of the new item if successful, -1 otherwise
   # it not set I_IMAGENONE, it will use image 0
   var item = LVITEM(iItem: index, mask: LVIF_IMAGE, iImage: image)
 
-  if text != nil:
+  if text.len != 0:
     item.mask = item.mask or LVIF_TEXT
     item.pszText = &T(text)
 
@@ -254,12 +254,12 @@ proc insertItem*(self: wListCtrl, index: int, text: string = nil,
 
   result = int SendMessage(mHwnd, LVM_INSERTITEM, 0, &item)
 
-proc appendItem*(self: wListCtrl, text: string = nil,
-    image = wListImageNone, data: int = 0): int {.validate, inline, discardable.} =
+proc appendItem*(self: wListCtrl, text = "", image = wListImageNone,
+    data: int = 0): int {.validate, inline, discardable.} =
   ## Adds an item.
   result = insertItem(getItemCount(), text, image, data)
 
-proc setItem*(self: wListCtrl, index: int, col: int = 0, text: string = nil,
+proc setItem*(self: wListCtrl, index: int, col: int = 0, text = "",
     image = wListIgnore, state = 0, flag = true) {.validate, property.} =
   ## Sets the data of an item.
   ## ==========  ===============================================================
@@ -278,7 +278,7 @@ proc setItem*(self: wListCtrl, index: int, col: int = 0, text: string = nil,
   ## flag        Set state to true or false.
   var item = LVITEM(iItem: index, iSubItem: col)
 
-  if text != nil:
+  if text.len != 0:
     item.mask = item.mask or LVIF_TEXT
     item.pszText = &T(text)
 

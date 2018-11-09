@@ -73,7 +73,7 @@ proc getText*(self: wComboBox, index: int): string =
   ## Returns the text of the item with the given index.
   # use getText instead of getString, otherwise property become "string" keyword.
   let maxLen = int SendMessage(mHwnd, CB_GETLBTEXTLEN, index, 0)
-  if maxLen == CB_ERR: return nil
+  if maxLen == CB_ERR: return ""
 
   var buffer = T(maxLen + 2)
   buffer.setLen(SendMessage(mHwnd, CB_GETLBTEXT, index, &buffer))
@@ -83,7 +83,7 @@ proc `[]`*(self: wComboBox, index: int): string {.validate, inline.} =
   ## Returns the text of the item with the given index.
   ## Raise error if index out of bounds.
   result = getText(index)
-  if result == nil:
+  if result.len == 0:
     raise newException(IndexError, "index out of bounds")
 
 iterator items*(self: wComboBox): string {.validate, inline.} =

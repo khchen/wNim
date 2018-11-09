@@ -406,9 +406,9 @@ iterator getDecoders*(self: wImage): string {.validate.} =
   except:
     raise newException(wImageError, "wImage getEncoders failure")
 
-proc saveFile*(self: wImage, filename: string, fileType: string = nil,
+proc saveFile*(self: wImage, filename: string, fileType = "",
     quality: range[0..100] = 90) {.validate.} =
-  ## Saves an image into the file. If fileType is nil, use extension name as
+  ## Saves an image into the file. If fileType is empty, use extension name as
   ## fileType. Use getEncoders iterator to list the supported format.
   wValidate(filename)
   try:

@@ -1604,7 +1604,7 @@ proc setToolTip*(self: wWindow, tip: string) {.validate, property.} =
 
 proc unsetToolTip*(self: wWindow) {.validate, inline.} =
   ## Unset any existing tooltip.
-  setToolTip(nil)
+  setToolTip("")
 
 proc setToolTip*(self: wWindow, maxWidth = wDefault, autoPop = wDefault,
     delay = wDefault, reshow = wDefault) {.validate, property.} =

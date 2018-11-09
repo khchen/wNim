@@ -135,8 +135,8 @@ proc setId*(self: wMenuBase, id: wCommandID, newid: wCommandID)
   withMenuPos(id):
     menu.setId(pos, newid)
 
-proc replace*(self: wMenuBase, id: wCommandID, text: string = nil,
-    help: string = nil, bitmap: wBitmap = nil, submenu: wMenu = nil,
+proc replace*(self: wMenuBase, id: wCommandID, text = "", help = "",
+    bitmap: wBitmap = nil, submenu: wMenu = nil,
     kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Replaces the menu item with another one.
   ## Return the new menu item object.

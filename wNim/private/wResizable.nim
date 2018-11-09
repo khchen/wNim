@@ -150,7 +150,7 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
         x.del(i)
         x.insert(i, new)
 
-    proc addConstraint(code: var string, x: NimNode, strength: string = nil) =
+    proc addConstraint(code: var string, x: NimNode, strength = "") =
       if x.kind == nnkInfix:
         ## enconter infix operator  a == b, a < b, etc.
         if strength.len == 0:

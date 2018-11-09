@@ -64,7 +64,7 @@ proc getText*(self: wListBox, index: int): string {.validate, property.} =
   ## Returns the label of the item with the given index.
   # use getText instead of getString, otherwise property become "string" keyword.
   let maxLen = int SendMessage(mHwnd, LB_GETTEXTLEN, index, 0)
-  if maxLen == LB_ERR: return nil
+  if maxLen == LB_ERR: return ""
 
   var buffer = T(maxLen + 2)
   buffer.setLen(SendMessage(mHwnd, LB_GETTEXT, index, &buffer))
@@ -74,7 +74,7 @@ proc `[]`*(self: wListBox, index: int): string {.validate, inline.} =
   ## Returns the label of the item with the given index.
   ## Raise error if index out of bounds.
   result = getText(index)
-  if result == nil:
+  if result.len == 0:
     raise newException(IndexError, "index out of bounds")
 
 iterator items*(self: wListBox): string {.validate, inline.} =

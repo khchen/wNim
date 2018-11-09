@@ -129,9 +129,9 @@ proc final*(self: wMenuItem) {.validate.} =
   ## Default finalizer for wMenuItem.
   discard
 
-proc init*(self: wMenuItem, id: wCommandID = 0, text: string = nil,
-    help: string = nil, kind = wMenuItemNormal, bitmap: wBitmap = nil,
-    submenu: wMenu = nil) {.validate.} =
+proc init*(self: wMenuItem, id: wCommandID = 0, text = "", help = "",
+    kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil)
+    {.validate.} =
   ## Initializer.
   mId = id
   mText = text
@@ -140,8 +140,8 @@ proc init*(self: wMenuItem, id: wCommandID = 0, text: string = nil,
   mBitmap = bitmap
   mSubmenu = submenu
 
-proc MenuItem*(id: wCommandID = 0, text: string = nil,
-    help: string = nil, kind = wMenuItemNormal, bitmap: wBitmap = nil,
+proc MenuItem*(id: wCommandID = 0, text = "", help = "",
+    kind = wMenuItemNormal, bitmap: wBitmap = nil,
     submenu: wMenu = nil): wMenuItem {.inline.} =
   ## Constructor.
   new(result, final)

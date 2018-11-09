@@ -29,7 +29,7 @@ proc wnimAdd(list: var NimNode, x: NimNode, parent: string, grand: string,
 
     let class = (if x.kind == nnkIdent: $x else: $x[0])
     var name = "anonymous_" & class.toLowerAscii() & $count
-    var param = (if parent == nil: "" else: parent)
+    var param = (if parent.len == 0: "" else: parent)
     count.inc
 
     if x.kind == nnkCall:
@@ -56,14 +56,14 @@ macro wNim*(x: untyped): untyped =
   result = newStmtList()
   var count = 1
   for node in x:
-    result.wnimAdd(node, nil, nil, count)
+    result.wnimAdd(node, "", "", count)
 
 macro wNim_Debug*(x: untyped): untyped =
   ## Debug the wNim DSL.
   result = newStmtList()
   var count = 1
   for node in x:
-    result.wnimAdd(node, nil, nil, count)
+    result.wnimAdd(node, "", "", count)
 
   echo result.repr
 
@@ -145,9 +145,11 @@ when not defined(release):
   proc wValidateToPointer*(x: pointer): (pointer, string) =
     (x, x.type.name)
   proc wValidateToPointer*(x: string): (pointer, string) =
-    ((if x.isNil: cast[pointer](0) else: cast[pointer](unsafeaddr x)), x.type.name)
+    # don't check string isnil anymore (for v0.19)
+    (cast[pointer](1), x.type.name)
   proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
-    (cast[pointer](x), x.type.name)
+    # don't check seq isnil anymore (for v0.19)
+    (cast[pointer](1), x.type.name)
 
   template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
     for tup in vargs:

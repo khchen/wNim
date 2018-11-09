@@ -141,7 +141,7 @@ proc initFromNative(self: wFont, lf: var LOGFONT) =
 
 proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
     weight = wFontWeightNormal, italic = false, underline = false,
-    faceName: string = nil, encoding = wFontEncodingDefault) {.validate.} =
+    faceName = "", encoding = wFontEncodingDefault) {.validate.} =
   ## Initializer.
 
   # use lfMessageFont in nonclientMetrics instead of DEFAULT_GUI_FONT
@@ -164,14 +164,14 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
   if encoding != wFontEncodingDefault:
     lf.lfCharSet = encoding.byte
 
-  if faceName != nil:
+  if faceName.len != 0:
     lf.lfFaceName <<< T(faceName)
 
   initFromNative(lf)
 
 proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
     weight = wFontWeightNormal, italic = false, underline = false,
-    faceName: string = nil, encoding = wFontEncodingDefault): wFont {.inline.} =
+    faceName = "", encoding = wFontEncodingDefault): wFont {.inline.} =
   ## Creates a font object with the specified attributes.
   ## ==========  =================================================================================
   ## Parameters  Description

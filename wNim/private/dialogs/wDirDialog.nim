@@ -30,16 +30,16 @@ proc final*(self: wDirDialog) =
   ## Default finalizer for wDirDialog.
   discard
 
-proc init*(self: wDirDialog, parent: wWindow = nil, message: string = nil,
-    defaultPath: string = nil, style: wStyle = 0) {.validate.} =
+proc init*(self: wDirDialog, parent: wWindow = nil, message = "",
+    defaultPath = "", style: wStyle = 0) {.validate.} =
   ## Initializer.
   mParent = parent
   mMessage = message
   mPath = defaultPath
   mStyle = style
 
-proc DirDialog*(parent: wWindow = nil, message: string = nil,
-    defaultPath: string = nil, style: wStyle = 0): wDirDialog {.inline.} =
+proc DirDialog*(parent: wWindow = nil, message = "", defaultPath = "",
+    style: wStyle = 0): wDirDialog {.inline.} =
   ## Constructor.
   new(result, final)
   result.init(parent, message, defaultPath, style)
@@ -76,10 +76,10 @@ when not defined(useWinXP):
 
       if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: raise
 
-      if mMessage != nil:
+      if mMessage.len != 0:
         if dialog.SetTitle(mMessage).FAILED: raise
 
-      if mPath != nil:
+      if mPath.len != 0:
         if SHCreateItemFromParsingName(mPath, nil, &IID_IShellItem,
           cast[ptr PVOID](&folder)).FAILED: raise
 
@@ -110,10 +110,10 @@ proc showModal_XPCompatible(self: wDirDialog): wId =
   if mParent != nil:
     bi.hwndOwner = mParent.mHwnd
 
-  if mMessage != nil:
+  if mMessage.len != 0:
     bi.lpszTitle = &T(mMessage)
 
-  if mPath != nil:
+  if mPath.len != 0:
     bi.lpfn = wDirDialog_CallbackProc
     bi.lParam = cast[LPARAM](&T(mPath))
 
