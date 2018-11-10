@@ -1,3 +1,8 @@
+Version 0.1.4
+-------------
+* Int expressions are totally supported by layout DSL now. (Fix #4)
+* Add wWindow.getToolTip(). (Fix #6)
+
 Version 0.1.3
 -------------
 * Add wIpCtrl class, the IP v4 address control.

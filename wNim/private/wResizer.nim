@@ -58,10 +58,10 @@ proc resolve*(self: wResizer) {.validate.} =
   for child in mObjects:
     if child of wWindow:
       let rect = child.wWindow.getRect()
-      mSolver.addConstraint((child.mLeft == rect.x.float) | WEAKEST)
-      mSolver.addConstraint((child.mTop == rect.y.float) | WEAKEST)
-      mSolver.addConstraint((child.mRight - child.mLeft == rect.width.float) | WEAKER)
-      mSolver.addConstraint((child.mBottom - child.mTop == rect.height.float) | WEAKER)
+      mSolver.addConstraint((child.mLeft == rect.x) | WEAKEST)
+      mSolver.addConstraint((child.mTop == rect.y) | WEAKEST)
+      mSolver.addConstraint((child.mRight - child.mLeft == rect.width) | WEAKER)
+      mSolver.addConstraint((child.mBottom - child.mTop == rect.height) | WEAKER)
 
   mSolver.updateVariables()
 

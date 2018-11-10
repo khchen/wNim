@@ -133,6 +133,7 @@ when not defined(wnimdoc):
   import winim/inc/[commctrl, commdlg, objbase, richedit, shellapi, gdiplus]
   export winstr, utils, windef, winerror, winbase, winuser, wingdi, kiwi
 
+  include wNim/private/wSymbolics
   include wNim/private/wMacro
   include wNim/private/wTypes
   include wNim/private/consts/wKeyCodes

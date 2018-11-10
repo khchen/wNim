@@ -104,18 +104,18 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
     code &= "  template down(name: wResizable): untyped = name.bottom\n"
     code &= "  template centerX(name: wResizable): untyped = ((name.right - name.left) / 2 + name.left)\n"
     code &= "  template centerY(name: wResizable): untyped = ((name.bottom - name.top) / 2 + name.top)\n"
-    code &= "  template defaultWidth(name: wResizable): untyped = name.wWindow.defaultSize.width.float\n"
-    code &= "  template defaultHeight(name: wResizable): untyped = name.wWindow.defaultSize.height.float\n"
-    code &= "  template bestWidth(name: wResizable): untyped = name.wWindow.bestSize.width.float\n"
-    code &= "  template bestHeight(name: wResizable): untyped = name.wWindow.bestSize.height.float\n"
+    code &= "  template defaultWidth(name: wResizable): untyped = name.wWindow.defaultSize.width\n"
+    code &= "  template defaultHeight(name: wResizable): untyped = name.wWindow.defaultSize.height\n"
+    code &= "  template bestWidth(name: wResizable): untyped = name.wWindow.bestSize.width\n"
+    code &= "  template bestHeight(name: wResizable): untyped = name.wWindow.bestSize.height\n"
 
     # for align between siblings only, for example: StaticBox
-    code &= "  template innerLeft(name: wResizable): untyped = name.left + name.wWindow.clientMargin(wLeft).float\n"
-    code &= "  template innerTop(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop).float\n"
-    code &= "  template innerRight(name: wResizable): untyped = name.right - name.wWindow.clientMargin(wRight).float\n"
-    code &= "  template innerBottom(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom).float\n"
-    code &= "  template innerUp(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop).float\n"
-    code &= "  template innerDown(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom).float\n"
+    code &= "  template innerLeft(name: wResizable): untyped = name.left + name.wWindow.clientMargin(wLeft)\n"
+    code &= "  template innerTop(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop)\n"
+    code &= "  template innerRight(name: wResizable): untyped = name.right - name.wWindow.clientMargin(wRight)\n"
+    code &= "  template innerBottom(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom)\n"
+    code &= "  template innerUp(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop)\n"
+    code &= "  template innerDown(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom)\n"
     code &= "  template innerWidth(name: wResizable): untyped = (name.innerRight - name.innerLeft)\n"
     code &= "  template innerHeight(name: wResizable): untyped = (name.innerBottom - name.innerTop)\n"
 
@@ -139,24 +139,13 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
           x.del(i)
           x.insert(i, new)
 
-    proc int2float(x: NimNode): NimNode =
-      if x.kind == nnkIntLit:
-        result = newFloatLitNode(intVal(x).float)
-      else:
-        result = x
-
-      for i in 0..<x.len:
-        let new = int2float(x[i])
-        x.del(i)
-        x.insert(i, new)
-
     proc addConstraint(code: var string, x: NimNode, strength = "") =
       if x.kind == nnkInfix:
         ## enconter infix operator  a == b, a < b, etc.
         if strength.len == 0:
-          code &= "  resizer.addConstraint(" & x.int2float.repr & ")\n"
+          code &= "  resizer.addConstraint(" & x.repr & ")\n"
         else:
-          code &= "  resizer.addConstraint(($1) | $2)\n" % [x.int2float.repr, strength]
+          code &= "  resizer.addConstraint(($1) | $2)\n" % [x.repr, strength]
 
       elif x.kind == nnkBracket:
         for item in x:
@@ -186,10 +175,10 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
 
     if parent.kind != nnkNilLit:
       code &= "  let size = $1.getClientSize()\n" % [$parent]
-      code &= "  resizer.addConstraint($1.left == 0.0)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.top == 0.0)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.width == size.width.float)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.height == size.height.float)\n" % [$parent]
+      code &= "  resizer.addConstraint($1.left == 0)\n" % [$parent]
+      code &= "  resizer.addConstraint($1.top == 0)\n" % [$parent]
+      code &= "  resizer.addConstraint($1.width == size.width)\n" % [$parent]
+      code &= "  resizer.addConstraint($1.height == size.height)\n" % [$parent]
 
     code &= "{.pop.}\n"
     parseStmt(code)

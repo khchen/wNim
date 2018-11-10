@@ -1577,6 +1577,19 @@ proc setDropTarget*(self: wWindow, flag = true) {.validate, property.} =
 
     RegisterDragDrop(mHwnd, pDropTarget)
 
+proc getToolTip*(self: wWindow): string {.validate, property.} =
+  ## Get the text of the associated tooltip or empty string if none.
+  if mTipHwnd != 0:
+    var buffer = T(65536)
+    var toolInfo = TOOLINFO(
+      cbSize: sizeof(TOOLINFO),
+      hwnd: mHwnd,
+      uId: cast[UINT_PTR](mHwnd),
+      lpszText: &buffer)
+
+    SendMessage(mTipHwnd, TTM_GETTEXT, 65536, &toolInfo)
+    buffer.nullTerminate
+    result = $buffer
 
 proc setToolTip*(self: wWindow, tip: string) {.validate, property.} =
   ## Attach a tooltip to the window.
