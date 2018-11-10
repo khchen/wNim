@@ -1,6 +1,6 @@
 # wNim
 
-wNim is Nim's Windows GUI Framework, based on winim.
+wNim is Nim's Windows GUI Framework, based on [winim](https://github.com/khchen/winim).
 Layout DSL is powered by Yuriy Glukhov's Kiwi constraint solving library.
 
 ## Code Examples
@@ -39,6 +39,19 @@ panel.layout:
     bottom + 10 = panel.bottom
 ```
 
+Getter and Setter:
+```nimrod
+let frame = Frame()
+
+# wxWidgets/wxPython style
+frame.setLabel("Hello World")
+echo frame.getLabel()
+
+# nim style
+frame.label = "Hello World"
+echo frame.label
+```
+
 ## Screenshots
 ![demo.nim](https://github.com/khchen/wNim/blob/master/examples/images/screenshot.png)
 
@@ -53,6 +66,17 @@ Without git:
     2. Start a console, change current dir to the folder which include "wNim.nimble" file.
        (for example: C:\wNim-master\wNim-master>)
     3. Run "nimble install"
+
+## Compile
+To compile the examples, try following command:
+
+    nim c -d:release --opt:size --passL:-s --app:gui demo.nim
+
+For Windows XP compatibility, add:
+
+    -d:useWinXP
+
+To compile by [Tiny C Compiler](https://bellard.org/tcc/), or want to add some resource files, take a look at https://github.com/khchen/winim/tree/master/tcclib
 
 ## Q & A
 ### Q: Why I start this project?

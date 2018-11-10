@@ -19,7 +19,7 @@ frame.icon = Icon("", 0) # load icon from exe file.
 var statusbar = StatusBar(frame)
 var panel = Panel(frame)
 
-let style = wAlignCentre or wAlignMiddle or wBorderSimple
+const style = wAlignCentre or wAlignMiddle or wBorderSimple
 var text1 = StaticText(panel, label="Text1", style=style)
 var text2 = StaticText(panel, label="Text2", style=style)
 var text3 = StaticText(panel, label="Text3", style=style)

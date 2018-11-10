@@ -80,10 +80,10 @@ var listbox = ListBox(notebook.page(2), style=wLbNoSel or wBorderSimple or wLbNe
 
 listbox.wEvent_ContextMenu do ():
   var menu = Menu()
-  menu.append(wID_CLEAR, "&Clear")
+  menu.append(wIdClear, "&Clear")
   listbox.popupMenu(menu)
 
-frame.wID_CLEAR do ():
+frame.wIdClear do ():
   listbox.clear()
 
 proc add(self: wListBox, text: string) =
@@ -111,136 +111,136 @@ staticbitmap.wEvent_CommandLeftClick do (): listbox.add "staticbitmap.wEvent_Com
 proc layout() =
   panel.layout:
     staticbox1:
-      top == panel.top
-      bottom == panel.bottom
-      left == panel.left
-      innerWidth == float calendarctrl.bestSize.width
+      top = panel.top
+      bottom = panel.bottom
+      left = panel.left
+      innerWidth = float calendarctrl.bestSize.width
 
     button:
-      top == staticbox1.innerTop + 5
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = staticbox1.innerTop + 5
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     checkbox:
-      top == button.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = button.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     textctrl:
-      top == checkbox.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = checkbox.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     statictext:
-      top == textctrl.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = textctrl.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     staticline:
-      top == statictext.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 2
+      top = statictext.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 2
 
     datepickerctrl:
-      top == staticline.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = staticline.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     timepickerctrl:
-      top == datepickerctrl.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
-      height == 25
+      top = datepickerctrl.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
+      height = 25
 
     calendarctrl:
-      top == timepickerctrl.bottom + 10
-      left == staticbox1.innerLeft + 5
-      right == staticbox1.innerRight - 5
+      top = timepickerctrl.bottom + 10
+      left = staticbox1.innerLeft + 5
+      right = staticbox1.innerRight - 5
 
     staticbox2:
-      top == panel.top
-      left == staticbox1.right + 10
-      right == panel.right
-      innerBottom == gauge.bottom + 5
+      top = panel.top
+      left = staticbox1.right + 10
+      right = panel.right
+      innerBottom = gauge.bottom + 5
 
     spinctrl:
-      top == staticbox2.innerTop + 5
-      left == staticbox2.innerLeft + 5
-      right == staticbox2.innerRight - 5
-      height == 25
+      top = staticbox2.innerTop + 5
+      left = staticbox2.innerLeft + 5
+      right = staticbox2.innerRight - 5
+      height = 25
 
     slider:
-      top == spinctrl.bottom + 10
-      left == staticbox2.innerLeft + 5
-      right == staticbox2.innerRight - 5
-      height == 25
+      top = spinctrl.bottom + 10
+      left = staticbox2.innerLeft + 5
+      right = staticbox2.innerRight - 5
+      height = 25
 
     gauge:
-      top == slider.bottom + 10
-      left == staticbox2.innerLeft + 5
-      right == staticbox2.innerRight - 5
-      height == 25
+      top = slider.bottom + 10
+      left = staticbox2.innerLeft + 5
+      right = staticbox2.innerRight - 5
+      height = 25
 
     staticbox3:
-      top == staticbox2.bottom + 10
-      left == staticbox1.right + 10
-      right == panel.right
-      innerBottom == radiobutton3.bottom + 5
+      top = staticbox2.bottom + 10
+      left = staticbox1.right + 10
+      right = panel.right
+      innerBottom = radiobutton3.bottom + 5
 
     combobox:
-      top == staticbox3.innerTop + 5
-      left == staticbox3.innerLeft + 5
-      right == staticbox3.innerRight - 5
-      height == 25
+      top = staticbox3.innerTop + 5
+      left = staticbox3.innerLeft + 5
+      right = staticbox3.innerRight - 5
+      height = 25
 
     editable:
-      top == combobox.bottom + 10
-      left == staticbox3.innerLeft + 5
-      right == staticbox3.innerRight - 5
-      height == 25
+      top = combobox.bottom + 10
+      left = staticbox3.innerLeft + 5
+      right = staticbox3.innerRight - 5
+      height = 25
 
     radiobutton1:
-      top == editable.bottom + 10
-      left == staticbox3.innerLeft + 5
-      right == staticbox3.innerRight - 5
-      height == 22
+      top = editable.bottom + 10
+      left = staticbox3.innerLeft + 5
+      right = staticbox3.innerRight - 5
+      height = 22
 
     radiobutton2:
-      top == radiobutton1.bottom
-      left == staticbox3.innerLeft + 5
-      right == staticbox3.innerRight - 5
-      height == 22
+      top = radiobutton1.bottom
+      left = staticbox3.innerLeft + 5
+      right = staticbox3.innerRight - 5
+      height = 22
 
     radiobutton3:
-      top == radiobutton2.bottom
-      left == staticbox3.innerLeft + 5
-      right == staticbox3.innerRight - 5
-      height == 22
+      top = radiobutton2.bottom
+      left = staticbox3.innerLeft + 5
+      right = staticbox3.innerRight - 5
+      height = 22
 
     notebook:
-      top == staticbox3.bottom + 10
-      bottom == panel.bottom
-      left == staticbox3.left
-      right == panel.right
+      top = staticbox3.bottom + 10
+      bottom = panel.bottom
+      left = staticbox3.left
+      right = panel.right
 
   notebook.layout:
     staticbitmap:
-      left == notebook.left
-      right == notebook.right
-      top == notebook.top
-      bottom == notebook.bottom
+      left = notebook.left
+      right = notebook.right
+      top = notebook.top
+      bottom = notebook.bottom
 
     listbox:
-      left == notebook.left
-      right == notebook.right
-      top == notebook.top
-      bottom == notebook.bottom
+      left = notebook.left
+      right = notebook.right
+      top = notebook.top
+      bottom = notebook.bottom
 
 panel.wEvent_Size do ():
   layout()
