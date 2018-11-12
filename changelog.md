@@ -1,3 +1,8 @@
+Version 0.1.5
+-------------
+* Add example: rebar.nim
+
+
 Version 0.1.4
 -------------
 * Int expressions are totally supported by layout DSL now. (Fix #4)

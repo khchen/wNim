@@ -34,7 +34,8 @@ proc getCount*(self: wRebar): int {.validate, property, inline.} =
   ## Returns the number of controls in the rebar.
   result = int SendMessage(mHwnd, RB_GETBANDCOUNT, 0, 0)
 
-proc addControl*(self: wRebar, control: wControl, image = -1, label = "") {.validate.} =
+proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
+    isBreak = false) {.validate.} =
   ## Adds a control to the rebar.
   wValidate(control)
 
@@ -42,6 +43,7 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "") {.vali
   rbBand.fMask = RBBIM_STYLE or RBBIM_CHILD or RBBIM_CHILDSIZE or
     RBBIM_SIZE or RBBIM_IMAGE
   rbBand.fStyle = RBBS_CHILDEDGE or RBBS_GRIPPERALWAYS
+  if isBreak: rbBand.fStyle = rbBand.fStyle or RBBS_BREAK
   rbBand.hwndChild = control.mHwnd
   rbBand.iImage = image
 
@@ -51,8 +53,13 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "") {.vali
     rbBand.cxMinChild = toolbar.getToolsCount() * toolSize.width
     rbBand.cyMinChild = toolSize.height
 
+    toolbar.addWindowStyle(wTbDefaultStyle or CCS_NODIVIDER or
+      CCS_NOPARENTALIGN or CCS_NORESIZE)
+
   else:
-    let size = control.getBestSize()
+    var size = control.getMinSize()
+    if size == wDefaultSize:
+      size = control.getBestSize()
     rbBand.cxMinChild = size.width
     rbBand.cyMinChild = size.height
 

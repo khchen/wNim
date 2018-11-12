@@ -101,6 +101,7 @@ converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
 type
   wId* = enum
     ## Predefined names to use as menus or controls ID.
+    wIdZero = 0,
     wIdLowest = 4999, wIdOpen, wIdClose, wIdNew, wIdSave, wIdSaveAS, wIdRevert,
       wIdExit, wIdUndo, wIdRedo, wIdHelp, wIdPrint, wIdPrintSetup, wIdPreview,
       wIdAbout, wIdHelpContents, wIdHelpCommands, wIdHelpProcedures, wIdCloseAll,
