@@ -10,7 +10,7 @@ when defined(cpu64):
 else:
   {.link: "wNim32.res".}
 
-import ../wNim
+import wNim
 
 type
   MenuID = enum
