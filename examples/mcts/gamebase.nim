@@ -37,7 +37,7 @@ proc getNextPlayer*[State](self: Game[State]): auto =
   type
     Player = self.state.playerJustMoved.type
 
-  if isFinish():
+  if self.isFinish():
     result = Player(0)
   else:
     result = Player(3 - self.state.playerJustMoved.ord)

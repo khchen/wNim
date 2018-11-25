@@ -5,7 +5,6 @@
 #
 #====================================================================
 
-{.this: self.}
 import wNim
 
 # wNim's class/object use following naming convention.
@@ -22,7 +21,7 @@ proc final(self: wMyFrame) =
 
 proc init(self: wMyFrame, title: string) =
   wFrame(self).init(title=title, size=(350, 200))
-  center()
+  self.center()
 
   self.wEvent_Destroy do ():
     MessageDialog(self, "wMyFrame is about to destroy.",

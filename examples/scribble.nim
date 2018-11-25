@@ -5,8 +5,6 @@
 #
 #====================================================================
 
-{.this: self.}
-
 when defined(cpu64):
   {.link: "wNim64.res".}
 else:
@@ -27,49 +25,49 @@ proc final(self: wScribble) =
 
 proc init(self: wScribble, title: string, size: wSize) =
   wFrame(self).init(title=title, size=size)
-  setIcon(Icon("", 0))
+  self.setIcon(Icon("", 0))
 
-  mPen = Pen(color=wBlack, width=5)
-  mBmp = Bmp(wGetScreenSize())
-  mMemDc = MemoryDC()
-  mMemDc.selectObject(mBmp)
-  mMemDc.setBackground(wWhiteBrush)
-  mMemDc.setBrush(wWhiteBrush)
-  mMemDc.setPen(mPen)
-  mMemDc.clear()
-  mLastPos = wDefaultPoint
+  self.mPen = Pen(color=wBlack, width=5)
+  self.mBmp = Bmp(wGetScreenSize())
+  self.mMemDc = MemoryDC()
+  self.mMemDc.selectObject(self.mBmp)
+  self.mMemDc.setBackground(wWhiteBrush)
+  self.mMemDc.setBrush(wWhiteBrush)
+  self.mMemDc.setPen(self.mPen)
+  self.mMemDc.clear()
+  self.mLastPos = wDefaultPoint
 
   const penResource = staticRead(r"images\pen.png")
   let penImage = Image(penResource)
   penImage.rescale(24, 24)
   penImage.rotateFlip(wImageRotateNoneFlipY)
-  setCursor(Cursor(penImage, hotSpot=(0, 0)))
+  self.setCursor(Cursor(penImage, hotSpot=(0, 0)))
 
   self.wEvent_Paint do ():
     var dc = PaintDC(self)
     let size = dc.size
-    dc.blit(source=mMemDc, width=size.width, height=size.height)
+    dc.blit(source=self.mMemDc, width=size.width, height=size.height)
     # In case that nim's destructors not works.
     dc.delete
 
   proc onLeftDown(event: wEvent) =
     let pos = event.mousePos()
-    mMemDc.drawLine(if mLastPos == wDefaultPoint: pos else: mLastPos, pos)
+    self.mMemDc.drawLine(if self.mLastPos == wDefaultPoint: pos else: self.mLastPos, pos)
     self.refresh(eraseBackground=false)
-    mLastPos = pos
+    self.mLastPos = pos
 
   proc onRightDown(event: wEvent) =
     let pos = event.mousePos()
-    mMemDc.setPen(wTransparentPen)
-    mMemDc.drawCircle(pos, 30)
-    mMemDc.setPen(mPen)
+    self.mMemDc.setPen(wTransparentPen)
+    self.mMemDc.drawCircle(pos, 30)
+    self.mMemDc.setPen(self.mPen)
     self.refresh(eraseBackground=false)
 
-  connect(wEvent_LeftDown, onLeftDown)
-  connect(wEvent_RightDown, onRightDown)
+  self.connect(wEvent_LeftDown, onLeftDown)
+  self.connect(wEvent_RightDown, onRightDown)
 
-  self.wEvent_MouseLeave do (): mLastPos = wDefaultPoint
-  self.wEvent_LeftUp do (): mLastPos = wDefaultPoint
+  self.wEvent_MouseLeave do (): self.mLastPos = wDefaultPoint
+  self.wEvent_LeftUp do (): self.mLastPos = wDefaultPoint
   self.wEvent_MouseMove do (event: wEvent):
     if event.leftDown(): onLeftDown(event)
     elif event.rightDown(): onRightDown(event)
@@ -79,26 +77,26 @@ proc Scribble(title: string, size: wSize): wScribble {.inline.} =
   result.init(title, size)
 
 proc clear(self: wScribble) =
-  mMemDc.clear()
-  refresh(eraseBackground=false)
+  self.mMemDc.clear()
+  self.refresh(eraseBackground=false)
 
 proc setColor(self: wScribble, color: wColor) =
-  mPen.setColor(color)
-  mMemDc.setPen(mPen)
+  self.mPen.setColor(color)
+  self.mMemDc.setPen(self.mPen)
 
 proc setWidth(self: wScribble, width: int) =
-  mPen.setWidth(width)
-  mMemDc.setPen(mPen)
+  self.mPen.setWidth(width)
+  self.mMemDc.setPen(self.mPen)
 
 proc loadFile(self: wScribble, filename: string) =
   var image = Image(filename)
-  mMemDc.clear()
-  mMemDc.drawImage(image)
-  setClientSize(image.size)
-  refresh(eraseBackground=false)
+  self.mMemDc.clear()
+  self.mMemDc.drawImage(image)
+  self.setClientSize(image.size)
+  self.refresh(eraseBackground=false)
 
 proc saveFile(self: wScribble, filename: string) =
-  var size = getClientSize()
+  var size = self.getClientSize()
   var bmp = Bmp(size)
   var dc = self.ClientDC()
   var memdc = MemoryDC()

@@ -5,8 +5,6 @@
 #
 #====================================================================
 
-{.this: self.}
-
 # Here we develop a wHyperLink GUI control as custom control example.
 
 # wNim's class/object use following naming convention.
@@ -40,58 +38,61 @@ type
 # For example, if we have setFont(self: wHyperLink, font: wFont) {.property.},
 # then we can just write self.font = Font(10)
 
+proc getVisitedOrNormalColor(self: wHyperLink): wColor {.validate, property.} =
+  result = if self.mIsVisited: self.mVisitedColor else: self.mNormalColor
+
 proc setFont*(self: wHyperLink, font: wFont) {.validate, property.} =
   self.wWindow.setFont(font)
-  mNormalFont = font
-  fit()
+  self.mNormalFont = font
+  self.fit()
 
 proc getHoverFont*(self: wHyperLink): wFont {.validate, property.} =
-  result = mHoverFont
+  result = self.mHoverFont
 
 proc setHoverFont*(self: wHyperLink, font: wFont) {.validate, property.} =
-  mHoverFont = font
-  if mIsMouseHover:
-    self.wWindow.setFont(mHoverFont)
-    fit()
+  self.mHoverFont = font
+  if self.mIsMouseHover:
+    self.wWindow.setFont(self.mHoverFont)
+    self.fit()
 
 proc getMarkedColor*(self: wHyperLink): wColor {.validate, property.} =
-  result = mMarkedColor
+  result = self.mMarkedColor
 
 proc setMarkedColor*(self: wHyperLink, color: wColor) {.validate, property.} =
-  mMarkedColor = color
-  if mIsPressed:
-    setForegroundColor(mMarkedColor)
-    refresh()
+  self.mMarkedColor = color
+  if self.mIsPressed:
+    self.setForegroundColor(self.mMarkedColor)
+    self.refresh()
 
 proc getNormalColor*(self: wHyperLink): wColor {.validate, property.} =
-  result = mNormalColor
+  result = self.mNormalColor
 
 proc setNormalColor*(self: wHyperLink, color: wColor) {.validate, property.} =
-  mNormalColor = color
-  if not mIsPressed:
-    setForegroundColor(if mIsVisited: mVisitedColor else: mNormalColor)
-    refresh()
+  self.mNormalColor = color
+  if not self.mIsPressed:
+    self.setForegroundColor(self.visitedOrNormalColor)
+    self.refresh()
 
-proc getVisitedColour*(self: wHyperLink): wColor {.validate, property.} =
-  result = mVisitedColor
+proc getVisitedColor*(self: wHyperLink): wColor {.validate, property.} =
+  result = self.mVisitedColor
 
-proc setVisitedColour*(self: wHyperLink, color: wColor) {.validate, property.} =
-  mVisitedColor = color
-  if not mIsPressed:
-    setForegroundColor(if mIsVisited: mVisitedColor else: mNormalColor)
-    refresh()
+proc setVisitedColor*(self: wHyperLink, color: wColor) {.validate, property.} =
+  self.mVisitedColor = color
+  if not self.mIsPressed:
+    self.setForegroundColor(self.visitedOrNormalColor)
+    self.refresh()
 
 proc getUrl*(self: wHyperLink): string {.validate, property.} =
-  result = mUrl
+  result = self.mUrl
 
 proc setUrl*(self: wHyperLink, url: string) {.validate, property.} =
-  mUrl = url
+  self.mUrl = url
 
 proc setVisited*(self: wHyperLink, isVisited = true) {.validate, property.} =
-  mIsVisited = isVisited
+  self.mIsVisited = isVisited
 
 proc getVisited*(self: wHyperLink): bool {.validate, property.} =
-  result = mIsVisited
+  result = self.mIsVisited
 
 proc final*(self: wHyperLink) =
   self.wStaticText.final()
@@ -100,62 +101,62 @@ proc init*(self: wHyperLink, parent: wWindow, id = wDefaultID, label: string,
     url: string, pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
   self.wStaticText.init(parent, id, label, pos, size, style)
-  mUrl = url
-  mMarkedColor = wRed
-  mVisitedColor = 0x8B1A55
-  mNormalColor = wBlue
-  mIsMouseHover = false
-  mIsPressed = false
-  mIsVisited = false
+  self.mUrl = url
+  self.mMarkedColor = wRed
+  self.mVisitedColor = 0x8B1A55
+  self.mNormalColor = wBlue
+  self.mIsMouseHover = false
+  self.mIsPressed = false
+  self.mIsVisited = false
 
-  fit()
-  setCursor(wHandCursor)
-  setForegroundColor(mNormalColor)
+  self.fit()
+  self.setCursor(wHandCursor)
+  self.setForegroundColor(self.mNormalColor)
 
-  mNormalFont = getFont()
-  mHoverFont = Font(mNormalFont)
-  mHoverFont.underlined = true
+  self.mNormalFont = self.getFont()
+  self.mHoverFont = Font(self.mNormalFont)
+  self.mHoverFont.underlined = true
 
   # Assume this event will propagated like other command event.
   wAppGetCurrentApp().setMessagePropagation(wEvent_OpenUrl)
 
   self.wEvent_MouseEnter do ():
-    mIsMouseHover = true
-    self.wWindow.setFont(mHoverFont)
-    if mIsPressed:
-      self.setForegroundColor(mMarkedColor)
+    self.mIsMouseHover = true
+    self.wWindow.setFont(self.mHoverFont)
+    if self.mIsPressed:
+      self.setForegroundColor(self.mMarkedColor)
     else:
-      self.setForegroundColor(if mIsVisited: mVisitedColor else: mNormalColor)
+      self.setForegroundColor(self.visitedOrNormalColor)
     self.fit()
     self.refresh()
 
   self.wEvent_MouseLeave do ():
-    mIsMouseHover = false
-    self.wWindow.setFont(mNormalFont)
-    self.setForegroundColor(if mIsVisited: mVisitedColor else: mNormalColor)
+    self.mIsMouseHover = false
+    self.wWindow.setFont(self.mNormalFont)
+    self.setForegroundColor(self.visitedOrNormalColor)
     self.fit()
     self.refresh()
 
   self.wEvent_LeftDown do ():
-    mIsPressed = true
+    self.mIsPressed = true
     self.captureMouse()
-    self.setForegroundColor(mMarkedColor)
+    self.setForegroundColor(self.mMarkedColor)
     self.refresh()
 
   self.wEvent_LeftUp do ():
-    var isPressed = mIsPressed
-    mIsPressed = false
+    var isPressed = self.mIsPressed
+    self.mIsPressed = false
     self.releaseMouse()
-    self.setForegroundColor(if mIsVisited: mVisitedColor else: mNormalColor)
+    self.setForegroundColor(self.visitedOrNormalColor)
     self.refresh()
 
-    if mIsMouseHover and isPressed:
-      if mUrl.len != 0:
+    if self.mIsMouseHover and isPressed:
+      if self.mUrl.len != 0:
         # provide a chance let the user to veto the action.
         let event = Event(window=self, msg=wEvent_OpenUrl)
         if not self.processEvent(event) or event.isAllowed:
-          ShellExecute(0, "open", mUrl, nil, nil, SW_SHOW)
-      mIsVisited = true
+          ShellExecute(0, "open", self.mUrl, nil, nil, SW_SHOW)
+      self.mIsVisited = true
 
 proc HyperLink*(parent: wWindow, id = wDefaultID, label: string, url: string,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLink
