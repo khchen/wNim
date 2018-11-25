@@ -36,24 +36,24 @@ const
 
 method getBestSize*(self: wRadioButton): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSizeWithCheckMark(getLabel(), mFont.mHandle)
+  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle)
   result.height += 2
 
 method getDefaultSize*(self: wRadioButton): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getBestSize()
-  result.height = getLineControlDefaultHeight(mFont.mHandle)
+  result = self.getBestSize()
+  result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
 proc getValue*(self: wRadioButton): bool {.validate, property, inline.} =
   ## Returns true if the radio button is checked, false otherwise.
-  result = SendMessage(mHwnd, BM_GETCHECK, 0, 0) == BST_CHECKED
+  result = SendMessage(self.mHwnd, BM_GETCHECK, 0, 0) == BST_CHECKED
 
 proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
   ## Sets the radio button to checked or unchecked status.
-  SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
+  SendMessage(self.mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
 method release(self: wRadioButton) =
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wRadioButton) =
   ## Default finalizer for wRadioButton.
@@ -67,11 +67,11 @@ proc init*(self: wRadioButton, parent: wWindow, id = wDefaultID,
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = (style and (not 0xF)) or BS_AUTORADIOBUTTON
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
+  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_RadioButton, event.mWparam, event.mLparam)
 
 proc RadioButton*(parent: wWindow, id = wDefaultID,

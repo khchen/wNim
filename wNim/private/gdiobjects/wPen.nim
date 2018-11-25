@@ -73,7 +73,7 @@ const
 
 proc final*(self: wPen) =
   ## Default finalizer for wPen.
-  delete()
+  self.delete()
 
 proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   self.wGdiObject.init()
@@ -82,15 +82,15 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
   lb.lbStyle = elp.elpBrushStyle
   lb.lbColor = elp.elpColor
   lb.lbHatch = elp.elpHatch
-  mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC,
+  self.mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC,
     elp.elpWidth, lb, 0, nil)
 
-  if mHandle == 0:
-    raise newException(wFontError, "wPen creation failure")
+  if self.mHandle == 0:
+    raise newException(wPenError, "wPen creation failure")
 
-  mColor = elp.elpColor
-  mStyle = elp.elpPenStyle or (DWORD elp.elpHatch shl 16)
-  mWidth = elp.elpWidth
+  self.mColor = elp.elpColor
+  self.mStyle = elp.elpPenStyle or (DWORD elp.elpHatch shl 16)
+  self.mWidth = elp.elpWidth
 
 proc init*(self: wPen, color = wBlack, style = wPenStyleSolid or wPenCapRound,
     width = 1) {.validate.} =
@@ -109,7 +109,7 @@ proc init*(self: wPen, color = wBlack, style = wPenStyleSolid or wPenCapRound,
   else:
     elp.elpBrushStyle = BS_SOLID
 
-  initFromNative(elp)
+  self.initFromNative(elp)
 
 proc Pen*(color = wBlack, style = wPenStyleSolid or wPenCapRound, width = 1): wPen
     {.inline.} =
@@ -121,7 +121,7 @@ proc init*(self: wPen, hPen: HANDLE) {.validate.} =
   ## Initializer.
   var elp: EXTLOGPEN
   GetObject(hPen, sizeof(elp), &elp)
-  initFromNative(elp)
+  self.initFromNative(elp)
 
 proc Pen*(hPen: HANDLE): wPen {.inline.} =
   ## Construct wPen object from a system pen handle.
@@ -131,7 +131,7 @@ proc Pen*(hPen: HANDLE): wPen {.inline.} =
 proc init*(self: wPen, pen: wPen) {.validate.} =
   ## Initializer.
   wValidate(pen)
-  init(pen.mHandle)
+  self.init(pen.mHandle)
 
 proc Pen*(pen: wPen): wPen {.inline.} =
   ## Copy constructor
@@ -140,27 +140,27 @@ proc Pen*(pen: wPen): wPen {.inline.} =
 
 proc getColor*(self: wPen): wColor {.validate, property, inline.} =
   ## Returns a reference to the pen color.
-  result = mColor
+  result = self.mColor
 
 proc getStyle*(self: wPen): DWORD {.validate, property, inline.} =
   ## Returns the pen style.
-  result = mStyle
+  result = self.mStyle
 
 proc getWidth*(self: wPen): int {.validate, property, inline.} =
   ## Returns the pen width.
-  result = mWidth
+  result = self.mWidth
 
 proc setColor*(self: wPen, color: wColor) {.validate, property.} =
   ## Set the pen color.
-  DeleteObject(mHandle)
-  init(color=color, style=mStyle, width=mWidth)
+  DeleteObject(self.mHandle)
+  self.init(color=color, style=self.mStyle, width=self.mWidth)
 
 proc setStyle*(self: wPen, style: DWORD) {.validate, property.} =
   ## Set the pen style.
-  DeleteObject(mHandle)
-  init(color=mColor, style=style, width=mWidth)
+  DeleteObject(self.mHandle)
+  self.init(color=self.mColor, style=style, width=self.mWidth)
 
 proc setWidth*(self: wPen, width: int) {.validate, property.} =
   ## Sets the pen width.
-  DeleteObject(mHandle)
-  init(color=mColor, style=mStyle, width=width)
+  DeleteObject(self.mHandle)
+  self.init(color=self.mColor, style=self.mStyle, width=width)

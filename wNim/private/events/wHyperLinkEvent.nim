@@ -28,20 +28,20 @@ proc isHyperLinkEvent(msg: UINT): bool {.inline.} =
 
 method getIndex*(self: wHyperLinkEvent): int {.property, inline.} =
   ## Returns the index of the hyperlink.
-  let pnmLink = cast[PNMLINK](mLparam)
+  let pnmLink = cast[PNMLINK](self.mLparam)
   result = pnmLink.item.iLink
 
 method getUrl*(self: wHyperLinkEvent): string {.property, inline.} =
   ## Returns the URL of the hyperlink.
-  let pnmLink = cast[PNMLINK](mLparam)
+  let pnmLink = cast[PNMLINK](self.mLparam)
   result = nullTerminated($pnmLink.item.szUrl)
 
 method getLinkId*(self: wHyperLinkEvent): string {.property, inline.} =
   ## Returns the link ID of the hyperlink.
-  let pnmLink = cast[PNMLINK](mLparam)
+  let pnmLink = cast[PNMLINK](self.mLparam)
   result = nullTerminated($pnmLink.item.szID)
 
 method getVisited*(self: wHyperLinkEvent): bool {.property, inline.} =
   ## Returns the visited state of the hyperlink.
   # visted state returned from PNMLINK always false?
-  result = wHyperLinkCtrl(self.mWindow).getVisited(getIndex())
+  result = wHyperLinkCtrl(self.mWindow).getVisited(self.getIndex())

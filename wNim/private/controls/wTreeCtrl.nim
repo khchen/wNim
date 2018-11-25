@@ -98,60 +98,60 @@ proc TreeItem*(treeCtrl: wTreeCtrl, handle: HTREEITEM): wTreeItem {.inline.} =
 
 proc isOk*(self: wTreeItem): bool {.inline.} =
   ## Returns true if this instance is referencing a valid tree item.
-  result = (mTreeCtrl != nil) and (mHandle != 0)
+  result = (self.mTreeCtrl != nil) and (self.mHandle != 0)
 
 proc unset*(self: var wTreeItem) {.inline.} =
   ## Unset the tree item.
-  mHandle = 0
+  self.mHandle = 0
 
 proc getHandle*(self: wTreeItem): HTREEITEM {.property.} =
   ## Gets the real tree item handle.
-  result = mHandle
+  result = self.mHandle
 
 proc getTreeCtrl*(self: wTreeItem): wTreeCtrl {.property.} =
   ## Gets the tree control this item associated to.
-  result = mTreeCtrl
+  result = self.mTreeCtrl
 
 proc getParent*(self: wTreeItem): wTreeItem {.property.} =
   ## Gets the parent of this item.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_PARENT)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_PARENT)
 
 proc getFirstChild*(self: wTreeItem): wTreeItem {.property.} =
   ## Gets the first child of the item.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_CHILD)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_CHILD)
 
 proc getPrevSibling*(self: wTreeItem): wTreeItem {.property.} =
   ## Gets the previous slbling of the item.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_PREVIOUS)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_PREVIOUS)
 
 proc getNextSibling*(self: wTreeItem): wTreeItem {.property.} =
   ## Gets the next slbling of the item.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_NEXT)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_NEXT)
 
 proc getLastChild*(self: wTreeItem): wTreeItem {.property.} =
   ## Gets the last child of the item.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var hLast: HTREEITEM = 0
-  var hItem = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_CHILD)
+  var hItem = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_CHILD)
   while hItem != 0:
     hLast = hItem
-    hItem = TreeView_GetNextItem(mTreeCtrl.mHwnd, hItem, TVGN_NEXT)
+    hItem = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, hItem, TVGN_NEXT)
 
-  result = TreeItem(mTreeCtrl, hLast)
+  result = TreeItem(self.mTreeCtrl, hLast)
 
 proc getChildrenCount*(self: wTreeItem, recursively = true): int {.property.} =
   ## Gets the number of items in the branch. If *recursively* is true, returns the
   ## total number of descendants, otherwise only one level of children is counted.
-  wValidate(mTreeCtrl)
-  var child = getFirstChild()
+  wValidate(self.mTreeCtrl)
+  var child = self.getFirstChild()
   while child.isOk():
     result.inc
     if recursively:
@@ -160,20 +160,20 @@ proc getChildrenCount*(self: wTreeItem, recursively = true): int {.property.} =
 
 proc len*(self: wTreeItem): int =
   ## Gets the number of children in this item.
-  wValidate(mTreeCtrl)
-  result = getChildrenCount(false)
+  wValidate(self.mTreeCtrl)
+  result = self.getChildrenCount(false)
 
 iterator items*(self: wTreeItem): wTreeItem =
   ## Iterate each child in this item.
-  wValidate(mTreeCtrl)
-  var item = getFirstChild()
+  wValidate(self.mTreeCtrl)
+  var item = self.getFirstChild()
   while item.isOk():
     yield item
     item = item.getNextSibling()
 
 iterator allItems*(self: wTreeItem): wTreeItem =
   ## Iterate each child in this item, including all descendants.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var node = self
   block loop:
     while true:
@@ -182,7 +182,7 @@ iterator allItems*(self: wTreeItem): wTreeItem =
         node = child
       else:
         while true:
-          if node.mHandle == mHandle:
+          if node.mHandle == self.mHandle:
             # this will happen if
             #   1. self(root) has no child
             #   2. getParent() reach self(root)
@@ -198,28 +198,28 @@ iterator allItems*(self: wTreeItem): wTreeItem =
       yield node
 
 proc addChildren(self: wTreeItem, children: var seq[wTreeItem], recursively = false) =
-  for item in items():
+  for item in self.items():
     children.add(item)
     if recursively:
       item.addChildren(children, true)
 
 proc getChildren*(self: wTreeItem): seq[wTreeItem] {.property.} =
   ## Returns all children as a seq.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   result = @[]
-  addChildren(result, false)
+  self.addChildren(result, false)
 
 proc getAllChildren*(self: wTreeItem): seq[wTreeItem] {.property.} =
   ## Returns all children including descendants as a seq.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   result = @[]
-  addChildren(result, true)
+  self.addChildren(result, true)
 
 proc set*(self: wTreeItem, text = "", image = wTreeIgnore,
     selImage = wTreeIgnore, state = 0, flag = true) =
   ## Sets the item attributes.
-  wValidate(mTreeCtrl)
-  var tvitem = TVITEM(mask: TVIF_HANDLE, hItem: mHandle)
+  wValidate(self.mTreeCtrl)
+  var tvitem = TVITEM(mask: TVIF_HANDLE, hItem: self.mHandle)
 
   if text.len != 0:
     tvitem.mask = tvitem.mask or TVIF_TEXT
@@ -238,70 +238,70 @@ proc set*(self: wTreeItem, text = "", image = wTreeIgnore,
     tvitem.stateMask = state
     tvitem.state = if flag: state else: 0
 
-  TreeView_SetItem(mTreeCtrl.mHwnd, &tvitem)
+  TreeView_SetItem(self.mTreeCtrl.mHwnd, &tvitem)
 
 proc setText*(self: wTreeItem, text: string) {.property, inline.} =
   ## Sets the item text.
-  wValidate(mTreeCtrl)
-  set(text=text)
+  wValidate(self.mTreeCtrl)
+  self.set(text=text)
 
 proc setBold*(self: wTreeItem, flag = true) {.property, inline.} =
   ## Makes the item appear in bold or not.
-  wValidate(mTreeCtrl)
-  set(state=TVIS_BOLD, flag=flag)
+  wValidate(self.mTreeCtrl)
+  self.set(state=TVIS_BOLD, flag=flag)
 
 proc setCut*(self: wTreeItem, flag = true) {.property, inline.} =
   ## Makes the item appear in cut-and-paste operation or not.
-  wValidate(mTreeCtrl)
-  set(state=TVIS_CUT, flag=flag)
+  wValidate(self.mTreeCtrl)
+  self.set(state=TVIS_CUT, flag=flag)
 
 proc setSelection*(self: wTreeItem, flag = true) {.property, inline.} =
   ## Makes the item appear in selected or not.
   ## Notice: this will broken single selection states, don't use this if possible.
-  wValidate(mTreeCtrl)
-  set(state=TVIS_SELECTED, flag=flag)
+  wValidate(self.mTreeCtrl)
+  self.set(state=TVIS_SELECTED, flag=flag)
 
 proc setDropHighlight*(self: wTreeItem, flag = true) {.property, inline.} =
   ## Makes the item appear in Drag'n'Drop actions or not.
-  wValidate(mTreeCtrl)
-  set(state=TVIS_DROPHILITED, flag=flag)
+  wValidate(self.mTreeCtrl)
+  self.set(state=TVIS_DROPHILITED, flag=flag)
 
 proc select*(self: wTreeItem) =
   ## Select, focus, and ensure visible of the item, also unselect others.
-  wValidate(mTreeCtrl)
-  TreeView_SelectItem(mTreeCtrl.mHwnd, mHandle)
+  wValidate(self.mTreeCtrl)
+  TreeView_SelectItem(self.mTreeCtrl.mHwnd, self.mHandle)
 
 proc scrollTo*(self: wTreeItem) =
   ## Scrolls the specified item into view.
-  wValidate(mTreeCtrl)
-  TreeView_Select(mTreeCtrl.mHwnd, mHandle, TVGN_FIRSTVISIBLE)
+  wValidate(self.mTreeCtrl)
+  TreeView_Select(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_FIRSTVISIBLE)
 
 proc unselect*(self: wTreeItem) {.inline.} =
   ## Unselects this item.
   ## Notice: this will broken single selection states, don't use this if possible.
-  wValidate(mTreeCtrl)
-  setSelection(false)
+  wValidate(self.mTreeCtrl)
+  self.setSelection(false)
 
 proc setImage*(self: wTreeItem, image = wTreeIgnore, selImage = wTreeIgnore)
     {.property.} =
   ## Sets the specified item's image.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var selImage = selImage
 
   if image != wTreeIgnore and selImage == wTreeIgnore:
     # the same image is used for both
     selImage = image
 
-  set(image=image, selImage=selImage)
+  self.set(image=image, selImage=selImage)
 
 proc setData*(self: wTreeItem, data: int) {.property.} =
   ## Sets the item associated data.
-  wValidate(mTreeCtrl)
-  if mTreeCtrl.mInSortChildren:
-    mTreeCtrl.mDataTable[mHandle] = data
+  wValidate(self.mTreeCtrl)
+  if self.mTreeCtrl.mInSortChildren:
+    self.mTreeCtrl.mDataTable[self.mHandle] = data
   else:
-    var tvitem = TVITEM(mask: TVIF_PARAM or TVIF_HANDLE, hItem: mHandle, lParam: data)
-    TreeView_SetItem(mTreeCtrl.mHwnd, &tvitem)
+    var tvitem = TVITEM(mask: TVIF_PARAM or TVIF_HANDLE, hItem: self.mHandle, lParam: data)
+    TreeView_SetItem(self.mTreeCtrl.mHwnd, &tvitem)
 
 proc setState*(self: wTreeItem, state: range[0..15]) {.property.} =
   ## Sets the item state image. If *state* > 0, the 1-based state image will
@@ -309,145 +309,145 @@ proc setState*(self: wTreeItem, state: range[0..15]) {.property.} =
   ## in the imagelist specified by setImageList(which=wImageListState).
 
   # state is bits 12 ~ 15, state image is 1-based, 0 for no state image
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var tvitem = TVITEM(
     mask: TVIF_STATE or TVIF_HANDLE,
-    hItem: mHandle,
+    hItem: self.mHandle,
     state: INDEXTOSTATEIMAGEMASK(state),
     stateMask: TVIS_STATEIMAGEMASK)
-  TreeView_SetItem(mTreeCtrl.mHwnd, &tvitem)
+  TreeView_SetItem(self.mTreeCtrl.mHwnd, &tvitem)
 
 proc setHasChildren*(self: wTreeItem, flag = true) {.property.} =
   ## Force appearance of the button next to the item.
-  wValidate(mTreeCtrl)
-  var tvitem = TVITEM(mask: TVIF_CHILDREN or TVIF_HANDLE, hItem: mHandle,
+  wValidate(self.mTreeCtrl)
+  var tvitem = TVITEM(mask: TVIF_CHILDREN or TVIF_HANDLE, hItem: self.mHandle,
     cChildren: if flag: 1 else: 0)
-  TreeView_SetItem(mTreeCtrl.mHwnd, &tvitem)
+  TreeView_SetItem(self.mTreeCtrl.mHwnd, &tvitem)
 
 proc expand*(self: wTreeItem) =
   ## Expands the item.
-  wValidate(mTreeCtrl)
-  TreeView_Expand(mTreeCtrl.mHwnd, mHandle, TVE_EXPAND)
+  wValidate(self.mTreeCtrl)
+  TreeView_Expand(self.mTreeCtrl.mHwnd, self.mHandle, TVE_EXPAND)
 
 proc collapse*(self: wTreeItem) =
   ## Collapses the item.
-  wValidate(mTreeCtrl)
-  TreeView_Expand(mTreeCtrl.mHwnd, mHandle, TVE_COLLAPSE)
+  wValidate(self.mTreeCtrl)
+  TreeView_Expand(self.mTreeCtrl.mHwnd, self.mHandle, TVE_COLLAPSE)
 
 proc collapseAndReset*(self: wTreeItem) =
   ## Collapses the given item and removes all children.
-  wValidate(mTreeCtrl)
-  TreeView_Expand(mTreeCtrl.mHwnd, mHandle, TVE_COLLAPSE or TVE_COLLAPSERESET)
+  wValidate(self.mTreeCtrl)
+  TreeView_Expand(self.mTreeCtrl.mHwnd, self.mHandle, TVE_COLLAPSE or TVE_COLLAPSERESET)
 
 proc toggle*(self: wTreeItem) =
   ## Toggles the item between collapsed and expanded states.
-  wValidate(mTreeCtrl)
-  TreeView_Expand(mTreeCtrl.mHwnd, mHandle, TVE_TOGGLE)
+  wValidate(self.mTreeCtrl)
+  TreeView_Expand(self.mTreeCtrl.mHwnd, self.mHandle, TVE_TOGGLE)
 
 proc getText*(self: wTreeItem): string {.property.} =
   ## Returns the item text.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var buffer = T(65536)
   var tvitem = TVITEM(
     mask: TVIF_TEXT or TVIF_HANDLE,
-    hItem: mHandle,
+    hItem: self.mHandle,
     cchTextMax: 65536,
     pszText: &buffer)
 
-  if TreeView_GetItem(mTreeCtrl.mHwnd, &tvitem) != 0:
+  if TreeView_GetItem(self.mTreeCtrl.mHwnd, &tvitem) != 0:
     buffer.nullTerminate
     result = $buffer
 
 proc get(self: wTreeItem, mask = 0): TVITEM =
   result.mask = TVIF_HANDLE or mask
-  result.hItem = mHandle
+  result.hItem = self.mHandle
   result.stateMask = -1
-  discard TreeView_GetItem(mTreeCtrl.mHwnd, &result)
+  discard TreeView_GetItem(self.mTreeCtrl.mHwnd, &result)
 
 proc isBold*(self: wTreeItem): bool =
   ## Returns true if the item is in bold state.
-  wValidate(mTreeCtrl)
-  var tvitem = get(TVIF_STATE)
+  wValidate(self.mTreeCtrl)
+  var tvitem = self.get(TVIF_STATE)
   result = (tvitem.state and TVIS_BOLD) != 0
 
 proc isCut*(self: wTreeItem): bool =
   ## Returns true if the item is in cut-and-paste operation state.
-  wValidate(mTreeCtrl)
-  var tvitem = get(TVIF_STATE)
+  wValidate(self.mTreeCtrl)
+  var tvitem = self.get(TVIF_STATE)
   result = (tvitem.state and TVIS_CUT) != 0
 
 proc isDropHighlight*(self: wTreeItem): bool =
   ## Returns true if the item is in drop hightlight state.
-  wValidate(mTreeCtrl)
-  var tvitem = get(TVIF_STATE)
+  wValidate(self.mTreeCtrl)
+  var tvitem = self.get(TVIF_STATE)
   result = (tvitem.state and TVIS_DROPHILITED) != 0
 
 proc isSelected*(self: wTreeItem): bool =
   ## Returns true if the item is in selected state.
-  wValidate(mTreeCtrl)
-  var tvitem = get(TVIF_STATE)
+  wValidate(self.mTreeCtrl)
+  var tvitem = self.get(TVIF_STATE)
   result = (tvitem.state and TVIS_SELECTED) != 0
 
 proc isExpanded*(self: wTreeItem): bool =
   ## Returns true if the item is expanded.
-  wValidate(mTreeCtrl)
-  var tvitem = get(TVIF_STATE)
+  wValidate(self.mTreeCtrl)
+  var tvitem = self.get(TVIF_STATE)
   result = (tvitem.state and TVIS_EXPANDED) != 0
 
 proc isFocused*(self: wTreeItem): bool =
   ## Returns true if the item is focused.
-  wValidate(mTreeCtrl)
-  result = mHandle == TreeView_GetSelection(mTreeCtrl.mHwnd)
+  wValidate(self.mTreeCtrl)
+  result = self.mHandle == TreeView_GetSelection(self.mTreeCtrl.mHwnd)
 
 proc getImage*(self: wTreeItem): int {.property.} =
   ## Gets the item image.
-  wValidate(mTreeCtrl)
-  let tvitem = get(TVIF_IMAGE)
+  wValidate(self.mTreeCtrl)
+  let tvitem = self.get(TVIF_IMAGE)
   result = tvitem.iImage
 
 proc getSelImage*(self: wTreeItem): int {.property.} =
   ## Gets the selected item image.
-  wValidate(mTreeCtrl)
-  let tvitem = get(TVIF_SELECTEDIMAGE)
+  wValidate(self.mTreeCtrl)
+  let tvitem = self.get(TVIF_SELECTEDIMAGE)
   result = tvitem.iImage
 
 proc getData*(self: wTreeItem): int {.property.} =
   ## Returns the data associated with the item.
-  wValidate(mTreeCtrl)
-  if mTreeCtrl.mInSortChildren:
-    result = mTreeCtrl.mDataTable.getOrDefault(mHandle)
+  wValidate(self.mTreeCtrl)
+  if self.mTreeCtrl.mInSortChildren:
+    result = self.mTreeCtrl.mDataTable.getOrDefault(self.mHandle)
   else:
-    let tvitem = get(TVIF_PARAM)
+    let tvitem = self.get(TVIF_PARAM)
     result = int tvitem.lParam
 
 proc getState*(self: wTreeItem): int {.property.} =
   ## Gets the item state image.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   template STATEIMAGEMASKTOINDEX(i: int): int = (i and TVIS_STATEIMAGEMASK) shr 12
-  let tvitem = get(TVIF_STATE)
+  let tvitem = self.get(TVIF_STATE)
   result = STATEIMAGEMASKTOINDEX(tvitem.state)
 
 proc hasChildren*(self: wTreeItem): bool =
   ## Returns true if the item is in having children state. Notice this only gets
   ## the state that can be set by setHasChildren().
-  wValidate(mTreeCtrl)
-  let tvitem = get(TVIF_CHILDREN)
+  wValidate(self.mTreeCtrl)
+  let tvitem = self.get(TVIF_CHILDREN)
   result = tvitem.cChildren != 0
 
 proc expandAllChildren*(self: wTreeItem) =
   ## Expands the item and all its children recursively.
-  wValidate(mTreeCtrl)
-  expand()
-  var child = getFirstChild()
+  wValidate(self.mTreeCtrl)
+  self.expand()
+  var child = self.getFirstChild()
   while child.isOk():
     child.expandAllChildren()
     child = child.getNextSibling()
 
 proc collapseAllChildren*(self: wTreeItem) =
   ## Collapses this item and all of its children, recursively.
-  wValidate(mTreeCtrl)
-  collapse()
-  var child = getFirstChild()
+  wValidate(self.mTreeCtrl)
+  self.collapse()
+  var child = self.getFirstChild()
   while child.isOk():
     child.collapseAllChildren()
     child = child.getNextSibling()
@@ -461,26 +461,26 @@ proc getBoundingRect*(self: wTreeItem, textOnly = false): wRect {.property.} =
   ## Notice that the rectangle coordinates are logical, not physical ones.
   ## So, for example, the x coordinate may be negative if the tree has a
   ## horizontal scrollbar and its position is not 0.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var rect: RECT
-  if TreeView_GetItemRect(mTreeCtrl.mHwnd, mHandle, &rect, textOnly):
+  if TreeView_GetItemRect(self.mTreeCtrl.mHwnd, self.mHandle, &rect, textOnly):
     result = toWRect(rect)
   else:
     result = wDefaultRect
 
 proc isVisible*(self: wTreeItem): bool =
   ## Returns true if the item is visible on the screen.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var rect: RECT
-  if TreeView_GetItemRect(mTreeCtrl.mHwnd, mHandle, &rect, true):
-    result = rect.bottom > 0 and rect.top < mTreeCtrl.getClientSize().height
+  if TreeView_GetItemRect(self.mTreeCtrl.mHwnd, self.mHandle, &rect, true):
+    result = rect.bottom > 0 and rect.top < self.mTreeCtrl.getClientSize().height
 
 proc getNextVisible*(self: wTreeItem): wTreeItem {.property.} =
   ## Returns the next visible item or an invalid item if this item is the last
   ## visible one. Notice: The item itself must be visible.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_NEXTVISIBLE)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_NEXTVISIBLE)
   # TVGN_NEXTVISIBLE return all non-collapsed item
   if not result.isVisible():
     result.mHandle = 0
@@ -488,57 +488,57 @@ proc getNextVisible*(self: wTreeItem): wTreeItem {.property.} =
 proc getPrevVisible*(self: wTreeItem): wTreeItem {.property.} =
   ## Returns the previous visible item or an invalid item if this item is the
   ## first visible one. Notice: The item itself must be visible.
-  wValidate(mTreeCtrl)
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = TreeView_GetNextItem(mTreeCtrl.mHwnd, mHandle, TVGN_PREVIOUSVISIBLE)
+  wValidate(self.mTreeCtrl)
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_PREVIOUSVISIBLE)
   # TVGN_PREVIOUSVISIBLE return all non-collapsed item
   if not result.isVisible():
     result.mHandle = 0
 
 proc ensureVisible*(self: wTreeItem) =
   ## Scrolls and/or expands items to ensure that the item is visible.
-  wValidate(mTreeCtrl)
-  TreeView_EnsureVisible(mTreeCtrl.mHwnd, mHandle)
+  wValidate(self.mTreeCtrl)
+  TreeView_EnsureVisible(self.mTreeCtrl.mHwnd, self.mHandle)
 
 proc delete*(self: wTreeItem) =
   ## Deletes the specified item.
-  wValidate(mTreeCtrl)
-  TreeView_DeleteItem(mTreeCtrl.mHwnd, mHandle)
+  wValidate(self.mTreeCtrl)
+  TreeView_DeleteItem(self.mTreeCtrl.mHwnd, self.mHandle)
 
 proc deleteChildren*(self: wTreeItem) =
   ## Deletes all children of the given item (but not the item itself).
-  wValidate(mTreeCtrl)
-  for item in getChildren():
+  wValidate(self.mTreeCtrl)
+  for item in self.getChildren():
     item.delete()
 
 proc toggleSelection*(self: wTreeItem) =
   ## Toggles the item between selected and unselected states.
-  wValidate(mTreeCtrl)
-  setSelection(not isSelected())
+  wValidate(self.mTreeCtrl)
+  self.setSelection(not self.isSelected())
 
 proc selectChildren*(self: wTreeItem) =
   ## Select all the immediate children of the given parent.
-  wValidate(mTreeCtrl)
-  for item in items():
+  wValidate(self.mTreeCtrl)
+  for item in self.items():
     item.setSelection(true)
 
 proc editLabel*(self: wTreeItem): wTextCtrl {.discardable.} =
   ## Starts editing the label of the item.
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   # TreeView_EditLabel requires that the control has focus.
-  mTreeCtrl.setFocus()
-  let hwnd = TreeView_EditLabel(mTreeCtrl.mHwnd, mHandle)
+  self.mTreeCtrl.setFocus()
+  let hwnd = TreeView_EditLabel(self.mTreeCtrl.mHwnd, self.mHandle)
   if hwnd != 0:
-    assert hwnd == mTreeCtrl.mTextCtrl.mHwnd
-    result = mTreeCtrl.mTextCtrl
+    assert hwnd == self.mTreeCtrl.mTextCtrl.mHwnd
+    result = self.mTreeCtrl.mTextCtrl
 
 proc sortChildren*(self: wTreeItem, recursively = false) =
   ## Sorts the children of the item by text (alphabetically).
   # TreeView_SortChildren don't really sort recursively, even MSDN says it will do.
-  wValidate(mTreeCtrl)
-  TreeView_SortChildren(mTreeCtrl.mHwnd, mHandle, 0)
+  wValidate(self.mTreeCtrl)
+  TreeView_SortChildren(self.mTreeCtrl.mHwnd, self.mHandle, 0)
   if recursively:
-    var child = getFirstChild()
+    var child = self.getFirstChild()
     while child.isOk():
       child.sortChildren(true)
       child = child.getNextSibling()
@@ -558,15 +558,15 @@ proc sortChildren*(self: wTreeItem, callback: wTreeCtrl_Compare,
     data: int = 0, recursively = false) =
   ## Sorts the children of the item. The value passed into callback function
   ## is the data associated with the item
-  wValidate(mTreeCtrl)
+  wValidate(self.mTreeCtrl)
   var sortData = wTreeCtrl_SortData(fn: callback, data: data)
-  var tvsortcb = TVSORTCB(hParent: mHandle, lpfnCompare: wTree_CompareFunc,
+  var tvsortcb = TVSORTCB(hParent: self.mHandle, lpfnCompare: wTree_CompareFunc,
     lParam: cast[LPARAM](&sortData))
 
-  TreeView_SortChildrenCB(mTreeCtrl.mHwnd, &tvsortcb, 0)
+  TreeView_SortChildrenCB(self.mTreeCtrl.mHwnd, &tvsortcb, 0)
 
   if recursively:
-    var child = getFirstChild()
+    var child = self.getFirstChild()
     while child.isOk():
       child.sortChildren(callback, data, true)
       child = child.getNextSibling()
@@ -589,53 +589,53 @@ proc sortChildren*(self: wTreeItem, callback: wTreeCtrl_ItemCompare,
     data: int = 0, recursively = false) =
   ## Sorts the children of the item. The value passed into callback function
   ## is the wTreeItem object.
-  wValidate(mTreeCtrl)
-  var sortData = wTreeCtrl_ItemSortData(fn: callback, data: data, treeCtrl: mTreeCtrl)
-  var tvsortcb = TVSORTCB(hParent: mHandle, lpfnCompare: wTree_ItemCompareFunc,
+  wValidate(self.mTreeCtrl)
+  var sortData = wTreeCtrl_ItemSortData(fn: callback, data: data, treeCtrl: self.mTreeCtrl)
+  var tvsortcb = TVSORTCB(hParent: self.mHandle, lpfnCompare: wTree_ItemCompareFunc,
     lParam: cast[LPARAM](&sortData))
 
-  mTreeCtrl.mDataTable = initTable[HTREEITEM, int]()
-  for item in items():
-    mTreeCtrl.mDataTable[item.mHandle] = item.getData()
+  self.mTreeCtrl.mDataTable = initTable[HTREEITEM, int]()
+  for item in self.items():
+    self.mTreeCtrl.mDataTable[item.mHandle] = item.getData()
     item.setData(item.mHandle)
 
-  mTreeCtrl.mInSortChildren = true
-  TreeView_SortChildrenCB(mTreeCtrl.mHwnd, &tvsortcb, 0)
-  mTreeCtrl.mInSortChildren = false
+  self.mTreeCtrl.mInSortChildren = true
+  TreeView_SortChildrenCB(self.mTreeCtrl.mHwnd, &tvsortcb, 0)
+  self.mTreeCtrl.mInSortChildren = false
 
-  for item in items():
-    item.setData(mTreeCtrl.mDataTable[item.mHandle])
-  mTreeCtrl.mDataTable.clear()
+  for item in self.items():
+    item.setData(self.mTreeCtrl.mDataTable[item.mHandle])
+  self.mTreeCtrl.mDataTable.clear()
 
   if recursively:
-    var child = getFirstChild()
+    var child = self.getFirstChild()
     while child.isOk():
       child.sortChildren(data=data, recursively=true, callback=callback)
       child = child.getNextSibling()
 
 proc setFocused*(self: wTreeItem) =
   ## Sets the currently focused item. Use select() instead of this if possible.
-  wValidate(mTreeCtrl)
-  var focus = TreeItem(mTreeCtrl, TreeView_GetSelection(mTreeCtrl.mHwnd))
-  if focus.mHandle == mHandle:
+  wValidate(self.mTreeCtrl)
+  var focus = TreeItem(self.mTreeCtrl, TreeView_GetSelection(self.mTreeCtrl.mHwnd))
+  if focus.mHandle == self.mHandle:
     return
 
-  if isOk():
-    var wasSelected = isSelected()
+  if self.isOk():
+    var wasSelected = self.isSelected()
     var reselectFocus = false
     if focus.isOk() and focus.isSelected():
-      TreeView_SelectItem(mTreeCtrl.mHwnd, 0)
+      TreeView_SelectItem(self.mTreeCtrl.mHwnd, 0)
       reselectFocus = true
 
-    select()
-    setSelection(wasSelected)
+    self.select()
+    self.setSelection(wasSelected)
 
     if reselectFocus:
       focus.setSelection(true)
 
   else:
     var wasSelected = focus.isSelected()
-    TreeView_SelectItem(mTreeCtrl.mHwnd, 0)
+    TreeView_SelectItem(self.mTreeCtrl.mHwnd, 0)
     focus.setSelection(wasSelected)
 
 # wTreeCtrl procs
@@ -643,26 +643,26 @@ proc setFocused*(self: wTreeItem) =
 proc getFirstRoot*(self: wTreeCtrl): wTreeItem {.validate, property.} =
   ## Returns the first root item for the tree control.
   result.mTreeCtrl = self
-  result.mHandle = TreeView_GetRoot(mHwnd)
+  result.mHandle = TreeView_GetRoot(self.mHwnd)
 
 proc getRootItem*(self: wTreeCtrl): wTreeItem {.validate, property, inline.} =
   ## Returns the first root item for the tree control. The same as getFirstRoot().
-  result = getFirstRoot()
+  result = self.getFirstRoot()
 
 proc getFirstVisibleItem*(self: wTreeCtrl): wTreeItem {.validate, property.} =
   ## Returns the first visible item.
   result.mTreeCtrl = self
-  result.mHandle = TreeView_GetFirstVisible(mHwnd)
+  result.mHandle = TreeView_GetFirstVisible(self.mHwnd)
 
 proc getFocusedItem*(self: wTreeCtrl): wTreeItem {.validate, property.} =
   ## Returns the item last clicked or otherwise selected.
   result.mTreeCtrl = self
-  result.mHandle = TreeView_GetSelection(mHwnd)
+  result.mHandle = TreeView_GetSelection(self.mHwnd)
 
 proc getSelections*(self: wTreeCtrl): seq[wTreeItem] {.validate, property.} =
   ## Returns currently selected items.
   result = @[]
-  var root = getFirstRoot()
+  var root = self.getFirstRoot()
   while root.isOk():
     if root.isSelected():
       result.add(root)
@@ -696,52 +696,52 @@ proc hitTest*(self: wTreeCtrl, x: int, y: int): tuple[item: wTreeItem, flag: int
   info.pt.x = x
   info.pt.y = y
   result.item.mTreeCtrl = self
-  result.item.mHandle = TreeView_HitTest(mHwnd, &info)
+  result.item.mHandle = TreeView_HitTest(self.mHwnd, &info)
   result.flag = info.flags
 
 proc hitTest*(self: wTreeCtrl, pos: wPoint): tuple[item: wTreeItem, flag: int]
     {.validate, inline.} =
   ## The same as hitTest().
-  result = hitTest(pos.x, pos.y)
+  result = self.hitTest(pos.x, pos.y)
 
 proc unselectAll*(self: wTreeCtrl) {.validate.} =
   ## Removes the selection from all items.
-  for item in getSelections():
+  for item in self.getSelections():
     item.unselect()
 
 proc expandAll*(self: wTreeCtrl) {.validate.} =
   ## Expands all items in the tree.
-  var root = getFirstRoot()
+  var root = self.getFirstRoot()
   while root.isOk():
     root.expandAllChildren()
     root = root.getNextSibling()
 
 proc collapseAll*(self: wTreeCtrl) {.validate.} =
   ## Collapses all items in the tree.
-  var root = getFirstRoot()
+  var root = self.getFirstRoot()
   while root.isOk():
     root.collapseAllChildren()
     root = root.getNextSibling()
 
 proc deleteAllItems*(self: wTreeCtrl) {.validate.} =
   ## Deletes all items in the control.
-  TreeView_DeleteItem(mHwnd, 0)
+  TreeView_DeleteItem(self.mHwnd, 0)
 
 proc clearFocusedItem*(self: wTreeCtrl) {.validate.} =
   ## Clears the currently focused item.
-  TreeView_SelectItem(mHwnd, 0)
+  TreeView_SelectItem(self.mHwnd, 0)
 
 proc getCount*(self: wTreeCtrl): int {.validate, property.} =
   ## Returns the number of items in the control.
-  result = TreeView_GetCount(mHwnd)
+  result = TreeView_GetCount(self.mHwnd)
 
 proc len*(self: wTreeCtrl): int {.validate, property, inline.} =
   ## Returns the number of items in the control. The same as getCount().
-  result = getCount()
+  result = self.getCount()
 
 proc isEmpty*(self: wTreeCtrl): bool {.validate, inline.} =
   ## Returns true if the control is empty.
-  result = getCount() == 0
+  result = self.getCount() == 0
 
 proc insertItem(self: wTreeCtrl, parent, after: HTREEITEM, text: string,
     image = wTreeImageNone, selImage = wTreeIgnore, data = 0): wTreeItem =
@@ -764,13 +764,13 @@ proc insertItem(self: wTreeCtrl, parent, after: HTREEITEM, text: string,
     insert.item.mask = insert.item.mask or TVIF_SELECTEDIMAGE
     insert.item.iSelectedImage = selImage
 
-  result = TreeItem(self, HTREEITEM SendMessage(mHwnd, TVM_INSERTITEM, 0, &insert))
+  result = TreeItem(self, HTREEITEM SendMessage(self.mHwnd, TVM_INSERTITEM, 0, &insert))
 
 proc addRoot*(self: wTreeCtrl, text: string, image = wTreeImageNone,
     selImage = wTreeIgnore, data: int = 0): wTreeItem {.validate, discardable.} =
   ## Adds the root node to the tree, returning the new item.
   wValidate(text)
-  result = insertItem(TVI_ROOT, TVI_ROOT, text, image, selImage, data)
+  result = self.insertItem(TVI_ROOT, TVI_ROOT, text, image, selImage, data)
 
 proc appendItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
     image = wTreeImageNone, selImage = wTreeIgnore, data: int = 0): wTreeItem
@@ -778,7 +778,7 @@ proc appendItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
   ## Appends an item to the end of the branch identified by parent, return a new item.
   assert parent.mTreeCtrl == self
   wValidate(text)
-  result = insertItem(parent.mHandle, TVI_LAST, text, image, selImage, data)
+  result = self.insertItem(parent.mHandle, TVI_LAST, text, image, selImage, data)
 
 proc prependItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
     image = wTreeImageNone, selImage = wTreeIgnore, data: int = 0): wTreeItem
@@ -786,7 +786,7 @@ proc prependItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
   ## Appends an item as the first child of parent, return a new item.
   assert parent.mTreeCtrl == self
   wValidate(text)
-  result = insertItem(parent.mHandle, TVI_FIRST, text, image, selImage, data)
+  result = self.insertItem(parent.mHandle, TVI_FIRST, text, image, selImage, data)
 
 proc insertItem*(self: wTreeCtrl, parent: wTreeItem, prev: wTreeItem, text: string,
     image = wTreeImageNone, selImage = wTreeIgnore, data: int = 0): wTreeItem
@@ -794,7 +794,7 @@ proc insertItem*(self: wTreeCtrl, parent: wTreeItem, prev: wTreeItem, text: stri
   ## Inserts an item after a given one (*previous*).
   assert parent.mTreeCtrl == self and prev.mTreeCtrl == self
   wValidate(text)
-  result = insertItem(parent.mHandle, prev.mHandle, text, image, selImage, data)
+  result = self.insertItem(parent.mHandle, prev.mHandle, text, image, selImage, data)
 
 proc insertItem*(self: wTreeCtrl, parent: wTreeItem, pos: int, text: string,
     image = wTreeImageNone, selImage = wTreeIgnore, data: int = 0): wTreeItem
@@ -824,7 +824,7 @@ proc insertItem*(self: wTreeCtrl, parent: wTreeItem, pos: int, text: string,
         after = TVI_LAST
         break
 
-  result = insertItem(hParent, after, text, image, selImage, data)
+  result = self.insertItem(hParent, after, text, image, selImage, data)
 
 proc setImageList*(self: wTreeCtrl, imageList: wImageList,
     which = wImageListNormal) {.validate, property.} =
@@ -834,52 +834,52 @@ proc setImageList*(self: wTreeCtrl, imageList: wImageList,
   # TVSIL_NORMAL = LVSIL_NORMAL, TVSIL_STATE = LVSIL_STATE
   # it's save to use the same define in wListCtrl
   case which
-  of TVSIL_NORMAL: mImageListNormal = imageList
-  of TVSIL_STATE: mImageListState = imageList
+  of TVSIL_NORMAL: self.mImageListNormal = imageList
+  of TVSIL_STATE: self.mImageListState = imageList
   else: return
-  SendMessage(mHwnd, TVM_SETIMAGELIST, which, imageList.mHandle)
+  SendMessage(self.mHwnd, TVM_SETIMAGELIST, which, imageList.mHandle)
 
 proc getImageList*(self: wTreeCtrl, which = wImageListNormal): wImageList
     {.validate, property.} =
   ## Returns the specified image list.
   ## *which* is one of wImageListNormal, wImageListState.
   result = case which
-  of TVSIL_NORMAL: mImageListNormal
-  of TVSIL_STATE: mImageListState
+  of TVSIL_NORMAL: self.mImageListNormal
+  of TVSIL_STATE: self.mImageListState
   else: nil
 
 proc getIndent*(self: wTreeCtrl): int {.validate, property.} =
   ## Returns the current tree control indentation.
-  result = TreeView_GetIndent(mHwnd)
+  result = TreeView_GetIndent(self.mHwnd)
 
 proc setIndent*(self: wTreeCtrl, indent: int) {.validate, property.} =
   ## Sets the indentation for the tree control.
-  TreeView_SetIndent(mHwnd, indent)
+  TreeView_SetIndent(self.mHwnd, indent)
 
 proc enableInsertMark*(self: wTreeCtrl, flag = true) {.validate, inline.} =
   ## Enables or disables insert mark durgn Drag'n'Drop action.
-  mEnableInsertMark = flag
+  self.mEnableInsertMark = flag
 
 method setBackgroundColor*(self: wTreeCtrl, color: wColor) {.property} =
   ## Sets the background color of the control.
   procCall wWindow(self).setBackgroundColor(color)
-  TreeView_SetBkColor(mHwnd, color)
+  TreeView_SetBkColor(self.mHwnd, color)
 
 method setForegroundColor*(self: wTreeCtrl, color: wColor) {.property} =
   ## Sets the foreground color of the control.
   procCall wWindow(self).setForegroundColor(color)
-  TreeView_SetTextColor(mHwnd, color)
+  TreeView_SetTextColor(self.mHwnd, color)
 
 iterator items*(self: wTreeCtrl): wTreeItem {.validate.} =
   ## Iterate each child in this control.
-  var item = getFirstRoot()
+  var item = self.getFirstRoot()
   while item.isOk():
     yield item
     item = item.getNextSibling()
 
 iterator allItems*(self: wTreeCtrl): wTreeItem {.validate.} =
   ## Iterate each child in this control, including all descendants.
-  var item = getFirstRoot()
+  var item = self.getFirstRoot()
   while item.isOk():
     yield item
     for subitem in item.allItems():
@@ -891,12 +891,12 @@ method getBestSize*(self: wTreeCtrl): wSize {.property.} =
   result = wDefaultSize
 
   var info = SCROLLBARINFO(cbSize: sizeof(SCROLLBARINFO))
-  GetScrollBarInfo(mHwnd, OBJID_VSCROLL, &info)
+  GetScrollBarInfo(self.mHwnd, OBJID_VSCROLL, &info)
   var scrollX = info.rcScrollBar.right - info.rcScrollBar.left
-  GetScrollBarInfo(mHwnd, OBJID_HSCROLL, &info)
+  GetScrollBarInfo(self.mHwnd, OBJID_HSCROLL, &info)
   var scrollY = info.rcScrollBar.bottom - info.rcScrollBar.top
 
-  for item in allItems():
+  for item in self.allItems():
     var rect = item.getBoundingRect(textOnly=true)
     if rect != wDefaultRect:
       result.width = max(result.width, rect.x + rect.width + scrollX + 5)
@@ -930,15 +930,15 @@ proc TreeEvent(self: wTreeCtrl, msg: UINT, lParam: LPARAM): wTreeEvent =
 
 proc isReallyOnItem(self: wTreeCtrl, flags: int): bool =
   var mask = TVHT_ONITEM
-  if (GetWindowLongPtr(mHwnd, GWL_STYLE) and TVS_FULLROWSELECT) != 0:
+  if (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and TVS_FULLROWSELECT) != 0:
     mask = mask or TVHT_ONITEMINDENT or TVHT_ONITEMRIGHT
 
   result = (flags and mask) != 0
 
 proc beginDrag(self: wTreeCtrl, hItem: HTREEITEM, pos: wPoint) =
-  mDragging = true
+  self.mDragging = true
   # select the item before Drag'n'Drop is nature behavior?
-  TreeView_SelectItem(mHwnd, hItem)
+  TreeView_SelectItem(self.mHwnd, hItem)
 
   # TreeView_CreateDragImage don't inlcude text for ascii string, but include
   # text for non-ascii string, a strange bug for Windows?
@@ -946,57 +946,57 @@ proc beginDrag(self: wTreeCtrl, hItem: HTREEITEM, pos: wPoint) =
   var item = TreeItem(self, hItem)
   let text = item.getText()
   item.setText(text & "\xE3\x80\x80")
-  var iml = TreeView_CreateDragImage(mHwnd, hItem)
+  var iml = TreeView_CreateDragImage(self.mHwnd, hItem)
   item.setText(text)
 
   ImageList_BeginDrag(iml, 0, 0, 0)
-  ImageList_DragEnter(mHwnd, pos.x, pos.y)
-  captureMouse()
+  ImageList_DragEnter(self.mHwnd, pos.x, pos.y)
+  self.captureMouse()
 
 proc dragging(self: wTreeCtrl, pos: wPoint) =
   ImageList_DragMove(pos.x, pos.y)
   ImageList_DragShowNoLock(false)
-  var item = hitTest(pos).item
+  var item = self.hitTest(pos).item
   if item.isOk():
-    mCurrentInsertItem = item.mHandle
+    self.mCurrentInsertItem = item.mHandle
     var insert = false
-    if mEnableInsertMark:
+    if self.mEnableInsertMark:
       let rect = item.getBoundingRect()
       if rect != wDefaultRect:
         if pos.y < rect.y + rect.height div 4:
-          TreeView_SetInsertMark(mHwnd, item.mHandle, false)
-          TreeView_SelectDropTarget(mHwnd, 0)
+          TreeView_SetInsertMark(self.mHwnd, item.mHandle, false)
+          TreeView_SelectDropTarget(self.mHwnd, 0)
           insert = true
-          mCurrentInsertMark = -1
+          self.mCurrentInsertMark = -1
         elif pos.y > rect.y + rect.height * 3 div 4:
-          TreeView_SetInsertMark(mHwnd, item.mHandle, true)
-          TreeView_SelectDropTarget(mHwnd, 0)
+          TreeView_SetInsertMark(self.mHwnd, item.mHandle, true)
+          TreeView_SelectDropTarget(self.mHwnd, 0)
           insert = true
-          mCurrentInsertMark = 1
+          self.mCurrentInsertMark = 1
 
     if not insert:
-      TreeView_SetInsertMark(mHwnd, 0, 0)
-      TreeView_SelectDropTarget(mHwnd, item.mHandle)
-      mCurrentInsertMark = 0
+      TreeView_SetInsertMark(self.mHwnd, 0, 0)
+      TreeView_SelectDropTarget(self.mHwnd, item.mHandle)
+      self.mCurrentInsertMark = 0
 
   ImageList_DragShowNoLock(true)
 
 proc cancelDrag*(self: wTreeCtrl) {.validate.} =
   ## Cancel Drag'n'Drop action.
-  if mDragging:
+  if self.mDragging:
     ImageList_EndDrag()
-    TreeView_SetInsertMark(mHwnd, 0, 0)
-    TreeView_SelectDropTarget(mHwnd, 0)
-    mDragging = false
-    releaseMouse()
+    TreeView_SetInsertMark(self.mHwnd, 0, 0)
+    TreeView_SelectDropTarget(self.mHwnd, 0)
+    self.mDragging = false
+    self.releaseMouse()
 
 proc endDrag*(self: wTreeCtrl) {.validate.} =
   ## Ends Drag'n'Drop action.
   # let this public so that user can end Drag'n'Drop programmatically.
-  if mDragging:
-    cancelDrag()
-    let event = TreeEvent(wEvent_TreeEndDrag, mCurrentInsertItem)
-    event.mInsertMark = mCurrentInsertMark
+  if self.mDragging:
+    self.cancelDrag()
+    let event = self.TreeEvent(wEvent_TreeEndDrag, self.mCurrentInsertItem)
+    event.mInsertMark = self.mCurrentInsertMark
     self.processEvent(event)
 
 method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
@@ -1004,25 +1004,25 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
   case code:
   of TVN_SELCHANGED:
-    let event = TreeEvent(wEvent_TreeSelChanged, lParam)
+    let event = self.TreeEvent(wEvent_TreeSelChanged, lParam)
     return self.processEvent(event)
 
   of TVN_DELETEITEM:
-    let event = TreeEvent(wEvent_TreeDeleteItem, lParam)
+    let event = self.TreeEvent(wEvent_TreeDeleteItem, lParam)
     return self.processEvent(event)
 
   of TVN_BEGINDRAG, TVN_BEGINRDRAG:
     let msg = if code == TVN_BEGINDRAG: wEvent_TreeBeginDrag else: wEvent_TreeBeginRdrag
-    let event = TreeEvent(msg, lParam)
+    let event = self.TreeEvent(msg, lParam)
     event.veto # vetoed by default.
     let processed = self.processEvent(event)
     if processed and event.isAllowed:
       let pnmtv = cast[LPNMTREEVIEW](lParam)
-      beginDrag(pnmtv.itemNew.hItem, (int pnmtv.ptDrag.x, int pnmtv.ptDrag.y))
+      self.beginDrag(pnmtv.itemNew.hItem, (int pnmtv.ptDrag.x, int pnmtv.ptDrag.y))
     return processed
 
   of TVN_SELCHANGING:
-    let event = TreeEvent(wEvent_TreeSelChanging, lParam)
+    let event = self.TreeEvent(wEvent_TreeSelChanging, lParam)
     let processed = self.processEvent(event)
     if processed and not event.isAllowed:
       # MSDN: Returns TRUE to prevent the selection from changing.
@@ -1036,7 +1036,7 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
       else:
         wEvent_TreeItemExpanding
 
-    let event = TreeEvent(msg, lParam)
+    let event = self.TreeEvent(msg, lParam)
     let processed = self.processEvent(event)
     if processed and not event.isAllowed:
       # MSDN: Returns TRUE to prevent the list from expanding or collapsing.
@@ -1050,28 +1050,28 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
       else:
         wEvent_TreeItemExpanded
 
-    let event = TreeEvent(msg, lParam)
+    let event = self.TreeEvent(msg, lParam)
     return self.processEvent(event)
 
   of TVN_BEGINLABELEDIT:
-    let hwnd = TreeView_GetEditControl(mHwnd)
+    let hwnd = TreeView_GetEditControl(self.mHwnd)
     if hWnd != 0:
-      mTextCtrl = TextCtrl(hwnd)
+      self.mTextCtrl = TextCtrl(hwnd)
 
-    let event = TreeEvent(wEvent_TreeBeginLabelEdit, lParam)
+    let event = self.TreeEvent(wEvent_TreeBeginLabelEdit, lParam)
     let processed = self.processEvent(event)
     if processed and not event.isAllowed:
       # MSDN: Returns TRUE to cancel label editing.
       ret = TRUE
       # if here return TRUE, TVN_ENDLABELEDIT won't be fired.
-      mTextCtrl = nil
+      self.mTextCtrl = nil
 
     return processed
 
   of TVN_ENDLABELEDIT:
-    mTextCtrl = nil
+    self.mTextCtrl = nil
 
-    let event = TreeEvent(wEvent_TreeEndLabelEdit, lParam)
+    let event = self.TreeEvent(wEvent_TreeEndLabelEdit, lParam)
     if self.processEvent(event) and not event.isAllowed:
       # MSDN: Return FALSE to reject the edited text and revert to the original label.
       # logic here is inverted !!
@@ -1083,18 +1083,18 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
   of NM_DBLCLK, NM_RCLICK:
     var processed = false
-    let (item, flag) = hitTest(screenToClient(wGetMessagePosition()))
-    if item.isOk() and isReallyOnItem(flag):
+    let (item, flag) = self.hitTest(self.screenToClient(wGetMessagePosition()))
+    if item.isOk() and self.isReallyOnItem(flag):
       let msg =
         if code == NM_DBLCLK:
           wEvent_TreeItemActivated
         else:
           wEvent_TreeItemRightClick
-      let event = TreeEvent(msg, item.mHandle)
+      let event = self.TreeEvent(msg, item.mHandle)
       processed = self.processEvent(event)
 
     if code == NM_RCLICK and not processed:
-      self.processMessage(wEvent_ContextMenu, WPARAM mHwnd, LPARAM GetMessagePos())
+      self.processMessage(wEvent_ContextMenu, WPARAM self.mHwnd, LPARAM GetMessagePos())
 
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
@@ -1186,8 +1186,8 @@ proc final*(self: wTreeCtrl) =
   discard
 
 method release(self: wTreeCtrl) =
-  mImageListNormal = nil
-  mImageListState = nil
+  self.mImageListNormal = nil
+  self.mImageListState = nil
 
 proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTrNoButtons) {.validate.} =
@@ -1206,16 +1206,16 @@ proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
       pszSubIdList: LPCWSTR): HRESULT {.stdcall.}
     let themeLib = loadLib("uxtheme.dll")
     let setWindowTheme = cast[SetWindowTheme](themeLib.checkedSymAddr("SetWindowTheme"))
-    discard setWindowTheme(mHwnd, "Explorer", nil)
+    discard setWindowTheme(self.mHwnd, "Explorer", nil)
 
-  hardConnect(wEvent_Char, wTreeCtrl_OnChar)
-  hardConnect(wEvent_ContextMenu, wTreeCtrl_OnContextMenu)
-  hardConnect(wEvent_MouseMove, wTreeCtrl_OnMouseMove)
-  hardConnect(wEvent_LeftUp, wTreeCtrl_LeftUp)
-  hardConnect(wEvent_RightUp, wTreeCtrl_RightUp)
-  hardConnect(wEvent_RightDown, wTreeCtrl_RightDown)
+  self.hardConnect(wEvent_Char, wTreeCtrl_OnChar)
+  self.hardConnect(wEvent_ContextMenu, wTreeCtrl_OnContextMenu)
+  self.hardConnect(wEvent_MouseMove, wTreeCtrl_OnMouseMove)
+  self.hardConnect(wEvent_LeftUp, wTreeCtrl_LeftUp)
+  self.hardConnect(wEvent_RightUp, wTreeCtrl_RightUp)
+  self.hardConnect(wEvent_RightDown, wTreeCtrl_RightDown)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 

@@ -46,28 +46,28 @@ proc `|`*(strength: float, constraint: Constraint): Constraint {.inline.} =
 
 proc addConstraint*(self: wResizer, constraint: Constraint) {.validate, inline.} =
   ## Add a constraint to the solver.
-  mSolver.addConstraint(constraint)
+  self.mSolver.addConstraint(constraint)
 
 proc addObject*(self: wResizer, obj: wResizable) {.validate, inline.} =
   ## Add an associated resizable object to the solver.
-  mObjects.incl obj
+  self.mObjects.incl obj
 
 proc resolve*(self: wResizer) {.validate.} =
   ## Count the layout of the associated object.
   # window's current layout as default, size should stronger than position
-  for child in mObjects:
+  for child in self.mObjects:
     if child of wWindow:
       let rect = child.wWindow.getRect()
-      mSolver.addConstraint((child.mLeft == rect.x) | WEAKEST)
-      mSolver.addConstraint((child.mTop == rect.y) | WEAKEST)
-      mSolver.addConstraint((child.mRight - child.mLeft == rect.width) | WEAKER)
-      mSolver.addConstraint((child.mBottom - child.mTop == rect.height) | WEAKER)
+      self.mSolver.addConstraint((child.mLeft == rect.x) | WEAKEST)
+      self.mSolver.addConstraint((child.mTop == rect.y) | WEAKEST)
+      self.mSolver.addConstraint((child.mRight - child.mLeft == rect.width) | WEAKER)
+      self.mSolver.addConstraint((child.mBottom - child.mTop == rect.height) | WEAKER)
 
-  mSolver.updateVariables()
+  self.mSolver.updateVariables()
 
 proc rearrange*(self: wResizer) {.validate.} =
   ## Rearrange the layout of the associated window.
-  for obj in mObjects:
+  for obj in self.mObjects:
     if obj of wWindow:
       let x = round(obj.mLeft.value).int
       let y = round(obj.mTop.value).int
@@ -77,7 +77,7 @@ proc rearrange*(self: wResizer) {.validate.} =
 
 iterator items*(self: wResizer): wResizable {.validate.} =
   ## Iterates over each associated object.
-  for obj in mObjects:
+  for obj in self.mObjects:
     yield obj
 
 proc final*(self: wResizer) =
@@ -85,8 +85,8 @@ proc final*(self: wResizer) =
   discard
 
 proc init*(self: wResizer) =
-  mSolver = newSolver()
-  mObjects = initSet[wResizable]()
+  self.mSolver = newSolver()
+  self.mObjects = initSet[wResizable]()
 
 proc Resizer*(): wResizer {.inline.} =
   ## Constructor.

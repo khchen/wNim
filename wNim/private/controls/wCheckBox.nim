@@ -44,44 +44,44 @@ const
 method getBestSize*(self: wCheckBox): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   # BCM_GETIDEALSIZE not works correct on BS_AUTO3STATE
-  result = getTextFontSizeWithCheckMark(getLabel(), mFont.mHandle)
+  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle)
   result.height += 2
 
 method getDefaultSize*(self: wCheckBox): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getBestSize()
-  result.height = getLineControlDefaultHeight(mFont.mHandle)
+  result = self.getBestSize()
+  result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
 proc getValue*(self: wCheckBox): bool {.validate, property, inline.} =
   ## Gets the state of a 2-state checkbox
-  result = SendMessage(mHwnd, BM_GETCHECK, 0, 0) == BST_CHECKED
+  result = SendMessage(self.mHwnd, BM_GETCHECK, 0, 0) == BST_CHECKED
 
 proc isChecked*(self: wCheckBox): bool {.validate, inline.} =
   ## This is just a maybe more readable synonym for getValue.
-  result = getValue()
+  result = self.getValue()
 
 proc is3State*(self: wCheckBox): bool {.validate.} =
   ## Returns whether or not the checkbox is a 3-state checkbox.
-  result = case getWindowStyle() and 0xF
+  result = case self.getWindowStyle() and 0xF
     of BS_3STATE, BS_AUTO3STATE: true
     else: false
 
 proc get3StateValue*(self: wCheckBox): int {.validate, property, inline.} =
   ## Gets the state of a 3-state checkbox.
   ## Returned value can be one of wChkUnchecked, wChkChecked, or wChkUndetermined.
-  result = int SendMessage(mHwnd, BM_GETCHECK, 0, 0)
+  result = int SendMessage(self.mHwnd, BM_GETCHECK, 0, 0)
 
 proc set3StateValue*(self: wCheckBox, state: int) {.validate, property, inline.} =
   ## Sets the checkbox to the given state.
   ## State can be one of wChkUnchecked, wChkChecked, or wChkUndetermined.
-  SendMessage(mHwnd, BM_SETCHECK, state, 0)
+  SendMessage(self.mHwnd, BM_SETCHECK, state, 0)
 
 proc setValue*(self: wCheckBox, state: bool) {.validate, property, inline.} =
   ## Sets the checkbox to the given state.
-  SendMessage(mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
+  SendMessage(self.mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
 method release(self: wCheckBox) =
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wCheckBox) =
   ## Default finalizer for wCheckBox.
@@ -97,11 +97,11 @@ proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
   # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
   let style = (style and (not 0xF)) or checkType
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
+  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
       self.processMessage(wEvent_CheckBox, event.mWparam, event.mLparam)
 
 proc CheckBox*(parent: wWindow, id = wDefaultID,

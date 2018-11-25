@@ -29,9 +29,9 @@ proc isSetCursorEvent(msg: UINT): bool {.inline.} =
 
 method getCursor*(self: wSetCursorEvent): wCursor {.property, inline.} =
   ## Returns a reference to the cursor specified by this event.
-  result = cast[wCursor](mLparam)
+  result = cast[wCursor](self.mLparam)
 
 method setCursor*(self: wSetCursorEvent, cursor: wCursor) {.property, inline.} =
   ## Sets the cursor associated with this event.
   wValidate(cursor)
-  mLparam = cast[LPARAM](cursor)
+  self.mLparam = cast[LPARAM](cursor)

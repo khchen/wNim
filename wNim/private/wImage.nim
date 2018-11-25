@@ -299,94 +299,94 @@ proc wGdipGetQualityParameters(quality: var LONG): EncoderParameters =
 proc delete*(self: wImage) {.validate.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if mGdipBmp != nil:
-    GdipDisposeImage(mGdipBmp)
-    mGdipBmp = nil
+  if self.mGdipBmp != nil:
+    GdipDisposeImage(self.mGdipBmp)
+    self.mGdipBmp = nil
 
 proc getHandle*(self: wImage): ptr GpBitmap {.validate, property, inline.} =
   ## Gets the real resource handle of gdiplus bitmap.
-  result = mGdipBmp
+  result = self.mGdipBmp
 
 proc getWidth*(self: wImage): int {.validate, property.} =
   ## Gets the width of the image in pixels.
   var width: UINT
-  if GdipGetImageWidth(mGdipBmp, &width) != Ok:
+  if GdipGetImageWidth(self.mGdipBmp, &width) != Ok:
     raise newException(wImageError, "wImage getWidth failure")
   result = int width
 
 proc getHeight*(self: wImage): int {.validate, property.} =
   ## Gets the height of the image in pixels.
   var height: UINT
-  if GdipGetImageHeight(mGdipBmp, &height) != Ok:
+  if GdipGetImageHeight(self.mGdipBmp, &height) != Ok:
     raise newException(wImageError, "wImage getHeight failure")
   result = int height
 
 proc getSize*(self: wImage): wSize {.validate, property, inline.} =
   ## Returns the size of the image in pixels.
-  result.width = getWidth()
-  result.height = getHeight()
+  result.width = self.getWidth()
+  result.height = self.getHeight()
 
 proc getPixel*(self: wImage, x: int, y: int): ARGB {.validate, property.} =
   ## Return the ARGB value at given pixel location.
-  if GdipBitmapGetPixel(mGdipBmp, x, y, &result) != Ok:
+  if GdipBitmapGetPixel(self.mGdipBmp, x, y, &result) != Ok:
     raise newException(wImageError, "wImage getPixel failure")
 
 proc getPixel*(self: wImage, pos: wPoint): ARGB {.validate, property.} =
   ## Return the ARGB value at given pixel location.
-  result = getPixel(pos.x, pos.y)
+  result = self.getPixel(pos.x, pos.y)
 
 proc setPixel*(self: wImage, x: int, y: int, color: ARGB) {.validate, property.} =
   ## Set the ARGB value at given pixel location.
-  if GdipBitmapSetPixel(mGdipBmp, x, y, color) != Ok:
+  if GdipBitmapSetPixel(self.mGdipBmp, x, y, color) != Ok:
     raise newException(wImageError, "wImage setPixel failure")
 
 proc setPixel*(self: wImage, pos: wPoint, color: ARGB) {.validate, property.} =
   ## Set the ARGB value at given pixel location.
-  setPixel(pos.x, pos.y, color)
+  self.setPixel(pos.x, pos.y, color)
 
 proc getRed*(self: wImage, x: int, y: int): byte {.validate, property.} =
   ## Returns the red intensity at the given coordinate.
   try:
-    result = GetRValue(getPixel(x, y))
+    result = GetRValue(self.getPixel(x, y))
   except:
     raise newException(wImageError, "wImage getRed failure")
 
 proc getRed*(self: wImage, pos: wPoint): byte {.validate, property.} =
   ## Returns the red intensity at the given coordinate.
-  result = getRed(pos.x, pos.y)
+  result = self.getRed(pos.x, pos.y)
 
 proc getGreen*(self: wImage, x: int, y: int): byte {.validate, property.} =
   ## Returns the green intensity at the given coordinate.
   try:
-    result = GetGValue(getPixel(x, y))
+    result = GetGValue(self.getPixel(x, y))
   except:
     raise newException(wImageError, "wImage getGreen failure")
 
 proc getGreen*(self: wImage, pos: wPoint): byte {.validate, property.} =
   ## Returns the green intensity at the given coordinate.
-  result = getGreen(pos.x, pos.y)
+  result = self.getGreen(pos.x, pos.y)
 
 proc getBlue*(self: wImage, x: int, y: int): byte {.validate, property.} =
   ## Returns the blue intensity at the given coordinate.
   try:
-    result = GetBValue(getPixel(x, y))
+    result = GetBValue(self.getPixel(x, y))
   except:
     raise newException(wImageError, "wImage getBlue failure")
 
 proc getBlue*(self: wImage, pos: wPoint): byte {.validate, property.} =
   ## Returns the blue intensity at the given coordinate.
-  result = getBlue(pos.x, pos.y)
+  result = self.getBlue(pos.x, pos.y)
 
 proc getAlpha*(self: wImage, x: int, y: int): byte {.validate, property.} =
   ## Return alpha value at given pixel location.
   try:
-    result = cast[byte](getPixel(x, y) shr 24)
+    result = cast[byte](self.getPixel(x, y) shr 24)
   except:
     raise newException(wImageError, "wImage getAlpha failure")
 
 proc getAlpha*(self: wImage, pos: wPoint): byte {.validate, property.} =
   ## Return alpha value at given pixel location.
-  result = getAlpha(pos.x, pos.y)
+  result = self.getAlpha(pos.x, pos.y)
 
 iterator getEncoders*(self: wImage): string {.validate.} =
   ## Iterates over each available image encoder on system.
@@ -425,7 +425,7 @@ proc saveFile*(self: wImage, filename: string, fileType = "",
       encoderParameters = wGdipGetQualityParameters(quality)
       clsid = wGdipGetEncoderCLSID(ext)
 
-    if GdipSaveImageToFile(mGdipBmp, +$filename, clsid, &encoderParameters) != Ok: raise
+    if GdipSaveImageToFile(self.mGdipBmp, +$filename, clsid, &encoderParameters) != Ok: raise
 
   except:
     raise newException(wImageError, "wImage saveFile failure")
@@ -445,7 +445,7 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
     defer:
       if stream != nil: stream.Release()
 
-    if stream == nil or GdipSaveImageToStream(mGdipBmp, stream, clsid,
+    if stream == nil or GdipSaveImageToStream(self.mGdipBmp, stream, clsid,
       &encoderParameters) != Ok: raise
     wGdipReadStream(stream, result)
 
@@ -454,17 +454,17 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
 
 proc final(self: wImage) =
   ## Default finalizer for wImage.
-  delete()
+  self.delete()
 
 proc init*(self: wImage, gdip: ptr GpBitmap, copy = true) {.validate.} =
   ## Initializer.
   wValidate(gdip)
   wGdipInit()
   if copy:
-    if GdipCloneImage(gdip, cast[ptr ptr GpImage](&mGdipBmp)) != Ok:
-      error()
+    if GdipCloneImage(gdip, cast[ptr ptr GpImage](&self.mGdipBmp)) != Ok:
+      self.error()
   else:
-    mGdipBmp = gdip
+    self.mGdipBmp = gdip
 
 proc Image*(gdip: ptr GpBitmap, copy = true): wImage {.inline.} =
   ## Creates an image from a gdiplus bitmap handle.
@@ -477,7 +477,7 @@ proc Image*(gdip: ptr GpBitmap, copy = true): wImage {.inline.} =
 proc init*(self: wImage, image: wImage) {.validate, inline.} =
   ## Initializer.
   wValidate(image)
-  init(image.mGdipBmp, copy=true)
+  self.init(image.mGdipBmp, copy=true)
 
 proc Image*(image: wImage): wImage {.inline.} =
   ## Creates an image from wImage object, aka. copy constructors.
@@ -489,8 +489,8 @@ proc init*(self: wImage, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
   wGdipInit()
-  if GdipCreateBitmapFromHBITMAP(bmp.mHandle, 0, &mGdipBmp) != Ok:
-    error()
+  if GdipCreateBitmapFromHBITMAP(bmp.mHandle, 0, &self.mGdipBmp) != Ok:
+    self.error()
 
 proc Image*(bmp: wBitmap): wImage {.inline.} =
   ## Creates an image from wBitmap object.
@@ -506,8 +506,8 @@ proc init*(self: wImage, data: ptr byte, length: int) {.validate.} =
   defer:
     if stream != nil: stream.Release()
 
-  if stream == nil or GdipCreateBitmapFromStream(stream, &mGdipBmp) != Ok:
-    error()
+  if stream == nil or GdipCreateBitmapFromStream(stream, &self.mGdipBmp) != Ok:
+    self.error()
 
 proc Image*(data: ptr byte, length: int): wImage {.inline.} =
   ## Creates an image from binary image data.
@@ -521,10 +521,10 @@ proc init*(self: wImage, str: string) {.validate.} =
   wValidate(str)
   wGdipInit()
   if str.isVaildPath():
-    if GdipCreateBitmapFromFile(str, &mGdipBmp) != Ok:
-      error()
+    if GdipCreateBitmapFromFile(str, &self.mGdipBmp) != Ok:
+      self.error()
   else:
-    init(cast[ptr byte](&str), str.len)
+    self.init(cast[ptr byte](&str), str.len)
 
 proc Image*(str: string): wImage {.inline.} =
   ## Creates an image from a file.
@@ -543,8 +543,8 @@ proc init*(self: wImage, width: int, height: int) {.validate.} =
   ## Initializer.
   wGdipInit()
   if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
-      nil, &mGdipBmp) != Ok:
-    error()
+      nil, &self.mGdipBmp) != Ok:
+    self.error()
 
 proc Image*(width: int, height: int): wImage {.inline.} =
   ## Creates an empty image with the given size.
@@ -553,7 +553,7 @@ proc Image*(width: int, height: int): wImage {.inline.} =
 
 proc init*(self: wImage, size: wSize) {.validate, inline.} =
   ## Initializer.
-  init(size.width, size.height)
+  self.init(size.width, size.height)
 
 proc Image*(size: wSize): wImage {.inline.} =
   ## Creates an empty image with the given size.
@@ -563,60 +563,60 @@ proc Image*(size: wSize): wImage {.inline.} =
 proc scale*(self: wImage, width, height: int, quality = wImageQualityNormal): wImage
     {.validate.} =
   ## Returns a scaled version of the image.
-  let newGdipbmp = wGdipScale(mGdipBmp, width, height, quality)
+  let newGdipbmp = wGdipScale(self.mGdipBmp, width, height, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage scale failure")
   result = Image(newGdipbmp, copy=false)
 
 proc scale*(self: wImage, size: wSize, quality = wImageQualityNormal): wImage
     {.validate, inline.} =
   ## Returns a scaled version of the image.
-  result = scale(size.width, size.height, quality)
+  result = self.scale(size.width, size.height, quality)
 
 proc rescale*(self: wImage, width, height: int, quality = wImageQualityNormal)
     {.validate, discardable.} =
   ## Changes the size of the image in-place by scaling it.
-  let newGdipbmp = wGdipScale(mGdipBmp, width, height, quality)
+  let newGdipbmp = wGdipScale(self.mGdipBmp, width, height, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage rescale failure")
-  GdipDisposeImage(mGdipBmp)
-  mGdipBmp = newGdipbmp
+  GdipDisposeImage(self.mGdipBmp)
+  self.mGdipBmp = newGdipbmp
 
 proc rescale*(self: wImage, size: wSize, quality = wImageQualityNormal)
     {.validate, inline, discardable.} =
   ## Changes the size of the image in-place by scaling it.
-  rescale(size.width, size.height, quality)
+  self.rescale(size.width, size.height, quality)
 
 proc size*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0): wImage
     {.validate.} =
   ## Returns a resized version of this image without scaling it.
   ## The image is pasted into a new image at the position pos or by given align.
   ## align can be combine of wRight, wCenter, wLeft, wUp, wMiddle, wDown.
-  let newGdipbmp = wGdipSize(mGdipBmp, size, pos, align)
+  let newGdipbmp = wGdipSize(self.mGdipBmp, size, pos, align)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage size failure")
   result = Image(newGdipbmp, copy=false)
 
 proc size*(self: wImage, width, height: int, x, y: int = 0, align = 0): wImage
     {.validate, inline.} =
   ## Returns a resized version of this image without scaling it.
-  result = size((width, height), (x, y), align)
+  result = self.size((width, height), (x, y), align)
 
 proc resize*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0)
     {.validate, discardable.} =
   ## Changes the size of the image in-place without scaling it.
-  let newGdipbmp = wGdipSize(mGdipBmp, size, pos, align)
+  let newGdipbmp = wGdipSize(self.mGdipBmp, size, pos, align)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage resize failure")
-  GdipDisposeImage(mGdipBmp)
-  mGdipBmp = newGdipbmp
+  GdipDisposeImage(self.mGdipBmp)
+  self.mGdipBmp = newGdipbmp
 
 proc resize*(self: wImage, width, height: int, x, y: int = 0, align = 0)
     {.validate, discardable.} =
   ## Changes the size of the image in-place without scaling it.
-  resize((width, height), (x, y), align)
+  self.resize((width, height), (x, y), align)
 
 proc transform*(self: wImage, scaleX, scaleY: float = 1,
     angle, deltaX, deltaY: float = 0,
     quality = wImageQualityNormal): wImage {.validate.} =
   ## Returned a transformed version of this image by given parameters.
-  let newGdipbmp = wGdipTransform(mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
+  let newGdipbmp = wGdipTransform(self.mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage transform failure")
   result = Image(newGdipbmp, copy=false)
 
@@ -624,10 +624,10 @@ proc retransform*(self: wImage, scaleX, scaleY: float = 1,
     angle, deltaX, deltaY: float = 0,
     quality = wImageQualityNormal) {.validate, discardable.} =
   ## Transforms the image in-place.
-  let newGdipbmp = wGdipTransform(mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
+  let newGdipbmp = wGdipTransform(self.mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage transform failure")
-  GdipDisposeImage(mGdipBmp)
-  mGdipBmp = newGdipbmp
+  GdipDisposeImage(self.mGdipBmp)
+  self.mGdipBmp = newGdipbmp
 
 proc paste*(self: wImage, image: wImage, x, y: int = 0, align = 0)
     {.validate, discardable.} =
@@ -640,11 +640,11 @@ proc paste*(self: wImage, image: wImage, pos: wPoint, align = 0)
     {.validate, discardable.} =
   ## Copy the data of the given image to the specified position in this image.
   wValidate(image)
-  paste(image, pos.x, pos.y, align)
+  self.paste(image, pos.x, pos.y, align)
 
 proc rotateFlip*(self: wImage, flag: int) {.validate, discardable.} =
   ## Rotates or flip the image.
-  if GdipImageRotateFlip(mGdipBmp, flag) != Ok:
+  if GdipImageRotateFlip(self.mGdipBmp, flag) != Ok:
     raise newException(wImageError, "wImage rotateFlip failure")
 
 proc rotateFlip*(self: wImage, angle: int, flipX: bool, flipY: bool)
@@ -684,13 +684,13 @@ proc rotateFlip*(self: wImage, angle: int, flipX: bool, flipY: bool)
     of Y: wImageRotate270FlipY
     of XY: wImageRotate270FlipXY
   else: raise newException(wImageError, "wImage rotateFlip failure")
-  rotateFlip(flag)
+  self.rotateFlip(flag)
 
 proc getSubImage*(self: wImage, rect: wRect): wImage {.validate.} =
   ## Returns a sub image of the current one as long as the rect belongs entirely
   ## to the image.
   try:
-    result = size((rect.width, rect.height), (-rect.x, -rect.y))
+    result = self.size((rect.width, rect.height), (-rect.x, -rect.y))
   except:
     raise newException(wImageError, "wImage getSubImage failure")
 
@@ -698,7 +698,7 @@ proc crop*(self: wImage, x, y, width, height: int): wImage {.validate.} =
   ## Returns a cropped image of the current one as long as the rect belongs
   ## entirely to the image.
   try:
-    result = size((width, height), (-x, -y))
+    result = self.size((width, height), (-x, -y))
   except:
     raise newException(wImageError, "wImage crop failure")
 
@@ -710,8 +710,8 @@ when not defined(useWinXP):
       rect: RECT
       newGdipbmp: ptr GpBitmap
 
-    rect.right = getWidth()
-    rect.bottom = getHeight()
+    rect.right = self.getWidth()
+    rect.bottom = self.getHeight()
 
     if GdipCreateEffect(guid, &effect) != Ok: raise
     defer: GdipDeleteEffect(effect)
@@ -721,18 +721,18 @@ when not defined(useWinXP):
     # GdipBitmapApplyEffect sometimes crash due to unknow reason (only 64bit)
 
     # if don't set rect, the image size will change?
-    if GdipBitmapCreateApplyEffect(&mGdipBmp, 1, effect, &rect, nil, &newGdipbmp,
+    if GdipBitmapCreateApplyEffect(&self.mGdipBmp, 1, effect, &rect, nil, &newGdipbmp,
       false, nil, nil) != Ok: raise
 
-    GdipDisposeImage(mGdipBmp)
-    mGdipBmp = newGdipbmp
+    GdipDisposeImage(self.mGdipBmp)
+    self.mGdipBmp = newGdipbmp
 
   proc blur*(self: wImage, radius: range[0..255] = 0, expandEdge = true)
       {.validate.} =
     ## Blur effect (Windows Vista or later).
     var param = BlurParams(radius: radius.float32, expandEdge: expandEdge)
     try:
-      effect(BlurEffectGuid, &param, sizeof(param))
+      self.effect(BlurEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage blur failure")
 
@@ -743,7 +743,7 @@ when not defined(useWinXP):
       contrastLevel: contrast)
 
     try:
-      effect(BrightnessContrastEffectGuid, &param, sizeof(param))
+      self.effect(BrightnessContrastEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage brightnessContrast failure")
 
@@ -752,7 +752,7 @@ when not defined(useWinXP):
     ## Sharpen effect (Windows Vista or later).
     var param = SharpenParams(radius: radius.float32, amount: amount.float32)
     try:
-      effect(SharpenEffectGuid, &param, sizeof(param))
+      self.effect(SharpenEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage sharpen failure")
 
@@ -761,7 +761,7 @@ when not defined(useWinXP):
     ## Tint effect (Windows Vista or later).
     var param = TintParams(hue: hue, amount: amount)
     try:
-      effect(TintEffectGuid, &param, sizeof(param))
+      self.effect(TintEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage tint failure")
 
@@ -773,7 +773,7 @@ when not defined(useWinXP):
       saturationLevel: saturation, lightnessLevel: lightness)
 
     try:
-      effect(HueSaturationLightnessEffectGuid, &param, sizeof(param))
+      self.effect(HueSaturationLightnessEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage hueSaturationLightness failure")
 
@@ -785,7 +785,7 @@ when not defined(useWinXP):
       yellowBlue: yellowBlue)
 
     try:
-      effect(ColorBalanceEffectGuid, &param, sizeof(param))
+      self.effect(ColorBalanceEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage colorBalance failure")
 
@@ -794,7 +794,6 @@ when not defined(useWinXP):
     ## Light, midtone, or dark adjustment (Windows Vista or later).
     var param = LevelsParams(highlight: highlight, midtone: midtone, shadow: shadow)
     try:
-      effect(LevelsEffectGuid, &param, sizeof(param))
+      self.effect(LevelsEffectGuid, &param, sizeof(param))
     except:
       raise newException(wImageError, "wImage levels failure")
-

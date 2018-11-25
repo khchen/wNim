@@ -27,9 +27,9 @@ proc delete*(self: var wWindowDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
-  if mHdc != 0:
+  if self.mHdc != 0:
     self.wDC.final()
-    ReleaseDC(mCanvas.mHwnd, mHdc)
-    mHdc = 0
+    ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+    self.mHdc = 0
 
-proc `=destroy`(self: var wWindowDC) = delete()
+proc `=destroy`(self: var wWindowDC) = self.delete()

@@ -32,5 +32,5 @@ proc isStatusBarEvent(msg: UINT): bool {.inline.} =
 
 method getIndex*(self: wStatusBarEvent): int {.property.} =
   ## Return the index of the field that was clicked.
-  let lpnm  = cast[LPNMMOUSE](mLparam)
+  let lpnm  = cast[LPNMMOUSE](self.mLparam)
   result = int lpnm.dwItemSpec

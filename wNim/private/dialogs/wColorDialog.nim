@@ -33,9 +33,9 @@ proc final*(self: wColorDialog) =
 proc init*(self: wColorDialog, parent: wWindow = nil, defaultColor = wBlack,
     style: wStyle = 0) {.validate.} =
   ## Initializer.
-  mParent = parent
-  mColor = defaultColor
-  mStyle = style
+  self.mParent = parent
+  self.mColor = defaultColor
+  self.mStyle = style
 
 proc ColorDialog*(parent: wWindow = nil, defaultColor = wBlack,
     style: wStyle = 0): wColorDialog {.inline.} =
@@ -45,21 +45,21 @@ proc ColorDialog*(parent: wWindow = nil, defaultColor = wBlack,
 
 proc getColor*(self: wColorDialog): wColor {.validate, property, inline.} =
   ## Returns the default or user-selected color.
-  result = mColor
+  result = self.mColor
 
 proc getCustomColor*(self: wColorDialog, i: range[0..15]): wColor
     {.validate, property, inline.} =
   ## Returns custom colors associated with the color dialog.
-  result = mCustomColor[i]
+  result = self.mCustomColor[i]
 
 proc setColor*(self: wColorDialog, color: wColor) {.validate, property, inline.} =
   ## Sets the default color.
-  mColor = color
+  self.mColor = color
 
 proc setCustomColor*(self: wColorDialog, i: range[0..15], color: wColor)
     {.validate, property, inline.} =
   ## Sets custom colors for the color dialog.
-  mCustomColor[i] = color
+  self.mCustomColor[i] = color
 
 proc wColorHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
     {.stdcall.} =
@@ -80,33 +80,33 @@ proc showModal*(self: wColorDialog): wId {.discardable.} =
   ## otherwise.
   var cc = TCHOOSECOLOR(
     lStructSize: sizeof(TCHOOSECOLOR),
-    rgbResult: mColor,
-    lpCustColors: &mCustomColor[0],
+    rgbResult: self.mColor,
+    lpCustColors: &self.mCustomColor[0],
     lpfnHook: wColorHookProc,
     lCustData: cast[LPARAM](self))
 
   cc.Flags = CC_RGBINIT or CC_ANYCOLOR or CC_ENABLEHOOK or
-    cast[DWORD](mStyle and 0xffffffff)
+    cast[DWORD](self.mStyle and 0xffffffff)
 
-  if mParent != nil:
-    cc.hwndOwner = mParent.mHwnd
+  if self.mParent != nil:
+    cc.hwndOwner = self.mParent.mHwnd
 
   if ChooseColor(&cc):
-    mColor = cc.rgbResult
+    self.mColor = cc.rgbResult
     result = wIdOk
   else:
     result = wIdCancel
 
 proc show*(self: wColorDialog): wId {.inline, discardable.} =
   ## The same as showModal().
-  result = showModal()
+  result = self.showModal()
 
 proc showModalResult*(self: wColorDialog): wColor {.inline, discardable.} =
   ## Shows the dialog, returning the user-selected color.
-  if showModal() == wIdOk:
-    result = getColor()
+  if self.showModal() == wIdOk:
+    result = self.getColor()
 
 proc showResult*(self: wColorDialog): wColor {.inline, discardable.} =
   ## The same as showModalResult().
-  if show() == wIdOk:
-    result = getColor()
+  if self.show() == wIdOk:
+    result = self.getColor()

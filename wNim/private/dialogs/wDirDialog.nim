@@ -33,10 +33,10 @@ proc final*(self: wDirDialog) =
 proc init*(self: wDirDialog, parent: wWindow = nil, message = "",
     defaultPath = "", style: wStyle = 0) {.validate.} =
   ## Initializer.
-  mParent = parent
-  mMessage = message
-  mPath = defaultPath
-  mStyle = style
+  self.mParent = parent
+  self.mMessage = message
+  self.mPath = defaultPath
+  self.mStyle = style
 
 proc DirDialog*(parent: wWindow = nil, message = "", defaultPath = "",
     style: wStyle = 0): wDirDialog {.inline.} =
@@ -46,20 +46,20 @@ proc DirDialog*(parent: wWindow = nil, message = "", defaultPath = "",
 
 proc getPath*(self: wDirDialog): string {.validate, property, inline.} =
   ## Returns the default or user-selected path.
-  result = mPath
+  result = self.mPath
 
 proc getMessage*(self: wDirDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
-  result = mMessage
+  result = self.mMessage
 
 proc setPath*(self: wDirDialog, path: string) {.validate, property, inline.} =
   ## Sets the default path.
-  mPath = path
+  self.mPath = path
 
 proc setMessage*(self: var wDirDialog, message: string)
     {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
-  mMessage = message
+  self.mMessage = message
 
 when not defined(useWinXP):
   proc showModal_VistaLaster(self: wDirDialog): wId =
@@ -76,17 +76,17 @@ when not defined(useWinXP):
 
       if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: raise
 
-      if mMessage.len != 0:
-        if dialog.SetTitle(mMessage).FAILED: raise
+      if self.mMessage.len != 0:
+        if dialog.SetTitle(self.mMessage).FAILED: raise
 
-      if mPath.len != 0:
-        if SHCreateItemFromParsingName(mPath, nil, &IID_IShellItem,
+      if self.mPath.len != 0:
+        if SHCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
           cast[ptr PVOID](&folder)).FAILED: raise
 
         if dialog.SetFolder(folder).FAILED: raise
 
       # include HRESULT_FROM_WIN32(ERROR_CANCELLED)
-      if dialog.Show(if mParent == nil: 0 else: mParent.mHwnd).FAILED: raise
+      if dialog.Show(if self.mParent == nil: 0 else: self.mParent.mHwnd).FAILED: raise
 
       if dialog.GetResult(&item).FAILED: raise
       defer: item.Release()
@@ -94,7 +94,7 @@ when not defined(useWinXP):
       if item.GetDisplayName(SIGDN_FILESYSPATH, &filePath).FAILED: raise
       defer: CoTaskMemFree(filePath)
 
-      mPath = $filePath
+      self.mPath = $filePath
       result = wIdOk
 
     except:
@@ -107,17 +107,17 @@ proc wDirDialog_CallbackProc(hwnd: HWND, uMsg: UINT, lp: LPARAM, pData: LPARAM):
 proc showModal_XPCompatible(self: wDirDialog): wId =
   var bi = BROWSEINFO(ulFlags: BIF_RETURNONLYFSDIRS or BIF_USENEWUI)
 
-  if mParent != nil:
-    bi.hwndOwner = mParent.mHwnd
+  if self.mParent != nil:
+    bi.hwndOwner = self.mParent.mHwnd
 
-  if mMessage.len != 0:
-    bi.lpszTitle = &T(mMessage)
+  if self.mMessage.len != 0:
+    bi.lpszTitle = &T(self.mMessage)
 
-  if mPath.len != 0:
+  if self.mPath.len != 0:
     bi.lpfn = wDirDialog_CallbackProc
-    bi.lParam = cast[LPARAM](&T(mPath))
+    bi.lParam = cast[LPARAM](&T(self.mPath))
 
-  if (mStyle and wDdDirMustExist) != 0:
+  if (self.mStyle and wDdDirMustExist) != 0:
     bi.ulFlags = bi.ulFlags or BIF_NONEWFOLDERBUTTON
 
   var pidl = SHBrowseForFolder(bi)
@@ -128,33 +128,33 @@ proc showModal_XPCompatible(self: wDirDialog): wId =
   SHGetPathFromIDList(pidl, &buffer)
   CoTaskMemFree(pidl)
   buffer.nullTerminate()
-  mPath = $buffer
+  self.mPath = $buffer
   result = wIdOk
 
 proc showModal*(self: wDirDialog): wId {.discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   when defined(useWinXP):
-    result = showModal_XPCompatible()
+    result = self.showModal_XPCompatible()
   else:
-    if (mStyle and wDdXpCompatible) != 0:
-      result = showModal_XPCompatible()
+    if (self.mStyle and wDdXpCompatible) != 0:
+      result = self.showModal_XPCompatible()
     else:
-      result = showModal_VistaLaster()
+      result = self.showModal_VistaLaster()
 
-  if result == wIdOk and (mStyle and wDdChangeDir) != 0:
-    SetCurrentDirectory(mPath)
+  if result == wIdOk and (self.mStyle and wDdChangeDir) != 0:
+    SetCurrentDirectory(self.mPath)
 
 proc show*(self: wDirDialog): wId {.inline, discardable.} =
   ## The same as showModal().
-  result = showModal()
+  result = self.showModal()
 
 proc showModalResult*(self: wDirDialog): string {.inline, discardable.} =
   ## Shows the dialog, returning the selected path or nil.
-  if showModal() == wIdOk:
-    result = getPath()
+  if self.showModal() == wIdOk:
+    result = self.getPath()
 
 proc showResult*(self: wDirDialog): string {.inline, discardable.} =
   ## The same as showModalResult().
-  if show() == wIdOk:
-    result = getPath()
+  if self.show() == wIdOk:
+    result = self.getPath()

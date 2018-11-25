@@ -47,16 +47,16 @@ proc isScrollWinEvent(msg: UINT): bool {.inline.} =
 
 method getKind*(self: wScrollWinEvent): int {.property, inline.} =
   ## Returns what kind of event type this is. Basically used in wEvent_ScrollWin.
-  let dataPtr = cast[ptr wScrollData](mLparam)
+  let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.kind
 
 method getOrientation*(self: wScrollWinEvent): int {.property, inline.} =
   ## Returns wHORIZONTAL or wVERTICAL
-  let dataPtr = cast[ptr wScrollData](mLparam)
+  let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.orientation
 
 proc getScrollPos*(self: wWindow, orientation: int): int {.inline.}
 
 method getScrollPos*(self: wScrollWinEvent): int {.property.} =
   ## Returns the position of the scrollbar.
-  result = self.mWindow.getScrollPos(getOrientation())
+  result = self.mWindow.getScrollPos(self.getOrientation())

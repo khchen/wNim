@@ -31,13 +31,13 @@ const
 
 proc isVertical*(self: wScrollBar): bool {.validate, inline.} =
   ## Returns true for scrollbars that have the vertical style set.
-  result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and SBS_VERT) != 0
+  result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and SBS_VERT) != 0
 
 method getDefaultSize*(self: wScrollBar): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getAverageASCIILetterSize(mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle)
 
-  if isVertical():
+  if self.isVertical():
     result.width = GetSystemMetrics(SM_CXVSCROLL)
     result.height = MulDiv(result.height, 107, 8)
   else:
@@ -46,7 +46,7 @@ method getDefaultSize*(self: wScrollBar): wSize {.property.} =
 
 method getBestSize*(self: wScrollBar): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getDefaultSize()
+  result = self.getDefaultSize()
 
 proc setScrollbar*(self: wScrollBar, position: Natural, pageSize: Positive,
     range: Positive) {.validate, property.} =
@@ -58,7 +58,7 @@ proc setScrollbar*(self: wScrollBar, position: Natural, pageSize: Positive,
     nPage: int32 pageSize,
     nMin: 0,
     nMax: int32 range)
-  SetScrollInfo(mHwnd, SB_CTL, &info, true) # true for redraw
+  SetScrollInfo(self.mHwnd, SB_CTL, &info, true) # true for redraw
 
 proc setScrollPos*(self: wScrollBar, position: int) {.validate, property.} =
   ## Sets the position of the scrollbar.
@@ -66,32 +66,32 @@ proc setScrollPos*(self: wScrollBar, position: int) {.validate, property.} =
     cbSize: sizeof(SCROLLINFO),
     fMask: SIF_POS,
     nPos: int32 position)
-  SetScrollInfo(mHwnd, SB_CTL, &info, true)
+  SetScrollInfo(self.mHwnd, SB_CTL, &info, true)
 
 proc getScrollInfo(self: wScrollBar): SCROLLINFO {.validate, property.} =
   result = SCROLLINFO(
     cbSize: sizeof(SCROLLINFO),
     fMask: SIF_ALL)
-  GetScrollInfo(mHwnd, SB_CTL, &result)
+  GetScrollInfo(self.mHwnd, SB_CTL, &result)
 
 proc getPageSize*(self: wScrollBar): int {.validate, property, inline.} =
   ## Returns the page size.
-  let info = getScrollInfo()
+  let info = self.getScrollInfo()
   result = info.nPage
 
 proc getRange*(self: wScrollBar): int {.validate, property, inline.} =
   ## Returns the length of the scrollbar.
-  let info = getScrollInfo()
+  let info = self.getScrollInfo()
   result = info.nMax
 
 proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
   ## Returns the current position of the scrollbar.
-  let info = getScrollInfo()
+  let info = self.getScrollInfo()
   result = info.nPos
 
 method release(self: wScrollBar) =
-  mParent.systemDisconnect(mHScrollConn)
-  mParent.systemDisconnect(mVScrollConn)
+  self.mParent.systemDisconnect(self.mHScrollConn)
+  self.mParent.systemDisconnect(self.mVScrollConn)
 
 proc final*(self: wScrollBar) =
   ## Default finalizer for wScrollBar.
@@ -101,10 +101,10 @@ proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
   ## Initializer.
   wValidate(parent)
-  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos, size=size,
-    style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos,
+    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  setScrollbar(0, 1, 2)
+  self.setScrollbar(0, 1, 2)
 
   proc wScroll_DoScroll(event: wEvent) =
     var processed = false
@@ -112,10 +112,10 @@ proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
       let orientation = if self.isVertical(): wVertical else: wHorizontal
       self.wScroll_DoScrollImpl(orientation, event.mWparam, isControl=true, processed)
 
-  mHScrollConn = parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
-  mVScrollConn = parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
+  self.mHScrollConn = parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
+  self.mVScrollConn = parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if self.isVertical():
       if event.keyCode in {wKey_Up, wKey_Down}:
         event.veto

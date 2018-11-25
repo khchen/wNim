@@ -23,9 +23,9 @@ proc delete*(self: var wScreenDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
-  if mHdc != 0:
+  if self.mHdc != 0:
     self.wDC.final()
-    ReleaseDC(0, mHdc)
-    mHdc = 0
+    ReleaseDC(0, self.mHdc)
+    self.mHdc = 0
 
-proc `=destroy`(self: var wScreenDC) = delete()
+proc `=destroy`(self: var wScreenDC) = self.delete()

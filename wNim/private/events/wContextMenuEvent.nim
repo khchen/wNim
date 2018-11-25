@@ -29,7 +29,7 @@ method getPosition*(self: wContextMenuEvent): wPoint {.property.} =
   ## If the event originated from a keyboard event, the value returned from this
   ## function will be wDefaultPosition.
 
-  result.x = GET_X_LPARAM(mLparam)
-  result.y = GET_Y_LPARAM(mLparam)
+  result.x = GET_X_LPARAM(self.mLparam)
+  result.y = GET_Y_LPARAM(self.mLparam)
   if result.x == -1 and result.y == -1:
     result = wDefaultPoint

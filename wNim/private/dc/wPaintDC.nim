@@ -36,9 +36,9 @@ proc delete*(self: var wPaintDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
-  if mHdc != 0:
+  if self.mHdc != 0:
     self.wDC.final()
-    EndPaint(mCanvas.mHwnd, mPs)
-    mHdc = 0
+    EndPaint(self.mCanvas.mHwnd, self.mPs)
+    self.mHdc = 0
 
-proc `=destroy`(self: var wPaintDC) = delete()
+proc `=destroy`(self: var wPaintDC) = self.delete()

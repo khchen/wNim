@@ -25,27 +25,27 @@ proc error(self: wBitmap) {.inline.} =
 
 proc final(self: wBitmap) =
   ## Default finalizer for wBitmap.
-  delete()
+  self.delete()
 
 proc init*(self: wBitmap, width, height: int, depth: int = 0) {.validate.} =
   ## Initializer.
   assert depth == 0 or depth == 24 or depth == 32
   self.wGdiObject.init()
 
-  mWidth = width
-  mHeight = height
-  mDepth = depth
+  self.mWidth = width
+  self.mHeight = height
+  self.mDepth = depth
 
   if depth == 0:
     let hdc = GetDC(0)
-    mDepth = GetDeviceCaps(hdc, PLANES) * GetDeviceCaps(hdc, BITSPIXEL)
-    mHandle = CreateCompatibleBitmap(hdc, width, height)
+    self.mDepth = GetDeviceCaps(hdc, PLANES) * GetDeviceCaps(hdc, BITSPIXEL)
+    self.mHandle = CreateCompatibleBitmap(hdc, width, height)
     ReleaseDC(0, hdc)
   else:
-    mDepth = depth
-    mHandle = CreateBitmap(width, height, 1, depth, nil)
+    self.mDepth = depth
+    self.mHandle = CreateBitmap(width, height, 1, depth, nil)
 
-  if mHandle == 0: error()
+  if self.mHandle == 0: self.error()
 
 proc Bmp*(width: int, height: int, depth: int = 0): wBitmap {.inline.} =
   ## Creates a new bitmap. A depth of 0 indicates the depth of the current screen.
@@ -54,7 +54,7 @@ proc Bmp*(width: int, height: int, depth: int = 0): wBitmap {.inline.} =
 
 proc init*(self: wBitmap, size: wSize, depth: int = 0) {.validate.} =
   ## Initializer.
-  init(size.width, size.height, depth)
+  self.init(size.width, size.height, depth)
 
 proc Bmp*(size: wSize, depth: int = 0): wBitmap =
   ## Creates a new bitmap. A depth of 0 indicates the depth of the current screen.
@@ -65,15 +65,15 @@ proc init*(self: wBitmap, gdipbmp: ptr GpBitmap) {.validate.} =
   self.wGdiObject.init()
   ## Initializer.
   # Here GdiplusStartupInput() should already called.
-  if GdipCreateHBITMAPFromBitmap(gdipbmp, addr mHandle, 0) != Ok:
-    error()
+  if GdipCreateHBITMAPFromBitmap(gdipbmp, addr self.mHandle, 0) != Ok:
+    self.error()
 
-  mDepth = 32
+  self.mDepth = 32
   var width, height: UINT
   GdipGetImageWidth(gdipbmp, &width)
   GdipGetImageHeight(gdipbmp, &height)
-  mWidth = width
-  mHeight = height
+  self.mWidth = width
+  self.mHeight = height
 
 proc Bmp*(gdipbmp: ptr GpBitmap): wBitmap {.inline.} =
   ## Creates a bitmap from a gdiplus bitmap handle.
@@ -83,7 +83,7 @@ proc Bmp*(gdipbmp: ptr GpBitmap): wBitmap {.inline.} =
 proc init*(self: wBitmap, image: wImage) {.validate.} =
   ## Initializer.
   wValidate(image)
-  init(image.mGdipBmp)
+  self.init(image.mGdipBmp)
 
 proc Bmp*(image: wImage): wBitmap {.inline.} =
   ## Creates a bitmap object from the given wImage object.
@@ -95,9 +95,9 @@ proc init*(self: wBitmap, filename: string) {.validate.} =
   ## Initializer.
   wValidate(filename)
   try:
-    init(Image(filename))
+    self.init(Image(filename))
   except:
-    error()
+    self.error()
 
 proc Bmp*(filename: string): wBitmap {.inline.} =
   ## Creates a bitmap object from a image file.
@@ -108,9 +108,9 @@ proc Bmp*(filename: string): wBitmap {.inline.} =
 proc init*(self: wBitmap, data: ptr byte, length: int) {.validate.} =
   ## Initializer.
   try:
-    init(Image(data, length))
+    self.init(Image(data, length))
   except:
-    error()
+    self.error()
 
 proc Bmp*(data: ptr byte, length: int): wBitmap {.inline.} =
   ## Creates a bitmap object from raw image data.
@@ -122,15 +122,15 @@ proc init*(self: wBitmap, handle: HBITMAP, copy = true) {.validate.} =
   ## Initializer.
   var bm: BITMAP
   if GetObject(handle, sizeof(BITMAP), &bm) == 0:
-    error()
+    self.error()
 
   if copy:
-    init(bm.bmWidth, bm.bmHeight, 32)
+    self.init(bm.bmWidth, bm.bmHeight, 32)
     var
       hdcSrc = CreateCompatibleDC(0)
       hdcDst = CreateCompatibleDC(0)
       prevSrc = SelectObject(hdcSrc, handle)
-      prevDst = SelectObject(hdcDst, mHandle)
+      prevDst = SelectObject(hdcDst, self.mHandle)
 
     defer:
       SelectObject(hdcSrc, prevSrc)
@@ -142,10 +142,10 @@ proc init*(self: wBitmap, handle: HBITMAP, copy = true) {.validate.} =
 
   else:
     self.wGdiObject.init()
-    mHandle = handle
-    mWidth = bm.bmWidth
-    mHeight = bm.bmHeight
-    mDepth = int bm.bmBitsPixel
+    self.mHandle = handle
+    self.mWidth = bm.bmWidth
+    self.mHeight = bm.bmHeight
+    self.mDepth = int bm.bmBitsPixel
 
 proc Bmp*(handle: HBITMAP, copy = true): wBitmap {.inline.} =
   ## Creates a bitmap from a system bitmap handle.
@@ -157,7 +157,7 @@ proc Bmp*(handle: HBITMAP, copy = true): wBitmap {.inline.} =
 proc init*(self: wBitmap, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
-  init(bmp.mHandle, copy=true)
+  self.init(bmp.mHandle, copy=true)
 
 proc Bmp*(bmp: wBitmap): wBitmap {.inline.} =
   ## Copy constructor
@@ -167,16 +167,16 @@ proc Bmp*(bmp: wBitmap): wBitmap {.inline.} =
 
 proc getSize*(self: wBitmap): wSize {.validate, property, inline.} =
   ## Returns the size of the bitmap in pixels.
-  result = (mWidth, mHeight)
+  result = (self.mWidth, self.mHeight)
 
 proc getWidth*(self: wBitmap): int {.validate, property, inline.} =
   ## Gets the width of the bitmap in pixels.
-  result = mWidth
+  result = self.mWidth
 
 proc getHeight*(self: wBitmap): int {.validate, property, inline.} =
   ## Gets the height of the bitmap in pixels.
-  result = mHeight
+  result = self.mHeight
 
 proc getDepth*(self: wBitmap): int {.validate, property, inline.} =
   ## Gets the color depth of the bitmap.
-  result = mDepth
+  result = self.mDepth

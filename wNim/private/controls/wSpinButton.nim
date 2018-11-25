@@ -30,11 +30,11 @@ const
 
 proc isVertical*(self: wSpinButton): bool {.validate, inline.} =
   ## Returns true if the spin button is vertical and false otherwise.
-  result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and UDS_HORZ) == 0
+  result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and UDS_HORZ) == 0
 
 method getDefaultSize*(self: wSpinButton): wSize {.property.} =
   ## Returns the default size for the control.
-  let isVert = isVertical()
+  let isVert = self.isVertical()
   result.width = GetSystemMetrics(if isVert: SM_CXVSCROLL else: SM_CXHSCROLL)
   result.height = GetSystemMetrics(if isVert: SM_CYVSCROLL else: SM_CYHSCROLL)
   if isVert:
@@ -44,19 +44,19 @@ method getDefaultSize*(self: wSpinButton): wSize {.property.} =
 
 method getBestSize*(self: wSpinButton): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getDefaultSize()
+  result = self.getDefaultSize()
 
 proc wSpinButton_OnNotify(self: wSpinButton, event: wEvent) =
   var processed = false
   defer: event.skip(if processed: false else: true)
 
   let lpnmud = cast[LPNMUPDOWN](event.lParam)
-  if lpnmud.hdr.hwndFrom == mHwnd and lpnmud.hdr.code == UDN_DELTAPOS:
+  if lpnmud.hdr.hwndFrom == self.mHwnd and lpnmud.hdr.code == UDN_DELTAPOS:
     var
       spinEvent = Event(window=self, msg=wEvent_Spin, wParam=event.wParam, lParam=event.lParam)
       directionMsg = 0
 
-    if isVertical():
+    if self.isVertical():
       if lpnmud.iDelta > 0: directionMsg = wEvent_SpinDown
       elif lpnmud.iDelta < 0: directionMsg = wEvent_SpinUp
     else:

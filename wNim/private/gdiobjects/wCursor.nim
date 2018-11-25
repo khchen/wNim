@@ -55,40 +55,40 @@ const
   wCursorHelp* = 32651
 
 proc isNilCursor(self: wCursor): bool {.inline.} =
-  result = mHandle == 0
+  result = self.mHandle == 0
 
 proc isCustomCursor(self: wCursor): bool {.inline.} =
-  result = mHandle != -1 and mHandle != 0
+  result = self.mHandle != -1 and self.mHandle != 0
 
 proc getHotSpot*(self: wCursor): wPoint {.validate, property.} =
   ## Returns the coordinates of the cursor hot spot.
   var iconInfo: ICONINFO
-  if GetIconInfo(mHandle, iconInfo) != 0:
+  if GetIconInfo(self.mHandle, iconInfo) != 0:
     result = (int iconInfo.xHotspot, int iconInfo.yHotspot)
 
 proc getSize*(self: wCursor): wSize {.validate, property.} =
   ## Returns the size of the cursor.
-  result = getIconSize(mHandle)
+  result = getIconSize(self.mHandle)
 
 method delete*(self: wCursor) =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if mDeletable:
-    if mIconResource:
-      DestroyIcon(mHandle)
+  if self.mDeletable:
+    if self.mIconResource:
+      DestroyIcon(self.mHandle)
     else:
-      DestroyCursor(mHandle)
-    mHandle = 0
+      DestroyCursor(self.mHandle)
+    self.mHandle = 0
 
 proc final*(self: wCursor) =
   ## Default finalizer for wCursor.
-  delete()
+  self.delete()
 
 proc init*(self: wCursor) =
   ## Initializer.
   self.wGdiObject.init()
-  mDeletable = false
-  mHandle = 0
+  self.mDeletable = false
+  self.mHandle = 0
 
 proc Cursor*(): wCursor {.inline.} =
   ## Creates a nil cursor.
@@ -97,11 +97,11 @@ proc Cursor*(): wCursor {.inline.} =
 
 proc init*(self: wCursor, id: int) =
   ## Initializer.
-  init()
+  self.init()
   if id == -1:
-    mHandle = -1
+    self.mHandle = -1
   else:
-    mHandle = LoadCursor(0, MAKEINTRESOURCE(id))
+    self.mHandle = LoadCursor(0, MAKEINTRESOURCE(id))
 
 proc Cursor*(id: int): wCursor {.inline.} =
   ## Creates a cursor using a cursor identifier.
@@ -112,13 +112,13 @@ proc init*(self: wCursor, data: ptr byte, length: int, size=wDefaultSize) =
   ## Initializer.
   # here support .ico, .png, .cur, .ani
   wValidate(data)
-  init()
-  mHandle = createIconFromMemory(data, length, width=size.width,
+  self.init()
+  self.mHandle = createIconFromMemory(data, length, width=size.width,
     height=size.height, isIcon=false)
 
-  if mHandle != 0:
-    mDeletable = true
-    mIconResource = true
+  if self.mHandle != 0:
+    self.mDeletable = true
+    self.mIconResource = true
 
 proc Cursor*(data: ptr byte, length: int, size = wDefaultSize): wCursor {.inline.} =
   ## Creates a cursor from binary data of cursor file format.
@@ -132,13 +132,13 @@ proc Cursor*(data: ptr byte, length: int, size = wDefaultSize): wCursor {.inline
 proc init*(self: wCursor, str: string) =
   ## Initializer.
   wValidate(str)
-  init()
+  self.init()
   if str.isVaildPath():
-    mHandle = LoadCursorFromFile(str)
-    mDeletable = false
-    mIconResource = false
+    self.mHandle = LoadCursorFromFile(str)
+    self.mDeletable = false
+    self.mIconResource = false
   else:
-    init(cast[ptr byte](&str), str.len)
+    self.init(cast[ptr byte](&str), str.len)
 
 proc Cursor*(str: string): wCursor {.inline.} =
   ## Creates a cursor from a file. Supports .cur and .ani.
@@ -150,11 +150,11 @@ proc Cursor*(str: string): wCursor {.inline.} =
 proc init*(self: wCursor, icon: wIcon, hotSpot = wDefaultPoint) =
   ## Initializer.
   wValidate(icon)
-  init()
-  mHandle = createIconFromHIcon(icon.mHandle, isIcon=false, hotSpot=hotSpot)
-  if mHandle != 0:
-    mDeletable = true
-    mIconResource = true
+  self.init()
+  self.mHandle = createIconFromHIcon(icon.mHandle, isIcon=false, hotSpot=hotSpot)
+  if self.mHandle != 0:
+    self.mDeletable = true
+    self.mIconResource = true
 
 proc Cursor*(icon: wIcon, hotSpot = wDefaultPoint): wCursor {.inline.} =
   ## Creates a cursor from the given wIcon object.
@@ -165,12 +165,12 @@ proc Cursor*(icon: wIcon, hotSpot = wDefaultPoint): wCursor {.inline.} =
 proc init*(self: wCursor, image: wImage, hotSpot = wDefaultPoint) =
   ## Initializer.
   wValidate(image)
-  init()
+  self.init()
   try:
     var icon = Icon(image)
-    init(icon, hotSpot)
+    self.init(icon, hotSpot)
   except:
-    mHandle = 0
+    self.mHandle = 0
 
 proc Cursor*(image: wImage, hotSpot = wDefaultPoint): wCursor {.inline.} =
   ## Creates a cursor from the given wImage object.
@@ -181,11 +181,11 @@ proc Cursor*(image: wImage, hotSpot = wDefaultPoint): wCursor {.inline.} =
 proc init*(self: wCursor, cursor: wCursor, hotSpot = wDefaultPoint) =
   ## Initializer.
   wValidate(cursor)
-  init()
-  mHandle = createIconFromHIcon(cursor.mHandle, isIcon=false, hotSpot=hotSpot)
-  if mHandle != 0:
-    mDeletable = true
-    mIconResource = true
+  self.init()
+  self.mHandle = createIconFromHIcon(cursor.mHandle, isIcon=false, hotSpot=hotSpot)
+  if self.mHandle != 0:
+    self.mDeletable = true
+    self.mIconResource = true
 
 proc Cursor*(cursor: wCursor, hotSpot = wDefaultPoint): wCursor {.inline.} =
   ## Copy constructor. HotSpot can be changed if needed.

@@ -22,17 +22,17 @@ proc setImageList*(self: wRebar, imageList: wImageList) {.validate, property.} =
   if imageList != nil:
     var rebarInfo = REBARINFO(cbSize: sizeof(REBARINFO), fMask: RBIM_IMAGELIST,
       himl: imageList.mHandle)
-    SendMessage(mHwnd, RB_SETBARINFO, 0, &rebarInfo)
+    SendMessage(self.mHwnd, RB_SETBARINFO, 0, &rebarInfo)
 
-  mImageList = imageList
+  self.mImageList = imageList
 
 proc getImageList*(self: wRebar): wImageList {.validate, property, inline.} =
   ## Returns the specified image list.
-  result = mImageList
+  result = self.mImageList
 
 proc getCount*(self: wRebar): int {.validate, property, inline.} =
   ## Returns the number of controls in the rebar.
-  result = int SendMessage(mHwnd, RB_GETBANDCOUNT, 0, 0)
+  result = int SendMessage(self.mHwnd, RB_GETBANDCOUNT, 0, 0)
 
 proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
     isBreak = false) {.validate.} =
@@ -70,21 +70,21 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
     rbBand.fMask = rbBand.fMask or RBBIM_TEXT
     rbBand.lpText = T(label)
 
-  SendMessage(mHwnd, RB_INSERTBAND, -1, &rbBand)
+  SendMessage(self.mHwnd, RB_INSERTBAND, -1, &rbBand)
 
 proc len*(self: wRebar): int {.validate, inline.} =
   ## Returns the number of controls in the rebar.
-  result = getCount()
+  result = self.getCount()
 
 method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
 
   case code
   of RBN_BEGINDRAG:
-    mDragging = true
+    self.mDragging = true
 
   of RBN_ENDDRAG:
-    mDragging = false
+    self.mDragging = false
 
   # of RBN_LAYOUTCHANGED:
   #   # Notice the parent the client size is changed. Here must be wEvent_Size
@@ -94,11 +94,11 @@ method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
   #     MAKELPARAM(rect.width, rect.height))
 
   of RBN_AUTOSIZE:
-    if mDragging:
+    if self.mDragging:
       # Notice the parent the client size is changed. Here must be wEvent_Size
       # instead of WM_SIZE, otherwise, it will enter infinite loop.
-      let rect = mParent.getWindowRect(sizeOnly=true)
-      mParent.processMessage(wEvent_Size, SIZE_RESTORED,
+      let rect = self.mParent.getWindowRect(sizeOnly=true)
+      self.mParent.processMessage(wEvent_Size, SIZE_RESTORED,
         MAKELPARAM(rect.width, rect.height))
 
   else:
@@ -106,8 +106,8 @@ method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 
 method release(self: wRebar) =
-  mImageList = nil
-  mParent.systemDisconnect(mSizeConn)
+  self.mImageList = nil
+  self.mParent.systemDisconnect(self.mSizeConn)
 
 proc final*(self: wRebar) =
   ## Default finalizer for wRebar.
@@ -117,7 +117,7 @@ proc init*(self: wRebar, parent: wWindow, id = wDefaultID,
     imageList: wImageList = nil, style: wStyle = 0) {.validate.} =
   ## Initializer.
   wValidate(parent)
-  mControls = @[]
+  self.mControls = @[]
 
   self.wControl.init(className=REBARCLASSNAME, parent=parent, id=id,
     style=style or WS_CHILD or WS_VISIBLE or WS_CLIPSIBLINGS or WS_CLIPCHILDREN or
@@ -125,7 +125,7 @@ proc init*(self: wRebar, parent: wWindow, id = wDefaultID,
 
   parent.mRebar = self
 
-  mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
+  self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
     self.setSize(parent.size.width, wDefault)
 
 proc Rebar*(parent: wWindow, id = wDefaultID, imageList: wImageList = nil,

@@ -58,35 +58,35 @@
 
 proc getSize*(self: wResizable): wSize {.validate, property.} =
   ## Returns the current size.
-  result.width = int round(mRight.value - mLeft.value)
-  result.height = int round(mBottom.value - mTop.value)
+  result.width = int round(self.mRight.value - self.mLeft.value)
+  result.height = int round(self.mBottom.value - self.mTop.value)
 
 proc getRect*(self: wResizable): wRect {.validate, property.} =
   ## Returns the current rect.
-  result.x = int round(mLeft.value)
-  result.y = int round(mTop.value)
-  result.width = int round(mRight.value - mLeft.value)
-  result.height = int round(mBottom.value - mTop.value)
+  result.x = int round(self.mLeft.value)
+  result.y = int round(self.mTop.value)
+  result.width = int round(self.mRight.value - self.mLeft.value)
+  result.height = int round(self.mBottom.value - self.mTop.value)
 
 proc final*(self: wResizable) =
   ## Default finalizer for wResizable.
   discard
 
 proc init(self: wResizable) =
-  mLeft = newVariable()
-  mRight = newVariable()
-  mTop = newVariable()
-  mBottom = newVariable()
+  self.mLeft = newVariable()
+  self.mRight = newVariable()
+  self.mTop = newVariable()
+  self.mBottom = newVariable()
 
 proc Resizable*(): wResizable {.inline.} =
   ## Constructor.
   new(result, final)
   result.init()
 
-proc left*(self: wResizable): Variable {.inline.} = mLeft
-proc right*(self: wResizable): Variable {.inline.} = mRight
-proc top*(self: wResizable): Variable {.inline.} = mTop
-proc bottom*(self: wResizable): Variable {.inline.} = mBottom
+proc left*(self: wResizable): Variable {.inline.} = self.mLeft
+proc right*(self: wResizable): Variable {.inline.} = self.mRight
+proc top*(self: wResizable): Variable {.inline.} = self.mTop
+proc bottom*(self: wResizable): Variable {.inline.} = self.mBottom
 
 when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
   proc dslParser(parent: NimNode, x: NimNode): NimNode =

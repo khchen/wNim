@@ -45,64 +45,67 @@ const
 method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   var rect: RECT
-  SendMessage(mHwnd, MCM_GETMINREQRECT, 0, addr rect)
-  result.width = max(rect.right.int, SendMessage(mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
+  SendMessage(self.mHwnd, MCM_GETMINREQRECT, 0, addr rect)
+  result.width = max(rect.right.int,
+    SendMessage(self.mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
   result.height = rect.bottom + 2
 
 method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline.} =
   ## Returns the default size for the control.
-  result = getBestSize()
+  result = self.getBestSize()
 
 proc getDate*(self: wCalendarCtrl): wTime {.validate, property.} =
   ## Gets the currently selected date.
   var st: SYSTEMTIME
-  if SendMessage(mHwnd, MCM_GETCURSEL, 0, addr st) != 0:
+  if SendMessage(self.mHwnd, MCM_GETCURSEL, 0, addr st) != 0:
     result = st.toTime()
 
 proc getDates*(self: wCalendarCtrl): (wTime, wTime) {.validate, property.} =
   ## Gets the currently selected date range.
   var st: array[2, SYSTEMTIME]
-  if SendMessage(mHwnd, MCM_GETSELRANGE, 0, addr st) != 0:
+  if SendMessage(self.mHwnd, MCM_GETSELRANGE, 0, addr st) != 0:
     result[0] = st[0].toTime()
     result[1] = st[1].toTime()
 
 proc setDate*(self: wCalendarCtrl, time: wTime) {.validate, property.} =
   ## Sets the current date.
   var st = time.toSystemTime()
-  SendMessage(mHwnd, MCM_SETCURSEL, 0, addr st)
+  SendMessage(self.mHwnd, MCM_SETCURSEL, 0, addr st)
 
-proc setDates*(self: wCalendarCtrl, time1: wTime, time2: wTime) {.validate, property.} =
+proc setDates*(self: wCalendarCtrl, time1: wTime, time2: wTime)
+    {.validate, property.} =
   ## Sets the selected date range.
   var st: array[2, SYSTEMTIME]
   st[0] = time1.toSystemTime()
   st[1] = time2.toSystemTime()
-  SendMessage(mHwnd, MCM_SETSELRANGE, 0, addr st)
+  SendMessage(self.mHwnd, MCM_SETSELRANGE, 0, addr st)
 
 proc setDates*(self: wCalendarCtrl, time: (wTime, wTime)) {.validate, property.} =
   ## Sets the selected date range.
-  setDates(time[0], time[1])
+  self.setDates(time[0], time[1])
 
 proc getToday*(self: wCalendarCtrl): wTime {.validate, property.} =
   ## Retrieves the date information for the date specified as "today"
   var st: SYSTEMTIME
-  if SendMessage(mHwnd, MCM_GETTODAY, 0, addr st) != 0:
+  if SendMessage(self.mHwnd, MCM_GETTODAY, 0, addr st) != 0:
     result = st.toTime()
 
 proc setToday*(self: wCalendarCtrl, time: wTime) {.validate, property.} =
   ## Sets the "today" value.
   var st = time.toSystemTime()
-  SendMessage(mHwnd, MCM_SETTODAY, 0, addr st)
-  refresh(false)
+  SendMessage(self.mHwnd, MCM_SETTODAY, 0, addr st)
+  self.refresh(false)
 
 proc getDateRange*(self: wCalendarCtrl): (wTime, wTime) {.validate, property.} =
   ## If the control had been previously limited to a range of dates,
   ## returns the lower and upper bounds of this range.
   var st: array[2, SYSTEMTIME]
-  let flag = SendMessage(mHwnd, MCM_GETRANGE, 0, addr st)
+  let flag = SendMessage(self.mHwnd, MCM_GETRANGE, 0, addr st)
   result[0] = if (flag and GDTR_MIN) != 0: st[0].toTime() else: wDefaultTime
   result[1] = if (flag and GDTR_MAX) != 0: st[1].toTime() else: wDefaultTime
 
-proc setDateRange*(self: wCalendarCtrl, time1 = wDefaultTime, time2 = wDefaultTime) {.validate, property.} =
+proc setDateRange*(self: wCalendarCtrl, time1 = wDefaultTime,
+    time2 = wDefaultTime) {.validate, property.} =
   ## Sets the valid range for the date selection.
   var st: array[2, SYSTEMTIME]
   var flag: DWORD
@@ -114,30 +117,30 @@ proc setDateRange*(self: wCalendarCtrl, time1 = wDefaultTime, time2 = wDefaultTi
     st[1] = time2.toSystemTime()
     flag = flag or GDTR_MAX
 
-  SendMessage(mHwnd, MCM_SETRANGE, flag, addr st)
+  SendMessage(self.mHwnd, MCM_SETRANGE, flag, addr st)
 
 proc setDateRange*(self: wCalendarCtrl, time: (wTime, wTime)) {.validate, property.} =
   ## Sets the valid range for the date selection.
-  setDateRange(time[0], time[1])
+  self.setDateRange(time[0], time[1])
 
 proc enableMonthChange*(self: wCalendarCtrl, flag = true) {.validate.} =
   ## Enable or Disable the month changing.
   if flag:
-    setDateRange()
+    self.setDateRange()
   else:
     var first = now()
     var last = first
     first.monthday = 1
     last.monthday = getDaysInMonth(last.month, last.year)
-    setDateRange(first.toTime(), last.toTime())
+    self.setDateRange(first.toTime(), last.toTime())
 
 proc setMaxSelectCount*(self: wCalendarCtrl, max: int) {.validate, property.} =
   ## Sets the maximum number of days that can be selected.
-  SendMessage(mHwnd, MCM_SETMAXSELCOUNT, max, 0)
+  SendMessage(self.mHwnd, MCM_SETMAXSELCOUNT, max, 0)
 
 proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   ## Retrieves the maximum date range that can be selected
-  result = int SendMessage(mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
+  result = int SendMessage(self.mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
 method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
@@ -165,15 +168,15 @@ proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if (style and wCalMondayFirst) != 0:
-    SendMessage(mHwnd, MCM_SETFIRSTDAYOFWEEK, 0, 0)
+    SendMessage(self.mHwnd, MCM_SETFIRSTDAYOFWEEK, 0, 0)
 
   if (style and wCalNoMonthChange) != 0:
-    enableMonthChange(false)
+    self.enableMonthChange(false)
 
   if date != wDefaultTime:
-    setDate(date)
+    self.setDate(date)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 

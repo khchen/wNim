@@ -66,13 +66,12 @@ proc isListEvent(msg: UINT): bool {.inline.} =
 
 method getIndex*(self: wListEvent): int {.property, inline.} =
   ## The item index.
-  result = mIndex
+  result = self.mIndex
 
 method getColumn*(self: wListEvent): int {.property, inline.} =
   ## The column position.
-  result = mCol
+  result = self.mCol
 
 method getText*(self: wListEvent): string {.property, inline.} =
   ## The (new) item label for wEvent_ListEndLabelEdit event.
-  result = mText
-
+  result = self.mText

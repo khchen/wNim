@@ -33,89 +33,90 @@ const
 
 method getDefaultSize*(self: wGauge): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getAverageASCIILetterSize(mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle)
   result.width = MulDiv(result.width.int32, 107, 4)
   result.height = MulDiv(result.height.int32, 8, 8)
 
 method getBestSize*(self: wGauge): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getDefaultSize()
+  result = self.getDefaultSize()
 
 proc setIndeterminateMode(self: wGauge) =
-  let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
+  let style = GetWindowLongPtr(self.mHwnd, GWL_STYLE)
   if (style and PBS_MARQUEE) == 0:
-    SetWindowLongPtr(mHwnd, GWL_STYLE, style or PBS_MARQUEE)
-    SendMessage(mHwnd, PBM_SETMARQUEE, 1, 0)
+    SetWindowLongPtr(self.mHwnd, GWL_STYLE, style or PBS_MARQUEE)
+    SendMessage(self.mHwnd, PBM_SETMARQUEE, 1, 0)
 
-    if mTaskBar != nil:
-      mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_INDETERMINATE)
+    if self.mTaskBar != nil:
+      self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_INDETERMINATE)
 
 proc setDeterminateMode(self: wGauge) =
-  let style = GetWindowLongPtr(mHwnd, GWL_STYLE)
+  let style = GetWindowLongPtr(self.mHwnd, GWL_STYLE)
   if (style and PBS_MARQUEE) != 0:
-    SendMessage(mHwnd, PBM_SETMARQUEE, 0, 0)
-    SetWindowLongPtr(mHwnd, GWL_STYLE, style and (not PBS_MARQUEE))
+    SendMessage(self.mHwnd, PBM_SETMARQUEE, 0, 0)
+    SetWindowLongPtr(self.mHwnd, GWL_STYLE, style and (not PBS_MARQUEE))
 
-    if mTaskBar != nil:
-      mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_NORMAL)
+    if self.mTaskBar != nil:
+      self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_NORMAL)
 
 proc setRange*(self: wGauge, range: int) {.validate, property, inline.} =
   ## Sets the range (maximum value) of the gauge.
-  setDeterminateMode()
-  SendMessage(mHwnd, PBM_SETRANGE32, 0, range)
+  self.setDeterminateMode()
+  SendMessage(self.mHwnd, PBM_SETRANGE32, 0, range)
 
 proc getRange*(self: wGauge): int {.validate, property, inline.} =
   ## Returns the maximum position of the gauge.
-  result = int SendMessage(mHwnd, PBM_GETRANGE, FALSE, 0)
+  result = int SendMessage(self.mHwnd, PBM_GETRANGE, FALSE, 0)
 
 proc setValue*(self: wGauge, value: int) {.validate, property.} =
-  ## Sets the position of the gauge. Use a value >= maximum to clear the taskbar progress.
-  setDeterminateMode()
-  SendMessage(mHwnd, PBM_SETPOS, value, 0)
+  ## Sets the position of the gauge. Use a value >= maximum to clear the taskbar
+  ## progress.
+  self.setDeterminateMode()
+  SendMessage(self.mHwnd, PBM_SETPOS, value, 0)
 
-  if mTaskBar != nil:
-    let range = getRange()
-    let topParentHwnd = getTopParent().mHwnd
+  if self.mTaskBar != nil:
+    let range = self.getRange()
+    let topParentHwnd = self.getTopParent().mHwnd
 
     if value >= range:
-      mTaskBar.SetProgressState(topParentHwnd, TBPF_NOPROGRESS)
+      self.mTaskBar.SetProgressState(topParentHwnd, TBPF_NOPROGRESS)
     else:
-      mTaskBar.SetProgressValue(topParentHwnd, ULONGLONG value, ULONGLONG range)
+      self.mTaskBar.SetProgressValue(topParentHwnd, ULONGLONG value, ULONGLONG range)
 
 proc getValue*(self: wGauge): int {.validate, property, inline.} =
   ## Returns the current position of the gauge
-  result = int SendMessage(mHwnd, PBM_GETPOS, 0, 0)
+  result = int SendMessage(self.mHwnd, PBM_GETPOS, 0, 0)
 
 proc pulse*(self: wGauge) {.validate, inline.} =
   ## Switch the gauge to indeterminate mode.
-  setIndeterminateMode()
-  SendMessage(mHwnd, PBM_STEPIT, 0, 0)
+  self.setIndeterminateMode()
+  SendMessage(self.mHwnd, PBM_STEPIT, 0, 0)
 
 proc pause*(self: wGauge) {.validate, inline.} =
   ## Pause the taskbar progress.
-  if mTaskBar != nil:
-    mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_PAUSED)
+  if self.mTaskBar != nil:
+    self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_PAUSED)
 
 proc error*(self: wGauge) {.validate, inline.} =
   ## Stop the taskbar progress and indicate an error.
-  if mTaskBar != nil:
-    mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_ERROR)
+  if self.mTaskBar != nil:
+    self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_ERROR)
 
 proc isVertical*(self: wGauge): bool {.validate, inline.} =
   ## Returns true if the gauge is vertical and false otherwise.
-  result = (GetWindowLongPtr(mHwnd, GWL_STYLE) and PBS_VERTICAL) != 0
+  result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and PBS_VERTICAL) != 0
 
 proc getTaskBar(self: wGauge) =
   if CoCreateInstance(&CLSID_TaskbarList, nil, CLSCTX_INPROC_SERVER,
-      &IID_ITaskbarList3, &mTaskBar) == S_OK:
+      &IID_ITaskbarList3, &self.mTaskBar) == S_OK:
 
-    mTaskBar.SetProgressState(getTopParent().mHwnd, TBPF_NORMAL)
+    self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_NORMAL)
 
 method release(self: wGauge) =
-  getTopParent().systemDisconnect(mTaskBarCreatedConn)
+  self.getTopParent().systemDisconnect(self.mTaskBarCreatedConn)
 
-  if mTaskBar != nil:
-    mTaskBar.Release()
+  if self.mTaskBar != nil:
+    self.mTaskBar.Release()
 
 proc final*(self: wGauge) =
   ## Default finalizer for wGauge.
@@ -130,17 +131,17 @@ proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
   self.wControl.init(className=PROGRESS_CLASS, parent=parent, id=id, pos=pos,
     size=size, style=style or WS_CHILD or WS_VISIBLE)
 
-  mFocusable = false
-  setRange(range)
-  setValue(value)
+  self.mFocusable = false
+  self.setRange(range)
+  self.setValue(value)
 
   if (style and wGaProgress) != 0:
     # try to get task bar (save in mTaskBar) first
     # if fail, maybe the task bar not yet created, try to get it latter
-    getTaskBar()
-    if mTaskBar == nil:
+    self.getTaskBar()
+    if self.mTaskBar == nil:
       let messageId = RegisterWindowMessage("TaskbarButtonCreated")
-      mTaskBarCreatedConn = getTopParent().systemConnect(messageId) do (event: wEvent):
+      self.mTaskBarCreatedConn = self.getTopParent().systemConnect(messageId) do (event: wEvent):
         self.getTaskBar()
 
 proc Gauge*(parent: wWindow, id = wDefaultID, range = 100,

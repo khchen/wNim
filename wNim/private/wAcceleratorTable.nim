@@ -83,65 +83,65 @@ converter tupleTowAcceleratorEntry2*[T: enum|wCommandID](x: (char, T)):
 
 proc getHandle(self: wAcceleratorTable): HACCEL =
   # Use internally, generate the accelerator table on the fly.
-  if mModified:
-    if mHandle != 0:
-      DestroyAcceleratorTable(mHandle)
+  if self.mModified:
+    if self.mHandle != 0:
+      DestroyAcceleratorTable(self.mHandle)
 
-    if mAccels.len != 0:
-      mHandle = CreateAcceleratorTable(addr mAccels[0], mAccels.len)
+    if self.mAccels.len != 0:
+      self.mHandle = CreateAcceleratorTable(addr self.mAccels[0], self.mAccels.len)
     else:
-      mHandle = 0
-    mModified = false
+      self.mHandle = 0
+    self.mModified = false
 
-  result = mHandle
+  result = self.mHandle
 
 proc add*(self: wAcceleratorTable, entry: wAcceleratorEntry)
     {.validate, inline.} =
   ## Adds an accelerator object to the table.
-  mAccels.add(ACCEL entry)
-  mModified = true
+  self.mAccels.add(ACCEL entry)
+  self.mModified = true
 
 proc add*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry])
     {.validate, inline.} =
   ## Adds multiple accelerator objects to the table.
   for entry in entries:
-    add(entry)
+    self.add(entry)
 
 proc add*(self: wAcceleratorTable, flag: int, keyCode: int, id: wCommandID)
     {.validate, inline.} =
   ## Adds a virtual-key code accelerator object to the table.
-  add(AcceleratorEntry(flag, keyCode, id))
+  self.add(AcceleratorEntry(flag, keyCode, id))
 
 proc add*(self: wAcceleratorTable, ch: char, id: wCommandID)
     {.validate, inline.} =
   ## Adds a character code accelerator object to the table.
-  add(AcceleratorEntry(ch, id))
+  self.add(AcceleratorEntry(ch, id))
 
 proc del*(self: wAcceleratorTable, index: Natural) {.validate, inline.} =
   ## Deletes the object in the table by index.
-  mAccels.del(index)
-  mModified = true
+  self.mAccels.del(index)
+  self.mModified = true
 
 proc clear*(self: wAcceleratorTable) {.validate, inline.} =
   ## Clear the talbe.
-  mAccels.setLen(0)
-  mModified = true
+  self.mAccels.setLen(0)
+  self.mModified = true
 
 iterator items*(self: wAcceleratorTable): wAcceleratorEntry {.validate, inline.} =
   ## Iterate each item in this table.
-  for accel in mAccels:
+  for accel in self.mAccels:
     yield wAcceleratorEntry accel
 
 proc final*(self: wAcceleratorTable) =
   ## Default finalizer for wAcceleratorTable.
-  mAccels.setLen(0)
-  if mHandle != 0:
-    DestroyAcceleratorTable(mHandle)
-  mHandle = 0
+  self.mAccels.setLen(0)
+  if self.mHandle != 0:
+    DestroyAcceleratorTable(self.mHandle)
+  self.mHandle = 0
 
 proc init*(self: wAcceleratorTable) {.validate, inline.} =
   ## Initializer.
-  mAccels = @[]
+  self.mAccels = @[]
 
 proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
   ## Constructor.
@@ -150,10 +150,10 @@ proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
 
 proc init*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
   ## Initializer.
-  mAccels = newSeqOfCap[ACCEL](entries.len)
+  self.mAccels = newSeqOfCap[ACCEL](entries.len)
   for entry in entries:
-    mAccels.add(ACCEL entry)
-  mModified = true
+    self.mAccels.add(ACCEL entry)
+  self.mModified = true
 
 proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]):
     wAcceleratorTable {.inline.} =
@@ -163,7 +163,7 @@ proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]):
 
 proc init*(self: wAcceleratorTable, window: wWindow) {.validate, inline.} =
   ## Initializer.
-  init()
+  self.init()
   window.setAcceleratorTable(self)
 
 proc AcceleratorTable*(window: wWindow): wAcceleratorTable {.inline.} =
@@ -174,7 +174,7 @@ proc AcceleratorTable*(window: wWindow): wAcceleratorTable {.inline.} =
 proc init*(self: wAcceleratorTable, window: wWindow,
     entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
   ## Initializer.
-  init(entries)
+  self.init(entries)
   window.setAcceleratorTable(self)
 
 proc AcceleratorTable*(window: wWindow, entries: openarray[wAcceleratorEntry]):

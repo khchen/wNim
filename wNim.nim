@@ -120,7 +120,7 @@
 ##  - `wColors <wColors.html>`_
 
 
-{.experimental, deadCodeElim: on, this: self.}
+{.experimental, deadCodeElim: on.}
 
 # import winim.lean, winim.inc/[commctrl, objbase, shellapi, richedit, gdiplus]
 # export lean

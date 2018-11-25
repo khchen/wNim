@@ -42,14 +42,14 @@ const
 
 method getBestSize*(self: wStaticText): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSize(getLabel(), mFont.mHandle)
+  result = getTextFontSize(self.getLabel(), self.mFont.mHandle)
   result.width += 2
   result.height += 2
 
 method getDefaultSize*(self: wStaticText): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getBestSize()
-  result.height = getLineControlDefaultHeight(mFont.mHandle)
+  result = self.getBestSize()
+  result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
 proc wStaticText_DoCommand(event: wEvent) =
   # also used in wStaticBitmap
@@ -63,7 +63,7 @@ proc wStaticText_DoCommand(event: wEvent) =
     else: discard
 
 method release(self: wStaticText) =
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wStaticText) =
   ## Default finalizer for wStaticText.
@@ -74,13 +74,13 @@ proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
     style: wStyle = wAlignLeft) {.validate.} =
   ## Initializer.
   wValidate(parent, label)
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label, pos=pos, size=size,
-    style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label,
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
 
-  mFocusable = false
+  self.mFocusable = false
 
-  mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
-  systemConnect(WM_SIZE) do (event: wEvent):
+  self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+  self.systemConnect(WM_SIZE) do (event: wEvent):
     # when size change, StaticText should refresh itself, but windows system don't do it
     self.refresh()
 

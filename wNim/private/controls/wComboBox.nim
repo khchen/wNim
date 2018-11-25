@@ -61,35 +61,35 @@ const
   wCbAlwaysScroll* = WS_VSCROLL or CBS_DISABLENOSCROLL
   wCbAutoHScroll* = CBS_AUTOHSCROLL
 
-proc len*(self: wComboBox): int {.validate, inline.} =
-  ## Returns the number of items in the control.
-  result = int SendMessage(mHwnd, CB_GETCOUNT, 0, 0)
-
 proc getCount*(self: wComboBox): int {.validate, property, inline.} =
   ## Returns the number of items in the control.
-  result = len()
+  result = int SendMessage(self.mHwnd, CB_GETCOUNT, 0, 0)
+
+proc len*(self: wComboBox): int {.validate, inline.} =
+  ## Returns the number of items in the control.
+  result = self.getCount()
 
 proc getText*(self: wComboBox, index: int): string =
   ## Returns the text of the item with the given index.
   # use getText instead of getString, otherwise property become "string" keyword.
-  let maxLen = int SendMessage(mHwnd, CB_GETLBTEXTLEN, index, 0)
+  let maxLen = int SendMessage(self.mHwnd, CB_GETLBTEXTLEN, index, 0)
   if maxLen == CB_ERR: return ""
 
   var buffer = T(maxLen + 2)
-  buffer.setLen(SendMessage(mHwnd, CB_GETLBTEXT, index, &buffer))
+  buffer.setLen(SendMessage(self.mHwnd, CB_GETLBTEXT, index, &buffer))
   result = $buffer
 
 proc `[]`*(self: wComboBox, index: int): string {.validate, inline.} =
   ## Returns the text of the item with the given index.
   ## Raise error if index out of bounds.
-  result = getText(index)
+  result = self.getText(index)
   if result.len == 0:
     raise newException(IndexError, "index out of bounds")
 
 iterator items*(self: wComboBox): string {.validate, inline.} =
   ## Iterate each item in this combo box.
-  for i in 0..<len():
-    yield getText(i)
+  for i in 0..<self.len:
+    yield self.getText(i)
 
 iterator pairs*(self: wComboBox): (int, string) {.validate, inline.} =
   ## Iterates over each item in this combo box. Yields ``(index, [index])`` pairs.
@@ -100,157 +100,163 @@ iterator pairs*(self: wComboBox): (int, string) {.validate, inline.} =
 
 proc insert*(self: wComboBox, pos: int, text: string) {.validate, inline.} =
   ## Inserts the given string before the specified position.
-  ## Notice that the inserted item won't be sorted even the list box has wCbSort style.
-  ## If pos is -1, the string is added to the end of the list.
-  SendMessage(mHwnd, CB_INSERTSTRING, pos, &T(text))
+  ## Notice that the inserted item won't be sorted even the list box has wCbSort
+  ## style. If pos is -1, the string is added to the end of the list.
+  SendMessage(self.mHwnd, CB_INSERTSTRING, pos, &T(text))
 
 proc insert*(self: wComboBox, pos: int, list: openarray[string]) {.validate, inline.} =
   ## Inserts multiple strings in the same time.
   for i, text in list:
-    insert(if pos < 0: pos else: i + pos, text)
+    self.insert(if pos < 0: pos else: i + pos, text)
 
 proc append*(self: wComboBox, text: string) {.validate, inline.} =
   ## Appends the given string to the end. If the combo box has the wCbSort style,
   ## the string is inserted into the list and the list is sorted.
-  SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
+  SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))
 
 proc append*(self: wComboBox, list: openarray[string]) {.validate, inline.} =
   ## ## Appends multiple strings in the same time.
   for text in list:
-    append(text)
+    self.append(text)
 
 proc delete*(self: wComboBox, index: int) {.validate, inline.} =
   ## Delete a string in the combo box.
-  if index >= 0: SendMessage(mHwnd, CB_DELETESTRING, index, 0)
+  if index >= 0: SendMessage(self.mHwnd, CB_DELETESTRING, index, 0)
 
 proc delete*(self: wComboBox, text: string)  {.validate, inline.} =
   ## Search and delete the specified string in the combo box.
-  delete(find(text))
+  self.delete(self.find(text))
 
 proc clear*(self: wComboBox)  {.validate, inline.} =
   ## Remove all items from a combo box.
-  SendMessage(mHwnd, CB_RESETCONTENT, 0, 0)
+  SendMessage(self.mHwnd, CB_RESETCONTENT, 0, 0)
 
 proc findText*(self: wComboBox, text: string): int {.validate, inline.} =
   ## Finds an item whose label matches the given text.
-  result = find(text)
+  result = self.find(text)
 
 proc getSelection*(self: wComboBox): int {.validate, property, inline.} =
-  ## Returns the index of the selected item or wNOT_FOUND(-1) if no item is selected.
-  result = int SendMessage(mHwnd, CB_GETCURSEL, 0, 0)
+  ## Returns the index of the selected item or wNOT_FOUND(-1) if no item is
+  ## selected.
+  result = int SendMessage(self.mHwnd, CB_GETCURSEL, 0, 0)
 
 proc select*(self: wComboBox, index: int) {.validate, inline.} =
-  ## Sets the selection to the given index or removes the selection entirely if index == wNOT_FOUND(-1).
-  SendMessage(mHwnd, CB_SETCURSEL, index, 0)
+  ## Sets the selection to the given index or removes the selection entirely if
+  ## index == wNOT_FOUND(-1).
+  SendMessage(self.mHwnd, CB_SETCURSEL, index, 0)
 
 proc setSelection*(self: wComboBox, index: int) {.validate, property, inline.} =
   ## The same as select().
-  select(index)
+  self.select(index)
 
 proc setText*(self: wComboBox, index: int, text: string) {.validate, property.} =
   ## Changes the text of the specified combobox item.
   # use setText instead of setString, otherwise property become "string" keyword.
   if index >= 0:
-    let reselect = (getSelection() == index)
-    delete(index)
-    insert(index, text)
+    let reselect = (self.getSelection() == index)
+    self.delete(index)
+    self.insert(index, text)
     if reselect:
-      select(index)
+      self.select(index)
 
 proc changeValue*(self: wComboBox, text: string) {.validate, property.} =
   ## Sets the text for the combobox text field.
   ## Notice that this proc won't generate wEvent_Text event.
-  let kind = GetWindowLongPtr(mHwnd, GWL_STYLE) and wCbStyleMask
+  let kind = GetWindowLongPtr(self.mHwnd, GWL_STYLE) and wCbStyleMask
   if kind == wCbReadOnly:
-    select(find(text)) # if result is -1, selection is removed
+    self.select(self.find(text)) # if result is -1, selection is removed
   else:
-    setLabel(text)
+    self.setLabel(text)
 
 proc setValue*(self: wComboBox, text: string) {.validate, property, inline.} =
   ## Sets the text for the combobox text field.
   ## Notice that this proc will generate wEvent_Text event.
-  changeValue(text)
+  self.changeValue(text)
   self.processMessage(wEvent_Text, 0, 0)
 
 proc getValue*(self: wComboBox): string {.validate, property, inline.} =
   ## Gets the text for the combobox text field.
-  result = getLabel()
+  result = self.getLabel()
 
 proc isListEmpty*(self: wComboBox): bool {.validate,  inline.} =
   ## Returns true if the list of combobox choices is empty.
-  result = (len() == 0)
+  result = (self.len() == 0)
 
 proc isTextEmpty*(self: wComboBox): bool {.validate,  inline.} =
   ## Returns true if the text of the combobox is empty.
-  result = GetWindowTextLength(mHwnd) == 0
+  result = GetWindowTextLength(self.mHwnd) == 0
 
 proc popup*(self: wComboBox) {.validate,  inline.} =
   ## Shows the list box portion of the combo box.
-  SendMessage(mHwnd, CB_SHOWDROPDOWN, TRUE, 0)
+  SendMessage(self.mHwnd, CB_SHOWDROPDOWN, TRUE, 0)
 
 proc dismiss*(self: wComboBox) {.validate,  inline.} =
   ## Hides the list box portion of the combo box.
-  SendMessage(mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
+  SendMessage(self.mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
 
 proc getEditControl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
   ## Returns the text control part of this combobox, or nil if no such control.
-  result = mEdit
+  result = self.mEdit
 
 proc getTextCtrl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
   ## Returns the text control part of this combobox, or nil if no such control.
   ## The same as getEditControl().
-  result = getEditControl()
+  result = self.getEditControl()
 
 proc getListControl*(self: wComboBox): wWindow {.validate, property, inline.} =
   ## Returns the list control part of this combobox, or nil if no such control.
   ## Notice that the result is wWindow for event handler only, not a wListBox.
-  result = mList
+  result = self.mList
 
 proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
   const maxItem = 10
   let
-    lineHeight = getLineControlDefaultHeight(mFont.mHandle)
-    kind = GetWindowLongPtr(mHwnd, GWL_STYLE) and wCbStyleMask
-    count = len()
+    lineHeight = getLineControlDefaultHeight(self.mFont.mHandle)
+    kind = GetWindowLongPtr(self.mHwnd, GWL_STYLE) and wCbStyleMask
+    count = self.len()
 
   var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
-  GetComboBoxInfo(mHwnd, cbi)
+  GetComboBoxInfo(self.mHwnd, cbi)
 
   proc countWidth(rate: float): int =
     result = lineHeight # minimum width
     for text in self.items():
-      let size = getTextFontSize(text, mFont.mHandle)
+      let size = getTextFontSize(text, self.mFont.mHandle)
       result = max(result, int(size.width.float * rate) + 8)
 
   if kind == wCbSimple:
-    let itemHeight = int SendMessage(mHwnd, CB_GETITEMHEIGHT, 0, 0)
+    let itemHeight = int SendMessage(self.mHwnd, CB_GETITEMHEIGHT, 0, 0)
     result.width = countWidth(rate)
-    result.height = lineHeight + min(max(count, minItem), maxItem) * itemHeight + 4 # not too tall, not too small
+
+    # not too tall, not too small
+    result.height = lineHeight + min(max(count, minItem), maxItem) * itemHeight + 4
 
     let style = GetWindowLongPtr(cbi.hwndList, GWL_STYLE)
-    if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or count > maxItem):
+    if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or
+        count > maxItem):
+
       result.width += GetSystemMetrics(SM_CXVSCROLL)
 
   else:
     result.width = countWidth(rate) + (cbi.rcButton.right - cbi.rcButton.left) + 2
-    result.height = getWindowRect(sizeOnly=true).height
+    result.height = self.getWindowRect(sizeOnly=true).height
 
 method getDefaultSize*(self: wComboBox): wSize =
   ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
-  result = countSize(3, 1.3)
+  result = self.countSize(3, 1.3)
 
 method getBestSize*(self: wComboBox): wSize =
   ## Returns the best acceptable minimal size for the control.
-  result = countSize(1, 1.0)
+  result = self.countSize(1, 1.0)
 
 method trigger(self: wComboBox) =
-  for i in 0..<mInitCount:
-    let text = mInitData[i]
-    SendMessage(mHwnd, CB_ADDSTRING, 0, &T(text))
+  for i in 0..<self.mInitCount:
+    let text = self.mInitData[i]
+    SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))
 
 method release(self: wComboBox) =
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wComboBox) =
   ## Default finalizer for wComboBox.
@@ -261,8 +267,8 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
     choices: openarray[string] = [], style: wStyle = wCbDropDown) {.validate.} =
   ## Initializer.
   wValidate(parent)
-  mInitData = cast[ptr UncheckedArray[string]](choices)
-  mInitCount = choices.len
+  self.mInitData = cast[ptr UncheckedArray[string]](choices)
+  self.mInitCount = choices.len
 
   # wCbDropDown as default style
   var style = style
@@ -278,15 +284,15 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
 
   # subclass child windows (edit and listbox) to handle the message in wNim's way
   # todo: the returned subclassed object is wWindow. let it become wTextCtrl and wListBox?
-  # for wCbReadOnly, mHwnd == cbi.hwndItem, there is no child edit control
+  # for wCbReadOnly, self.mHwnd == cbi.hwndItem, there is no child edit control
   var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
-  GetComboBoxInfo(mHwnd, cbi)
+  GetComboBoxInfo(self.mHwnd, cbi)
 
-  if cbi.hwndItem != mHwnd:
-    mEdit = TextCtrl(cbi.hwndItem)
+  if cbi.hwndItem != self.mHwnd:
+    self.mEdit = TextCtrl(cbi.hwndItem)
     # we need send the navigation events to this wComboBox
     # so that navigation key can works under subclassed window
-    mEdit.hardConnect(WM_CHAR) do (event: wEvent):
+    self.mEdit.hardConnect(WM_CHAR) do (event: wEvent):
       if event.keyCode == VK_RETURN:
         # try to send wEvent_TextEnter first.
         # If someone handle this, block the default behavior.
@@ -297,22 +303,22 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
       if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
         event.skip
 
-    mEdit.hardConnect(WM_KEYDOWN) do (event: wEvent):
+    self.mEdit.hardConnect(WM_KEYDOWN) do (event: wEvent):
       if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
         event.skip
 
-    mEdit.hardConnect(WM_SYSCHAR) do (event: wEvent):
+    self.mEdit.hardConnect(WM_SYSCHAR) do (event: wEvent):
       if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
         event.skip
 
-  if cbi.hwndList != mHwnd:
-    mList = Window(cbi.hwndList)
+  if cbi.hwndList != self.mHwnd:
+    self.mList = Window(cbi.hwndList)
     # don't need hook navigation events because list window by defult won't get focus
 
-  setValue(value)
+  self.setValue(value)
 
-  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == mHwnd:
+  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+    if event.mLparam == self.mHwnd:
       let cmdEvent = case HIWORD(event.mWparam)
         of CBN_SELENDOK:
           # the system set the edit control value AFTER this event
@@ -332,7 +338,7 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
       if cmdEvent != 0:
         self.processMessage(cmdEvent, event.mWparam, event.mLparam)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 

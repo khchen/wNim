@@ -42,12 +42,12 @@ proc final*(self: wFileDialog) =
 proc init*(self: wFileDialog, parent: wWindow = nil, message = "", defaultDir = "",
     defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
   ## Initializer.
-  mParent = parent
-  mMessage = message
-  mDefaultDir = defaultDir
-  mDefaultFile = defaultFile
-  mWildcard = wildcard
-  mStyle = style
+  self.mParent = parent
+  self.mMessage = message
+  self.mDefaultDir = defaultDir
+  self.mDefaultFile = defaultFile
+  self.mWildcard = wildcard
+  self.mStyle = style
 
 proc FileDialog*(parent: wWindow = nil, message = "", defaultDir = "",
     defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen): wFileDialog
@@ -58,57 +58,57 @@ proc FileDialog*(parent: wWindow = nil, message = "", defaultDir = "",
 
 proc getMessage*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
-  result = mMessage
+  result = self.mMessage
 
 proc getDirectory*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the default directory.
-  result = mDefaultDir
+  result = self.mDefaultDir
 
 proc getFilename*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the default filename.
-  result = mDefaultFile
+  result = self.mDefaultFile
 
 proc getWildcard*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the file dialog wildcard.
-  result = mWildcard
+  result = self.mWildcard
 
 proc getFilterIndex*(self: wFileDialog): int {.validate, property, inline.} =
   ## Returns the index into the list of filters supplied.
   ## Before the dialog is shown, this is the index which will be used.
   ## After the dialog is shown, this is the index selected by the user.
-  result = mFilterIndex
+  result = self.mFilterIndex
 
 proc getPath*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the full path (directory and filename) of the selected file.
   ## If the user selects multiple files, this only return the directory.
   ## If the dialog is cancelled, the return value is nil.
-  result = mPath
+  result = self.mPath
 
 proc getPaths*(self: wFileDialog): seq[string] {.validate, property, inline.} =
   ## Returns a seq to full paths of the files chosen.
   ## If the dialog is cancelled, the return value is empty seq (@[]).
-  result = mPaths
+  result = self.mPaths
 
 proc setMessage*(self: wFileDialog, message: string) {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
-  mMessage = message
+  self.mMessage = message
 
 proc setDirectory*(self: wFileDialog, defaultDir: string) {.validate, property, inline.} =
   ## Sets the default directory.
-  mDefaultDir = defaultDir
+  self.mDefaultDir = defaultDir
 
 proc setFilename*(self: wFileDialog, defaultFile: string) {.validate, property, inline.} =
   ## Sets the default filename.
-  mDefaultFile = defaultFile
+  self.mDefaultFile = defaultFile
 
 proc setWildcard*(self: wFileDialog, wildcard: string) {.validate, property, inline.} =
   ## Sets the wildcard, which can contain multiple file types,
   ## for example: "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif".
-  mWildcard = wildcard
+  self.mWildcard = wildcard
 
 proc setFilterIndex*(self: wFileDialog, index: int) {.validate, property, inline.} =
   ## Sets the default filter index, starting from one.
-  mFilterIndex = index
+  self.mFilterIndex = index
 
 proc showModal*(self: wFileDialog): wId {.discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
@@ -127,32 +127,32 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
       lStructSize: sizeof(OPENFILENAME),
       lpstrFile: &buffer,
       nMaxFile: wFdMaxPath,
-      nFilterIndex: mFilterIndex)
+      nFilterIndex: self.mFilterIndex)
 
   ofn.Flags = OFN_EXPLORER or
-    cast[DWORD](mStyle and 0xffffffff)
+    cast[DWORD](self.mStyle and 0xffffffff)
 
-  if mParent != nil:
-    ofn.hwndOwner = mParent.mHwnd
+  if self.mParent != nil:
+    ofn.hwndOwner = self.mParent.mHwnd
 
-  if mDefaultDir.len != 0:
-    ofn.lpstrInitialDir = &T(mDefaultDir)
+  if self.mDefaultDir.len != 0:
+    ofn.lpstrInitialDir = &T(self.mDefaultDir)
 
-  if mMessage.len != 0:
-    ofn.lpstrTitle = &T(mMessage)
+  if self.mMessage.len != 0:
+    ofn.lpstrTitle = &T(self.mMessage)
 
-  if mWildcard.len != 0:
-    ofn.lpstrFilter = &T(mWildcard.replace('|', '\0') & '\0')
+  if self.mWildcard.len != 0:
+    ofn.lpstrFilter = &T(self.mWildcard.replace('|', '\0') & '\0')
 
   var isOk =
-    if (mStyle and wFdSave) != 0:
+    if (self.mStyle and wFdSave) != 0:
       GetSaveFileName(&ofn)
     else:
       GetOpenFileName(&ofn)
 
-  mPaths = @[]
-  mPath = ""
-  mFilterIndex = ofn.nFilterIndex
+  self.mPaths = @[]
+  self.mPath = ""
+  self.mFilterIndex = ofn.nFilterIndex
 
   if isOk:
     var str = $buffer # convert to utf8
@@ -161,14 +161,14 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
     str.setLen(str.find("\0\0"))
     for name in str.split('\0'):
       if first:
-        mPath = name
+        self.mPath = name
         first = false
       else:
-        mPaths.add(mPath & "\\" & name)
+        self.mPaths.add(self.mPath & "\\" & name)
 
     # if only one file choosed, add it to paths
-    if mPaths.len == 0:
-      mPaths.add(mPath)
+    if self.mPaths.len == 0:
+      self.mPaths.add(self.mPath)
 
     result = wIdOk
   else:
@@ -176,14 +176,14 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
 
 proc show*(self: wFileDialog): wId {.inline, discardable.} =
   ## The same as ShowModal().
-  result = showModal()
+  result = self.showModal()
 
 proc showModalResult*(self: wFileDialog): seq[string] {.inline, discardable.} =
   ## Shows the dialog, returning the selected files or @[].
-  if showModal() == wIdOk:
-    result = getPaths()
+  if self.showModal() == wIdOk:
+    result = self.getPaths()
 
 proc showResult*(self: wFileDialog): seq[string] {.inline, discardable.} =
   ## The same as showModalResult().
-  if show() == wIdOk:
-    result = getPaths()
+  if self.show() == wIdOk:
+    result = self.getPaths()

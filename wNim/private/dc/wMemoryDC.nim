@@ -24,9 +24,9 @@
 proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   ## Selects the given bitmap into the device context, to use as the memory bitmap.
   wValidate(bitmap)
-  mBitmap = bitmap
-  let hBmp = SelectObject(mHdc, bitmap.mHandle)
-  if mhOldBitmap == 0: mhOldBitmap = hBmp
+  self.mBitmap = bitmap
+  let hBmp = SelectObject(self.mHdc, bitmap.mHandle)
+  if self.mhOldBitmap == 0: self.mhOldBitmap = hBmp
 
 proc MemoryDC*(): wMemoryDC =
   ## Constructs a new memory device context.
@@ -37,9 +37,9 @@ proc delete*(self: var wMemoryDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
-  if mHdc != 0:
+  if self.mHdc != 0:
     self.wDC.final()
-    DeleteDC(mHdc)
-    mHdc = 0
+    DeleteDC(self.mHdc)
+    self.mHdc = 0
 
-proc `=destroy`(self: var wMemoryDC) = delete()
+proc `=destroy`(self: var wMemoryDC) = self.delete()

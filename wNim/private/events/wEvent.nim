@@ -218,99 +218,99 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the object (usually a window) associated with the event
-  result = mWindow
+  result = self.mWindow
 
 proc getWindow*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the window associated with the event. This proc is equal to
   ## getEventObject.
-  result = mWindow
+  result = self.mWindow
 
 proc getEventType*(self: wEvent): UINT {.validate, property, inline.} =
   ## Returns the type of the given event, such as wEvent_Button, aka message code.
-  result = mMsg
+  result = self.mMsg
 
 proc getEventMessage*(self: wEvent): UINT {.validate, property, inline.} =
   ## Returns the message code of the given event. The same as getEventType().
-  result = mMsg
+  result = self.mMsg
 
 proc getId*(self: wEvent): wCommandID {.validate, property, inline.} =
   ## Returns the ID associated with this event, aka command ID or menu ID.
-  result = mID
+  result = self.mID
 
 proc getIntId*(self: wEvent): int {.validate, property, inline.} =
   ## Returns the ID associated with this event, aka command ID or menu ID.
-  result = int mID
+  result = int self.mID
 
 proc getTimerId*(self: wEvent): int {.validate, property, inline.} =
   ## Return the timer ID. Only for wEvent_Timer event.
-  result = int mWparam
+  result = int self.mWparam
 
 proc getlParam*(self: wEvent): LPARAM {.validate, property, inline.} =
   ## Returns the low-level LPARAM data of the associated windows message.
-  result = mLparam
+  result = self.mLparam
 
 proc getwParam*(self: wEvent): WPARAM {.validate, property, inline.} =
   ## Returns the low-level WPARAM data of the associated windows message.
-  result = mWparam
+  result = self.mWparam
 
 proc getResult*(self: wEvent): LRESULT {.validate, property, inline.} =
   ## Returns data that will be sent to system after event handler exit.
-  result = mResult
+  result = self.mResult
 
 proc setResult*(self: wEvent, ret: LRESULT) {.validate, property, inline.} =
   ## Set the data that will be sent to system after event handler exit.
-  mResult = ret
+  self.mResult = ret
 
 proc getUserData*(self: wEvent): int {.validate, property, inline.} =
   ## Return the userdata associated with a event.
-  result = mUserData
+  result = self.mUserData
 
 proc setUserData*(self: wEvent, userData: int) {.validate, property, inline.} =
   ## Set the userdata associated with a event.
-  mUserData = userData
+  self.mUserData = userData
 
 proc skip*(self: wEvent, skip = true) {.validate, inline.} =
   ## This proc can be used inside an event handler to control whether further
   ## event handlers bound to this event will be called after the current one
   ## returns. It sometimes means skip the default behavior for a event.
-  mSkip = skip
+  self.mSkip = skip
 
 proc `skip=`*(self: wEvent, skip: bool) {.validate, inline.} =
   ## Nim style setter for skip
-  skip(skip)
+  self.skip(skip)
 
 proc veto*(self: wEvent) {.validate, inline.} =
   ## Prevents the change announced by this event from happening.
   # Most windows's message return non-zero value to "veto". So for convenience,
   # here just set mResult to TRUE. If somewhere the logic is inverted, deal with
   # the value clearly in the event handler.
-  mResult = TRUE
+  self.mResult = TRUE
 
 proc deny*(self: wEvent) {.validate, inline.} =
   ## The same as veto().
-  veto()
+  self.veto()
 
 proc allow*(self: wEvent) {.validate, inline.} =
   ## This is the opposite of veto(): it explicitly allows the event to be
   ## processed.
-  mResult = FALSE
+  self.mResult = FALSE
 
 proc isAllowed*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the change is allowed (veto() hasn't been called) or false
   ## otherwise (if it was).
-  result = mResult != TRUE
+  result = self.mResult != TRUE
 
 proc stopPropagation*(self: wEvent): int {.validate, inline, discardable.} =
   ## Stop the event from propagating to its parent window.
-  result = mPropagationLevel
-  mPropagationLevel = 0
+  result = self.mPropagationLevel
+  self.mPropagationLevel = 0
 
 proc resumePropagation*(self: wEvent, propagationLevel = wEvent_PropagateMax)
     {.validate, inline.} =
   ## Sets the propagation level to the given value.
-  mPropagationLevel = propagationLevel
+  self.mPropagationLevel = propagationLevel
 
-method shouldPropagate*(self: wEvent): bool {.base.} = mPropagationLevel > 0
+method shouldPropagate*(self: wEvent): bool {.base.} = self.mPropagationLevel > 0
   ## Test if this event should be propagated or not, i.e. if the propagation
   ## level is currently greater than 0.This method can be override, for example:
   ##
@@ -324,95 +324,95 @@ method shouldPropagate*(self: wEvent): bool {.base.} = mPropagationLevel > 0
 
 proc getPropagationLevel*(self: wEvent): int {.validate, property, inline.} =
   ## Get how many levels the event can propagate.
-  result = mPropagationLevel
+  result = self.mPropagationLevel
 
 proc setPropagationLevel*(self: wEvent, propagationLevel: int)
     {.validate, property, inline.}  =
   ## Set how many levels the event can propagate.
-  mPropagationLevel = propagationLevel
+  self.mPropagationLevel = propagationLevel
 
 proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
   ## Get coordinate of the cursor.
   ## The coordinate is relative to the screen.
-  result = mMousePos
+  result = self.mMousePos
 
 proc getMousePos*(self: wEvent): wPoint {.validate, property.} =
   ## Get coordinate of the cursor.
   ## The coordinate is relative to the origin of the client area.
-  if mClientPos == wDefaultPoint:
-    mClientPos = mWindow.screenToClient(mMousePos)
+  if self.mClientPos == wDefaultPoint:
+    self.mClientPos = self.mWindow.screenToClient(self.mMousePos)
 
-  result = mClientPos
+  result = self.mClientPos
 
 proc getX*(self: wEvent): int {.validate, property, inline.} =
   ## Get x-coordinate of the cursor.
   ## The coordinate is relative to the origin of the client area.
-  result = getMousePos().x
+  result = self.getMousePos().x
 
 proc getY*(self: wEvent): int {.validate, property, inline.} =
   ## Get y-coordinate of the cursor.
   ## The coordinate is relative to the origin of the client area.
-  result = getMousePos().y
+  result = self.getMousePos().y
 
 proc lCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left ctrl key is pressed.
-  result = mKeyStatus[wKeyLCtrl] < 0
+  result = self.mKeyStatus[wKeyLCtrl] < 0
 
 proc lShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left shift key is pressed.
-  result = mKeyStatus[wKeyLShift] < 0
+  result = self.mKeyStatus[wKeyLShift] < 0
 
 proc lAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left alt key is pressed.
-  result = mKeyStatus[wKeyLAlt] < 0
+  result = self.mKeyStatus[wKeyLAlt] < 0
 
 proc lWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left win key is pressed.
-  result = mKeyStatus[wKeyLWin] < 0
+  result = self.mKeyStatus[wKeyLWin] < 0
 
 proc rCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right ctrl key is pressed.
-  result = mKeyStatus[wKeyRCtrl] < 0
+  result = self.mKeyStatus[wKeyRCtrl] < 0
 
 proc rShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right shift key is pressed.
-  result = mKeyStatus[wKeyRShift] < 0
+  result = self.mKeyStatus[wKeyRShift] < 0
 
 proc rAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right alt key is pressed.
-  result = mKeyStatus[wKeyRAlt] < 0
+  result = self.mKeyStatus[wKeyRAlt] < 0
 
 proc rWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right win key is pressed.
-  result = mKeyStatus[wKeyRWin] < 0
+  result = self.mKeyStatus[wKeyRWin] < 0
 
 proc ctrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any ctrl key is pressed.
-  result = lCtrlDown() or rCtrlDown()
+  result = self.lCtrlDown() or self.rCtrlDown()
 
 proc shiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any shift key is pressed.
-  result = lShiftDown() or rShiftDown()
+  result = self.lShiftDown() or self.rShiftDown()
 
 proc altDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any alt key is pressed.
-  result = lAltDown() or rAltDown()
+  result = self.lAltDown() or self.rAltDown()
 
 proc winDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any win key is pressed.
-  result = lWinDown() or rWinDown()
+  result = self.lWinDown() or self.rWinDown()
 
 proc leftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left mouse button is currently down.
-  result = mKeyStatus[wKeyLButton] < 0
+  result = self.mKeyStatus[wKeyLButton] < 0
 
 proc rightDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right mouse button is currently down.
-  result = mKeyStatus[wKeyRButton] < 0
+  result = self.mKeyStatus[wKeyRButton] < 0
 
 proc middleDown*(self: wEvent): bool {.validate, inline.} =
   ##  Returns true if the middle mouse button is currently down.
-  result = mKeyStatus[wKeyMButton] < 0
+  result = self.mKeyStatus[wKeyMButton] < 0
 
 proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.} =
   ## Return an bool array with all the pressed keys.
@@ -421,7 +421,7 @@ proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.
   ##
   ## .. code-block:: Nim
   ##   echo event.keyStauts[wKeyCtrl]
-  for key, val in mKeyStatus:
+  for key, val in self.mKeyStatus:
     result[key] = val < 0
 
 method getIndex*(self: wEvent): int {.base, property.} = discard

@@ -40,31 +40,31 @@ const
 method getBestSize*(self: wDatePickerCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the window.
   var size: SIZE
-  SendMessage(mHwnd, DTM_GETIDEALSIZE, 0, addr size)
+  SendMessage(self.mHwnd, DTM_GETIDEALSIZE, 0, addr size)
   result.width = size.cx + 2
   result.height = size.cy + 2
 
 method getDefaultSize*(self: wDatePickerCtrl): wSize {.property.} =
   ## Returns the default size for the window.
-  result = getBestSize()
-  result.height = getLineControlDefaultHeight(mFont.mHandle)
+  result = self.getBestSize()
+  result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
 proc getValue*(self: wDatePickerCtrl): wTime {.validate, property.} =
   ## Returns the currently entered date.
   var st: SYSTEMTIME
-  if GDT_VALID == SendMessage(mHwnd, DTM_GETSYSTEMTIME, 0, addr st):
+  if GDT_VALID == SendMessage(self.mHwnd, DTM_GETSYSTEMTIME, 0, addr st):
     result = st.toTime()
 
 proc setValue*(self: wDatePickerCtrl, time: wTime) {.validate, property.} =
   ## Changes the current value of the control.
   var st = time.toSystemTime()
-  SendMessage(mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
+  SendMessage(self.mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
 
 proc getRange*(self: wDatePickerCtrl): (wTime, wTime) {.validate, property.} =
   ## If the control had been previously limited to a range of dates,
   ## returns the lower and upper bounds of this range.
   var st: array[2, SYSTEMTIME]
-  let flag = SendMessage(mHwnd, DTM_GETRANGE , 0, addr st)
+  let flag = SendMessage(self.mHwnd, DTM_GETRANGE , 0, addr st)
   result[0] = if (flag and GDTR_MIN) != 0: st[0].toTime() else: wDefaultTime
   result[1] = if (flag and GDTR_MAX) != 0: st[1].toTime() else: wDefaultTime
 
@@ -80,11 +80,11 @@ proc setRange*(self: wDatePickerCtrl, time1 = wDefaultTime, time2 = wDefaultTime
     st[1] = time2.toSystemTime()
     flag = flag or GDTR_MAX
 
-  SendMessage(mHwnd, DTM_SETRANGE, flag, addr st)
+  SendMessage(self.mHwnd, DTM_SETRANGE, flag, addr st)
 
 proc setRange*(self: wDatePickerCtrl, time: (wTime, wTime)) {.validate, property.} =
   ## Sets the valid range for the date selection.
-  setRange(time[0], time[1])
+  self.setRange(time[0], time[1])
 
 method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
@@ -107,9 +107,9 @@ proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
   if date != wDefaultTime:
-    setValue(date)
+    self.setValue(date)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 

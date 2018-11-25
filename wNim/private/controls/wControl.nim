@@ -48,7 +48,7 @@ proc focusPrev(self: wNoteBook): bool
 method getClientSize*(self: wControl): wSize {.property.} =
   ## Returns the size of the control 'client area' in pixels.
   var r: RECT
-  GetClientRect(mHwnd, r)
+  GetClientRect(self.mHwnd, r)
   result.width = r.right - r.left
   result.height = r.bottom - r.top
 
@@ -70,10 +70,10 @@ proc wControl_DoMenuCommand(event: wEvent) =
     win = win.mParent
 
 proc getNextGroup(self: wControl, previous: bool): wControl =
-  var hWnd = mHwnd
+  var hWnd = self.mHwnd
   while true:
-    hWnd = GetNextDlgGroupItem(mParent.mHwnd, hWnd, previous)
-    if hWnd == 0 or hWnd == mHwnd:
+    hWnd = GetNextDlgGroupItem(self.mParent.mHwnd, hWnd, previous)
+    if hWnd == 0 or hWnd == self.mHwnd:
       break
 
     let win = wAppWindowFindByHwnd(hWnd)
@@ -81,10 +81,10 @@ proc getNextGroup(self: wControl, previous: bool): wControl =
       return wControl(win)
 
 proc getNextTab(self: wControl, previous: bool): wControl =
-  var hWnd = mHwnd
+  var hWnd = self.mHwnd
   while true:
-    hWnd = GetNextDlgTabItem(mParent.mHwnd, hWnd, previous)
-    if hWnd == 0 or hWnd == mHwnd:
+    hWnd = GetNextDlgTabItem(self.mParent.mHwnd, hWnd, previous)
+    if hWnd == 0 or hWnd == self.mHwnd:
       break
 
     let win = wAppWindowFindByHwnd(hWnd)
@@ -94,10 +94,10 @@ proc getNextTab(self: wControl, previous: bool): wControl =
 proc getNextMnemonic(self: wControl, letter: char, onlyone: var bool): wControl =
   # return control with specified letter,
   # however, click only there is one control with this letter
-  if mParent == nil or mParent.mChildren.len == 0: return
+  if self.mParent == nil or self.mParent.mChildren.len == 0: return
 
   let
-    siblings = mParent.mChildren
+    siblings = self.mParent.mChildren
     this = siblings.find(self)
 
   var index = this
@@ -315,13 +315,13 @@ proc init(self: wControl, className: string, parent: wWindow,
     style=style or WS_CHILD, fgColor=parent.mForegroundColor, bgColor=parent.mBackgroundColor,
     id=HMENU(id), regist=false)
 
-  SetWindowSubclass(mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
+  SetWindowSubclass(self.mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
 
-  mFocusable = true # by default, all control can has focus, modify this by subclass
+  self.mFocusable = true # by default, all control can has focus, modify this by subclass
 
-  systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
-  systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
-  systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
-  hardConnect(WM_CHAR, wControl_OnNavigation)
-  hardConnect(WM_KEYDOWN, wControl_OnNavigation)
-  hardConnect(WM_SYSCHAR, wControl_OnNavigation)
+  self.systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
+  self.systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
+  self.systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
+  self.hardConnect(WM_CHAR, wControl_OnNavigation)
+  self.hardConnect(WM_KEYDOWN, wControl_OnNavigation)
+  self.hardConnect(WM_SYSCHAR, wControl_OnNavigation)

@@ -38,30 +38,30 @@
 
 method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline.} =
   # WC_IPADDRESS cannot change size after create, it's Windows's limitation.
-  SetWindowPos(mHwnd, 0, x, y, 0, 0,
+  SetWindowPos(self.mHwnd, 0, x, y, 0, 0,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE or SWP_NOSIZE))
 
 proc setFocus*(self: wIpCtrl, index: range[0..3]) {.validate, property.} =
   ## Sets the focus to specified field.
-  SendMessage(mHwnd, IPM_SETFOCUS, index, 0)
+  SendMessage(self.mHwnd, IPM_SETFOCUS, index, 0)
 
 proc setValue*(self: wIpCtrl, value: int) {.validate, property.} =
   ## Sets the address values for all four fields in the IP address control.
-  SendMessage(mHwnd, IPM_SETADDRESS, 0, value)
+  SendMessage(self.mHwnd, IPM_SETADDRESS, 0, value)
 
 proc getValue*(self: wIpCtrl): int {.validate, property.} =
   ## Gets the address values for all four fields in the IP address control.
-  discard SendMessage(mHwnd, IPM_GETADDRESS, 0, &result)
+  discard SendMessage(self.mHwnd, IPM_GETADDRESS, 0, &result)
 
 proc setIpAddress*(self: wIpCtrl, ipAddress: IpAddress) {.validate, property.} =
   ## Sets the address object for all four fields in the IP address control.
   if ipAddress.family == IpAddressFamily.IPv4:
-    setValue(cast[int](MAKEIPADDRESS(ipAddress.address_v4[0], ipAddress.address_v4[1],
-      ipAddress.address_v4[2], ipAddress.address_v4[3])))
+    self.setValue(cast[int](MAKEIPADDRESS(ipAddress.address_v4[0],
+      ipAddress.address_v4[1], ipAddress.address_v4[2], ipAddress.address_v4[3])))
 
 proc getIpAddress*(self: wIpCtrl): IpAddress {.validate, property.} =
   ## Gets the address object for all four fields in the IP address control.
-  let value = getValue()
+  let value = self.getValue()
   result = IpAddress(
     family: IpAddressFamily.IPv4,
     address_v4: [value.FIRST_IPADDRESS, value.SECOND_IPADDRESS,
@@ -70,11 +70,11 @@ proc getIpAddress*(self: wIpCtrl): IpAddress {.validate, property.} =
 proc setText*(self: wIpCtrl, text: string) {.validate, property.} =
   ## Sets the address text for all four fields in the IP address control.
   wValidate(text)
-  setIpAddress(parseIpAddress(text))
+  self.setIpAddress(parseIpAddress(text))
 
 proc getText*(self: wIpCtrl): string {.validate, property.} =
   ## Gets the address text for all four fields in the IP address control.
-  let value = getValue()
+  let value = self.getValue()
   result = $value.FIRST_IPADDRESS
   result.add '.'
   result.add $value.SECOND_IPADDRESS
@@ -85,18 +85,22 @@ proc getText*(self: wIpCtrl): string {.validate, property.} =
 
 proc clear*(self: wIpCtrl) {.validate.} =
   ## Clears the contents of the IP address control.
-  SendMessage(mHwnd, IPM_CLEARADDRESS, 0, 0)
+  SendMessage(self.mHwnd, IPM_CLEARADDRESS, 0, 0)
 
-proc getEditControl*(self: wIpCtrl, index: range[0..3]): wTextCtrl {.validate, property, inline.} =
+proc getEditControl*(self: wIpCtrl, index: range[0..3]): wTextCtrl
+    {.validate, property, inline.} =
   ## Returns the text control part of the specified field.
-  result = mEdits[index]
+  result = self.mEdits[index]
 
-proc getTextCtrl*(self: wIpCtrl, index: range[0..3]): wTextCtrl {.validate, property, inline.} =
+proc getTextCtrl*(self: wIpCtrl, index: range[0..3]): wTextCtrl
+    {.validate, property, inline.} =
   ## Returns the text control part of the specified field.
   ## The same as getEditControl().
-  result = getEditControl(index)
+  result = self.getEditControl(index)
 
-method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool =
+
   if code == IPN_FIELDCHANGED:
     let lpnmipa = cast[LPNMIPADDRESS](lparam)
     let event = wIpEvent Event(window=self, msg=wEvent_IpChanged)
@@ -133,7 +137,7 @@ proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
 
   self.setFont(font)
   if value != 0:
-    setValue(value)
+    self.setValue(value)
 
   # subclass all the child edit control and relay the navigation events to self
   proc EnumChildProc(hwnd: HWND, lParam: LPARAM): BOOL {.stdcall.} =
@@ -144,9 +148,9 @@ proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
         break
     return TRUE
 
-  EnumChildWindows(mHwnd, EnumChildProc, cast[LPARAM](self))
+  EnumChildWindows(self.mHwnd, EnumChildProc, cast[LPARAM](self))
 
-  for edit in mEdits:
+  for edit in self.mEdits:
     if edit != nil:
       edit.hardConnect(WM_CHAR) do (event: wEvent):
         if event.keyCode == VK_RETURN:
@@ -166,7 +170,7 @@ proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
         if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
           event.skip
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Left, wKey_Right}:
       event.veto
 

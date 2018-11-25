@@ -21,40 +21,45 @@
 ##   wEvent_TimeChanged               The selected time changed.
 ##   ===============================  =============================================================
 
-proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int] {.validate, property.} =
+proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int]
+    {.validate, property.} =
   ## Returns the currently entered time as hours, minutes and seconds
   var st: SYSTEMTIME
-  if GDT_VALID == SendMessage(mHwnd, DTM_GETSYSTEMTIME, 0, addr st):
+  if GDT_VALID == SendMessage(self.mHwnd, DTM_GETSYSTEMTIME, 0, addr st):
     result.hour = st.wHour.int
     result.min = st.wMinute.int
     result.sec = st.wSecond.int
 
-proc setTime*(self: wTimePickerCtrl, hour: int, min: int, sec: int) {.validate, property.} =
+proc setTime*(self: wTimePickerCtrl, hour: int, min: int, sec: int)
+    {.validate, property.} =
   ## Changes the current time of the control.
   var st: SYSTEMTIME
   GetLocalTime(addr st)
   st.wHour = hour.WORD
   st.wMinute = min.WORD
   st.wSecond = sec.WORD
-  SendMessage(mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
+  SendMessage(self.mHwnd, DTM_SETSYSTEMTIME, GDT_VALID, addr st)
 
-proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int]) {.validate, property.} =
+proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int])
+    {.validate, property.} =
   ## Changes the current time of the control.
-  setTime(time.hour, time.min, time.sec)
+  self.setTime(time.hour, time.min, time.sec)
 
 proc final*(self: wTimePickerCtrl) =
   ## Default finalizer for wTimePickerCtrl.
   discard
 
-proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID, time = wDefaultTime,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID,
+    time = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+    style: wStyle = 0) {.validate.} =
   ## Initializer.
   wValidate(parent)
   self.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos,
     size=size, style=style or DTS_TIMEFORMAT)
 
 proc TimePickerCtrl*(parent: wWindow, id = wDefaultID, time = wDefaultTime,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTimePickerCtrl {.discardable.} =
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTimePickerCtrl
+    {.discardable.} =
   ## Creates the control.
   ## ==========  =================================================================================
   ## Parameters  Description

@@ -105,20 +105,20 @@ proc dwRop(rop: int): DWORD =
 
 proc drawPoint*(self: wDC, x, y: int) =
   ## Draws a point using the color of the current pen.
-  SetPixel(mHdc, x, y, mPen.mColor)
+  SetPixel(self.mHdc, x, y, self.mPen.mColor)
 
 proc drawPoint*(self: wDC, point: wPoint) =
   ## Draws a point using the color of the current pen.
-  drawPoint(point.x, point.y)
+  self.drawPoint(point.x, point.y)
 
 proc drawLine*(self: wDC, x1, y1, x2, y2: int) =
   ## Draws a line from the first point to the second.
-  MoveToEx(mHdc, x1, y1, nil)
-  LineTo(mHdc, x2, y2)
+  MoveToEx(self.mHdc, x1, y1, nil)
+  LineTo(self.mHdc, x2, y2)
 
 proc drawLine*(self: wDC, point1, point2: wPoint) =
   ## Draws a line from the first point to the second.
-  drawLine(point1.x, point1.y, point2.x, point2.y)
+  self.drawLine(point1.x, point1.y, point2.x, point2.y)
 
 proc drawRectangle*(self: wDC, x, y, width, height: int) =
   ## Draws a rectangle with the given corner coordinate and size.
@@ -126,90 +126,90 @@ proc drawRectangle*(self: wDC, x, y, width, height: int) =
     x2 = x + width
     y2 = y + height
 
-  if (mPen.mStyle and wPenStyleMask) == wPenStyleTransparent:
+  if (self.mPen.mStyle and wPenStyleMask) == wPenStyleTransparent:
     x2.inc
     y2.inc
 
-  Rectangle(mHdc, x, y, x2, y2)
+  Rectangle(self.mHdc, x, y, x2, y2)
 
 proc drawRectangle*(self: wDC, point: wPoint, size: wSize) =
   ## ## Draws a rectangle with the given corner coordinate and size.
-  drawRectangle(point.x, point.y, size.width, size.height)
+  self.drawRectangle(point.x, point.y, size.width, size.height)
 
 proc drawRectangle*(self: wDC, rect: wRect) =
   ## ## Draws a rectangle with the given corner coordinate and size.
-  drawRectangle(rect.x, rect.y, rect.width, rect.height)
+  self.drawRectangle(rect.x, rect.y, rect.width, rect.height)
 
 proc drawEllipse*(self: wDC, x, y, width, height: int) =
   ## Draws an ellipse contained in the rectangle.
-  Ellipse(mHdc, x, y, x + width, y + height)
+  Ellipse(self.mHdc, x, y, x + width, y + height)
 
 proc drawEllipse*(self: wDC, point: wPoint, size: wSize) =
   ## Draws an ellipse contained in the rectangle.
-  drawEllipse(point.x, point.y, size.width, size.height)
+  self.drawEllipse(point.x, point.y, size.width, size.height)
 
 proc drawEllipse*(self: wDC, rect: wRect) =
   ## Draws an ellipse contained in the rectangle.
-  drawEllipse(rect.x, rect.y, rect.width, rect.height)
+  self.drawEllipse(rect.x, rect.y, rect.width, rect.height)
 
 proc drawCircle*(self: wDC, x, y, radius: int) =
   ## Draws a circle with the given center and radius.
-  drawEllipse(x - radius, y - radius, radius * 2, radius * 2)
+  self.drawEllipse(x - radius, y - radius, radius * 2, radius * 2)
 
 proc drawCircle*(self: wDC, point: wPoint, radius: int) =
   ## Draws a circle with the given center and radius.
-  drawCircle(point.x, point.y, radius)
+  self.drawCircle(point.x, point.y, radius)
 
 proc drawTextWithDeg(self: wDC, text: string, x, y: int = 0, deg: float) =
   var
     size: SIZE
     x = x
     y = y
-    oldColor = SetBkColor(mHdc, mTextBackgroundColor)
+    oldColor = SetBkColor(self.mHdc, self.mTextBackgroundColor)
 
   for line in text.splitLines:
     var line = T(line)
-    GetTextExtentPoint32(mHdc, line, line.len, &size)
-    TextOut(mHdc, x, y, line, line.len)
+    GetTextExtentPoint32(self.mHdc, line, line.len, &size)
+    TextOut(self.mHdc, x, y, line, line.len)
     x += int(sin(degToRad(deg)) * float size.cy)
     y += int(cos(degToRad(deg)) * float size.cy)
-  SetBkColor(mHdc, oldColor)
+  SetBkColor(self.mHdc, oldColor)
 
 proc drawText*(self: wDC, text: string, x, y: int = 0) =
   ## Draws a text string at the specified point, using the current text font,
   ## and the current text foreground and background colors.
   ## The text can contain multiple lines separated by the new line ('\n')
   ## characters.
-  drawTextWithDeg(text, x, y, 0.0)
+  self.drawTextWithDeg(text, x, y, 0.0)
 
 proc drawText*(self: wDC, text: string, point: wPoint) =
   ## Draws a text string at the specified point, using the current text font,
   ## and the current text foreground and background colors.
   ## The text can contain multiple lines separated by the new line ('\n')
   ## characters.
-  drawText(text, point.x, point.y)
+  self.drawText(text, point.x, point.y)
 
 proc drawRotatedText*(self: wDC, text: string, x, y: int = 0, angle: float = 0) =
   ## Draws the text rotated by angle degrees (positive angles are counterclockwise;
   ## the full angle is 360 degrees). The text can contain multiple lines separated
   ## by the new line ('\n') characters.
   if angle == 0:
-    drawText(text, x, y)
+    self.drawText(text, x, y)
   else:
     var lf: LOGFONT
-    GetObject(mFont.mHandle, sizeof(LOGFONT), addr lf)
+    GetObject(self.mFont.mHandle, sizeof(LOGFONT), addr lf)
     let angle10 = int32(angle * 10)
     lf.lfEscapement = angle10
     lf.lfOrientation = angle10
-    let prev = SelectObject(mHdc, CreateFontIndirect(lf))
-    drawTextWithDeg(text, x, y, angle)
-    SelectObject(mHdc, prev)
+    let prev = SelectObject(self.mHdc, CreateFontIndirect(lf))
+    self.drawTextWithDeg(text, x, y, angle)
+    SelectObject(self.mHdc, prev)
 
 proc drawRotatedText*(self: wDC, text: string, point: wPoint, angle: float = 0) =
   ## Draws the text rotated by angle degrees (positive angles are counterclockwise;
   ## the full angle is 360 degrees). The text can contain multiple lines separated
   ## by the new line ('\n') characters.
-  drawRotatedText(text, point.x, point.y, angle)
+  self.drawRotatedText(text, point.x, point.y, angle)
 
 proc drawCheckMark*(self: wDC, x, y, width, height: int) =
   ## Draws a check mark inside the given rectangle.
@@ -218,15 +218,15 @@ proc drawCheckMark*(self: wDC, x, y, width, height: int) =
   rect.top  = y
   rect.right  = x + width
   rect.bottom = y + height
-  DrawFrameControl(mHdc, rect, DFC_MENU, DFCS_MENUCHECK)
+  DrawFrameControl(self.mHdc, rect, DFC_MENU, DFCS_MENUCHECK)
 
 proc drawCheckMark*(self: wDC, point: wPoint, size: wSize) =
   ## Draws a check mark inside the given rectangle.
-  drawCheckMark(point.x, point.y, size.width, size.height)
+  self.drawCheckMark(point.x, point.y, size.width, size.height)
 
 proc drawCheckMark*(self: wDC, rect: wRect) =
   ## Draws a check mark inside the given rectangle.
-  drawCheckMark(rect.x, rect.y, rect.width, rect.height)
+  self.drawCheckMark(rect.x, rect.y, rect.width, rect.height)
 
 proc drawArc*(self: wDC, x1, y1, x2, y2, xc, yc: int) =
   ## Draws an arc from the given start to the given end point.
@@ -236,7 +236,7 @@ proc drawArc*(self: wDC, x1, y1, x2, y2, xc, yc: int) =
     r = sqrt(dx*dx + dy*dy).int
 
   if x1 == x2 and y1 == y2:
-    drawEllipse(xc - r, yc - r, r*2, r*2)
+    self.drawEllipse(xc - r, yc - r, r*2, r*2)
 
   else:
     let
@@ -245,14 +245,14 @@ proc drawArc*(self: wDC, x1, y1, x2, y2, xc, yc: int) =
       xx2 = xc + r
       yy2 = yc + r
 
-    if (mBrush.mStyle and wBrushStyleMask) != wBrushStyleTransparent:
-      Pie(mHdc, xx1, yy1, xx2 + 1, yy2 + 1, x1, y1, x2, y2)
+    if (self.mBrush.mStyle and wBrushStyleMask) != wBrushStyleTransparent:
+      Pie(self.mHdc, xx1, yy1, xx2 + 1, yy2 + 1, x1, y1, x2, y2)
     else:
-      Arc(mHdc, xx1, yy1, xx2, yy2, x1, y1, x2, y2)
+      Arc(self.mHdc, xx1, yy1, xx2, yy2, x1, y1, x2, y2)
 
 proc drawArc*(self: wDC, point1, point2, center: wPoint) =
   ## Draws an arc from the given start to the given end point.
-  drawArc(point1.x, point1.y, point2.x, point2.y, center.x, center.y)
+  self.drawArc(point1.x, point1.y, point2.x, point2.y, center.x, center.y)
 
 proc drawRoundedRectangle*(self: wDC, x, y, width, height: int, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
@@ -264,19 +264,19 @@ proc drawRoundedRectangle*(self: wDC, x, y, width, height: int, radius: float) =
   if radius < 0:
     r = int(-radius * min(width, height).float)
 
-  if (mPen.mStyle and wPenStyleMask) == wPenStyleTransparent:
+  if (self.mPen.mStyle and wPenStyleMask) == wPenStyleTransparent:
     x2.inc
     y2.inc
 
-  RoundRect(mHdc, x, y, x2, y2, r * 2, r * 2)
+  RoundRect(self.mHdc, x, y, x2, y2, r * 2, r * 2)
 
 proc drawRoundedRectangle*(self: wDC, point: wPoint, size: wSize, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
-  drawRoundedRectangle(point.x, point.y, size.width, size.height, radius)
+  self.drawRoundedRectangle(point.x, point.y, size.width, size.height, radius)
 
 proc drawRoundedRectangle*(self: wDC, rect: wRect, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
-  drawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, radius)
+  self.drawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, radius)
 
 proc addPoints(pseq: var seq[POINT], points: openarray[wPoint], xoffset: int = 0,
     yoffset: int = 0) =
@@ -289,62 +289,62 @@ proc drawLines*(self: wDC, points: openarray[wPoint], xoffset: int = 0,
   ## Draws lines using an array of points, adding the optional offset coordinate.
   var pseq = newSeqOfCap[POINT](points.len)
   pseq.addPoints(points, xoffset, yoffset)
-  Polyline(mHdc, addr pseq[0], pseq.len)
+  Polyline(self.mHdc, addr pseq[0], pseq.len)
 
 proc drawLines*(self: wDC, xoffset: int, yoffset: int, points: varargs[wPoint]) =
   ## Draws lines using an array of points, adding the optional offset coordinate.
   ## Varargs version.
-  drawLines(points, xoffset, yoffset)
+  self.drawLines(points, xoffset, yoffset)
 
 proc drawPolygon*(self: wDC, points: openarray[wPoint], xoffset: int = 0,
     yoffset: int = 0, style = wOddevenRule) =
   ## Draws a filled polygon using an array of points, adding the optional offset
   ## coordinate.
-  let prev = SetPolyFillMode(mHdc, style)
-  defer: SetPolyFillMode(mHdc, prev)
+  let prev = SetPolyFillMode(self.mHdc, style)
+  defer: SetPolyFillMode(self.mHdc, prev)
 
   var pseq = newSeqOfCap[POINT](points.len)
   pseq.addPoints(points, xoffset, yoffset)
-  Polygon(mHdc, addr pseq[0], pseq.len)
+  Polygon(self.mHdc, addr pseq[0], pseq.len)
 
 proc drawPolygon*(self: wDC, xoffset: int, yoffset: int, style: int,
     points: varargs[wPoint]) =
   ## Draws a filled polygon using an array of points, adding the optional offset
   ## coordinate. Varargs version.
-  drawPolygon(points, xoffset, yoffset, style)
+  self.drawPolygon(points, xoffset, yoffset, style)
 
 proc drawPolyPolygon*(self: wDC, counts: openarray[int], points: openarray[wPoint],
     xoffset: int = 0, yoffset: int = 0, style=wOddevenRule) =
   ## Draws two or more filled polygons using an array of points, adding the
   ## optional offset coordinates.
-  let prev = SetPolyFillMode(mHdc, style)
-  defer: SetPolyFillMode(mHdc, prev)
+  let prev = SetPolyFillMode(self.mHdc, style)
+  defer: SetPolyFillMode(self.mHdc, prev)
 
   var iseq = newSeqOfCap[INT](counts.len)
   var pseq = newSeqOfCap[POINT](points.len)
   for i in counts: iseq.add i
   pseq.addPoints(points, xoffset, yoffset)
-  PolyPolygon(mHdc, addr pseq[0], addr iseq[0], counts.len)
+  PolyPolygon(self.mHdc, addr pseq[0], addr iseq[0], counts.len)
 
 proc drawPolyPolygon*(self: wDC, points: openarray[seq[wPoint]], xoffset: int = 0,
     yoffset: int = 0, style=wOddevenRule) =
   ## Draws two or more filled polygons using an array of points, adding the
   ## optional offset coordinates.
-  let prev = SetPolyFillMode(mHdc, style)
-  defer: SetPolyFillMode(mHdc, prev)
+  let prev = SetPolyFillMode(self.mHdc, style)
+  defer: SetPolyFillMode(self.mHdc, prev)
 
   var iseq = newSeqOfCap[INT](points.len)
   var pseq = newSeq[POINT]()
   for wpseq in points:
     iseq.add wpseq.len
     pseq.addPoints(wpseq, xoffset, yoffset)
-  PolyPolygon(mHdc, addr pseq[0], addr iseq[0], iseq.len)
+  PolyPolygon(self.mHdc, addr pseq[0], addr iseq[0], iseq.len)
 
 proc drawPolyPolygon*(self: wDC, xoffset: int, yoffset: int, style: int,
     points: varargs[seq[wPoint], `@`]) =
   ## Draws two or more filled polygons using an array of points, adding the
   ## optional offset coordinates. Varargs version.
-  drawPolyPolygon(points, xoffset, yoffset, style)
+  self.drawPolyPolygon(points, xoffset, yoffset, style)
 
 proc drawSpline*(self: wDC, points: varargs[wPoint]) =
   ## Draws a spline between all given points using the current pen.
@@ -381,7 +381,7 @@ proc drawSpline*(self: wDC, points: varargs[wPoint]) =
   pseq.add(P(x2, y2))
   pseq.add(pseq[pseq.high])
 
-  PolyBezier(mHdc, addr pseq[0], pseq.len)
+  PolyBezier(self.mHdc, addr pseq[0], pseq.len)
 
 proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor,
     destColor: wColor, direction = wRight) =
@@ -414,22 +414,22 @@ proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor,
       newPen = Pen(color=newColor)
       newBrush = Brush(color=newColor)
 
-    SelectObject(mHdc, newPen.mHandle)
-    SelectObject(mHdc, newBrush.mHandle)
+    SelectObject(self.mHdc, newPen.mHandle)
+    SelectObject(self.mHdc, newBrush.mHandle)
 
     case direction
     of wLeft:
-      drawRectangle(rect.x + p, rect.y, delta, rect.height)
+      self.drawRectangle(rect.x + p, rect.y, delta, rect.height)
     of wUp:
-      drawRectangle(rect.x, rect.y + p, rect.width, delta)
+      self.drawRectangle(rect.x, rect.y + p, rect.width, delta)
     of wDown:
-      drawRectangle(rect.x, rect.y + rect.height - p - delta + 1, rect.width, delta)
+      self.drawRectangle(rect.x, rect.y + rect.height - p - delta + 1, rect.width, delta)
     else: # wRight:
-      drawRectangle(rect.x + rect.width - p - delta + 1, rect.y, delta, rect.height)
+      self.drawRectangle(rect.x + rect.width - p - delta + 1, rect.y, delta, rect.height)
 
     # delete the GDIObject at first, GC will collect the memory later.
-    SelectObject(mHdc, mPen.mHandle)
-    SelectObject(mHdc, mBrush.mHandle)
+    SelectObject(self.mHdc, self.mPen.mHandle)
+    SelectObject(self.mHdc, self.mBrush.mHandle)
     newPen.delete
     newBrush.delete
 
@@ -464,158 +464,158 @@ proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor,
         nr = byte(nr1 + ((nr2 - nr1) * gradient / 100))
         ng = byte(ng1 + ((ng2 - ng1) * gradient / 100))
         nb = byte(nb1 + ((nb2 - nb1) * gradient / 100))
-      SetPixel(mHdc, x + rect.x, y + rect.y, RGB(nr, ng, nb))
+      SetPixel(self.mHdc, x + rect.x, y + rect.y, RGB(nr, ng, nb))
 
 proc gradientFillConcentric*(self: wDC, rect: wRect, initialColor: wColor,
     destColor: wColor) =
   ## Fill the area specified by rect with a radial gradient, starting from
   ## initialColor at the center of the circle and fading to destColor on the
   ## circle outside. The circle is placed at the center of rect.
-  gradientFillConcentric(rect, initialColor, destColor,
+  self.gradientFillConcentric(rect, initialColor, destColor,
     (rect.width div 2, rect.height div 2))
 
 proc getHandle*(self: wDC): HANDLE {.inline, property.} =
   ## Returns a value that can be used as a handle to the native drawing context.
-  result = mHdc
+  result = self.mHdc
 
 proc getHdc*(self: wDC): HANDLE {.inline, property.} =
   ## Returns a value that can be used as a handle to the native drawing context.
-  result = mHdc
+  result = self.mHdc
 
 proc getDepth*(self: wDC): int {.inline, property.} =
   ## Returns the depth (number of bits/pixel) of this DC.
-  result = GetDeviceCaps(mHdc, BITSPIXEL)
+  result = GetDeviceCaps(self.mHdc, BITSPIXEL)
 
 proc getPixel*(self: wDC, x: int, y: int): wColor {.inline, property.} =
   ## Gets the color at the specified location.
-  result = GetPixel(mHdc, x, y)
+  result = GetPixel(self.mHdc, x, y)
 
 proc getPpi*(self: wDC): wSize {.inline, property.} =
   ## Returns the resolution of the device in pixels per inch.
-  result = (int GetDeviceCaps(mHdc, LOGPIXELSX), int GetDeviceCaps(mHdc, LOGPIXELSY))
+  result = (int GetDeviceCaps(self.mHdc, LOGPIXELSX), int GetDeviceCaps(self.mHdc, LOGPIXELSY))
 
 proc getLogicalFunction*(self: wDC): int {.inline, property.} =
   ## Gets the current logical function.
-  result = GetROP2(mHdc)
+  result = GetROP2(self.mHdc)
 
 proc getPen*(self: wDC): wPen {.inline, property.} =
   ## Gets the current pen.
-  result = mPen
+  result = self.mPen
 
 proc getBrush*(self: wDC): wBrush {.inline, property.} =
   ## Gets the current brush.
-  result = mBrush
+  result = self.mBrush
 
 proc getFont*(self: wDC): wFont {.inline, property.} =
   ## Gets the current font.
-  result = mFont
+  result = self.mFont
 
 proc getTextForeground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text foreground color.
-  result = mTextForegroundColor
+  result = self.mTextForegroundColor
 
 proc getTextBackground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text background color.
-  result = mTextBackgroundColor
+  result = self.mTextBackgroundColor
 
 proc getBackground*(self: wDC): wBrush {.inline, property.} =
   ## Gets the brush used for painting the background.
-  result = mBackground
+  result = self.mBackground
 
 proc getBackgroundMode*(self: wDC): int {.inline, property.} =
   ## Returns the current background mode: wPenStyleSolid or wPenStyleTransparent.
-  result = (if GetBkMode(mHdc) == OPAQUE: wPenStyleSolid else: wPenStyleTransparent)
+  result = (if GetBkMode(self.mHdc) == OPAQUE: wPenStyleSolid else: wPenStyleTransparent)
 
 proc getBackgroundTransparent*(self: wDC): bool {.inline, property.} =
   ## Returns ture if the current background mode is transparent.
-  result = (if GetBkMode(mHdc) == OPAQUE: false else: true)
+  result = (if GetBkMode(self.mHdc) == OPAQUE: false else: true)
 
 proc getOrigin*(self: wDC): wPoint {.property.} =
   ## Returns the current origin.
   var p: POINT
-  GetViewportOrgEx(mHdc, p)
+  GetViewportOrgEx(self.mHdc, p)
   result.x = p.x
   result.y = p.y
 
 proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} =
   ## Gets the current scale factor.
-  result = mScale
+  result = self.mScale
 
 proc getSize*(self: wDC): wSize {.property.} =
   ## Gets the size of the device context.
-  if mCanvas != nil:
+  if self.mCanvas != nil:
     if self of wWindowDC:
-      result = mCanvas.getSize()
+      result = self.mCanvas.getSize()
     else:
-      result = mCanvas.getClientSize()
-  elif mBitmap != nil:
-    result = mBitmap.getSize()
+      result = self.mCanvas.getClientSize()
+  elif self.mBitmap != nil:
+    result = self.mBitmap.getSize()
   else:
-    result.width = GetDeviceCaps(mHdc, HORZRES)
-    result.height = GetDeviceCaps(mHdc, VERTRES)
+    result.width = GetDeviceCaps(self.mHdc, HORZRES)
+    result.height = GetDeviceCaps(self.mHdc, VERTRES)
 
 proc setLogicalFunction*(self: var wDC, mode: int) {.inline, property.} =
   ## Sets the current logical function for the device context.
-  SetROP2(mHdc, mode)
+  SetROP2(self.mHdc, mode)
 
 proc setPen*(self: var wDC, pen: wPen) {.inline, property.} =
   ## Sets the current pen for the DC.
   wValidate(pen)
-  mPen = pen
-  let hPen = SelectObject(mHdc, pen.mHandle)
-  if mhOldPen == 0: mhOldPen = hPen
+  self.mPen = pen
+  let hPen = SelectObject(self.mHdc, pen.mHandle)
+  if self.mhOldPen == 0: self.mhOldPen = hPen
 
 proc setBrush*(self: var wDC, brush: wBrush) {.inline, property.} =
   ## Sets the current brush for the DC.
   wValidate(brush)
-  mBrush = brush
-  let hBrush = SelectObject(mHdc, brush.mHandle)
-  if mhOldBrush == 0: mhOldBrush = hBrush
+  self.mBrush = brush
+  let hBrush = SelectObject(self.mHdc, brush.mHandle)
+  if self.mhOldBrush == 0: self.mhOldBrush = hBrush
 
 proc setFont*(self: var wDC, font: wFont) {.inline, property.} =
   ## Sets the current font for the DC.
   wValidate(font)
-  mFont = font
-  let hFont = SelectObject(mHdc, font.mHandle)
-  if mhOldFont == 0: mhOldFont = hFont
+  self.mFont = font
+  let hFont = SelectObject(self.mHdc, font.mHandle)
+  if self.mhOldFont == 0: self.mhOldFont = hFont
 
 proc setTextBackground*(self: var wDC, color: wColor) {.inline, property.} =
   ## Sets the current text background color for the DC.
-  mTextBackgroundColor = color
+  self.mTextBackgroundColor = color
 
 proc setTextForeground*(self: var wDC, color: wColor) {.inline, property.} =
   ## Sets the current text foreground color for the DC.
-  mTextForegroundColor = color
-  SetTextColor(mHdc, color)
+  self.mTextForegroundColor = color
+  SetTextColor(self.mHdc, color)
 
 proc setBackground*(self: var wDC, brush: wBrush) {.inline, property.} =
   ## Sets the current background brush for the DC.
   wValidate(brush)
-  mBackground = brush
-  SetBkColor(mHdc, brush.mColor)
+  self.mBackground = brush
+  SetBkColor(self.mHdc, brush.mColor)
 
 proc setBackground*(self: var wDC, color: wColor) {.inline, property.} =
   ## Sets the current background brush for the DC, use the color to create the
   ## brush.
-  setBackground(Brush(color=color))
+  self.setBackground(Brush(color=color))
 
 proc setBackgroundMode*(self: var wDC, mode: int) {.inline, property.} =
   ## *mode* may be one of wPenStyleSolid and wPenStyleTransparent. This setting
   ## determines whether text will be drawn with a background color or not.
-  SetBkMode(mHdc, (if mode == wPenStyleTransparent: TRANSPARENT else: OPAQUE))
+  SetBkMode(self.mHdc, (if mode == wPenStyleTransparent: TRANSPARENT else: OPAQUE))
 
 proc setBackgroundTransparent*(self: var wDC, flag: bool) {.inline, property.} =
   ## This setting determines whether text will be drawn with a background color
   ## or not.
-  SetBkMode(mHdc, (if flag: TRANSPARENT else: OPAQUE))
+  SetBkMode(self.mHdc, (if flag: TRANSPARENT else: OPAQUE))
 
 proc setOrigin*(self: var wDC, x: int, y: int) {.inline, property.} =
   ## Sets the origin.
-  SetViewportOrgEx(mHdc, x, y, nil)
+  SetViewportOrgEx(self.mHdc, x, y, nil)
 
 proc setOrigin*(self: var wDC, point: wPoint) {.inline, property.} =
   ## Sets the origin.
-  setOrigin(point.x, point.y)
+  self.setOrigin(point.x, point.y)
 
 proc setScale*(self: var wDC, x: float, y: float) {.property.} =
   ## Sets the scaling factor.
@@ -631,21 +631,21 @@ proc setScale*(self: var wDC, x: float, y: float) {.property.} =
       top = 134217727
       bottom = int32(134217727'f / s)
 
-  mScale = (x, y)
+  self.mScale = (x, y)
   if x == 1.0 and y == 1.0:
-    SetMapMode(mHdc, MM_TEXT)
+    SetMapMode(self.mHdc, MM_TEXT)
   else:
     var topx, topy, bottomx, bottomy: int32
     calc(x, topx, bottomx)
     calc(y, topy, bottomy)
 
-    SetMapMode(mHdc, MM_ANISOTROPIC)
-    SetViewportExtEx(mHdc, topx, topy, nil)
-    SetWindowExtEx(mHdc, bottomx, bottomy, nil)
+    SetMapMode(self.mHdc, MM_ANISOTROPIC)
+    SetViewportExtEx(self.mHdc, topx, topy, nil)
+    SetWindowExtEx(self.mHdc, bottomx, bottomy, nil)
 
 proc setScale*(self: var wDC, scale: (float, float)) {.inline, property.} =
   ## Sets the scaling factor.
-  setScale(scale[0], scale[1])
+  self.setScale(scale[0], scale[1])
 
 proc crossHair*(self: var wDC, x: int, y: int) =
   ## Displays a cross hair using the current pen.
@@ -653,45 +653,45 @@ proc crossHair*(self: var wDC, x: int, y: int) =
     cxScreen = GetSystemMetrics(SM_CXSCREEN)
     cyScreen = GetSystemMetrics(SM_CYSCREEN)
 
-  let prev = SetMapMode(mHdc, MM_TEXT)
-  drawLine(x - cxScreen, y, x + cxScreen, y)
-  drawLine(x, y - cyScreen, x, y + cyScreen)
+  let prev = SetMapMode(self.mHdc, MM_TEXT)
+  self.drawLine(x - cxScreen, y, x + cxScreen, y)
+  self.drawLine(x, y - cyScreen, x, y + cyScreen)
 
   if prev != MM_TEXT:
-    self.setScale(mScale)
+    self.setScale(self.mScale)
 
 proc crossHair*(self: var wDC, point: wPoint) =
   ## Displays a cross hair using the current pen.
-  crossHair(point.x, point.y)
+  self.crossHair(point.x, point.y)
 
 proc clear*(self: var wDC) =
   ## Clears the device context using the current background brush.
   var rect: RECT
   let
-    origin = getOrigin()
-    size = getSize()
+    origin = self.getOrigin()
+    size = self.getSize()
 
   rect.left = - origin.x
   rect.top = - origin.y
   rect.right = size.width
   rect.bottom = size.height
 
-  let prev = SetMapMode(mHdc, MM_TEXT)
-  FillRect(mHdc, rect, mBackground.mHandle)
+  let prev = SetMapMode(self.mHdc, MM_TEXT)
+  FillRect(self.mHdc, rect, self.mBackground.mHandle)
 
   if prev != MM_TEXT:
-    self.setScale(mScale)
+    self.setScale(self.mScale)
 
 proc blit*(self: wDC, xdest, ydest, width, height: int = 0, source: wDC,
     xsrc, ysrc: int = 0, rop: int = wCopy) =
   ## Copy from a source DC to this DC. *rop* is the raster operation.
-  BitBlt(mHdc, xdest, ydest, width, height, source.mHdc, xsrc, ysrc, rop.dwRop)
+  BitBlt(self.mHdc, xdest, ydest, width, height, source.mHdc, xsrc, ysrc, rop.dwRop)
 
 proc stretchBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
     source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
   ## Copy from a source DC to this DC possibly changing the scale.
   ## *rop* is the raster operation.
-  StretchBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
+  StretchBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
     srcWidth, srcHeight, rop.dwRop)
 
 proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
@@ -701,13 +701,13 @@ proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
   var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: alpha.byte,
     AlphaFormat: AC_SRC_ALPHA)
 
-  AlphaBlend(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
+  AlphaBlend(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
     srcWidth, srcHeight, bf)
 
 proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
     source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent = wWHITE) =
   ## Copy from a source DC to this DC and treat a RGB color as transparent.
-  TransparentBlt(mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc,
+  TransparentBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc,
     xsrc, ysrc, srcWidth, srcHeight, transparent)
 
 proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
@@ -726,31 +726,31 @@ proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
     var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255,
       AlphaFormat: AC_SRC_ALPHA)
 
-    AlphaBlend(mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0,
+    AlphaBlend(self.mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0,
       bmp.mWidth, bmp.mHeight, bf)
 
   else:
-    BitBlt(mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0, SRCCOPY)
+    BitBlt(self.mHdc, x, y, bmp.mWidth, bmp.mHeight, memdc, 0, 0, SRCCOPY)
 
 proc drawBitmap*(self: wDC, bmp: wBitmap, pos: wPoint, transparent = true) =
   ## Draw a bitmap on the device context at the specified point.
   wValidate(bmp)
-  drawBitmap(bmp, pos.x, pos.y)
+  self.drawBitmap(bmp, pos.x, pos.y)
 
 proc drawImage*(self: wDC, image: wImage, x, y: int = 0) =
   ## Draw a image on the device context at the specified point.
   wValidate(image)
-  drawBitmap(Bmp(image), x, y)
+  self.drawBitmap(Bmp(image), x, y)
 
 proc drawImage*(self: wDC, image: wImage, pos: wPoint) =
   ## Draw a image on the device context at the specified point.
   wValidate(image)
-  drawBitmap(Bmp(image), pos.x, pos.y)
+  self.drawBitmap(Bmp(image), pos.x, pos.y)
 
 proc drawIcon*(self: wDC, icon: wIcon, x, y: int = 0) =
   ## Draw an icon at the specified point.
   wValidate(icon)
-  DrawIconEx(mHdc, x, y, icon.mHandle, icon.mWidth, icon.mHeight, 0, 0, DI_NORMAL)
+  DrawIconEx(self.mHdc, x, y, icon.mHandle, icon.mWidth, icon.mHeight, 0, 0, DI_NORMAL)
 
 proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
     font = wDefaultFont, pen = wDefaultPen, brush = wDefaultBrush,
@@ -765,18 +765,18 @@ proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
 
 proc final*(self: var wDC) =
   ## Default finalizer for wDC.
-  if mhOldFont != 0:
-    SelectObject(mHdc, mhOldFont)
-    mhOldFont = 0
+  if self.mhOldFont != 0:
+    SelectObject(self.mHdc, self.mhOldFont)
+    self.mhOldFont = 0
 
-  if mhOldPen != 0:
-    SelectObject(mHdc, mhOldPen)
-    mhOldPen = 0
+  if self.mhOldPen != 0:
+    SelectObject(self.mHdc, self.mhOldPen)
+    self.mhOldPen = 0
 
-  if mhOldBrush != 0:
-    SelectObject(mHdc, mhOldBrush)
-    mhOldBrush = 0
+  if self.mhOldBrush != 0:
+    SelectObject(self.mHdc, self.mhOldBrush)
+    self.mhOldBrush = 0
 
-  if mhOldBitmap != 0:
-    SelectObject(mHdc, mhOldBitmap)
-    mhOldBitmap = 0
+  if self.mhOldBitmap != 0:
+    SelectObject(self.mHdc, self.mhOldBitmap)
+    self.mhOldBitmap = 0

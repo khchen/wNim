@@ -26,12 +26,12 @@ proc isIpEvent(msg: UINT): bool {.inline.} =
 
 method getIndex*(self: wIpEvent): int {.property, inline.} =
   ## The zero-based number of the field that was changed.
-  result = mIndex
+  result = self.mIndex
 
 method getValue*(self: wIpEvent): int {.property, inline.} =
   ## Gets the new value of the field.
-  result = mValue
+  result = self.mValue
 
 method setValue*(self: wIpEvent, value: int) {.property, inline.} =
   ## Sets the new value of the field.
-  mValue = value
+  self.mValue = value

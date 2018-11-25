@@ -35,4 +35,4 @@ proc isKeyEvent(msg: UINT): bool {.inline.} =
 
 method getKeyCode*(self: wKeyEvent): int {.property, inline.} =
   ## Returns the key code of the key that generated this event.
-  result = int mWparam
+  result = int self.mWparam

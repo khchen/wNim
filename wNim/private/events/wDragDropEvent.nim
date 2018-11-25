@@ -35,14 +35,14 @@ proc isDragDropEvent(msg: UINT): bool {.inline.} =
 
 method getDataObject*(self: wDragDropEvent): wDataObject {.property, inline.} =
   ## Returns the wDataObject object associated with the drop target.
-  result = mDataObject
+  result = self.mDataObject
 
 method getEffect*(self: wDragDropEvent): int {.property, inline.} =
   ## Returns the effect for drag and drop. *effect* should be one of wDragNone,
   ## wDragCopy, wDragMove or wDragLink.
-  result = mEffect
+  result = self.mEffect
 
 method setEffect*(self: wDragDropEvent, effect: int) {.property, inline.} =
   ## Sets the effect for drag and drop. *effect* should be one of wDragNone,
   ## wDragCopy, wDragMove or wDragLink.
-  mEffect = effect
+  self.mEffect = effect

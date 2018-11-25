@@ -37,7 +37,7 @@ proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int]
 
 template withMenuPos(id: wCommandID, body: untyped) =
   mixin self
-  let tup = find(id)
+  let tup = self.find(id)
   let menu {.inject.} = tup.menu
   let pos {.inject.} = tup.pos
   if menu != nil:

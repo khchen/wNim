@@ -109,7 +109,7 @@ proc setColumnWidth*(self: wListCtrl, col: int, width: int)
   ## *width* can be a width in pixels or wListAutosize (-1)
   ## or wListAutosizeUseHeader (-2).
   ## For wLcList mode, col must be set to 0.
-  SendMessage(mHwnd, LVM_SETCOLUMNWIDTH, col, width)
+  SendMessage(self.mHwnd, LVM_SETCOLUMNWIDTH, col, width)
 
 proc insertColumn*(self: wListCtrl, col: int, text = "",
     format = wListFormatLeft, width = wListAutosize,
@@ -129,18 +129,18 @@ proc insertColumn*(self: wListCtrl, col: int, text = "",
     lvcol.mask = lvcol.mask or LVCF_TEXT
     lvcol.pszText = &T(text)
 
-  result = int SendMessage(mHwnd, LVM_INSERTCOLUMN, col, &lvcol)
+  result = int SendMessage(self.mHwnd, LVM_INSERTCOLUMN, col, &lvcol)
   if result != -1:
-    mColCount.inc
+    self.mColCount.inc
 
     if width == wListAutosizeUseHeader:
-      setColumnWidth(result, LVSCW_AUTOSIZE_USEHEADER)
+      self.setColumnWidth(result, LVSCW_AUTOSIZE_USEHEADER)
 
 proc appendColumn*(self: wListCtrl, text = "", format = wListFormatLeft,
     width = wListAutosize, image = wListImageNone): int
     {.validate, inline, discardable.} =
   ## Adds a new column to the list control in report view mode.
-  insertColumn(mColCount, text, format, width, image)
+  self.insertColumn(self.mColCount, text, format, width, image)
 
 proc setColumn*(self: wListCtrl, col: int, text = "", format = wListIgnore,
     width = wListIgnore, image = wListIgnore) {.validate, property.} =
@@ -160,7 +160,7 @@ proc setColumn*(self: wListCtrl, col: int, text = "", format = wListIgnore,
   ## image       Zero-based index of the image associated with the item into the
   ##             image list.
   if width != wListIgnore:
-    setColumnWidth(col, width)
+    self.setColumnWidth(col, width)
 
   var lvcol: LVCOLUMN
   if text.len != 0:
@@ -175,68 +175,68 @@ proc setColumn*(self: wListCtrl, col: int, text = "", format = wListIgnore,
     lvcol.mask = lvcol.mask or LVCF_IMAGE
     lvcol.iImage = image
 
-  SendMessage(mHwnd, LVM_SETCOLUMN, col, &lvcol)
+  SendMessage(self.mHwnd, LVM_SETCOLUMN, col, &lvcol)
 
 proc setColumnText*(self: wListCtrl, col: int, text: string)
     {.validate, property, inline.} =
   ## Sets the column text.
   wValidate(text)
-  setColumn(col, text=text)
+  self.setColumn(col, text=text)
 
 proc setColumnFormat*(self: wListCtrl, col: int, format: int)
     {.validate, property, inline.} =
   ## Sets the column format.
-  setColumn(col, format=format)
+  self.setColumn(col, format=format)
 
 proc setColumnImage*(self: wListCtrl, col: int, image: int)
   {.validate, property, inline.} =
   ## Sets the column image.
-  setColumn(col, image=image)
+  self.setColumn(col, image=image)
 
 proc getColumnCount*(self: wListCtrl): int {.validate, property, inline.} =
   ## Returns the number of columns.
-  result = mColCount
+  result = self.mColCount
 
 proc getColumnWidth*(self: wListCtrl, col: int): int
     {.validate, property.} =
   ## Gets the column width.
-  result = int SendMessage(mHwnd, LVM_GETCOLUMNWIDTH, col, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETCOLUMNWIDTH, col, 0)
 
 proc getColumnFormat*(self: wListCtrl, col: int): int
     {.validate, property.} =
   ## Gets the column format.
   var lvcol = LVCOLUMN(mask: LVCF_FMT)
-  SendMessage(mHwnd, LVM_GETCOLUMN, col, &lvcol)
+  SendMessage(self.mHwnd, LVM_GETCOLUMN, col, &lvcol)
   result = lvcol.fmt
 
 proc getColumnImage*(self: wListCtrl, col: int): int
     {.validate, property.} =
   ## Gets the column format.
   var lvcol = LVCOLUMN(mask: LVCF_IMAGE)
-  SendMessage(mHwnd, LVM_GETCOLUMN, col, &lvcol)
+  SendMessage(self.mHwnd, LVM_GETCOLUMN, col, &lvcol)
   result = lvcol.iImage
 
 proc getColumnText*(self: wListCtrl, col: int): string {.validate, property.} =
   ## Gets the column text.
   var buffer = T(65536)
   var lvcol = LVCOLUMN(mask: LVCF_TEXT, cchTextMax: 65536, pszText: &buffer)
-  if SendMessage(mHwnd, LVM_GETCOLUMN, col, &lvcol) != 0:
+  if SendMessage(self.mHwnd, LVM_GETCOLUMN, col, &lvcol) != 0:
     buffer.nullTerminate
     result = $buffer
 
 proc getItemCount*(self: wListCtrl): int {.validate, property.} =
   ## Returns the number of items in the list control.
-  result = int SendMessage(mHwnd, LVM_GETITEMCOUNT, 0, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETITEMCOUNT, 0, 0)
 
 proc deleteColumn*(self: wListCtrl, col: int) {.validate.} =
   ## Deletes a column.
-  if SendMessage(mHwnd, LVM_DELETECOLUMN, col, 0) != 0:
-    mColCount.dec
+  if SendMessage(self.mHwnd, LVM_DELETECOLUMN, col, 0) != 0:
+    self.mColCount.dec
 
 proc deleteAllColumns*(self: wListCtrl) {.validate.} =
   ## Delete all columns in the list control.
-  while mColCount > 0:
-    deleteColumn(0)
+  while self.mColCount > 0:
+    self.deleteColumn(0)
 
 proc insertItem*(self: wListCtrl, index: int, text = "", image = wListImageNone,
     data: int = 0): int {.validate, discardable.} =
@@ -252,12 +252,12 @@ proc insertItem*(self: wListCtrl, index: int, text = "", image = wListImageNone,
     item.mask = item.mask or LVIF_PARAM
     item.lParam = data
 
-  result = int SendMessage(mHwnd, LVM_INSERTITEM, 0, &item)
+  result = int SendMessage(self.mHwnd, LVM_INSERTITEM, 0, &item)
 
 proc appendItem*(self: wListCtrl, text = "", image = wListImageNone,
     data: int = 0): int {.validate, inline, discardable.} =
   ## Adds an item.
-  result = insertItem(getItemCount(), text, image, data)
+  result = self.insertItem(self.getItemCount(), text, image, data)
 
 proc setItem*(self: wListCtrl, index: int, col: int = 0, text = "",
     image = wListIgnore, state = 0, flag = true) {.validate, property.} =
@@ -291,22 +291,22 @@ proc setItem*(self: wListCtrl, index: int, col: int = 0, text = "",
     item.stateMask = state
     item.state = if flag: state else: 0
 
-  SendMessage(mHwnd, LVM_SETITEM, 0, &item)
+  SendMessage(self.mHwnd, LVM_SETITEM, 0, &item)
 
 proc setItemText*(self: wListCtrl, index: int, col: int = 0, text: string)
     {.validate, property, inline.} =
   ## Sets the text of an item.
-  setItem(index, col, text=text)
+  self.setItem(index, col, text=text)
 
 proc setItemState*(self: wListCtrl, index: int, col: int = 0, state: int,
     flag = true) {.validate, property, inline.} =
   ## Sets the state of an item.
-  setItem(index, col, state=state, flag=flag)
+  self.setItem(index, col, state=state, flag=flag)
 
 proc setItemImage*(self: wListCtrl, index: int, col: int = 0, image: int)
     {.validate, property, inline.} =
   ## Sets the image of an item.
-  setItem(index, col, image=image)
+  self.setItem(index, col, image=image)
 
 proc setItemData*(self: wListCtrl, index: int, data: int)
     {.validate, property, inline.} =
@@ -314,7 +314,7 @@ proc setItemData*(self: wListCtrl, index: int, data: int)
   # lParam can only associated with an item,
   # If iSubItem != 0, lParam have no use.
   var item = LVITEM(iItem: index, mask: LVIF_PARAM, lParam: data)
-  SendMessage(mHwnd, LVM_SETITEM, 0, &item)
+  SendMessage(self.mHwnd, LVM_SETITEM, 0, &item)
 
 proc getItemText*(self: wListCtrl, index: int, col: int = 0): string
     {.validate, property.} =
@@ -323,7 +323,7 @@ proc getItemText*(self: wListCtrl, index: int, col: int = 0): string
   var item = LVITEM(mask: LVIF_TEXT, iItem: index, iSubItem: col,
     cchTextMax: 65536, pszText: &buffer)
 
-  if SendMessage(mHwnd, LVM_GETITEM, 0, &item) != 0:
+  if SendMessage(self.mHwnd, LVM_GETITEM, 0, &item) != 0:
     buffer.nullTerminate
     result = $buffer
 
@@ -331,68 +331,68 @@ proc getItemState*(self: wListCtrl, index: int, col: int = 0): int
     {.validate, property.} =
   ## Gets the item state.
   var item = LVITEM(mask: LVIF_STATE, iItem: index, iSubItem: col, stateMask: -1)
-  SendMessage(mHwnd, LVM_GETITEM, 0, &item)
+  SendMessage(self.mHwnd, LVM_GETITEM, 0, &item)
   result = item.state
 
 proc getItemImage*(self: wListCtrl, index: int, col: int = 0): int
     {.validate, property.} =
   ## Gets the item image.
   var item = LVITEM(mask: LVIF_IMAGE, iItem: index, iSubItem: col)
-  SendMessage(mHwnd, LVM_GETITEM, 0, &item)
+  SendMessage(self.mHwnd, LVM_GETITEM, 0, &item)
   result = item.iImage
 
 proc getItemData*(self: wListCtrl, index: int): int
     {.validate, property.} =
   ## Gets the application-defined data associated with this item.
   var item = LVITEM(mask: LVIF_PARAM, iItem: index)
-  SendMessage(mHwnd, LVM_GETITEM, 0, &item)
+  SendMessage(self.mHwnd, LVM_GETITEM, 0, &item)
   result = int item.lParam
 
 proc insertItem*(self: wListCtrl, index: int, texts: openarray[string],
     image = wListImageNone, data: int = 0): int {.validate, discardable.} =
   ## Inserts an item, and sets the text of subitems in the mean time.
   if texts.len >= 1:
-    result = insertItem(index, texts[0], image, data)
+    result = self.insertItem(index, texts[0], image, data)
     for i in 1..<texts.len:
-      setItem(result, i, texts[i])
+      self.setItem(result, i, texts[i])
 
 proc appendItem*(self: wListCtrl, texts: openarray[string],
     image = wListImageNone, data: int = 0): int {.validate, discardable.} =
   ## Adds an item, and sets the text of subitems in the mean time.
-  insertItem(getItemCount(), texts, image, data)
+  self.insertItem(self.getItemCount(), texts, image, data)
 
 proc deleteItem*(self: wListCtrl, index: int) {.validate.} =
   ## Deletes the specified item.
-  SendMessage(mHwnd, LVM_DELETEITEM, index, 0)
+  SendMessage(self.mHwnd, LVM_DELETEITEM, index, 0)
 
 proc deleteAllItems*(self: wListCtrl) {.validate.} =
   ## Deletes all items in the list control.
-  SendMessage(mHwnd, LVM_DELETEALLITEMS, 0, 0)
+  SendMessage(self.mHwnd, LVM_DELETEALLITEMS, 0, 0)
 
 proc clearAll*(self: wListCtrl) {.validate, inline.} =
   ## Deletes all items and all columns.
-  deleteAllItems()
-  deleteAllColumns()
+  self.deleteAllItems()
+  self.deleteAllColumns()
 
 iterator items*(self: wListCtrl): string {.validate.} =
   ## Iterate each item in this list control.
-  let count = getItemCount()
+  let count = self.getItemCount()
   var i = 0
   while i < count:
-    yield getItemText(i, 0)
+    yield self.getItemText(i, 0)
     i.inc
 
 iterator pairs*(self: wListCtrl): (int, string) {.validate.} =
   ## Iterates over each item in list control. Yields ``(index, [index])`` pairs.
-  let count = getItemCount()
+  let count = self.getItemCount()
   var i = 0
   while i < count:
-    yield (i, getItemText(i, 0))
+    yield (i, self.getItemText(i, 0))
     i.inc
 
 proc len*(self: wListCtrl): int {.validate, inline.} =
   ## Returns the number of items in the list control. The same as getItemCount().
-  result = getItemCount()
+  result = self.getItemCount()
 
 proc findItem*(self: wListCtrl, text: string, start: int = 0, partial = false): int
     {.validate.} =
@@ -403,19 +403,19 @@ proc findItem*(self: wListCtrl, text: string, start: int = 0, partial = false): 
     psz: T(text))
 
   # LVM_FINDITEM: The specified item is itself excluded from the search, so dec 1
-  result = int SendMessage(mHwnd, LVM_FINDITEM, start - 1, &findInfo)
+  result = int SendMessage(self.mHwnd, LVM_FINDITEM, start - 1, &findInfo)
 
 proc findItem*(self: wListCtrl, data: int, start: int = 0): int {.validate.} =
   ## Find an item whose data matches this data.
   var findInfo = LVFINDINFO(flags: LVFI_PARAM, lParam: data)
   # LVM_FINDITEM: The specified item is itself excluded from the search, so dec 1
-  result = int SendMessage(mHwnd, LVM_FINDITEM, start - 1, &findInfo)
+  result = int SendMessage(self.mHwnd, LVM_FINDITEM, start - 1, &findInfo)
 
 proc getItemPosition*(self: wListCtrl, index: int): wPoint
     {.validate, property.} =
   ## Returns the position of the item, in icon or small icon view.
   var pt: POINT
-  SendMessage(mHwnd, LVM_GETITEMPOSITION, index, &pt)
+  SendMessage(self.mHwnd, LVM_GETITEMPOSITION, index, &pt)
   result.x = pt.x
   result.y = pt.y
 
@@ -425,24 +425,24 @@ proc setItemPosition*(self: wListCtrl, index: int, pos: wPoint)
   var pt: POINT
   pt.x = pos.x
   pt.y = pos.y
-  SendMessage(mHwnd, LVM_SETITEMPOSITION32, index, &pt)
+  SendMessage(self.mHwnd, LVM_SETITEMPOSITION32, index, &pt)
 
 proc getItemSpacing*(self: wListCtrl): wSize {.validate, property.} =
   ## Retrieves the spacing between icons in pixels
-  let isSmall = (GetWindowLongPtr(mHwnd, GWL_STYLE) and LVS_SMALLICON) != 0
-  let spacing = SendMessage(mHwnd, LVM_GETITEMSPACING, isSmall, 0)
+  let isSmall = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and LVS_SMALLICON) != 0
+  let spacing = SendMessage(self.mHwnd, LVM_GETITEMSPACING, isSmall, 0)
   result.width = int LOWORD(spacing)
   result.height = int HIWORD(spacing)
 
 proc getTopItem*(self: wListCtrl): int {.validate, property.} =
   ## Gets the index of the topmost visible item when in list or report view.
-  result = int SendMessage(mHwnd, LVM_GETTOPINDEX, 0, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETTOPINDEX, 0, 0)
 
 proc getCountPerPage*(self: wListCtrl): int {.validate, property.} =
   ## Gets the number of items that can fit vertically in the visible area
   #  of the list control (list or report view) or the total number of items
   ## in the list control (icon or small icon view).
-  result = int SendMessage(mHwnd, LVM_GETCOUNTPERPAGE, 0, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETCOUNTPERPAGE, 0, 0)
 
 proc getItemRect*(self: wListCtrl, index: int, code = wListRectBounds): wRect
     {.validate, property.} =
@@ -450,7 +450,7 @@ proc getItemRect*(self: wListCtrl, index: int, code = wListRectBounds): wRect
   ## in physical coordinates. *code* is one of wListRectBounds, wListRectIcon,
   ## wListRectLabel or wListRectSelectBounds.
   var rect = RECT(left: code)
-  SendMessage(mHwnd, LVM_GETITEMRECT, index, &rect)
+  SendMessage(self.mHwnd, LVM_GETITEMRECT, index, &rect)
   result = toWRect(rect)
 
 proc getSubItemRect*(self: wListCtrl, index, col: int,
@@ -460,37 +460,37 @@ proc getSubItemRect*(self: wListCtrl, index, col: int,
   ## wListCtrl is in the report mode. *code* can be one wListRectBounds,
   ## wListRectIcon or wListRectLabel.
   var rect = RECT(top: col, left: code)
-  SendMessage(mHwnd, LVM_GETSUBITEMRECT, index, &rect)
+  SendMessage(self.mHwnd, LVM_GETSUBITEMRECT, index, &rect)
   result = toWRect(rect)
 
   if col == 0 and code == wListRectBounds:
     # fix width if col = 0, it will return full row width
-    result.width = getColumnWidth(0)
+    result.width = self.getColumnWidth(0)
 
 proc getViewRect*(self: wListCtrl): wRect {.validate, property.} =
   ## Returns the rectangle taken by all items in the control.
   ## Note that this function only works in the icon views, small icon views, and
   ## reprot views.
 
-  if (GetWindowLongPtr(mHwnd, GWL_STYLE) and LVS_REPORT) != 0:
-    let count = getItemCount()
+  if (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and LVS_REPORT) != 0:
+    let count = self.getItemCount()
     if count > 0:
-      result = getItemRect(min(getTopItem() + getCountPerPage(), count - 1))
+      result = self.getItemRect(min(self.getTopItem() + self.getCountPerPage(), count - 1))
       result.height += result.y
       result.y = 0
   else:
     # LVM_GETVIEWRECT only works for icon or small icon view.
     var rect: RECT
-    SendMessage(mHwnd, LVM_GETVIEWRECT, 0, &rect)
+    SendMessage(self.mHwnd, LVM_GETVIEWRECT, 0, &rect)
     result = toWRect(rect)
 
 proc getView*(self: wListCtrl): int {.validate, property.} =
   ## Gets the view style of list control. wLcIcon, wLcSmallIcon, wLcList or wLcReport.
-  result = int SendMessage(mHwnd, LVM_GETVIEW, 0, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETVIEW, 0, 0)
 
 proc setView*(self: wListCtrl, style: int) {.validate, property.} =
   ## Sets the view style of list contorl.
-  SendMessage(mHwnd, LVM_SETVIEW, style, 0)
+  SendMessage(self.mHwnd, LVM_SETVIEW, style, 0)
 
 proc setImageList*(self: wListCtrl, imageList: wImageList,
     which = wImageListSmall) {.validate, property.} =
@@ -498,78 +498,78 @@ proc setImageList*(self: wListCtrl, imageList: wImageList,
   ## *which* is one of wImageListNormal, wImageListSmall, wImageListState.
   wValidate(imageList)
   case which
-  of LVSIL_NORMAL: mImageListNormal = imageList
-  of LVSIL_SMALL: mImageListSmall = imageList
-  of LVSIL_STATE: mImageListState = imageList
+  of LVSIL_NORMAL: self.mImageListNormal = imageList
+  of LVSIL_SMALL: self.mImageListSmall = imageList
+  of LVSIL_STATE: self.mImageListState = imageList
   else: return
-  SendMessage(mHwnd, LVM_SETIMAGELIST, which, imageList.mHandle)
+  SendMessage(self.mHwnd, LVM_SETIMAGELIST, which, imageList.mHandle)
 
 proc getImageList*(self: wListCtrl, which = wImageListNormal): wImageList
     {.validate, property.} =
   ## Returns the specified image list.
   ## *which* is one of wImageListNormal, wImageListSmall, wImageListState.
   result = case which
-  of LVSIL_NORMAL: mImageListNormal
-  of LVSIL_SMALL: mImageListSmall
-  of LVSIL_STATE: mImageListState
+  of LVSIL_NORMAL: self.mImageListNormal
+  of LVSIL_SMALL: self.mImageListSmall
+  of LVSIL_STATE: self.mImageListState
   else: nil
 
 proc setTextColor*(self: wListCtrl, color: wColor) {.validate, property.} =
   ## Sets the text color of the list control.
-  SendMessage(mHwnd, LVM_SETTEXTCOLOR, 0, color)
+  SendMessage(self.mHwnd, LVM_SETTEXTCOLOR, 0, color)
 
 proc getTextColor*(self: wListCtrl): wColor {.validate, property.} =
   ## Gets the text color of the list control.
-  result = wColor SendMessage(mHwnd, LVM_GETTEXTCOLOR, 0, 0)
+  result = wColor SendMessage(self.mHwnd, LVM_GETTEXTCOLOR, 0, 0)
 
 method setBackgroundColor*(self: wListCtrl, color: wColor) {.property} =
   ## Sets the background color of the control.
   procCall wWindow(self).setBackgroundColor(color)
-  SendMessage(mHwnd, LVM_SETTEXTBKCOLOR, 0, color)
-  SendMessage(mHwnd, LVM_SETBKCOLOR, 0, color)
+  SendMessage(self.mHwnd, LVM_SETTEXTBKCOLOR, 0, color)
+  SendMessage(self.mHwnd, LVM_SETBKCOLOR, 0, color)
 
 method setForegroundColor*(self: wListCtrl, color: wColor) {.property} =
   ## Sets the foreground color of the control.
   procCall wWindow(self).setForegroundColor(color)
-  setTextColor(color)
+  self.setTextColor(color)
 
 proc setAlternateRowColor*(self: wListCtrl, color: wColor)
     {.validate, property, inline.} =
   ## Sets alternating row background colors. Use a negative color vlaue to
   ## start from first row.
-  mAlternateRowColor = color
+  self.mAlternateRowColor = color
 
 proc getAlternateRowColor*(self: wListCtrl): wColor {.validate, property, inline.} =
   ## Gets alternating row background colors.
-  result = mAlternateRowColor
+  result = self.mAlternateRowColor
 
 proc disableAlternateRowColors*(self: wListCtrl) {.validate, property, inline.} =
   ## Disable alternating row background colors.
-  mAlternateRowColor = -1
+  self.mAlternateRowColor = -1
 
 proc enableAlternateRowColors*(self: wListCtrl, flag = true) {.validate.} =
   ## Enable alternating row background colors. The appropriate color for the
   ## even rows is chosen automatically.
   if flag:
-    if mAlternateRowColor == -1:
-      let r = (mBackgroundColor.GetRValue().float * 0.9).byte
-      let g = (mBackgroundColor.GetGValue().float * 0.9).byte
-      let b = (mBackgroundColor.GetBValue().float * 0.9).byte
-      mAlternateRowColor = RGB(r, g, b)
+    if self.mAlternateRowColor == -1:
+      let r = (self.mBackgroundColor.GetRValue().float * 0.9).byte
+      let g = (self.mBackgroundColor.GetGValue().float * 0.9).byte
+      let b = (self.mBackgroundColor.GetBValue().float * 0.9).byte
+      self.mAlternateRowColor = RGB(r, g, b)
 
   else:
-    disableAlternateRowColors()
+    self.disableAlternateRowColors()
 
 proc getSelectedItemCount*(self: wListCtrl): int {.validate, property.} =
   ## Returns the number of selected items in the list control.
-  result = int SendMessage(mHwnd, LVM_GETSELECTEDCOUNT, 0, 0)
+  result = int SendMessage(self.mHwnd, LVM_GETSELECTEDCOUNT, 0, 0)
 
 proc getColumnsOrder*(self: wListCtrl): seq[int] {.validate, property.} =
   ## Returns the seq containing the orders of all columns.
-  var buffer = newSeq[int32](mColCount)
-  newSeq(result, mColCount)
-  if SendMessage(mHwnd, LVM_GETCOLUMNORDERARRAY, mColCount, &buffer[0]) != 0:
-    for i in 0..<mColCount:
+  var buffer = newSeq[int32](self.mColCount)
+  newSeq(result, self.mColCount)
+  if SendMessage(self.mHwnd, LVM_GETCOLUMNORDERARRAY, self.mColCount, &buffer[0]) != 0:
+    for i in 0..<self.mColCount:
       result[i] = buffer[i]
 
 proc setColumnsOrder*(self: wListCtrl, orders: openarray[int]) {.validate, property.} =
@@ -577,11 +577,11 @@ proc setColumnsOrder*(self: wListCtrl, orders: openarray[int]) {.validate, prope
   var buffer = newSeq[int32](orders.len)
   for i in 0..<orders.len:
     buffer[i] = orders[i].int32
-  SendMessage(mHwnd, LVM_SETCOLUMNORDERARRAY, orders.len, &buffer[0])
+  SendMessage(self.mHwnd, LVM_SETCOLUMNORDERARRAY, orders.len, &buffer[0])
 
 proc ensureVisible*(self: wListCtrl, index: int) {.validate.} =
   ## Ensures this item is visible.
-  SendMessage(mHwnd, LVM_ENSUREVISIBLE, index, false)
+  SendMessage(self.mHwnd, LVM_ENSUREVISIBLE, index, false)
 
 proc hitTest*(self: wListCtrl, x: int, y: int): tuple[index, col, flag: int]
     {.validate.} =
@@ -601,20 +601,20 @@ proc hitTest*(self: wListCtrl, x: int, y: int): tuple[index, col, flag: int]
   var info: LV_HITTESTINFO
   info.pt.x = x
   info.pt.y = y
-  result.index = int SendMessage(mHwnd, LVM_SUBITEMHITTEST, 0, &info)
+  result.index = int SendMessage(self.mHwnd, LVM_SUBITEMHITTEST, 0, &info)
   result.col = info.iSubItem
   result.flag = info.flags
 
 proc hitTest*(self: wListCtrl, pos: wPoint): tuple[index, col, flag: int]
     {.validate, inline.} =
   ## The same as hitTest().
-  result = hitTest(pos.x, pos.y)
+  result = self.hitTest(pos.x, pos.y)
 
 proc arrange*(self: wListCtrl, flag = wListAlignDefault) {.validate.} =
   ## Arranges the items in icon or small icon view.
   ## *flag* is one of: wListAlignDefault, wListAlignLeft, wListAlignTop,
   ## wListAlignSnapToGrid
-  SendMessage(mHwnd, LVM_ARRANGE, flag, 0)
+  SendMessage(self.mHwnd, LVM_ARRANGE, flag, 0)
 
 proc getNextItem*(self: wListCtrl, start: int, geometry: int, state: int): int
     {.validate, property.} =
@@ -624,15 +624,15 @@ proc getNextItem*(self: wListCtrl, start: int, geometry: int, state: int): int
   ## wListStateDontCare, wListStateDropHighlighted, wListStateFocused,
   ## wListStateSelected, wListStateCut.
   # The specified item itself is excluded from the search.
-  result = int SendMessage(mHwnd, LVM_GETNEXTITEM, start - 1, geometry or state)
+  result = int SendMessage(self.mHwnd, LVM_GETNEXTITEM, start - 1, geometry or state)
 
 proc refreshItem*(self: wListCtrl, item: int, itemTo = -1) {.validate.} =
   ## Redraws the given item or items between item and itemTo.
-  SendMessage(mHwnd, LVM_REDRAWITEMS, item, if itemTo < 0: item else: itemTo)
+  SendMessage(self.mHwnd, LVM_REDRAWITEMS, item, if itemTo < 0: item else: itemTo)
 
 proc scrollList*(self: wListCtrl, dx: int, dy: int) {.validate.} =
   ## Scrolls the list control.
-  SendMessage(mHwnd, LVM_SCROLL, dx, dy)
+  SendMessage(self.mHwnd, LVM_SCROLL, dx, dy)
 
 
 type
@@ -653,7 +653,7 @@ proc sortItems*(self: wListCtrl, callback: wListCtrl_Compare, data: int = 0)
   ## The extra parameter *data* is the value passed into callback funtion
   ## as third parameter.
   var sortData = wListCtrl_SortData(fn: callback, data: data)
-  SendMessage(mHwnd, LVM_SORTITEMS, &sortData, wListCtrl_CompareFunc)
+  SendMessage(self.mHwnd, LVM_SORTITEMS, &sortData, wListCtrl_CompareFunc)
 
 proc sortItemsByIndex*(self: wListCtrl, callback: wListCtrl_Compare, data: int = 0)
     {.validate.} =
@@ -661,62 +661,62 @@ proc sortItemsByIndex*(self: wListCtrl, callback: wListCtrl_Compare, data: int =
   ## is the item index. You can use getItemText() to retrieve more information
   ## on an item if needed.
   var sortData = wListCtrl_SortData(fn: callback, data: data)
-  SendMessage(mHwnd, LVM_SORTITEMSEX, &sortData, wListCtrl_CompareFunc)
+  SendMessage(self.mHwnd, LVM_SORTITEMSEX, &sortData, wListCtrl_CompareFunc)
 
 proc setExtendedStyle*(self: wListCtrl, exStyle: DWORD, flag = true)
     {.validate, property.} =
   ## Sets extended styles in the list controls. See MSDN about
   ## "Extended List-View Styles" for more information.
-  SendMessage(mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, exStyle, if flag: exStyle else: 0)
+  SendMessage(self.mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, exStyle, if flag: exStyle else: 0)
 
 proc getExtendedStyle*(self: wListCtrl): DWORD {.validate, property.} =
   ## Gets the extended styles that are currently in use for the list control.
-  result = DWORD SendMessage(mHwnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0)
+  result = DWORD SendMessage(self.mHwnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0)
 
 proc enableCheckBoxes*(self: wListCtrl, enable = true) {.validate, inline.} =
   ## Enable or disable checkboxes for list items.
-  setExtendedStyle(LVS_EX_CHECKBOXES, enable)
+  self.setExtendedStyle(LVS_EX_CHECKBOXES, enable)
 
 proc hasCheckBoxes*(self: wListCtrl): bool {.validate.} =
   ## Returns true if checkboxes are enabled for list items.
-  let style = getExtendedStyle()
+  let style = self.getExtendedStyle()
   result = (style and LVS_EX_CHECKBOXES) != 0
 
 proc checkItem*(self: wListCtrl, index: int, state = true) {.validate.} =
   ## Check or uncheck a item in a control using checkboxes.
-  ListView_SetCheckState(mHwnd, index, state)
+  ListView_SetCheckState(self.mHwnd, index, state)
 
 proc isItemChecked*(self: wListCtrl, index: int): bool {.validate.} =
   ## Return true if the checkbox for the given index is checked.
-  result = bool ListView_GetCheckState(mHwnd, index)
+  result = bool ListView_GetCheckState(self.mHwnd, index)
 
 proc getEditControl*(self: wListCtrl): wTextCtrl {.validate, property.} =
   ## Returns the edit control being currently used to edit a label.
   ## Returns nil if no label is being edited.
-  let hwnd = HWND SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0)
+  let hwnd = HWND SendMessage(self.mHwnd, LVM_GETEDITCONTROL, 0, 0)
   if hwnd != 0:
-    assert mTextCtrl.mHwnd == hwnd
-    result = mTextCtrl
+    assert self.mTextCtrl.mHwnd == hwnd
+    result = self.mTextCtrl
 
 proc editLabel*(self: wListCtrl, index: int): wTextCtrl {.validate, discardable.} =
   ## Starts editing the label of the given item.
   # LVM_EDITLABEL requires that the list has focus.
-  setFocus()
-  let hwnd = HWND SendMessage(mHwnd, LVM_EDITLABEL, index, 0)
+  self.setFocus()
+  let hwnd = HWND SendMessage(self.mHwnd, LVM_EDITLABEL, index, 0)
   if hwnd != 0:
-    assert hwnd == mTextCtrl.mHwnd
-    result = mTextCtrl
+    assert hwnd == self.mTextCtrl.mHwnd
+    result = self.mTextCtrl
 
 proc endEditLabel*(self: wListCtrl, cancel = false) {.validate.} =
   ## Finish editing the label.
-  let hwnd = HWND SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0)
+  let hwnd = HWND SendMessage(self.mHwnd, LVM_GETEDITCONTROL, 0, 0)
   if hwnd != 0:
-    assert hwnd == mTextCtrl.mHwnd
+    assert hwnd == self.mTextCtrl.mHwnd
     SendMessage(hwnd, WM_KEYDOWN, if cancel: VK_ESCAPE else: VK_RETURN, 0)
 
 method getBestSize*(self: wListCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  let ret = SendMessage(mHwnd, LVM_APPROXIMATEVIEWRECT, -1, MAKELPARAM(-1, -1))
+  let ret = SendMessage(self.mHwnd, LVM_APPROXIMATEVIEWRECT, -1, MAKELPARAM(-1, -1))
   result.width = int LOWORD(ret)
   result.height = int HIWORD(ret)
 
@@ -774,11 +774,11 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
   else: 0
 
   if msg != 0:
-    return self.processEvent(ListEvent(msg, lParam))
+    return self.processEvent(self.ListEvent(msg, lParam))
 
   case code
   of HDN_BEGINTRACK:
-    let event = ListEvent(wEvent_ListColBeginDrag, lParam)
+    let event = self.ListEvent(wEvent_ListColBeginDrag, lParam)
     let processed = self.processEvent(event)
     if processed and not event.isAllowed:
       # MSDN: Returns FALSE to allow tracking of the divider, or TRUE to prevent tracking.
@@ -788,42 +788,42 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
   of HDN_ITEMCHANGING:
     let pnh = cast[LPNMHEADER](lParam)
     if pnh.pitem != nil and (pnh.pitem.mask and HDI_WIDTH) != 0 and
-        getColumnWidth(pnh.iItem) != pnh.pitem.cxy:
+        self.getColumnWidth(pnh.iItem) != pnh.pitem.cxy:
 
-      let event = ListEvent(wEvent_ListColDragging, lParam)
+      let event = self.ListEvent(wEvent_ListColDragging, lParam)
       if event.leftDown():
         return self.processEvent(event)
 
   of NM_RCLICK:
-    let isHeader = cast[LPNMHDR](lparam).hwndFrom != mHwnd
+    let isHeader = cast[LPNMHDR](lparam).hwndFrom != self.mHwnd
     let msg = if isHeader: wEvent_ListColRightClick else: wEvent_ListItemRightClick
-    return self.processEvent(ListEvent(msg, lParam))
+    return self.processEvent(self.ListEvent(msg, lParam))
 
   of LVN_DELETEALLITEMS:
-    self.processEvent(ListEvent(wEvent_ListDeleteAllItems, lParam))
+    self.processEvent(self.ListEvent(wEvent_ListDeleteAllItems, lParam))
     # MSDN: To suppress subsequent LVN_DELETEITEM notification codes, return TRUE.
     ret = TRUE
     return true # must return true so that TRUE will pass to who send WM_NOTIFY
 
   of LVN_BEGINLABELEDIT:
-    let hwnd = HWND SendMessage(mHwnd, LVM_GETEDITCONTROL, 0, 0)
+    let hwnd = HWND SendMessage(self.mHwnd, LVM_GETEDITCONTROL, 0, 0)
     if hwnd != 0:
-      mTextCtrl = TextCtrl(hwnd)
+      self.mTextCtrl = TextCtrl(hwnd)
 
-    let event = ListEvent(wEvent_ListBeginLabelEdit, lParam)
+    let event = self.ListEvent(wEvent_ListBeginLabelEdit, lParam)
     let processed = self.processEvent(event)
     if processed and not event.isAllowed:
       # MSDN: To prevent the user from editing the label, return TRUE.
       ret = TRUE
       # if here return TRUE, LVN_ENDLABELEDIT won't be fired.
-      mTextCtrl = nil
+      self.mTextCtrl = nil
 
     return processed
 
   of LVN_ENDLABELEDIT:
-    mTextCtrl = nil
+    self.mTextCtrl = nil
 
-    let event = ListEvent(wEvent_ListEndLabelEdit, lParam)
+    let event = self.ListEvent(wEvent_ListEndLabelEdit, lParam)
     if self.processEvent(event) and not event.isAllowed:
       # MSDN: Return FALSE to reject the edited text and revert to the original label.
       # logic here is inverted !!
@@ -843,7 +843,7 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
       if (oldSt and LVIS_FOCUSED) == 0 and (newSt and LVIS_FOCUSED) != 0:
         processed = processed or
-          self.processEvent(ListEvent(wEvent_ListItemFocused, lParam))
+          self.processEvent(self.ListEvent(wEvent_ListItemFocused, lParam))
 
       if (oldSt and LVIS_SELECTED) != (newSt and LVIS_SELECTED):
         let msg =
@@ -852,18 +852,18 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
           else:
             wEvent_ListItemDeselected
         processed = processed or
-          self.processEvent(ListEvent(msg, lParam))
+          self.processEvent(self.ListEvent(msg, lParam))
 
       if (newSt and LVIS_STATEIMAGEMASK) != (oldSt and LVIS_STATEIMAGEMASK) and
           oldSt != INDEXTOSTATEIMAGEMASK(0):
 
         if newSt == INDEXTOSTATEIMAGEMASK(1):
           processed = processed or
-            self.processEvent(ListEvent(wEvent_ListitemUnchecked, lParam))
+            self.processEvent(self.ListEvent(wEvent_ListitemUnchecked, lParam))
 
         elif newSt == INDEXTOSTATEIMAGEMASK(2):
           processed = processed or
-            self.processEvent(ListEvent(wEvent_ListitemChecked, lParam))
+            self.processEvent(self.ListEvent(wEvent_ListitemChecked, lParam))
 
     return processed
 
@@ -917,10 +917,10 @@ proc final*(self: wListCtrl) =
   discard
 
 method release(self: wListCtrl) =
-  mImageListNormal = nil
-  mImageListSmall = nil
-  mImageListState = nil
-  mTextCtrl = nil
+  self.mImageListNormal = nil
+  self.mImageListSmall = nil
+  self.mImageListState = nil
+  self.mTextCtrl = nil
 
 proc init*(self: wListCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wLcIcon) {.validate.} =
@@ -930,16 +930,16 @@ proc init*(self: wListCtrl, parent: wWindow, id: wCommandID = wDefaultID,
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
     LVS_SHAREIMAGELISTS or LVS_SHOWSELALWAYS)
 
-  SendMessage(mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or
+  SendMessage(self.mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or
     LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)
 
   # set default background color
-  setBackgroundColor(wColor SendMessage(mHwnd, LVM_GETBKCOLOR, 0, 0))
-  disableAlternateRowColors()
+  self.setBackgroundColor(wColor SendMessage(self.mHwnd, LVM_GETBKCOLOR, 0, 0))
+  self.disableAlternateRowColors()
 
-  hardConnect(WM_PAINT, wListCtrl_OnPaint)
+  self.hardConnect(WM_PAINT, wListCtrl_OnPaint)
 
-  hardConnect(wEvent_Navigation) do (event: wEvent):
+  self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
 

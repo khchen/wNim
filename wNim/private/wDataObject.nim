@@ -46,11 +46,11 @@ proc isText*(self: wDataObject): bool {.validate.} =
     lindex: -1,
     tymed: TYMED_HGLOBAL)
 
-  if mObj.QueryGetData(&format) == S_OK:
+  if self.mObj.QueryGetData(&format) == S_OK:
     return true
 
   format.cfFormat = CF_TEXT
-  if mObj.QueryGetData(&format) == S_OK:
+  if self.mObj.QueryGetData(&format) == S_OK:
     return true
 
 proc getText*(self: wDataObject): string {.validate.} =
@@ -66,10 +66,10 @@ proc getText*(self: wDataObject): string {.validate.} =
 
   var isUnicode = true
   var medium: STGMEDIUM
-  if mObj.GetData(&format, &medium) != S_OK:
+  if self.mObj.GetData(&format, &medium) != S_OK:
     format.cfFormat = CF_TEXT
     isUnicode = false
-    if mObj.GetData(&format, &medium) != S_OK:
+    if self.mObj.GetData(&format, &medium) != S_OK:
       return
 
   if medium.tymed == TYMED_HGLOBAL:
@@ -91,10 +91,10 @@ proc isFiles*(self: wDataObject): bool {.validate.} =
     lindex: -1,
     tymed: TYMED_HGLOBAL)
 
-  if mObj.QueryGetData(&format) == S_OK:
+  if self.mObj.QueryGetData(&format) == S_OK:
     # only return true if there are some files.
     var medium: STGMEDIUM
-    if mObj.GetData(&format, &medium) == S_OK:
+    if self.mObj.GetData(&format, &medium) == S_OK:
       if medium.tymed == TYMED_HGLOBAL:
         let count = DragQueryFile(medium.u.hGlobal, -1, nil, 0)
         if count >= 1:
@@ -109,7 +109,7 @@ iterator getFiles*(self: wDataObject): string {.validate.} =
     tymed: TYMED_HGLOBAL)
 
   var medium: STGMEDIUM
-  if mObj.GetData(&format, &medium) == S_OK:
+  if self.mObj.GetData(&format, &medium) == S_OK:
     if medium.tymed == TYMED_HGLOBAL:
       var buffer = T(65536)
       let count = DragQueryFile(medium.u.hGlobal, -1, nil, 0)
@@ -122,7 +122,7 @@ iterator getFiles*(self: wDataObject): string {.validate.} =
 proc getFiles*(self: wDataObject): seq[string] {.validate, inline.} =
   ## Gets the files list as seq.
   result = @[]
-  for file in getFiles():
+  for file in self.getFiles():
     result.add file
 
 proc isBitmap*(self: wDataObject): bool {.validate.} =
@@ -133,7 +133,7 @@ proc isBitmap*(self: wDataObject): bool {.validate.} =
     lindex: -1,
     tymed: TYMED_GDI)
 
-  if mObj.QueryGetData(&format) == S_OK:
+  if self.mObj.QueryGetData(&format) == S_OK:
     return true
 
 proc getBitmap*(self: wDataObject): wBitmap {.validate.} =
@@ -145,7 +145,7 @@ proc getBitmap*(self: wDataObject): wBitmap {.validate.} =
     tymed: TYMED_GDI)
 
   var medium: STGMEDIUM
-  if mObj.GetData(&format, &medium) == S_OK:
+  if self.mObj.GetData(&format, &medium) == S_OK:
     if medium.tymed == TYMED_GDI:
       result = Bmp(medium.u.hBitmap, copy=true)
 
@@ -164,7 +164,7 @@ proc doDragDrop*(self: wDataObject, flags: int = wDragCopy or wDragMove or
   when not defined(wnimdoc):
     # I don't know why the docgen don't like following code, the proc will disappear
     var effect: DWORD
-    result = case SHDoDragDrop(0, mObj, nil, flags, &effect)
+    result = case SHDoDragDrop(0, self.mObj, nil, flags, &effect)
     of DRAGDROP_S_DROP:
       effect
     of DRAGDROP_S_CANCEL:
@@ -177,23 +177,23 @@ proc delete*(self: wDataObject) {.validate.} =
   ## However, sometimes you maybe want do that by yourself.
   ## Moreover, if the data object is still on the clipboard, delete
   ## it will force to flush it.
-  if OleIsCurrentClipboard(mObj):
+  if OleIsCurrentClipboard(self.mObj):
     OleFlushClipboard()
 
-  if mReleasable and mObj != nil:
-    mObj.Release()
+  if self.mReleasable and self.mObj != nil:
+    self.mObj.Release()
 
-  mObj = nil
-  mBmp = nil
+  self.mObj = nil
+  self.mBmp = nil
 
 proc final*(self: wDataObject) {.validate.} =
   ## Default finalizer for wDataObject.
-  delete()
+  self.delete()
 
 proc init*(self: wDataObject, dataObj: ptr IDataObject) {.validate, inline.} =
   ## Initializer.
-  mObj = dataObj
-  mReleasable = false
+  self.mObj = dataObj
+  self.mReleasable = false
 
 proc DataObject*(dataObj: ptr IDataObject): wDataObject {.inline.} =
   ## Constructor.
@@ -220,12 +220,12 @@ proc ensureSHCreateFileDataObject() =
 proc init*(self: wDataObject, text: string) {.validate.} =
   ## Initializer.
   ensureSHCreateFileDataObject()
-  if SHCreateFileDataObject(nil, 0, nil, nil, &mObj) != S_OK: error()
+  if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
 
-  # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &mObj) != S_OK:
+  # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
   #   error()
 
-  mReleasable = true
+  self.mReleasable = true
 
   var format = FORMATETC(
     dwAspect: DVASPECT_CONTENT,
@@ -240,17 +240,17 @@ proc init*(self: wDataObject, text: string) {.validate.} =
     mstr = -$text
     pMstr = GlobalAlloc(GPTR, SIZE_T mstr.len + 1)
 
-  if pWstr == 0 or pMstr == 0: error()
+  if pWstr == 0 or pMstr == 0: self.error()
   cast[ptr WCHAR](pWstr) <<< wstr
   cast[ptr char](pMstr) <<< mstr
 
   format.cfFormat = CF_UNICODETEXT
   medium.u.hGlobal = pWstr
-  if mObj.SetData(&format, &medium, TRUE) != S_OK: error()
+  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
   format.cfFormat = CF_TEXT
   medium.u.hGlobal = pMstr
-  if mObj.SetData(&format, &medium, TRUE) != S_OK: error()
+  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
 proc DataObject*(text: string): wDataObject {.inline.} =
   ## Constructor from text.
@@ -259,23 +259,25 @@ proc DataObject*(text: string): wDataObject {.inline.} =
 
 proc init*(self: wDataObject, files: openarray[string]) {.validate.} =
   ## Initializer.
-  if files.len == 0: error()
+  if files.len == 0: self.error()
   ensureSHCreateFileDataObject()
 
   var pidlDesk: PIDLIST_ABSOLUTE
-  if SHGetSpecialFolderLocation(0, CSIDL_DESKTOP, &pidlDesk) != S_OK: error()
+  if SHGetSpecialFolderLocation(0, CSIDL_DESKTOP, &pidlDesk) != S_OK: self.error()
   defer: CoTaskMemFree(pidlDesk)
 
   var apidl = newSeqOfCap[PIDLIST_ABSOLUTE](files.len)
   var buffer = T(65536)
   for file in files:
-    if GetFullPathName(file, 65536, &buffer, nil) == 0: error()
+    if GetFullPathName(file, 65536, &buffer, nil) == 0: self.error()
     var il = ILCreateFromPath(buffer)
-    if il == nil: error()
+    if il == nil: self.error()
     apidl.add(il)
 
-  if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &mObj) != S_OK: error()
-  mReleasable = true
+  if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &self.mObj) != S_OK:
+    self.error()
+
+  self.mReleasable = true
 
   for il in apidl:
     ILFree(il)
@@ -289,9 +291,9 @@ proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
   ensureSHCreateFileDataObject()
-  if SHCreateFileDataObject(nil, 0, nil, nil, &mObj) != S_OK: error()
-  mReleasable = true
-  mBmp = Bmp(bmp)
+  if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
+  self.mReleasable = true
+  self.mBmp = Bmp(bmp)
 
   var format = FORMATETC(
     cfFormat: CF_BITMAP,
@@ -300,8 +302,8 @@ proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
     tymed: TYMED_GDI)
 
   var medium = STGMEDIUM(tymed: TYMED_GDI)
-  medium.u.hBitmap = mBmp.mHandle
-  if mObj.SetData(&format, &medium, TRUE) != S_OK: error()
+  medium.u.hBitmap = self.mBmp.mHandle
+  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
 proc DataObject*(bmp: wBitmap): wDataObject {.inline.} =
   ## Constructor from bitmap.
@@ -313,14 +315,14 @@ proc init*(self: wDataObject, dataObj: wDataObject) {.validate.} =
   ## Initializer.
   wValidate(dataObj)
   if dataObj.isText():
-    init(dataObj.getText())
+    self.init(dataObj.getText())
   elif dataObj.isFiles():
-    init(dataObj.getFiles())
+    self.init(dataObj.getFiles())
   elif dataObj.isBitmap():
     # don't add self it become wBitmap.init
     self.init(dataObj.getBitmap())
   else:
-    error()
+    self.error()
 
 proc DataObject*(dataObj: wDataObject): wDataObject {.inline.} =
   ## Copy constructor.

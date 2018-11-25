@@ -57,22 +57,22 @@ proc isTreeEvent(msg: UINT): bool {.inline.} =
 
 method getItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
   ## Returns the item.
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = mHandle
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = self.mHandle
 
 method getOldItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
   ## Returns the old item (valid for wEvent_TreeSelChanging and wEvent_TreeSelChanged events).
-  result.mTreeCtrl = mTreeCtrl
-  result.mHandle = mOldHandle
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = self.mOldHandle
 
 method getText*(self: wTreeEvent): string {.property, inline.} =
   ## The (new) item label for wEvent_TreeEndLabelEdit event.
-  result = mText
+  result = self.mText
 
 method getInsertMark*(self: wTreeEvent): int {.property, inline.} =
   ## Retrun insert mark position (valid for wEvent_TreeEndDrag event).
-  result = mInsertMark
+  result = self.mInsertMark
 
 method getPoint*(self: wTreeEvent): wPoint {.property, inline.} =
   ## Returns the position of the mouse pointer if the event is a drag or menu-context event.
-  result = mPoint
+  result = self.mPoint

@@ -48,17 +48,17 @@ const
 
 proc final*(self: wBrush) =
   ## Default finalizer for wBrush.
-  delete()
+  self.delete()
 
 proc initFromNative(self: wBrush, lb: var LOGBRUSH) =
   self.wGdiObject.init()
 
-  mHandle = CreateBrushIndirect(lb)
-  if mHandle == 0:
-    raise newException(wFontError, "wBrush creation failure")
+  self.mHandle = CreateBrushIndirect(lb)
+  if self.mHandle == 0:
+    raise newException(wBrushError, "wBrush creation failure")
 
-  mColor = lb.lbColor
-  mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)
+  self.mColor = lb.lbColor
+  self.mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)
 
 proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.validate.} =
   ## Initializer.
@@ -74,7 +74,7 @@ proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.val
   else:
     lb.lbStyle = BS_SOLID
 
-  initFromNative(lb)
+  self.initFromNative(lb)
 
 proc Brush*(color: wColor = wWHITE, style = wBrushStyleSolid): wBrush {.inline.} =
   ## Constructs a brush from a color and style.
@@ -85,7 +85,7 @@ proc init*(self: wBrush, hBrush: HANDLE) {.validate.} =
   ## Initializer.
   var lb: LOGBRUSH
   GetObject(hBrush, sizeof(lb), &lb)
-  initFromNative(lb)
+  self.initFromNative(lb)
 
 proc Brush*(hBrush: HANDLE): wBrush {.inline.} =
   ## Construct wBrush object from a system brush handle.
@@ -94,7 +94,7 @@ proc Brush*(hBrush: HANDLE): wBrush {.inline.} =
 
 proc init*(self: wBrush, brush: wBrush) {.validate.} =
   ## Initializer.
-  init(brush.mHandle)
+  self.init(brush.mHandle)
 
 proc Brush*(brush: wBrush): wBrush {.inline.} =
   ## Copy constructor
@@ -104,18 +104,18 @@ proc Brush*(brush: wBrush): wBrush {.inline.} =
 
 proc getColor*(self: wBrush): wColor {.validate, property, inline.} =
   ## Returns a reference to the brush color.
-  result = mColor
+  result = self.mColor
 
 proc getStyle*(self: wBrush): DWORD {.validate, property, inline.} =
   ## Returns the brush style.
-  result = mStyle
+  result = self.mStyle
 
 proc setColor*(self: wBrush, color: wColor) {.validate, property.} =
   ## Sets the brush color.
-  DeleteObject(mHandle)
-  init(color=color, style=mStyle)
+  DeleteObject(self.mHandle)
+  self.init(color=color, style=self.mStyle)
 
 proc setStyle*(self: wBrush, style: DWORD) {.validate, property.} =
   ## Sets the brush style.
-  DeleteObject(mHandle)
-  init(color=mColor, style=style)
+  DeleteObject(self.mHandle)
+  self.init(color=self.mColor, style=style)

@@ -121,23 +121,23 @@ const
 
 proc final*(self: wFont) =
   ## Default finalizer for wFont.
-  delete()
+  self.delete()
 
 proc initFromNative(self: wFont, lf: var LOGFONT) =
   self.wGdiObject.init()
 
-  mHandle = CreateFontIndirect(lf)
-  if mHandle == 0:
+  self.mHandle = CreateFontIndirect(lf)
+  if self.mHandle == 0:
     raise newException(wFontError, "wFont creation failure")
 
-  mPointSize = -(lf.lfHeight * 72 / wGetDPI())
-  mWeight = lf.lfWeight
-  mFaceName = $lf.lfFaceName
-  mFaceName.nullTerminate()
-  mEncoding = int lf.lfCharSet
-  mFamily = int(lf.lfPitchAndFamily and 0b000)
-  mItalic = (lf.lfItalic != 0)
-  mUnderline = (lf.lfUnderline != 0)
+  self.mPointSize = -(lf.lfHeight * 72 / wGetDPI())
+  self.mWeight = lf.lfWeight
+  self.mFaceName = $lf.lfFaceName
+  self.mFaceName.nullTerminate()
+  self.mEncoding = int lf.lfCharSet
+  self.mFamily = int(lf.lfPitchAndFamily and 0b000)
+  self.mItalic = (lf.lfItalic != 0)
+  self.mUnderline = (lf.lfUnderline != 0)
 
 proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
     weight = wFontWeightNormal, italic = false, underline = false,
@@ -167,7 +167,7 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
   if faceName.len != 0:
     lf.lfFaceName <<< T(faceName)
 
-  initFromNative(lf)
+  self.initFromNative(lf)
 
 proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
     weight = wFontWeightNormal, italic = false, underline = false,
@@ -190,12 +190,12 @@ proc init*(self: wFont, hFont: HANDLE) {.validate.} =
   ## Initializer.
   if GetObjectType(hFont) == 0:
     # maybe it means pointSize?
-    init(float hFont)
+    self.init(float hFont)
 
   else:
     var lf: LOGFONT
     GetObject(hFont, sizeof(LOGFONT), cast[pointer](&lf))
-    initFromNative(lf)
+    self.initFromNative(lf)
 
 proc Font*(hFont: HANDLE): wFont {.inline.} =
   ## Construct wFont object from a system font handle.
@@ -205,7 +205,7 @@ proc Font*(hFont: HANDLE): wFont {.inline.} =
 proc init*(self: wFont, font: wFont) {.validate.} =
   ## Initializer.
   wValidate(font)
-  init(font.mHandle)
+  self.init(font.mHandle)
 
 proc Font*(font: wFont): wFont {.inline.} =
   ## Copy constructor
@@ -215,70 +215,77 @@ proc Font*(font: wFont): wFont {.inline.} =
 
 proc getPointSize*(self: wFont): float {.validate, property, inline.} =
   ## Gets the point size.
-  result = mPointSize
+  result = self.mPointSize
 
 proc getFamily*(self: wFont): int {.validate, property, inline.} =
   ## Gets the font family if possible.
-  result = mFamily
+  result = self.mFamily
 
 proc getWeight*(self: wFont): int {.validate, property, inline.} =
   ## Gets the font weight.
-  result = mWeight
+  result = self.mWeight
 
 proc getItalic*(self: wFont): bool {.validate, property, inline.} =
   ## Gets true if font is italic.
-  result = mItalic
+  result = self.mItalic
 
 proc getUnderlined*(self: wFont): bool {.validate, property, inline.} =
   ## Gets true if font is underlined.
-  result = mUnderline
+  result = self.mUnderline
 
 proc getFaceName*(self: wFont): string {.validate, property, inline.} =
   ## Gets the font family if possible.
-  result = mFaceName
+  result = self.mFaceName
 
 proc getEncoding*(self: wFont): int {.validate, property, inline.} =
   ## Gets the encoding of this font.
-  result = mEncoding
+  result = self.mEncoding
 
 proc setPointSize*(self: wFont, pointSize: float) {.validate, property.} =
   ## Sets the point size.
-  DeleteObject(mHandle)
-  init(pointSize=pointSize, family=mFamily, weight=mWeight, italic=mItalic,
-    underline=mUnderline, faceName=mFaceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=pointSize, family=self.mFamily, weight=self.mWeight,
+    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
+    encoding=self.mEncoding)
 
 proc setFamily*(self: wFont, family: int) {.validate, property.} =
   ## Sets the font family.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=family, weight=mWeight, italic=mItalic,
-    underline=mUnderline, faceName=mFaceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=family, weight=self.mWeight,
+    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
+    encoding=self.mEncoding)
 
 proc setWeight*(self: wFont, weight: int) {.validate, property.} =
   ## Sets the font weight.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=mFamily, weight=weight, italic=mItalic,
-    underline=mUnderline, faceName=mFaceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=weight,
+    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
+    encoding=self.mEncoding)
 
 proc setItalic*(self: wFont, italic: bool) {.validate, property.} =
   ## Sets the font italic style.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=mFamily, weight=mWeight, italic=italic,
-    underline=mUnderline, faceName=mFaceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
+    italic=italic, underline=self.mUnderline, faceName=self.mFaceName,
+    encoding=self.mEncoding)
 
 proc setUnderlined*(self: wFont, underline: bool) {.validate, property.} =
   ## Sets underlining.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=mFamily, weight=mWeight, italic=mItalic,
-    underline=underline, faceName=mFaceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
+    italic=self.mItalic, underline=underline, faceName=self.mFaceName,
+    encoding=self.mEncoding)
 
 proc setFaceName*(self: wFont, faceName: string) {.validate, property.} =
   ## Sets the facename for the font.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=mFamily, weight=mWeight, italic=mItalic,
-    underline=mUnderline, faceName=faceName, encoding=mEncoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
+    italic=self.mItalic, underline=self.mUnderline, faceName=faceName,
+    encoding=self.mEncoding)
 
 proc setEncoding*(self: wFont, encoding: int) {.validate, property.} =
   ## Sets the encoding for this font.
-  DeleteObject(mHandle)
-  init(pointSize=mPointSize, family=mFamily, weight=mWeight, italic=mItalic,
-    underline=mUnderline, faceName=mFaceName, encoding=encoding)
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
+    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
+    encoding=encoding)

@@ -89,5 +89,5 @@ proc isMouseEvent(msg: UINT): bool {.inline.} =
 
 method getWheelRotation*(self: wMouseEvent): int {.property.} =
   ## Get wheel rotation, positive or negative indicates direction of rotation.
-  if mMsg == wEvent_MouseWheel:
-    result = int GET_WHEEL_DELTA_WPARAM(mWparam)
+  if self.mMsg == wEvent_MouseWheel:
+    result = int GET_WHEEL_DELTA_WPARAM(self.mWparam)

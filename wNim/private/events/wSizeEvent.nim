@@ -35,5 +35,5 @@ proc isSizeEvent(msg: UINT): bool {.inline.} =
 
 method getSize*(self: wSizeEvent): wSize {.property.} =
   ## Returns the entire size of the window generating the size change event.
-  result.width = GET_X_LPARAM(mLparam)
-  result.height = GET_Y_LPARAM(mLparam)
+  result.width = GET_X_LPARAM(self.mLparam)
+  result.height = GET_Y_LPARAM(self.mLparam)

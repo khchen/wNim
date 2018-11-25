@@ -53,12 +53,12 @@ proc isScrollEvent(msg: UINT): bool {.inline.} =
 method getKind*(self: wScrollEvent): int {.property, inline.} =
   ## Returns what kind of event type this is. Basically used in wEvent_ScrollBar
   ## or wEvent_Slider.
-  let dataPtr = cast[ptr wScrollData](mLparam)
+  let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.kind
 
 method getOrientation*(self: wScrollEvent): int {.property, inline.} =
   ## Returns wHORIZONTAL or wVERTICAL
-  let dataPtr = cast[ptr wScrollData](mLparam)
+  let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.orientation
 
 method getScrollPos*(self: wScrollEvent): int {.property.} =

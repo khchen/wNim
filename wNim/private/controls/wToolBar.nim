@@ -54,55 +54,55 @@ const
 # toolbar's best size and default size are current size
 method getBestSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the best size for the tool bar.
-  result = getSize()
+  result = self.getSize()
 
 method getDefaultSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the default size for the tool bar.
-  result = getSize()
+  result = self.getSize()
 
 proc getToolByPos(self: wToolBar, pos: Natural): wToolBarTool =
   var button = TBBUTTON()
-  if SendMessage(mHwnd, TB_GETBUTTON, pos, &button) != 0:
+  if SendMessage(self.mHwnd, TB_GETBUTTON, pos, &button) != 0:
     result = cast[wToolBarTool](button.dwData)
 
 proc getToolById(self: wToolBar, toolId: wCommandID): wToolBarTool =
   var buttonInfo = TBBUTTONINFO(cbSize: sizeof(TBBUTTONINFO), dwMask: TBIF_LPARAM)
-  if SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo).int >= 0:
+  if SendMessage(self.mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo).int >= 0:
     result = cast[wToolBarTool](buttonInfo.lParam)
 
 proc getToolsCount*(self: wToolBar): int {.validate, property, inline.} =
   # Returns the number of tools in the toolbar.
-  result = int SendMessage(mHwnd, TB_BUTTONCOUNT, 0, 0)
+  result = int SendMessage(self.mHwnd, TB_BUTTONCOUNT, 0, 0)
 
 proc getToolPos*(self: wToolBar, toolId: wCommandID): int {.validate, property.} =
   ## Returns the tool position in the toolbar, or wNOT_FOUND if the tool is not found.
   var buttonInfo = TBBUTTONINFO(cbSize: sizeof(TBBUTTONINFO))
-  result = int SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
+  result = int SendMessage(self.mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
 
 proc getToolSize*(self: wToolBar): wSize {.validate, property.} =
   ## Returns the size of a whole button.
-  let ret = SendMessage(mHwnd, TB_GETBUTTONSIZE, 0, 0)
+  let ret = SendMessage(self.mHwnd, TB_GETBUTTONSIZE, 0, 0)
   result = (int LOWORD(ret), int HIWORD(ret))
 
 proc deleteToolByPos*(self: wToolBar, pos: Natural) {.validate.} =
   ## This function behaves like deleteTool but it deletes the tool at the
   ## specified position.
-  let tool = getToolByPos(pos)
+  let tool = self.getToolByPos(pos)
   if tool != nil:
-    SendMessage(mHwnd, TB_DELETEBUTTON, pos, 0)
-    mTools.delete(pos)
+    SendMessage(self.mHwnd, TB_DELETEBUTTON, pos, 0)
+    self.mTools.delete(pos)
 
 proc deleteTool*(self: wToolBar, toolId: wCommandID) {.validate.} =
   ##Removes the specified tool from the toolbar and deletes it.
   while true:
-    let pos = getToolPos(toolId)
+    let pos = self.getToolPos(toolId)
     if pos == wNOT_FOUND: break
-    deleteToolByPos(pos)
+    self.deleteToolByPos(pos)
 
 proc clearTools*(self: wToolBar) {.validate.} =
   ##　Deletes all the tools in the toolbar.
-  for i in 1..getToolsCount():
-    deleteToolByPos(0)
+  for i in 1..self.getToolsCount():
+    self.deleteToolByPos(0)
 
 proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "", kind: int = wTbNormal)
@@ -120,130 +120,130 @@ proc insertTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
 
   elif bitmap != nil:
     let size = bitmap.getSize()
-    SendMessage(mHwnd, TB_SETBITMAPSIZE, 0, MAKELONG(size.width, size.height))
+    SendMessage(self.mHwnd, TB_SETBITMAPSIZE, 0, MAKELONG(size.width, size.height))
 
     var addBitmap = TTBADDBITMAP(nID: cast[UINT_PTR](bitmap.mHandle))
-    button.iBitmap = int32 SendMessage(mHwnd, TB_ADDBITMAP, 1, &addBitmap)
+    button.iBitmap = int32 SendMessage(self.mHwnd, TB_ADDBITMAP, 1, &addBitmap)
 
   var tool = wToolBarTool(mBitmap: bitmap, mShortHelp: shortHelp, mLongHelp: longHelp)
   button.dwData = cast[DWORD_PTR](tool)
 
-  if SendMessage(mHwnd, TB_INSERTBUTTON, pos, &button) != 0:
-    SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
-    mTools.add tool
+  if SendMessage(self.mHwnd, TB_INSERTBUTTON, pos, &button) != 0:
+    SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
+    self.mTools.add tool
 
 proc insertSeparator*(self: wToolBar, pos: int) {.validate, inline.} =
   ## Inserts the separator into the toolbar at the given position.
-  insertTool(pos, toolId=0, kind=wTbSeparator)
+  self.insertTool(pos, toolId=0, kind=wTbSeparator)
 
 proc insertCheckTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Insert the check (or toggle) tool into the toolbar at the given position.
-  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
+  self.insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
 
 proc insertRadioTool*(self: wToolBar, pos: int, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Insert the radio tool into the toolbar at the given position.
-  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
+  self.insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
 
 proc insertDropDownTool*(self: wToolBar, pos: int, toolId: wCommandID,
     label = "", bitmap: wBitmap = nil, shortHelp = "", longHelp = "")
     {.validate, inline.} =
   ## Insert the drowdown tool into the toolbar at the given position.
-  insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
+  self.insertTool(pos, toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
 
 proc addTool*(self: wToolBar, toolId: wCommandID, label = "", bitmap: wBitmap = nil,
     shortHelp = "", longHelp = "", kind: int = wTbNormal) {.validate, inline.} =
   ## Adds a tool to the toolbar.
-  insertTool(getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind)
+  self.insertTool(self.getToolsCount(), toolId, label, bitmap, shortHelp, longHelp, kind)
 
 proc addSeparator*(self: wToolBar) {.validate, inline.} =
   ## Adds a separator for spacing groups of tools.
-  addTool(toolId=0, kind=wTbSeparator)
+  self.addTool(toolId=0, kind=wTbSeparator)
 
 proc addCheckTool*(self: wToolBar, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new check (or toggle) tool to the toolbar.
-  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
+  self.addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbCheck)
 
 proc addRadioTool*(self: wToolBar, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new radio tool to the toolbar.
-  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
+  self.addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbRadio)
 
 proc addDropDownTool*(self: wToolBar, toolId: wCommandID, label = "",
     bitmap: wBitmap = nil, shortHelp = "", longHelp = "") {.validate, inline.} =
   ## Adds a new drowdown tool to the toolbar.
-  addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
+  self.addTool(toolId, label, bitmap, shortHelp, longHelp, kind=wTbDropDown)
 
 proc enableTool*(self: wToolBar, toolId: wCommandID, enable = true)
     {.validate, inline.} =
   ## Enables or disables the tool.
-  SendMessage(mHwnd, TB_ENABLEBUTTON, toolId, enable)
+  SendMessage(self.mHwnd, TB_ENABLEBUTTON, toolId, enable)
 
 proc disableTool*(self: wToolBar, toolId: wCommandID, enable = true)
     {.validate, inline.} =
   ## Disables the tool.
-  enableTool(toolId, false)
+  self.enableTool(toolId, false)
 
 proc getToolEnabled*(self: wToolBar, toolId: wCommandID): bool
     {.validate, property, inline.} =
   ## Called to determine whether a tool is enabled (responds to user input).
-  result = (SendMessage(mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_ENABLED) != 0
+  result = (SendMessage(self.mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_ENABLED) != 0
 
 proc toggleTool*(self: wToolBar, toolId: wCommandID, toggle = true) {.validate.} =
   ## Toggles a tool on or off.
-  var state = SendMessage(mHwnd, TB_GETSTATE, toolId, 0).WORD
+  var state = SendMessage(self.mHwnd, TB_GETSTATE, toolId, 0).WORD
   if toggle:
     state = state or TBSTATE_CHECKED.WORD
   else:
     state = state and (not TBSTATE_CHECKED.WORD)
-  SendMessage(mHwnd, TB_SETSTATE, toolId, state)
+  SendMessage(self.mHwnd, TB_SETSTATE, toolId, state)
 
 proc getToolState*(self: wToolBar, toolId: wCommandID): bool
     {.validate, property, inline.} =
   ## Gets the on/off state of a toggle tool.
-  result = (SendMessage(mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_CHECKED) != 0
+  result = (SendMessage(self.mHwnd, TB_GETSTATE, toolId, 0) and TBSTATE_CHECKED) != 0
 
 proc getToolShortHelp*(self: wToolBar, toolId: wCommandID): string
     {.validate, property, inline.} =
   ## Returns the short help for the given tool.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     result = tool.mShortHelp
 
 proc setToolShortHelp*(self: wToolBar, toolId: wCommandID,
     shortHelp = "") {.validate, property, inline.} =
   ## Sets the short help for the given tool.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     tool.mShortHelp = shortHelp
 
 proc getToolLongHelp*(self: wToolBar, toolId: wCommandID): string
     {.validate, property, inline.} =
   ## Returns the long help for the given tool.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     result = tool.mLongHelp
 
 proc setToolLongHelp*(self: wToolBar, toolId: wCommandID,
     longHelp = "") {.validate, property, inline.} =
   ## Sets the long help for the given tool.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     tool.mLongHelp = longHelp
 
 proc getDropdownMenu*(self: wToolBar, toolId: wCommandID): wMenu
     {.validate, property, inline.} =
   ## Returns the dropdown menu for the given tool.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     result = tool.mMenu
 
 proc setDropdownMenu*(self: wToolBar, toolId: wCommandID, menu: wMenu = nil)
     {.validate, property, inline.} =
   ## Sets the dropdown menu for the tool given by its id.
-  let tool = getToolById(toolId)
+  let tool = self.getToolById(toolId)
   if tool != nil:
     tool.mMenu = menu
 
@@ -256,7 +256,7 @@ proc getToolLabel*(self: wToolBar, toolId: wCommandID): string
     dwMask: TBIF_TEXT,
     cchText: 65535,
     pszText: &buffer)
-  SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
+  SendMessage(self.mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
   buffer.nullTerminate
   result = $buffer
 
@@ -264,11 +264,11 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     {.validate, property.} =
   ## Sets the label for the tool given by its id.
   # need to recreate a button so that TB_AUTOSIZE works
-  let pos = getToolPos(toolId)
+  let pos = self.getToolPos(toolId)
   if pos >= 0:
     var buttonInfo = TBBUTTONINFO(cbSize: sizeof(TBBUTTONINFO),
       dwMask: TBIF_IMAGE or TBIF_STATE or TBIF_STYLE or TBIF_LPARAM)
-    SendMessage(mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
+    SendMessage(self.mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
 
     var button = TBBUTTON(
       fsState: buttonInfo.fsState,
@@ -280,9 +280,9 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     if label.len != 0:
       button.iString = cast[INT_PTR](&T(label))
 
-    SendMessage(mHwnd, TB_DELETEBUTTON, pos, 0)
-    SendMessage(mHwnd, TB_INSERTBUTTON, pos, &button)
-    SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
+    SendMessage(self.mHwnd, TB_DELETEBUTTON, pos, 0)
+    SendMessage(self.mHwnd, TB_INSERTBUTTON, pos, &button)
+    SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
 method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
@@ -291,7 +291,7 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
   of TTN_GETDISPINFO:
     # show the tip (short help)
     var pNMTTDISPINFO = cast[LPNMTTDISPINFO](lparam)
-    let tool = getToolById(wCommandID id)
+    let tool = self.getToolById(wCommandID id)
     if tool != nil:
       pNMTTDISPINFO.lpszText = T(tool.mShortHelp)
     return true
@@ -301,7 +301,7 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
     var
       pNMTBHOTITEM = cast[LPNMTBHOTITEM](lparam)
       statusBar: wStatusBar
-      parent = mParent
+      parent = self.mParent
 
     while parent != nil:
       if parent.mStatusBar != nil:
@@ -312,7 +312,7 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
     if statusBar != nil:
       var text: string
       if pNMTBHOTITEM.idNew != 0:
-        let tool = getToolById(wCommandID pNMTBHOTITEM.idNew)
+        let tool = self.getToolById(wCommandID pNMTBHOTITEM.idNew)
         if tool != nil:
           text = tool.mLongHelp
       statusBar.setStatusText(text)
@@ -355,8 +355,8 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
     processed = true
 
 method release(self: wToolBar) =
-  mParent.systemDisconnect(mSizeConn)
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mSizeConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wToolBar) =
   ## Default finalizer for wToolBar.
@@ -366,24 +366,24 @@ proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
     style: wStyle = wTbDefaultStyle) {.validate.} =
   ## Initializer.
   wValidate(parent)
-  mTools = @[]
+  self.mTools = @[]
 
   self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id,
     style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
 
-  SendMessage(mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
-  SendMessage(mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
+  SendMessage(self.mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
+  SendMessage(self.mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 
   parent.mToolBar = self
-  mFocusable = false
+  self.mFocusable = false
   # todo: handle key navigation by TB_SETHOTITEM?
 
-  mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
-    SendMessage(mHwnd, TB_AUTOSIZE, 0, 0)
+  self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
+    SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
-  mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
     # translate WM_COMMAND to wEvent_Tool
-    if event.mLparam == mHwnd and HIWORD(event.mWparam) == 0:
+    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == 0:
       self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
 
   # send WM_MENUCOMMAND to wFrame (if there has one)
@@ -391,7 +391,7 @@ proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
   # this already be done in wControl
 
   # show the popupmenu is a default behavior, but can be overridden.
-  hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
+  self.hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
 
 proc ToolBar*(parent: wWindow, id = wDefaultID,
     style: wStyle = wTbDefaultStyle): wToolBar {.inline, discardable.} =

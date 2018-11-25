@@ -29,20 +29,20 @@ proc isMoveEvent(msg: UINT): bool {.inline.} =
 
 method getPosition*(self: wMoveEvent): wPoint {.property.} =
   ## Returns the entire size of the window generating the size change event.
-  if mMsg in {WM_MOVE, wEvent_Dragging}:
-    result.x = GET_X_LPARAM(mLparam)
-    result.y = GET_Y_LPARAM(mLparam)
-  elif mMsg == WM_MOVING:
-    var rect = toWRect(cast[PRECT](mLparam)[])
+  if self.mMsg in {WM_MOVE, wEvent_Dragging}:
+    result.x = GET_X_LPARAM(self.mLparam)
+    result.y = GET_Y_LPARAM(self.mLparam)
+  elif self.mMsg == WM_MOVING:
+    var rect = toWRect(cast[PRECT](self.mLparam)[])
     result.x = rect.x
     result.y = rect.y
 
 method setPosition*(self: wMoveEvent, x: int, y: int) {.property.} =
-  if mMsg == WM_MOVING:
-    var rect = toWRect(cast[PRECT](mLparam)[])
+  if self.mMsg == WM_MOVING:
+    var rect = toWRect(cast[PRECT](self.mLparam)[])
     rect.x = x
     rect.y = y
-    cast[PRECT](mLparam)[] = toRect(rect)
+    cast[PRECT](self.mLparam)[] = toRect(rect)
 
 method setPosition*(self: wMoveEvent, pos: wPoint) {.property.} =
   self.setPosition(pos.x, pos.y)

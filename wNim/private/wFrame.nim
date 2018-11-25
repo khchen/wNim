@@ -77,12 +77,12 @@ proc setMenuBar*(self: wFrame, menuBar: wMenuBar) {.validate, property, inline.}
 
 proc getMenuBar*(self: wFrame): wMenuBar {.validate, property, inline.} =
   ## Returns the menubar currently associated with the frame.
-  result = mMenuBar
+  result = self.mMenuBar
 
 proc setTopMost*(self: wFrame, top = true) {.validate, property.} =
   ## Sets whether the frame top most to all windows.
   let flag = if top: HWND_TOPMOST else: HWND_NOTOPMOST
-  SetWindowPos(mHwnd, flag, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE)
+  SetWindowPos(self.mHwnd, flag, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE)
 
 proc createStatusBar*(self: wFrame, number: int = 1, style: wStyle = 0,
     id: wCommandID = 0): wStatusBar {.validate, property, discardable.} =
@@ -93,72 +93,72 @@ proc createStatusBar*(self: wFrame, number: int = 1, style: wStyle = 0,
 
 proc setIcon*(self: wFrame, icon: wIcon) {.validate, property.} =
   ## Sets the icon for this frame.
-  mIcon = icon
-  SendMessage(mHwnd, WM_SETICON, ICON_SMALL, if icon != nil: icon.mHandle else: 0)
+  self.mIcon = icon
+  SendMessage(self.mHwnd, WM_SETICON, ICON_SMALL, if icon != nil: icon.mHandle else: 0)
 
 proc getIcon*(self: wFrame): wIcon {.validate, property, inline.} =
   ## Returns the standard icon.
-  result = mIcon
+  result = self.mIcon
 
 proc minimize*(self: wFrame, flag = true) {.validate.} =
   ## Minimizes or restores the frame
-  if isShownOnScreen():
-    ShowWindow(mHwnd, if flag: SW_MINIMIZE else: SW_RESTORE)
+  if self.isShownOnScreen():
+    ShowWindow(self.mHwnd, if flag: SW_MINIMIZE else: SW_RESTORE)
 
 proc iconize*(self: wFrame, flag = true) {.validate, inline.} =
   ## Iconizes or restores the frame. The same as minimize().
-  minimize(flag)
+  self.minimize(flag)
 
 proc maximize*(self: wFrame, flag = true) {.validate.} =
   ## Maximizes or restores the frame.
-  if isShownOnScreen():
-    ShowWindow(mHwnd, if flag: SW_MAXIMIZE else: SW_RESTORE)
+  if self.isShownOnScreen():
+    ShowWindow(self.mHwnd, if flag: SW_MAXIMIZE else: SW_RESTORE)
 
 proc restore*(self: wFrame) {.validate, inline.} =
   ## Restore a previously iconized or maximized frame to its normal state.
-  ShowWindow(mHwnd, SW_RESTORE)
+  ShowWindow(self.mHwnd, SW_RESTORE)
 
 proc isIconized*(self: wFrame): bool {.validate, inline.} =
   ## Returns true if the frame is iconized.
-  result = IsIconic(mHwnd) != 0
+  result = IsIconic(self.mHwnd) != 0
 
 proc isMaximized*(self: wFrame): bool {.validate, inline.} =
   ## Returns true if the frame is maximized.
-  result = IsZoomed(mHwnd) != 0
+  result = IsZoomed(self.mHwnd) != 0
 
 proc enableCloseButton*(self: wFrame, flag = true) {.validate.} =
   ## Enables or disables the Close button.
-  var hmenu = GetSystemMenu(mHwnd, 0)
+  var hmenu = GetSystemMenu(self.mHwnd, 0)
   EnableMenuItem(hmenu, SC_CLOSE, UINT(MF_BYCOMMAND or (if flag: MF_ENABLED else : MF_GRAYED)))
-  DrawMenuBar(mHwnd)
+  DrawMenuBar(self.mHwnd)
 
 proc disableCloseButton*(self: wFrame) {.validate, inline.} =
   ## Disables the Close button.
-  enableCloseButton(false)
+  self.enableCloseButton(false)
 
 proc enableMaximizeButton*(self: wFrame, flag = true) {.validate.} =
   ## Enables or disables the Maximize button.
-  var value = GetWindowLongPtr(mHwnd, GWL_STYLE)
-  SetWindowLongPtr(mHwnd, GWL_STYLE, if flag: value or WS_MAXIMIZEBOX else: value and (not WS_MAXIMIZEBOX))
+  var value = GetWindowLongPtr(self.mHwnd, GWL_STYLE)
+  SetWindowLongPtr(self.mHwnd, GWL_STYLE, if flag: value or WS_MAXIMIZEBOX else: value and (not WS_MAXIMIZEBOX))
 
 proc disableMaximizeButton*(self: wFrame) {.validate, inline.} =
   ## Disables the Maximize button.
-  enableMaximizeButton(false)
+  self.enableMaximizeButton(false)
 
 proc enableMinimizeButton*(self: wFrame, flag = true) {.validate.} =
   ## Enables or disables the Minimize button.
-  var value = GetWindowLongPtr(mHwnd, GWL_STYLE)
-  SetWindowLongPtr(mHwnd, GWL_STYLE, if flag: value or WS_MINIMIZEBOX else: value and (not WS_MINIMIZEBOX))
+  var value = GetWindowLongPtr(self.mHwnd, GWL_STYLE)
+  SetWindowLongPtr(self.mHwnd, GWL_STYLE, if flag: value or WS_MINIMIZEBOX else: value and (not WS_MINIMIZEBOX))
 
 proc disableMinimizeButton*(self: wFrame) {.validate, inline.} =
   ## Disables the Minimize button.
-  enableMinimizeButton(false)
+  self.enableMinimizeButton(false)
 
 proc shortcutId(self: wFrame, flag: int, keyCode: int): wCommandID =
-  var accel = getAcceleratorTable()
+  var accel = self.getAcceleratorTable()
   if accel == nil:
     accel = AcceleratorTable()
-    setAcceleratorTable(accel)
+    self.setAcceleratorTable(accel)
 
   var id = keyCode
   if (flag and wAccelCtrl) != 0: id = id or 0x100
@@ -174,26 +174,26 @@ proc shortcut*(self: wFrame, flag: int, keyCode: int,
   ## Quickly bind a keyboard shortcut to an event handler.
   ## If this frame not yet have a accelerator table, it will create a new one.
   ## This function use wCommandID between 64257..65535.
-  return self.connect(shortcutId(flag, keyCode), handler)
+  return self.connect(self.shortcutId(flag, keyCode), handler)
 
 proc shortcut*(self: wFrame, flag: int, keyCode: int,
     handler: wEventNeatHandler): wEventConnection {.validate, discardable.} =
   ## Quickly bind a keyboard shortcut to an event handler.
   ## If this frame not yet have a accelerator table, it will create a new one.
   ## This function use wCommandID between 64257..65535.
-  return self.connect(shortcutId(flag, keyCode), handler)
+  return self.connect(self.shortcutId(flag, keyCode), handler)
 
 proc showModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows the frame as an application-modal dialog.
   ## Program flow does not return until the dialog has been dismissed with EndModal.
-  mDisableList = newSeq[wWindow]()
+  self.mDisableList = newSeq[wWindow]()
 
   for topwin in wAppTopLevelWindows():
     if topwin != self and topwin.isEnabled():
       topwin.disable()
-      mDisableList.add(topwin)
+      self.mDisableList.add(topwin)
 
-  show()
+  self.show()
   result = MessageLoop(isMainLoop=false)
 
 proc endModal*(self: wFrame, retCode: int = 0) =
@@ -202,24 +202,24 @@ proc endModal*(self: wFrame, retCode: int = 0) =
 
   # MSDN: the application must enable the main window before destroying the
   # dialog box
-  for topwin in mDisableList:
+  for topwin in self.mDisableList:
     topwin.enable()
-  mDisableList = @[]
+  self.mDisableList = @[]
 
   # use wEvent_AppQuit to end the loop in showModal
   PostMessage(0, wEvent_AppQuit, WPARAM retCode, 0)
-  hide()
+  self.hide()
 
 proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.} =
   ## Creates the system tray icon.
   wValidate(icon)
   if icon != nil:
-    mTrayIcon = icon
-    mTrayToolTip = tooltip
+    self.mTrayIcon = icon
+    self.mTrayToolTip = tooltip
 
     var nid = NOTIFYICONDATA(
       cbSize: sizeof(NOTIFYICONDATA),
-      hWnd: mHwnd,
+      hWnd: self.mHwnd,
       uFlags: NIF_MESSAGE or NIF_ICON,
       hIcon: icon.mHandle,
       uCallbackMessage: wEvent_TrayIcon)
@@ -228,17 +228,17 @@ proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.
       nid.uFlags = nid.uFlags or NIF_TIP
       nid.szTip << T(tooltip)
 
-    if Shell_NotifyIcon(if mTrayIconAdded: NIM_MODIFY else: NIM_ADD, &nid):
-      if not mTrayIconAdded:
-        mTrayIconAdded = true
+    if Shell_NotifyIcon(if self.mTrayIconAdded: NIM_MODIFY else: NIM_ADD, &nid):
+      if not self.mTrayIconAdded:
+        self.mTrayIconAdded = true
 
         let msgTaskbarCreated = RegisterWindowMessage("TaskbarCreated")
-        mCreateConn = systemConnect(msgTaskbarCreated) do (event: wEvent):
+        self.mCreateConn = self.systemConnect(msgTaskbarCreated) do (event: wEvent):
           # taskbar crash, recreate trayicon
-          mTrayIconAdded = false
-          self.setTrayIcon(mTrayIcon, mTrayToolTip)
+          self.mTrayIconAdded = false
+          self.setTrayIcon(self.mTrayIcon, self.mTrayToolTip)
 
-        mTrayConn = systemConnect(wEvent_TrayIcon) do (event: wEvent):
+        self.mTrayConn = self.systemConnect(wEvent_TrayIcon) do (event: wEvent):
           let msg = case event.lParam
           of WM_LBUTTONDOWN: wEvent_TrayLeftDown
           of WM_LBUTTONUP: wEvent_TrayLeftUp
@@ -254,14 +254,14 @@ proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.
 
 proc removeTrayIcon*(self: wFrame) {.validate.} =
   ## Removes the system tray icon.
-  if mTrayIconAdded:
-    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: mHwnd)
+  if self.mTrayIconAdded:
+    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: self.mHwnd)
     Shell_NotifyIcon(NIM_DELETE, &nid)
-    mTrayIconAdded = false
-    mTrayIcon = nil
-    mTrayToolTip = ""
-    systemDisconnect(mCreateConn)
-    systemDisconnect(mTrayConn)
+    self.mTrayIconAdded = false
+    self.mTrayIcon = nil
+    self.mTrayToolTip = ""
+    self.systemDisconnect(self.mCreateConn)
+    self.systemDisconnect(self.mTrayConn)
 
 proc showBalloon*(self: wFrame, title: string, text: string, timeout: int = 3000,
     flag = wBallonNone) {.validate.} =
@@ -269,15 +269,15 @@ proc showBalloon*(self: wFrame, title: string, text: string, timeout: int = 3000
   ## tray icon. *flag* is one of wBallonNone, wBallonInfo, wBallonWarning or
   ## wBallonError.
   wValidate(title, text)
-  if mTrayIconAdded:
+  if self.mTrayIconAdded:
     # uVersion and uTimeout in the union, need setter
-    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: mHwnd)
+    var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: self.mHwnd)
     nid.uVersion = 3
     Shell_NotifyIcon(NIM_SETVERSION, &nid)
 
     nid = NOTIFYICONDATA(
       cbSize: sizeof(NOTIFYICONDATA),
-      hWnd: mHwnd,
+      hWnd: self.mHwnd,
       uFlags: NIF_INFO)
 
     nid.uTimeout = timeout
@@ -307,7 +307,7 @@ proc wFrame_DoSize(event: wEvent) =
     childOne.setSize(0, 0, clientSize.width, clientSize.height)
 
 proc findFocusableChild(self: wWindow): wWindow =
-  for win in mChildren:
+  for win in self.mChildren:
     if win.isFocusable():
       return win
     elif win.mChildren.len > 0:
@@ -454,7 +454,7 @@ proc final*(self: wFrame) =
 
 method release(self: wFrame) =
   # delete the tray icon (if any)
-  removeTrayIcon()
+  self.removeTrayIcon()
 
 proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
@@ -464,15 +464,15 @@ proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
     style=style or WS_CLIPCHILDREN, owner=owner, className=className,
     bgColor=GetSysColor(COLOR_APPWORKSPACE))
 
-  systemConnect(wEvent_Size, wFrame_DoSize)
+  self.systemConnect(wEvent_Size, wFrame_DoSize)
 
-  hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
-  hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)
-  hardConnect(WM_MENUCOMMAND, wFrame_OnMenuCommand)
+  self.hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
+  self.hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)
+  self.hardConnect(WM_MENUCOMMAND, wFrame_OnMenuCommand)
 
   when defined(useWinXP):
-    hardConnect(WM_MEASUREITEM, wFrame_OnMeasureItem)
-    hardConnect(WM_DRAWITEM, wFrame_OndrawItem)
+    self.hardConnect(WM_MEASUREITEM, wFrame_OnMeasureItem)
+    self.hardConnect(WM_DRAWITEM, wFrame_OndrawItem)
 
 proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wDefaultFrameStyle,

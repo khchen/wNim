@@ -39,25 +39,26 @@ const
 
 method getBestSize*(self: wStaticBitmap): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
-  if mBitmap != nil:
-    result = mBitmap.getSize()
+  if self.mBitmap != nil:
+    result = self.mBitmap.getSize()
 
 method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline.} =
   ## Returns the default size for the control.
-  if mBitmap != nil:
-    result = mBitmap.getSize()
+  if self.mBitmap != nil:
+    result = self.mBitmap.getSize()
 
 proc setBitmap*(self: wStaticBitmap, bitmap: wBitmap) {.validate, property.} =
   ## Sets the bitmap label.
-  mBitmap = bitmap
-  SendMessage(mHwnd, STM_SETIMAGE, IMAGE_BITMAP, if bitmap != nil: bitmap.mHandle else: 0)
+  self.mBitmap = bitmap
+  SendMessage(self.mHwnd, STM_SETIMAGE, IMAGE_BITMAP,
+    if bitmap != nil: bitmap.mHandle else: 0)
 
 proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
   ## Returns the bitmap currently used in the control.
-  result = mBitmap
+  result = self.mBitmap
 
 method release(self: wStaticBitmap) =
-  mParent.systemDisconnect(mCommandConn)
+  self.mParent.systemDisconnect(self.mCommandConn)
 
 proc final*(self: wStaticBitmap) =
   ## Default finalizer for wStaticBitmap.
@@ -68,14 +69,14 @@ proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
     style: wStyle = wSbAuto) {.validate.} =
   ## Initializer.
   wValidate(parent)
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="", pos=pos, size=size,
-    style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
+  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="",
+    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
 
-  setBitmap(bitmap)
-  mFocusable = false
+  self.setBitmap(bitmap)
+  self.mFocusable = false
 
   # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
-  mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+  self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
 
 proc StaticBitmap*(parent: wWindow, id = wDefaultID,
     bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,

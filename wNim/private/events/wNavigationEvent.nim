@@ -30,4 +30,4 @@ method shouldPropagate*(event: wNavigationEvent): bool =
 
 method getKeyCode*(self: wNavigationEvent): int {.property, inline.} =
   ## Returns the key code of the key that generated this event.
-  result = int mWparam
+  result = int self.mWparam

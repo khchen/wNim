@@ -29,9 +29,9 @@ const
 method getDefaultSize*(self: wStaticLine): wSize {.property.} =
   ## Returns the default size for the control.
   let
-    pos = getPosition()
-    clientSize = mParent.getClientSize()
-    isVertical = (GetWindowLongPtr(mHwnd, GWL_STYLE) and wLiVertical) != 0
+    pos = self.getPosition()
+    clientSize = self.mParent.getClientSize()
+    isVertical = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and wLiVertical) != 0
 
   if isVertical:
     result.width = 2
@@ -42,11 +42,11 @@ method getDefaultSize*(self: wStaticLine): wSize {.property.} =
 
 method getBestSize*(self: wStaticLine): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getDefaultSize()
+  result = self.getDefaultSize()
 
 proc isVertical*(self: wStaticLine): bool {.validate.} =
   ## Returns true if the line is vertical, false if horizontal.
-  result = (getWindowStyle() and wLiVertical) != 0
+  result = (self.getWindowStyle() and wLiVertical) != 0
 
 proc final*(self: wStaticLine) =
   ## Default finalizer for wStaticLine.
@@ -66,7 +66,7 @@ proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPo
   self.wControl.init(className=WC_STATIC, parent=parent, id=id,
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_SUNKEN)
 
-  mFocusable = false
+  self.mFocusable = false
 
 proc StaticLine*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
     size = wDefaultSize, style: wStyle = wLiHorizontal): wStaticLine
