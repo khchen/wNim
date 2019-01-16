@@ -1,7 +1,7 @@
 Version 0.1.5
 -------------
 * Add example: rebar.nim
-
+* Remove "this" pragma (deprecated).
 
 Version 0.1.4
 -------------
