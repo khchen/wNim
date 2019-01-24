@@ -16,6 +16,7 @@
 ##  - `wApp <wApp.html>`_
 ##  - `wImage <wImage.html>`_
 ##  - `wImageList <wImageList.html>`_
+##  - `wIconImage <wIconImage.html>`_
 ##  - `wResizer <wResizer.html>`_
 ##  - `wResizable <wResizable.html>`_
 ##  - `wDataObject <wDataObject.html>`_
@@ -161,6 +162,7 @@ when not defined(wnimdoc):
   include wNim/private/events/wListEvent
   include wNim/private/events/wTreeEvent
   include wNim/private/events/wDragDropEvent
+  include wNim/private/wIconImage
   include wNim/private/wImage
   include wNim/private/gdiobjects/wGdiObject
   include wNim/private/gdiobjects/wFont

@@ -168,7 +168,7 @@ template wNilBitmap*(): untyped =
 
 template wNilCursor*(): untyped =
   wAppGDIStock(wCursor, NilCursor):
-    Cursor()
+    Cursor(0)
 
 template wDefaultCursor*(): untyped =
   wAppGDIStock(wCursor, DefaultCursor):

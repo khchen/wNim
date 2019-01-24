@@ -37,44 +37,82 @@ proc getHeight*(self: wIcon): int {.validate, property, inline.} =
 method delete*(self: wIcon) {.inline.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if self.mHandle != 0:
+  if self.mHandle != 0 and self.mDeletable:
     DestroyIcon(self.mHandle)
-    self.mHandle = 0
+
+  self.mHandle = 0
 
 proc final*(self: wIcon) =
   ## Default finalizer for wIcon.
   self.delete()
 
-proc wIcon_FromImage(self: wIcon, image: wImage, size = wDefaultSize) =
-  # todo: GdipCreateHICONFromBitmap don't hanlde alpha channel very well.
+proc init*(self: wIcon, iconImage: wIconImage, size = wDefaultSize) {.validate.} =
+  ## Initializer.
+  wValidate(iconImage)
+  self.wGdiObject.init()
 
-  var image = image
-  var imgSize = image.getSize()
-  var isResize = false
+  # Windows XP don't support PNG format. However, even under Vista or
+  # Windows 7, the system still handle PNG icon with some error.
+  # So we create a new iconimage and convert it to bmp format by ourself.
+  var
+    newIconImage = IconImage(iconImage)
+    width = if size.width < 0: iconImage.getWidth() else: size.width
+    height = if size.height < 0: iconImage.getHeight() else: size.height
 
-  if size.width > 0 and size.width != imgSize.width:
-    isResize = true
-    self.mWidth = size.width
-  else:
-    self.mWidth = imgSize.width
+  newIconImage.toBmp()
 
-  if size.height > 0 and size.height != imgSize.height:
-    isResize = true
-    self.mHeight = size.height
-  else:
-    self.mHeight = imgSize.height
+  self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&newIconImage.mIcon),
+    newIconImage.mIcon.len, TRUE, 0x30000, width, height, 0)
 
-  if isResize:
-    image = image.scale(self.mWidth, self.mHeight)
+  if self.mHandle == 0: self.error()
+  (self.mWidth, self.mHeight) = (width, height)
 
-  if GdipCreateHICONFromBitmap(image.mGdipBmp, &self.mHandle) != Ok:
-    self.error()
+proc Icon*(iconImage: wIconImage, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from a wIconImage object.
+  wValidate(iconImage)
+  new(result, final)
+  result.init(iconImage, size)
 
-proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate, inline.} =
+proc init*(self: wIcon, bmp: wBitmap, size = wDefaultSize) {.validate, inline.} =
+  ## Initializer.
+  wValidate(bmp)
+  var iconImage = IconImage(bmp)
+  self.init(iconImage, size)
+
+proc Icon*(bmp: wBitmap, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from the given wBitmap object.
+  wValidate(bmp)
+  new(result, final)
+  result.init(bmp)
+
+proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate.} =
   ## Initializer.
   wValidate(image)
-  self.wGdiObject.init()
-  self.wIcon_FromImage(image, size)
+
+  try:
+    var
+      image = image
+      isRescale = false
+      (width, height) = image.getSize()
+
+    if size.width > 0 and size.width != width:
+      isRescale = true
+      width = size.width
+
+    if size.height > 0 and size.height != height:
+      isRescale = true
+      height = size.height
+
+    if isRescale:
+      image = image.scale(width, height)
+
+    defer:
+      if isRescale: image.delete()
+
+    self.init(IconImage(image))
+
+  except wError:
+    self.error()
 
 proc Icon*(image: wImage, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from the given wImage object.
@@ -82,99 +120,92 @@ proc Icon*(image: wImage, size = wDefaultSize): wIcon {.inline.} =
   new(result, final)
   result.init(image, size)
 
-proc init*(self: wIcon, data: ptr byte, length: int, size = wDefaultSize) {.validate.} =
+proc init*(self: wIcon, data: pointer, length: int, size = wDefaultSize)
+    {.validate, inline.} =
   ## Initializer.
   wValidate(data)
-  self.wGdiObject.init()
-  # createIconFromMemory better than Image() becasue it choose
-  # best fits icon in icon group, and it supports .ani format.
-  self.mHandle = createIconFromMemory(data, length, width=size.width,
-    height=size.height, isIcon=true)
+  self.init(IconImage(data, length, size), size)
 
-  if self.mHandle != 0:
-    (self.mWidth, self.mHeight) = getIconSize(self.mHandle)
-  else:
-    self.wIcon_FromImage(Image(data, length), size)
-
-proc Icon*(data: ptr byte, length: int, size = wDefaultSize): wIcon {.inline.} =
-  ## Creates an icon from binary data of image file format.
-  ## Supports .ico, .cur (choose best fits image from group), .ani (without animated),
-  ## and other formats that wImage supported.
+proc Icon*(data: pointer, length: int, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from binary data of .ico or .cur file.
   wValidate(data)
   new(result, final)
   result.init(data, length, size)
 
-proc init*(self: wIcon, str: string, size = wDefaultSize) {.validate.} =
+proc init*(self: wIcon, str: string, size = wDefaultSize) {.validate, inline.} =
   ## Initializer.
   wValidate(str)
-  var
-    buffer: ptr byte
-    length: int
-    data: string
-
-  if str.isVaildPath():
-    data = readFile(str)
-    buffer = cast[ptr byte](&data)
-    length = data.len
-  else:
-    buffer = cast[ptr byte](&str)
-    length = str.len
-
-  self.init(buffer, length, size)
+  self.init(IconImage(str, size), size)
 
 proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
-  ## Creates an icon from a image file.
-  ## If str is not a valid file path, it will be regarded as the binary data in memory.
+  ## Creates an icon from a file. The file should be format of .ico, .cur,
+  ## or 32-bit executable files (.exe or .dll, etc). If str is not a valid file
+  ## path, it will be regarded as the binary data of .ico or .cur file.
+  ##
+  ## For 32-bit executable files (.exe or .dll), it allows string like
+  ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
+  ## to specifies the cursor index. Use zero-based index to specified the
+  ## resource position, and negative value to specified the resource identifier.
   wValidate(str)
   new(result, final)
   result.init(str, size)
 
-proc init*(self: wIcon, file: string, index: int, size = wDefaultSize) {.validate.} =
-  ## Initializer.
-  wValidate(file)
-  self.wGdiObject.init()
-  self.mHandle = createIconFromPE(file, index, size.width, size.height)
-  if self.mHandle != 0:
-    (self.mWidth, self.mHeight) = getIconSize(self.mHandle)
-  else:
-    self.error()
-
-proc Icon*(file: string, index: int, size = wDefaultSize): wIcon {.inline.} =
-  ## Creates an icon from a PE file (.exe or .dll).
-  ## Empty string indicates the current executable file.
-  ## Positive index indicates the icon position, and negative value indicates the
-  ## icon ID.
-  wValidate(file)
-  new(result, final)
-  result.init(file, index, size)
-
-proc init*(self: wIcon, hIcon: HICON, copy = true) {.validate.} =
+proc init*(self: wIcon, hIcon: HICON, copy = true, shared = false) {.validate.} =
   ## Initializer.
   self.wGdiObject.init()
-  if copy:
-    self.mHandle = createIconFromHIcon(hIcon, isIcon=true)
-  else:
-    self.mHandle = hIcon
+  var
+    iconInfo: ICONINFO
+    bitmapInfo: BITMAP
 
-  if self.mHandle != 0:
-    (self.mWidth, self.mHeight) = getIconSize(self.mHandle)
-  else:
-    self.error()
+  if GetIconInfo(hIcon, iconInfo) != 0:
+    defer:
+      DeleteObject(iconInfo.hbmColor)
+      DeleteObject(iconInfo.hbmMask)
 
-proc Icon*(hIcon: HICON, copy = true): wIcon {.inline.} =
+    iconInfo.fIcon = TRUE
+    iconInfo.xHotspot = 0
+    iconInfo.yHotspot = 0
+
+    if GetObject(iconInfo.hbmColor, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
+      self.mWidth = int bitmapInfo.bmWidth
+      self.mHeight = int bitmapInfo.bmHeight
+
+      if copy:
+        self.mHandle = CreateIconIndirect(iconInfo)
+        self.mDeletable = true
+      else:
+        self.mHandle = hIcon
+        self.mDeletable = not shared
+
+  if self.mHandle == 0: self.error()
+
+proc Icon*(hIcon: HICON, copy = true, shared = false): wIcon {.inline.} =
   ## Creates an icon from Windows icon handle.
-  ## If copy is false, this only wrap it to wIcon object.
-  ## Notice this means the handle will be destroyed by wIcon when it is destroyed.
+  ## If copy is false, this only wrap it to wIcon object. It means the handle
+  ## will be destroyed by wIcon when it is destroyed. So if you wrap a
+  ## shared icon handle into wIcon, you must set *shared* = true to avoid
+  ## the handle being destroyed.
   new(result, final)
-  result.init(hIcon, copy)
+  result.init(hIcon, copy, shared)
 
 proc init*(self: wIcon, icon: wIcon) {.validate.} =
   ## Initializer.
   wValidate(icon)
-  self.init(icon.mHandle)
+  self.init(icon.mHandle, copy=true)
 
 proc Icon*(icon: wIcon): wIcon {.inline.} =
-  ## Creates an icon from wIcon object, aka. copy constructors.
+  ## Creates an icon from a wIcon object, aka. copy constructors.
   wValidate(icon)
   new(result, final)
   result.init(icon)
+
+proc init*(self: wIcon, cursor: wCursor) {.validate.} =
+  ## Initializer.
+  wValidate(cursor)
+  self.init(cursor.mHandle, copy=true)
+
+proc Icon*(cursor: wCursor): wIcon {.inline.} =
+  ## Creates an icon from a wCursor object
+  wValidate(cursor)
+  new(result, final)
+  result.init(cursor)

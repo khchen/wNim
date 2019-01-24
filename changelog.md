@@ -1,7 +1,9 @@
-Version 0.1.5
+Version 0.2
 -------------
+* Add wIconImage class.
+* wImage, wBitmap, wIcon, and wCursor can convert between each other now.
+* Remove deprecated "this" pragma.
 * Add example: rebar.nim
-* Remove "this" pragma (deprecated).
 
 Version 0.1.4
 -------------

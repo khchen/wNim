@@ -94,7 +94,6 @@ const
   wCenter* = wLeft or wRight
   wMiddle* = wUp or wDown
 
-
 converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
   ## We usually use the enum for where need a command ID. see the examples.
 
@@ -470,6 +469,10 @@ when not defined(wnimdoc):
     wImageList* = ref object of RootObj
       mHandle: HIMAGELIST
 
+    wIconImage* = ref object of RootObj
+      mIcon: string
+      mHotspot: wPoint
+
     wGdiObject* = ref object of RootObj
       mHandle: HANDLE
 
@@ -499,8 +502,12 @@ when not defined(wnimdoc):
     wIcon* = ref object of wGdiObject
       mWidth: int
       mHeight: int
+      mDeletable: bool
 
     wCursor* = ref object of wGdiObject
+      mWidth: int
+      mHeight: int
+      mHotspot: wPoint
       mDeletable: bool
       mIconResource: bool
 

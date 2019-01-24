@@ -96,8 +96,6 @@ const
 proc error(self: wImage) {.inline.} =
   raise newException(wImageError, "wImage creation failure")
 
-converter GpImageToGpBitmap(x: ptr GpBitmap): ptr GpImage = cast[ptr GpImage](x)
-
 type
   SHCreateMemStreamType = proc (pInit: pointer, cbInit: UINT): ptr IStream {.stdcall.}
 
@@ -452,7 +450,7 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
   except:
     raise newException(wImageError, "wImage saveData failure")
 
-proc final(self: wImage) =
+proc final*(self: wImage) =
   ## Default finalizer for wImage.
   self.delete()
 
@@ -468,8 +466,8 @@ proc init*(self: wImage, gdip: ptr GpBitmap, copy = true) {.validate.} =
 
 proc Image*(gdip: ptr GpBitmap, copy = true): wImage {.inline.} =
   ## Creates an image from a gdiplus bitmap handle.
-  ## If copy is false, this only wrap it to wImage object.
-  ## Notice this means the handle will be destroyed by wImage when it is destroyed.
+  ## If copy is false, this only wrap it to wImage object. It means the handle
+  ## will be destroyed by wImage when it is destroyed.
   wValidate(gdip)
   new(result, final)
   result.init(gdip, copy)
@@ -489,8 +487,29 @@ proc init*(self: wImage, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
   wGdipInit()
-  if GdipCreateBitmapFromHBITMAP(bmp.mHandle, 0, &self.mGdipBmp) != Ok:
-    self.error()
+
+  # if the bmp is 32bit argb format, don't use GdipCreateBitmapFromHBITMAP
+  # otherwise the result will loss the alpha channel data.
+  try:
+    var dibSection: DIBSECTION
+    if GetObject(bmp.mHandle, sizeof(dibSection), &dibSection) == 0: raise
+
+    var
+      scan0 = cast[ptr BYTE](dibSection.dsBm.bmBits)
+      bitCount = dibSection.dsBm.bmBitsPixel
+      width = dibSection.dsBmih.biWidth
+      height = dibSection.dsBmih.biHeight
+
+    if bitCount != 32: raise
+
+    if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
+      scan0, &self.mGdipBmp) != Ok: raise
+
+    if GdipImageRotateFlip(self.mGdipBmp, rotateNoneFlipY) != Ok: raise
+
+  except:
+    if GdipCreateBitmapFromHBITMAP(bmp.mHandle, 0, &self.mGdipBmp) != Ok:
+      self.error()
 
 proc Image*(bmp: wBitmap): wImage {.inline.} =
   ## Creates an image from wBitmap object.
@@ -498,7 +517,7 @@ proc Image*(bmp: wBitmap): wImage {.inline.} =
   new(result, final)
   result.init(bmp)
 
-proc init*(self: wImage, data: ptr byte, length: int) {.validate.} =
+proc init*(self: wImage, data: pointer, length: int) {.validate.} =
   ## Initializer.
   wValidate(data)
   wGdipInit()
@@ -509,7 +528,7 @@ proc init*(self: wImage, data: ptr byte, length: int) {.validate.} =
   if stream == nil or GdipCreateBitmapFromStream(stream, &self.mGdipBmp) != Ok:
     self.error()
 
-proc Image*(data: ptr byte, length: int): wImage {.inline.} =
+proc Image*(data: pointer, length: int): wImage {.inline.} =
   ## Creates an image from binary image data.
   ## Use getDecoders iterator to list the supported format.
   wValidate(data)
@@ -524,7 +543,7 @@ proc init*(self: wImage, str: string) {.validate.} =
     if GdipCreateBitmapFromFile(str, &self.mGdipBmp) != Ok:
       self.error()
   else:
-    self.init(cast[ptr byte](&str), str.len)
+    self.init(&str, str.len)
 
 proc Image*(str: string): wImage {.inline.} =
   ## Creates an image from a file.
@@ -559,6 +578,62 @@ proc Image*(size: wSize): wImage {.inline.} =
   ## Creates an empty image with the given size.
   new(result, final)
   result.init(size)
+
+proc init*(self: wImage, iconImage: wIconImage) {.validate.} =
+  ## Initializer.
+  wValidate(iconImage)
+  if iconImage.isPng():
+    self.init(&iconImage.mIcon, iconImage.mIcon.len)
+
+  else:
+    if iconImage.getBitCount() == 32:
+      wGdipInit()
+      var
+        (width, height) = iconImage.getSize()
+        scan0 = cast[ptr BYTE](cast[int](&iconImage.mIcon) + sizeof(BITMAPINFOHEADER))
+
+      if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
+        scan0, &self.mGdipBmp) != Ok: self.error()
+
+      if GdipImageRotateFlip(self.mGdipBmp, rotateNoneFlipY) != Ok: self.error()
+
+    else:
+      var data = iconImage.save()
+      self.init(&data, data.len)
+
+proc Image*(iconImage: wIconImage): wImage {.inline.} =
+  ## Creates an image from a wIconImage object.
+  wValidate(iconImage)
+  new(result, final)
+  result.init(iconImage)
+
+proc init*(self: wImage, icon: wIcon) {.validate.} =
+  ## Initializer.
+  wValidate(icon)
+  try:
+    self.init(IconImage(icon))
+  except wError:
+    self.error()
+
+proc Image*(icon: wIcon): wImage {.inline.} =
+  ## Creates an image from wIcon object.
+  wValidate(icon)
+  new(result, final)
+  result.init(icon)
+
+proc init*(self: wImage, cursor: wCursor) {.validate.} =
+  ## Initializer.
+  wValidate(cursor)
+  try:
+    self.init(IconImage(cursor))
+  except wError:
+    self.error()
+
+proc Image*(cursor: wCursor): wImage {.inline.} =
+  ## Creates an image from wCursor object.
+  wValidate(cursor)
+  new(result, final)
+  result.init(cursor)
 
 proc scale*(self: wImage, width, height: int, quality = wImageQualityNormal): wImage
     {.validate.} =

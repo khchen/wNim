@@ -29,7 +29,7 @@ proc getHandle*(self: wGdiObject): HANDLE {.validate, property, inline.} =
 
 proc init*(self: wGdiObject) {.validate.} =
   ## Initializer.
-  discard # do nothing for now
+  self.mHandle = 0
 
 method delete*(self: wGdiObject) {.base, inline.} =
   ## Nim's garbage collector will delete this object by default.

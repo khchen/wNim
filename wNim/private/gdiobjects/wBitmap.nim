@@ -61,9 +61,9 @@ proc Bmp*(size: wSize, depth: int = 0): wBitmap =
   new(result, final)
   result.init(size, depth)
 
-proc init*(self: wBitmap, gdipbmp: ptr GpBitmap) {.validate.} =
-  self.wGdiObject.init()
+proc init*(self: wBitmap, gdipBmp: ptr GpBitmap) {.validate.} =
   ## Initializer.
+  self.wGdiObject.init()
   # Here GdiplusStartupInput() should already called.
   if GdipCreateHBITMAPFromBitmap(gdipbmp, addr self.mHandle, 0) != Ok:
     self.error()
@@ -75,10 +75,10 @@ proc init*(self: wBitmap, gdipbmp: ptr GpBitmap) {.validate.} =
   self.mWidth = width
   self.mHeight = height
 
-proc Bmp*(gdipbmp: ptr GpBitmap): wBitmap {.inline.} =
+proc Bmp*(gdipBmp: ptr GpBitmap): wBitmap {.inline.} =
   ## Creates a bitmap from a gdiplus bitmap handle.
   new(result, final)
-  result.init(gdipbmp)
+  result.init(gdipBmp)
 
 proc init*(self: wBitmap, image: wImage) {.validate.} =
   ## Initializer.
@@ -90,6 +90,48 @@ proc Bmp*(image: wImage): wBitmap {.inline.} =
   wValidate(image)
   new(result, final)
   result.init(image)
+
+proc init*(self: wBitmap, iconImage: wIconImage) {.validate.} =
+  ## Initializer.
+  wValidate(iconImage)
+  try:
+    self.init(Image(iconImage))
+  except wError:
+    self.error()
+
+proc Bmp*(iconImage: wIconImage): wBitmap {.inline.} =
+  ## Creates a bitmap object from the given wIconImage object.
+  wValidate(iconImage)
+  new(result, final)
+  result.init(iconImage)
+
+proc init*(self: wBitmap, icon: wIcon) {.validate.} =
+  ## Initializer.
+  wValidate(icon)
+  try:
+    self.init(Image(icon))
+  except wError:
+    self.error()
+
+proc Bmp*(icon: wIcon): wBitmap {.inline.} =
+  ## Creates a bitmap object from the given wIcon object.
+  wValidate(icon)
+  new(result, final)
+  result.init(icon)
+
+proc init*(self: wBitmap, cursor: wCursor) {.validate.} =
+  ## Initializer.
+  wValidate(cursor)
+  try:
+    self.init(Image(cursor))
+  except wError:
+    self.error()
+
+proc Bmp*(cursor: wCursor): wBitmap {.inline.} =
+  ## Creates a bitmap object from the given wCursor object.
+  wValidate(cursor)
+  new(result, final)
+  result.init(cursor)
 
 proc init*(self: wBitmap, filename: string) {.validate.} =
   ## Initializer.
@@ -105,14 +147,14 @@ proc Bmp*(filename: string): wBitmap {.inline.} =
   new(result, final)
   result.init(filename)
 
-proc init*(self: wBitmap, data: ptr byte, length: int) {.validate.} =
+proc init*(self: wBitmap, data: pointer, length: int) {.validate.} =
   ## Initializer.
   try:
     self.init(Image(data, length))
   except:
     self.error()
 
-proc Bmp*(data: ptr byte, length: int): wBitmap {.inline.} =
+proc Bmp*(data: pointer, length: int): wBitmap {.inline.} =
   ## Creates a bitmap object from raw image data.
   wValidate(data)
   new(result, final)
@@ -149,8 +191,8 @@ proc init*(self: wBitmap, handle: HBITMAP, copy = true) {.validate.} =
 
 proc Bmp*(handle: HBITMAP, copy = true): wBitmap {.inline.} =
   ## Creates a bitmap from a system bitmap handle.
-  ## If copy is false, this only wrap it to wBitmap object.
-  ## Notice this means the handle will be destroyed by wBitmap when it is destroyed.
+  ## If copy is false, this only wrap it to wBitmap object. It means the handle
+  ## will be destroyed by wBitmap when it is destroyed.
   new(result, final)
   result.init(handle, copy)
 
