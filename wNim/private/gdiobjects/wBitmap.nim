@@ -138,7 +138,7 @@ proc init*(self: wBitmap, filename: string) {.validate.} =
   wValidate(filename)
   try:
     self.init(Image(filename))
-  except:
+  except wError:
     self.error()
 
 proc Bmp*(filename: string): wBitmap {.inline.} =
@@ -151,7 +151,7 @@ proc init*(self: wBitmap, data: pointer, length: int) {.validate.} =
   ## Initializer.
   try:
     self.init(Image(data, length))
-  except:
+  except wError:
     self.error()
 
 proc Bmp*(data: pointer, length: int): wBitmap {.inline.} =

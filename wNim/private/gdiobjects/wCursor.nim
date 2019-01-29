@@ -175,30 +175,34 @@ proc init*(self: wCursor, iconImage: wIconImage, size = wDefaultSize,
   wValidate(iconImage)
   self.wGdiObject.init()
 
-  var
-    newIconImage = IconImage(iconImage)
-    width = if size.width < 0: iconImage.getWidth() else: size.width
-    height = if size.height < 0: iconImage.getHeight() else: size.height
-    hotspot = if hotspot == wDefaultPoint: iconImage.getHotspot() else: hotspot
+  try:
+    var
+      newIconImage = IconImage(iconImage)
+      width = if size.width < 0: iconImage.getWidth() else: size.width
+      height = if size.height < 0: iconImage.getHeight() else: size.height
+      hotspot = if hotspot == wDefaultPoint: iconImage.getHotspot() else: hotspot
 
-  if hotspot == wDefaultPoint: self.error()
+    if hotspot == wDefaultPoint: self.error()
 
-  newIconImage.toBmp()
-  var
-    buffer = newString(newIconImage.mIcon.len + 4)
-    hotspotPtr = cast[ptr UncheckedArray[int16]](&buffer)
+    newIconImage.toBmp()
+    var
+      buffer = newString(newIconImage.mIcon.len + 4)
+      hotspotPtr = cast[ptr UncheckedArray[int16]](&buffer)
 
-  hotspotPtr[0] = int16 hotspot.x
-  hotspotPtr[1] = int16 hotspot.y
-  copyMem(&hotspotPtr[2], &newIconImage.mIcon, newIconImage.mIcon.len)
+    hotspotPtr[0] = int16 hotspot.x
+    hotspotPtr[1] = int16 hotspot.y
+    copyMem(&hotspotPtr[2], &newIconImage.mIcon, newIconImage.mIcon.len)
 
-  self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&buffer), buffer.len,
-    FALSE, 0x30000, width, height, 0)
+    self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&buffer), buffer.len,
+      FALSE, 0x30000, width, height, 0)
 
-  if self.mHandle == 0: self.error()
-  (self.mWidth, self.mHeight, self.mHotspot) = (width, height, hotspot)
-  self.mDeletable = true
-  self.mIconResource = true
+    if self.mHandle == 0: self.error()
+    (self.mWidth, self.mHeight, self.mHotspot) = (width, height, hotspot)
+    self.mDeletable = true
+    self.mIconResource = true
+
+  except wError:
+    self.error()
 
 proc Cursor*(iconImage: wIconImage, size = wDefaultSize,
     hotspot = wDefaultPoint): wCursor {.inline.} =
@@ -223,7 +227,10 @@ proc Cursor*(icon: wIcon, hotspot: wPoint): wCursor {.inline.} =
 proc init*(self: wCursor, image: wImage, hotspot: wPoint) {.validate, inline.} =
   ## Initializer.
   wValidate(image)
-  self.init(IconImage(image), hotspot=hotspot)
+  try:
+    self.init(IconImage(image), hotspot=hotspot)
+  except wError:
+    self.error()
 
 proc Cursor*(image: wImage, hotspot: wPoint): wCursor {.inline.} =
   ## Creates a cursor from the given wImage object and hotspot.
@@ -234,7 +241,10 @@ proc Cursor*(image: wImage, hotspot: wPoint): wCursor {.inline.} =
 proc init*(self: wCursor, bmp: wBitmap, hotspot: wPoint) {.validate, inline.} =
   ## Initializer.
   wValidate(bmp)
-  self.init(IconImage(bmp), hotspot=hotspot)
+  try:
+    self.init(IconImage(bmp), hotspot=hotspot)
+  except wError:
+    self.error()
 
 proc Cursor*(bmp: wBitmap, hotspot: wPoint): wCursor {.inline.} =
   ## Creates a cursor from the given wBitmap object and hotspot.
@@ -308,14 +318,15 @@ proc init*(self: wCursor, str: string, size = wDefaultSize,
 
 proc Cursor*(str: string, size = wDefaultSize, hotspot = wDefaultPoint): wCursor
     {.inline.} =
-  ## Creates a cursor from a file. The file should be format of .ico, .cur, .ani,
-  ## or 32-bit executable files (.exe or .dll, etc). If str is not a valid file
+  ## Creates a cursor from a file. The file should be in format of .ico, .cur,
+  ## .ani, or Windows PE file (.exe or .dll, etc). If str is not a valid file
   ## path, it will be regarded as the binary data of .ico, .cur, or .ani file.
   ##
-  ## For 32-bit executable files (.exe or .dll), it allows string like
+  ## For Windows PE file (.exe or .dll), it allows string like
   ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
   ## to specifies the cursor index. Use zero-based index to specified the
   ## resource position, and negative value to specified the resource identifier.
+  ## Empty string (e.g. ",-1") to specified the current executable file.
   wValidate(str)
   new(result, final)
   result.init(str, size, hotspot)

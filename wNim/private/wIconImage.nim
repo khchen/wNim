@@ -132,6 +132,7 @@ proc toDefaultSize(size: wSize): wSize =
 
 proc loadIconLibrary(str: string): tuple[module: HMODULE, index: int, isIcon: bool] =
   var
+    found = false
     pefile: string
     index: int
     isIcon: bool
@@ -141,6 +142,7 @@ proc loadIconLibrary(str: string): tuple[module: HMODULE, index: int, isIcon: bo
     index = parseInt(tailSplit[1])
     pefile = tailSplit[0]
     isIcon = true
+    found = true
   except IndexError, ValueError: discard
 
   try:
@@ -148,12 +150,18 @@ proc loadIconLibrary(str: string): tuple[module: HMODULE, index: int, isIcon: bo
     index = parseInt(tailSplit[1])
     pefile = tailSplit[0]
     isIcon = false
+    found = true
   except IndexError, ValueError: discard
 
-  if pefile.len != 0:
-    var module = LoadLibraryEx(pefile, 0, LOAD_LIBRARY_AS_DATAFILE)
-    if module != 0:
-      result = (module, index, isIcon)
+  if found:
+    if pefile.len != 0:
+      var module = LoadLibraryEx(pefile, 0, LOAD_LIBRARY_AS_DATAFILE)
+      if module != 0:
+        return (module, index, isIcon)
+    else: # for current process.
+      return (0, index, isIcon)
+
+  return (-1, 0, false)
 
 proc initRaw(self: wIconImage, width: int32, height: int32, bitCount: WORD,
   colorSize: int32, colorBit: pointer, maskSize: int32, maskBit: pointer,
@@ -485,7 +493,7 @@ proc IconImage*(data: pointer, length: int, size = wDefaultSize): wIconImage {.i
 proc init*(self: wIconImage, str: string, size = wDefaultSize) {.validate.} =
   ## Initializer.
   let (module, index, isIcon) = loadIconLibrary(str)
-  if module != 0:
+  if module != -1:
     defer: FreeLibrary(module)
     self.initRawModuleIndex(module, index, size, isIcon)
 
@@ -500,22 +508,23 @@ proc init*(self: wIconImage, str: string, size = wDefaultSize) {.validate.} =
   if self.mIcon.len == 0: self.error()
 
 proc IconImage*(str: string, size = wDefaultSize): wIconImage {.inline.} =
-  ## Creates an icon image from a file. The file should be format of .ico, .cur,
-  ## or 32-bit executable files (.exe or .dll, etc). If str is not a valid file
-  ## path, it will be regarded as the binary data of .ico or .cur file.
+  ## Creates an icon image from a file. The file should be in format of
+  ## .ico, .cur, or Windows PE file (.exe or .dll, etc). If str is not a valid
+  ## file path, it will be regarded as the binary data of .ico or .cur file.
   ##
-  ## For 32-bit executable files (.exe or .dll), it allows string like
+  ## For Windows PE file (.exe or .dll), you should use string like
   ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
   ## to specifies the cursor index. Use zero-based index to specified the
   ## resource position, and negative value to specified the resource identifier.
+  ## Empty string (e.g. ",-1") to specified the current executable file.
   ##
-  ## If the source is a icon/cursor group, the extra *size* parameter can be
+  ## If the resource is an icon/cursor group, the extra *size* parameter can be
   ## used to specified the desired display size. The function uses Windows API
   ## to search and return the best fits icon, or uses the SM_CXICON/SM_CXCURSOR
   ## system metric value as default value.
   ##
-  ## **Notice: The really size of returned icon may not equal to your desired
-  ## size.**
+  ## **Notice: The function will not resize the image, so the real size of
+  ## retruned icon image may not equal to your desired size.
   wValidate(str)
   new(result, final)
   result.init(str, size)
@@ -534,11 +543,11 @@ proc IconImage*(iconImage: wIconImage): wIconImage {.inline.} =
   result.init(iconImage)
 
 proc isPng*(self: wIconImage): bool {.validate, inline.} =
-  ## Returns true if this is a PNG format icon.
+  ## Returns true if this is a PNG format icon image.
   result = self.mIcon[0..7] == "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"
 
 proc isBmp*(self: wIconImage): bool {.validate, inline.} =
-  ## Returns true if this is a bitmap format icon.
+  ## Returns true if this is a bitmap format icon image.
   result = not self.isPng()
 
 proc toPng*(self: wIconImage) {.validate.} =
@@ -685,7 +694,7 @@ proc IconImages*(str: string): seq[wIconImage] =
   ## Similar to IconImage(), but this function loads all image in the group and
   ## returns a seq.
   let (module, index, isIcon) = loadIconLibrary(str)
-  if module != 0:
+  if module != -1:
     defer: FreeLibrary(module)
     result = IconImagesModuleIndex(module, index, isIcon)
 
@@ -698,7 +707,8 @@ proc IconImages*(str: string): seq[wIconImage] =
       result = IconImages(&str, str.len)
 
 proc save*(icons: openarray[wIconImage], isIcon = true): string =
-  ## Stores multiple icon images to a .ico or .cur format data depends on *isIcon*.
+  ## Stores multiple icon images to a .ico or .cur format data depends on
+  ## *isIcon*.
   var headerSize = sizeof(ICONDIR) + icons.len * sizeof(ICONDIRENTRY)
   var header = newString(headerSize)
   var offset = headerSize
@@ -747,10 +757,10 @@ proc save*(self: wIconImage, isIcon = true): string {.validate.} =
   ## Stores single icon image to a .ico or .cur format data depends on *isIcon*.
   result = save([self], isIcon)
 
-proc save*(icons: openarray[wIconImage], file: string, isIcon = true) =
+proc save*(icons: openarray[wIconImage], filename: string, isIcon = true) =
   ## Stores multiple icon images to a .ico or .cur format file depends on *isIcon*.
-  writeFile(file, icons.save(isIcon))
+  writeFile(filename, icons.save(isIcon))
 
-proc save*(self: wIconImage, file: string, isIcon = true) {.validate.} =
+proc save*(self: wIconImage, filename: string, isIcon = true) {.validate.} =
   ## Stores single icon image to a .ico or .cur format file depends on *isIcon*.
-  writeFile(file, self.save(isIcon))
+  writeFile(filename, self.save(isIcon))

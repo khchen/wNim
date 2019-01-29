@@ -123,11 +123,8 @@
 
 {.experimental, deadCodeElim: on.}
 
-# import winim.lean, winim.inc/[commctrl, objbase, shellapi, richedit, gdiplus]
-# export lean
 when not defined(wnimdoc):
-  import tables, lists, math, strutils, dynlib, hashes, macros, times, sets,
-    ospaths, net
+  import tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net
   import kiwi
   import winim/winstr, winim/utils
   import winim/inc/[windef, winerror, winbase, winuser, wingdi]

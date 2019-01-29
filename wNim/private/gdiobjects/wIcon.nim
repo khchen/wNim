@@ -54,18 +54,22 @@ proc init*(self: wIcon, iconImage: wIconImage, size = wDefaultSize) {.validate.}
   # Windows XP don't support PNG format. However, even under Vista or
   # Windows 7, the system still handle PNG icon with some error.
   # So we create a new iconimage and convert it to bmp format by ourself.
-  var
-    newIconImage = IconImage(iconImage)
-    width = if size.width < 0: iconImage.getWidth() else: size.width
-    height = if size.height < 0: iconImage.getHeight() else: size.height
+  try:
+    var
+      newIconImage = IconImage(iconImage)
+      width = if size.width < 0: iconImage.getWidth() else: size.width
+      height = if size.height < 0: iconImage.getHeight() else: size.height
 
-  newIconImage.toBmp()
+    newIconImage.toBmp()
 
-  self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&newIconImage.mIcon),
-    newIconImage.mIcon.len, TRUE, 0x30000, width, height, 0)
+    self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&newIconImage.mIcon),
+      newIconImage.mIcon.len, TRUE, 0x30000, width, height, 0)
 
-  if self.mHandle == 0: self.error()
-  (self.mWidth, self.mHeight) = (width, height)
+    if self.mHandle == 0: self.error()
+    (self.mWidth, self.mHeight) = (width, height)
+
+  except wError:
+    self.error()
 
 proc Icon*(iconImage: wIconImage, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from a wIconImage object.
@@ -76,8 +80,11 @@ proc Icon*(iconImage: wIconImage, size = wDefaultSize): wIcon {.inline.} =
 proc init*(self: wIcon, bmp: wBitmap, size = wDefaultSize) {.validate, inline.} =
   ## Initializer.
   wValidate(bmp)
-  var iconImage = IconImage(bmp)
-  self.init(iconImage, size)
+  try:
+    var iconImage = IconImage(bmp)
+    self.init(iconImage, size)
+  except wError:
+    self.error()
 
 proc Icon*(bmp: wBitmap, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from the given wBitmap object.
@@ -124,7 +131,10 @@ proc init*(self: wIcon, data: pointer, length: int, size = wDefaultSize)
     {.validate, inline.} =
   ## Initializer.
   wValidate(data)
-  self.init(IconImage(data, length, size), size)
+  try:
+    self.init(IconImage(data, length, size), size)
+  except wError:
+    self.error()
 
 proc Icon*(data: pointer, length: int, size = wDefaultSize): wIcon {.inline.} =
   ## Creates an icon from binary data of .ico or .cur file.
@@ -135,17 +145,24 @@ proc Icon*(data: pointer, length: int, size = wDefaultSize): wIcon {.inline.} =
 proc init*(self: wIcon, str: string, size = wDefaultSize) {.validate, inline.} =
   ## Initializer.
   wValidate(str)
-  self.init(IconImage(str, size), size)
+  try:
+    self.init(IconImage(str, size), size)
+  except wError:
+    self.error()
 
 proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
-  ## Creates an icon from a file. The file should be format of .ico, .cur,
-  ## or 32-bit executable files (.exe or .dll, etc). If str is not a valid file
-  ## path, it will be regarded as the binary data of .ico or .cur file.
+  ## Creates an icon from a file. The file should be in format of .ico, .cur,
+  ## or Windows PE file (.exe or .dll, etc). If str is not a valid file path,
+  ## it will be regarded as the binary data of .ico or .cur file.
   ##
-  ## For 32-bit executable files (.exe or .dll), it allows string like
+  ## For Windows PE file (.exe or .dll), you should use string like
   ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
   ## to specifies the cursor index. Use zero-based index to specified the
   ## resource position, and negative value to specified the resource identifier.
+  ## Empty string (e.g. ",-1") to specified the current executable file.
+  ##
+  ## If *size* is wDefaultSize, it uses the SM_CXICON/SM_CXCURSOR system metric
+  ## value as default value.
   wValidate(str)
   new(result, final)
   result.init(str, size)
@@ -209,3 +226,21 @@ proc Icon*(cursor: wCursor): wIcon {.inline.} =
   wValidate(cursor)
   new(result, final)
   result.init(cursor)
+
+proc init*(self: wIcon, filename: string, index: int, size = wDefaultSize)
+    {.validate, inline.} =
+  ## Initializer.
+  wValidate(filename)
+  self.init(filename & "," & $index, size)
+
+proc Icon*(filename: string, index: int, size = wDefaultSize): wIcon {.inline.} =
+  ## Creates an icon from a Windows PE file (.exe or .dll, etc). Use zero-based
+  ## index to specified the resource position, and negative value to specified
+  ## the resource identifier. Empty string to specified the current executable
+  ## file.
+  ##
+  ## If *size* is wDefaultSize, it uses the SM_CXICON/SM_CXCURSOR system metric
+  ## value as default value.
+  wValidate(filename)
+  new(result, final)
+  result.init(filename, index, size)
