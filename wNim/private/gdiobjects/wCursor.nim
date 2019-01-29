@@ -15,6 +15,7 @@
 ## :Seealso:
 ##    `wDC <wDC.html>`_
 ##    `wPredefined <wPredefined.html>`_
+##    `wIconImage <wIconImage.html>`_
 #
 ## :Enum:
 ##    ==============================  =============================================================
@@ -326,7 +327,7 @@ proc Cursor*(str: string, size = wDefaultSize, hotspot = wDefaultPoint): wCursor
   ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
   ## to specifies the cursor index. Use zero-based index to specified the
   ## resource position, and negative value to specified the resource identifier.
-  ## Empty string (e.g. ",-1") to specified the current executable file.
+  ## Empty filename (e.g. ",-1") to specified the current executable file.
   wValidate(str)
   new(result, final)
   result.init(str, size, hotspot)

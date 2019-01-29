@@ -15,6 +15,7 @@
 ## :Seealso:
 ##   `wDC <wDC.html>`_
 ##   `wPredefined <wPredefined.html>`_
+##   `wIconImage <wIconImage.html>`_
 
 type
   wBitmapError* = object of wGdiObjectError

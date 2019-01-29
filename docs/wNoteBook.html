@@ -1288,6 +1288,9 @@ function main() {
     title="setPadding(self: wNoteBook; size: wSize)"><wbr />set<wbr />Padding<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final,wNoteBook"
     title="final(self: wNoteBook)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wNoteBook,wWindow,wStyle"
+    title="init(self: wNoteBook; parent: wWindow; id = wDefaultID; pos = wDefaultPoint;
+     size = wDefaultSize; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#NoteBook,wWindow,wStyle"
     title="NoteBook(parent: wWindow; id = wDefaultID; pos = wDefaultPoint; size = wDefaultSize;
          style: wStyle = 0): wNoteBook"><wbr />Note<wbr />Book<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1468,6 +1471,12 @@ Sets the amount of space around each page's icon and label, in pixels.
 Default finalizer for wNoteBook.
 
 </dd>
+<dt id="init"><a name="init,wNoteBook,wWindow,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
+         <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
 <dt id="NoteBook"><a name="NoteBook,wWindow,wStyle"></a><pre><span class="Keyword">proc</span> <span class="Identifier">NoteBook</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
              <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
@@ -1504,7 +1513,7 @@ Iterate each page in this notebook control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2018-11-09 12:29:34 UTC</small>
+        <small>Made with Nim. Generated: 2019-01-29 16:26:08 UTC</small>
       </div>
     </div>
   </div>

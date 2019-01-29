@@ -17,11 +17,17 @@
 ## wBitmap, wIcon, wCursor, or .ico/.cur files. In summary, it is easy to deal
 ## with Windows' image like resource and image files with wIconImage.
 ##
-## The wIconImage class use the same binary format as a image inside the icon
+## The wIconImage class use the same binary format as an image inside the icon
 ## files. So there are two possible format of wIconImage object: BMP or PNG.
 ## Since Windows XP don't support PNG format icon files, it is recommend to
 ## use toBmp() before saving a wIconImage object to icon file if the icon file
 ## will be used under Windows XP.
+#
+## :Seealso:
+##   `wImage <wImage.html>`_
+##   `wBitmap <wBitmap.html>`_
+##   `wIcon <wIcon.html>`_
+##   `wCursor <wCursor.html>`_
 
 # forward declarations
 proc Image*(iconImage: wIconImage): wImage {.inline.}
@@ -399,7 +405,8 @@ proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefault
 
   for i in 0..<count:
     copyMem(&grpIconDir.idEntries[i], &iconDir.idEntries[i], sizeof(GRPICONDIRENTRY))
-    grpIconDir.idEntries[i].nID = WORD(i + 1)
+    when not defined(wnimdoc): # this code crash nim doc generator
+      grpIconDir.idEntries[i].nID = WORD(i + 1)
 
   var index = LookupIconIdFromDirectoryEx(cast[PBYTE](grpIconDir), isIcon, width, height, 0)
   if index != 0:
@@ -484,8 +491,8 @@ proc IconImage*(data: pointer, length: int, size = wDefaultSize): wIconImage {.i
   ## uses Windows API to search and return the best fits icon, or uses the
   ## SM_CXICON/SM_CXCURSOR system metric value as default value.
   ##
-  ## **Notice: The really size of returned icon may not equal to your desired
-  ## size.**
+  ## **Notice: The function will not resize the image, so the real size of
+  ## retruned icon image may not equal to your desired size.**
   wValidate(data)
   new(result, final)
   result.init(data, length, size)
@@ -516,7 +523,7 @@ proc IconImage*(str: string, size = wDefaultSize): wIconImage {.inline.} =
   ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
   ## to specifies the cursor index. Use zero-based index to specified the
   ## resource position, and negative value to specified the resource identifier.
-  ## Empty string (e.g. ",-1") to specified the current executable file.
+  ## Empty filename (e.g. ",-1") to specified the current executable file.
   ##
   ## If the resource is an icon/cursor group, the extra *size* parameter can be
   ## used to specified the desired display size. The function uses Windows API
@@ -524,7 +531,7 @@ proc IconImage*(str: string, size = wDefaultSize): wIconImage {.inline.} =
   ## system metric value as default value.
   ##
   ## **Notice: The function will not resize the image, so the real size of
-  ## retruned icon image may not equal to your desired size.
+  ## retruned icon image may not equal to your desired size.**
   wValidate(str)
   new(result, final)
   result.init(str, size)
@@ -613,7 +620,9 @@ proc IconImages*(data: pointer, length: int): seq[wIconImage] =
     count = int iconDir.idCount
     isIcon = iconDir.idType == 1
 
-  result = newSeq[wIconImage](count)
+  when not defined(wnimdoc): # this code crash nim doc generator
+    result = newSeq[wIconImage](count)
+
   for i in 0..<count:
     let
       length = int iconDir.idEntries[i].dwBytesInRes

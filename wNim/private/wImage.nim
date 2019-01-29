@@ -13,6 +13,7 @@
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
 ##   `wCursor <wCursor.html>`_
+##   `wIconImage <wIconImage.html>`_
 #
 ## :Consts:
 ##

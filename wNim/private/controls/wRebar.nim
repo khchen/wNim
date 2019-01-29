@@ -9,6 +9,7 @@
 ## gripper bar, a bitmap, a text label, and one child control.
 ## As you dynamically reposition a rebar control band, the rebar control manages
 ## the size and position of the child window assigned to that band.
+## **Notice: This is just a experimental module, not yet fully functional.**
 #
 ## :Superclass:
 ##   `wControl <wControl.html>`_
