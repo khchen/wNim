@@ -98,10 +98,11 @@ proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate.} =
   wValidate(image)
 
   try:
-    var
-      image = image
-      isRescale = false
-      (width, height) = image.getSize()
+    when not defined(wnimdoc): # this code crash nim doc generator
+      var
+        image = image
+        isRescale = false
+        (width, height) = image.getSize()
 
     if size.width > 0 and size.width != width:
       isRescale = true

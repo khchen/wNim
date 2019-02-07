@@ -322,11 +322,12 @@ proc initRawGdipbmp(self: wIconImage, gdipbmp: ptr GpBitmap) =
   self.initRaw(width, height, 32, colorSize, colorBit, maskSize, monoMaskBit)
 
 proc initRawModuleGroupId(self: wIconImage, module: HMODULE, groupId: LPTSTR, size: wSize, isIcon: bool) =
-  var
-    (width, height) = size.toDefaultSize()
-    resource = FindResource(module, groupId, if isIcon: RT_GROUP_ICON else: RT_GROUP_CURSOR)
-    handle = LoadResource(module, resource)
-    p = LockResource(handle)
+  when not defined(wnimdoc): # this code crash nim doc generator
+    var
+      (width, height) = size.toDefaultSize()
+      resource = FindResource(module, groupId, if isIcon: RT_GROUP_ICON else: RT_GROUP_CURSOR)
+      handle = LoadResource(module, resource)
+      p = LockResource(handle)
 
   if resource != 0 and handle != 0 and p != nil:
     var
@@ -391,13 +392,14 @@ proc isIconBinary(data: pointer, length: int): bool =
 proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefaultSize) =
   if not isIconBinary(data, length): return
 
-  let
-    (width, height) = size.toDefaultSize()
-    iconDir = cast[ptr ICONDIR](data)
-    count = int iconDir.idCount
-    isIcon = iconDir.idType == 1
-    buffer = newString(sizeof(GRPICONDIR) + sizeof(GRPICONDIRENTRY) * count)
-    grpIconDir = cast[ptr GRPICONDIR](&buffer)
+  when not defined(wnimdoc): # this code crash nim doc generator
+    let
+      (width, height) = size.toDefaultSize()
+      iconDir = cast[ptr ICONDIR](data)
+      count = int iconDir.idCount
+      isIcon = iconDir.idType == 1
+      buffer = newString(sizeof(GRPICONDIR) + sizeof(GRPICONDIRENTRY) * count)
+      grpIconDir = cast[ptr GRPICONDIR](&buffer)
 
   grpIconDir.idReserved = iconDir.idReserved
   grpIconDir.idType = iconDir.idType

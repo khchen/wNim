@@ -589,9 +589,10 @@ proc init*(self: wImage, iconImage: wIconImage) {.validate.} =
   else:
     if iconImage.getBitCount() == 32:
       wGdipInit()
-      var
-        (width, height) = iconImage.getSize()
-        scan0 = cast[ptr BYTE](cast[int](&iconImage.mIcon) + sizeof(BITMAPINFOHEADER))
+      when not defined(wnimdoc): # this code crash nim doc generator
+        var
+          (width, height) = iconImage.getSize()
+          scan0 = cast[ptr BYTE](cast[int](&iconImage.mIcon) + sizeof(BITMAPINFOHEADER))
 
       if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
         scan0, &self.mGdipBmp) != Ok: self.error()
