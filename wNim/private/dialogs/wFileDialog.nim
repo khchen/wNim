@@ -103,7 +103,7 @@ proc setFilename*(self: wFileDialog, defaultFile: string) {.validate, property, 
 
 proc setWildcard*(self: wFileDialog, wildcard: string) {.validate, property, inline.} =
   ## Sets the wildcard, which can contain multiple file types,
-  ## for example: "BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif".
+  ## for example: "BMP files (\*.bmp)|\*.bmp|JPEG files (\*.jpg, \*.jpeg)|\*.jpg;\*.jpeg".
   self.mWildcard = wildcard
 
 proc setFilterIndex*(self: wFileDialog, index: int) {.validate, property, inline.} =
