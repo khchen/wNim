@@ -20,6 +20,7 @@
 ##   wAlignLeft                      Align the text to the left.
 ##   wAlignRight                     Align the text to the right.
 ##   wAlignCentre                    Center the text (horizontally).
+##   wAlignCenter                    Center the text (horizontally).
 ##   wAlignMiddle                    Center the text (vertically).
 ##   wAlignLeftNoWordWrap            Align the text to the left, but words are not wrapped
 ##   ==============================  =============================================================
@@ -37,6 +38,7 @@ const
   wAlignLeft* = SS_LEFT
   wAlignRight* = SS_RIGHT
   wAlignCentre* = SS_CENTER
+  wAlignCenter* = SS_CENTER
   wAlignMiddle* = SS_CENTERIMAGE
   wAlignLeftNoWordWrap* = SS_LEFTNOWORDWRAP
 
