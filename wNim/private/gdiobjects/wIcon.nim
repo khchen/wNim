@@ -63,6 +63,7 @@ proc init*(self: wIcon, iconImage: wIconImage, size = wDefaultSize) {.validate.}
 
     newIconImage.toBmp()
 
+    self.mDeletable = true
     self.mHandle = CreateIconFromResourceEx(cast[PBYTE](&newIconImage.mIcon),
       newIconImage.mIcon.len, TRUE, 0x30000, width, height, 0)
 

@@ -434,9 +434,13 @@ proc getItemSpacing*(self: wListCtrl): wSize {.validate, property.} =
   result.width = int LOWORD(spacing)
   result.height = int HIWORD(spacing)
 
-proc setItemSpacing*(self: wListCtrl, size: wSize) {.validate, property.} =
+proc setItemSpacing*(self: wListCtrl, width: int, height: int) {.validate, property.} =
   ## Sets the spacing between icons.
-  SendMessage(self.mHwnd, LVM_SETICONSPACING, 0, MAKELONG(size.width, size.height))
+  SendMessage(self.mHwnd, LVM_SETICONSPACING, 0, MAKELONG(width, height))
+
+proc setItemSpacing*(self: wListCtrl, size: wSize) {.validate, property, inline.} =
+  ## Sets the spacing between icons.
+  self.setItemSpacing(size.width, size.height)
 
 proc getTopItem*(self: wListCtrl): int {.validate, property.} =
   ## Gets the index of the topmost visible item when in list or report view.

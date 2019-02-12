@@ -2033,7 +2033,9 @@ proc init*(self: wWindow, hWnd: HWND) {.validate.} =
 
   wAppWindowAdd(self)
   if self.mParent == nil:
-    wAppTopLevelWindowAdd(self)
+    # Don't add a subclassed window into our top level list
+    # it means, all window in top level list is a window create from wNim
+    discard # wAppTopLevelWindowAdd(self)
   else:
     self.mParent.mChildren.add(self)
 

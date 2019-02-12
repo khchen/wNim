@@ -1,5 +1,12 @@
-Version 0.2
+Version 0.2.1
 -------------
+* Fix scroll bar bug in GUI controls.
+* Fix resource leak in wIcon.
+* Fix bug for wFrame.showModal().
+* Add wListCtrl.setItemSpacing().
+
+Version 0.2
+-----------
 * Add wIconImage class.
 * wImage, wBitmap, wIcon, and wCursor can convert between each other now.
 * Remove deprecated "this" pragma.
