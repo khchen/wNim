@@ -909,10 +909,14 @@ proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint)
     pos = wGetMousePosition()
 
   # Q135788, so when you click outside the popup menu, the popup menu disappears correctly.
-  SetForegroundWindow(self.mHwnd)
+  if self.isTopLevel():
+    SetForegroundWindow(self.mHwnd)
+
   TrackPopupMenu(menu.mHmenu, TPM_RECURSE or TPM_RIGHTBUTTON,
     pos.x, pos.y, 0, self.mHwnd, nil)
-  PostMessage(self.mHwnd, WM_NULL, 0, 0)
+
+  if self.isTopLevel():
+    PostMessage(self.mHwnd, WM_NULL, 0, 0)
 
 proc popupMenu*(self: wWindow, menu: wMenu, x, y: int) {.validate, inline.} =
   ## Pops up the given menu at the specified coordinates.
@@ -2000,8 +2004,9 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   self.systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
 
   self.systemConnect(WM_GETMINMAXINFO, wWindow_DoGetMinMaxInfo)
-  self.systemConnect(WM_VSCROLL, wWindow_DoScroll)
-  self.systemConnect(WM_HSCROLL, wWindow_DoScroll)
+  if regist: # let GUI controls handle scroll by themself
+    self.systemConnect(WM_VSCROLL, wWindow_DoScroll)
+    self.systemConnect(WM_HSCROLL, wWindow_DoScroll)
 
   self.hardConnect(WM_COMMAND, wWindow_OnCommand)
   self.hardConnect(WM_NOTIFY, wWindow_OnNotify)

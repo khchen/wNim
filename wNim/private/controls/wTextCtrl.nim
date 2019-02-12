@@ -28,6 +28,7 @@
 ##   wTeNoHideSel                    Show the selection event when it doesn't have focus.
 ##   wTeLeft                         The text in the control will be left-justified (default).
 ##   wTeCentre                       The text in the control will be centered.
+##   wTeCenter                       The text in the control will be centered.
 ##   wTeRight                        The text in the control will be right-justified.
 ##   wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
 ##   wTeRich                         Use rich text control under, this allows to have more than 64KB
@@ -55,6 +56,7 @@ const
   wTeNoHideSel* = ES_NOHIDESEL
   wTeLeft* = ES_LEFT
   wTeCentre* = ES_CENTER
+  wTeCenter* = ES_CENTER
   wTeRight* = ES_RIGHT
   wTeDontWrap* = WS_HSCROLL or ES_AUTOHSCROLL
   wTeRich* = 0x10000000 shl 32

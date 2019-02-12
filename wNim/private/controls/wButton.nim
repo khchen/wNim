@@ -172,6 +172,7 @@ proc setDefault*(self: wButton, flag = true) {.validate, property.} =
         wButton(win).mDefault = false
 
 proc setDropdownMenu*(self: wButton, menu: wMenu = nil) {.validate, property.} =
+  ## Sets a dropdown menu for a button, or nil to cancel it.
   if menu != nil:
     self.addWindowStyle(BS_SPLITBUTTON)
     self.mMenu = menu

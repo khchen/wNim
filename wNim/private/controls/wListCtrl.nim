@@ -18,7 +18,7 @@
 ##   ==============================  =============================================================
 ##   Styles                          Description
 ##   ==============================  =============================================================
-##   wLcIcon                         Multicolumn list view.
+##   wLcList                         Multicolumn list view.
 ##   wLcReport                       Single or multicolumn report view, with optional header.
 ##   wLcIcon                         Large icon view, with optional labels.
 ##   wLcSmallIcon                    Small icon view, with optional labels.
@@ -433,6 +433,10 @@ proc getItemSpacing*(self: wListCtrl): wSize {.validate, property.} =
   let spacing = SendMessage(self.mHwnd, LVM_GETITEMSPACING, isSmall, 0)
   result.width = int LOWORD(spacing)
   result.height = int HIWORD(spacing)
+
+proc setItemSpacing*(self: wListCtrl, size: wSize) {.validate, property.} =
+  ## Sets the spacing between icons.
+  SendMessage(self.mHwnd, LVM_SETICONSPACING, 0, MAKELONG(size.width, size.height))
 
 proc getTopItem*(self: wListCtrl): int {.validate, property.} =
   ## Gets the index of the topmost visible item when in list or report view.
