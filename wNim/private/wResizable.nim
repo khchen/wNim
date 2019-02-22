@@ -156,11 +156,21 @@ when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
         code.addConstraint(infix(x[0], "==", x[1]), strength)
 
       elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
-        # enconter name: stmtlist
+        # enconter name: stmtlist or number: stmtlist
         # if name is not strength, it should be a resizable object.
-        if $x[0] in strengthes:
+        # if there is number, consider it is strength
+        if x[0].kind in nnkCharLit..nnkUInt64Lit:
+          for item in x[1]:
+            code.addConstraint(item, $x[0].intVal)
+
+        elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
+          for item in x[1]:
+            code.addConstraint(item, $x[0].floatVal)
+
+        elif $x[0] in strengthes:
           for item in x[1]:
             code.addConstraint(item, $x[0])
+
         else:
           code &= "  self = $1\n" % [x[0].repr]
           code &= "  resizer.addObject($1)\n" % [x[0].repr]
