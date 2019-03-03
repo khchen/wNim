@@ -6,9 +6,9 @@
 #====================================================================
 
 when defined(cpu64):
-  {.link: "wNim64.res".}
+  {.link: "../wNim64.res".}
 else:
-  {.link: "wNim32.res".}
+  {.link: "../wNim32.res".}
 
 import wNim
 
@@ -34,48 +34,19 @@ var button4 = Button(panel, label="Buton4")
 var button5 = Button(panel, label="Buton5")
 
 proc layout() =
-  panel.layout:
-    staticbox1:
-      left = panel.left
-      right + 20 = staticbox2.left
-      top = panel.top
-      bottom = panel.bottom
+  panel.autolayout """
+    spacing: 10
+    H:|[staticbox1(staticbox2)]-20-[staticbox2]|
+    V:|[staticbox1..2]|
 
-    staticbox2:
-      width = staticbox1.width
-      right = panel.right
-      top = panel.top
-      bottom = panel.bottom
+    outer: staticbox1
+    H:|[button1..3]|
+    V:|[button1(button2,button3)]-[button2]-[button3]|
 
-    button1:
-      left = staticbox1.innerLeft
-      right = staticbox1.innerRight
-      top = staticbox1.innerTop
-      bottom + 10 = button2.top
-
-    button2:
-      left = staticbox1.innerLeft
-      right = staticbox1.innerRight
-      height = button1.height
-      bottom + 10 = button3.top
-
-    button3:
-      left = staticbox1.innerLeft
-      right = staticbox1.innerRight
-      height = button2.height
-      bottom = staticbox1.innerBottom
-
-    button4:
-      left = staticbox2.innerLeft
-      right = staticbox2.innerRight
-      top = staticbox2.innerTop
-      bottom + 10 = button5.top
-
-    button5:
-      left = staticbox2.innerLeft
-      right = staticbox2.innerRight
-      height = button4.height
-      bottom = staticbox2.innerBottom
+    outer: staticbox2
+    H:|[button4..5]|
+    V:|[button4(button5)]-[button5]|
+  """
 
   staticbox3.contain(staticbox1, staticbox2)
 

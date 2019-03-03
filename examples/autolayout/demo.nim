@@ -6,9 +6,9 @@
 #====================================================================
 
 when defined(cpu64):
-  {.link: "wNim64.res".}
+  {.link: "../wNim64.res".}
 else:
-  {.link: "wNim32.res".}
+  {.link: "../wNim32.res".}
 
 import wNim
 
@@ -21,8 +21,6 @@ frame.icon = Icon("", 0) # load icon from exe file.
 
 var statusBar = StatusBar(frame)
 var panel = Panel(frame)
-panel.margin = 10
-
 var staticbox1 = StaticBox(panel, label="Basic Controls")
 var staticbox2 = StaticBox(panel, label="Numbers Controls")
 var staticbox3 = StaticBox(panel, label="Lists Controls")
@@ -109,138 +107,33 @@ notebook.wEvent_NoteBookPageChanged do (): listbox.add "notebook.wEvent_NoteBook
 staticbitmap.wEvent_CommandLeftClick do (): listbox.add "staticbitmap.wEvent_CommandLeftClick"
 
 proc layout() =
-  panel.layout:
-    staticbox1:
-      top = panel.top
-      bottom = panel.bottom
-      left = panel.left
-      innerWidth = calendarctrl.bestSize.width
+  panel.autolayout """
+    spacing: 10
+    H:|-[staticbox1]-[staticbox2..3,notebook]-|
+    V:|-[staticbox1]-|
+    V:|-[staticbox2]-[staticbox3]-[notebook]-|
+    C: staticbox1.innerWidth = calendarctrl.bestSize.width
 
-    button:
-      top = staticbox1.innerTop + 5
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox1
+    V:|-5-{stack1:[button]-[checkbox]-[textctrl]-[statictext]}-[staticline]-
+      {stack2:[datepickerctrl]-[timepickerctrl]}-[calendarctrl]
+    H:|-5-[stack1..2,staticline,calendarctrl]-5-|
 
-    checkbox:
-      top = button.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox2
+    V:|-5-{stack3:[spinctrl]-[slider]-[gauge]}-5-|
+    H:|-5-[stack3]-5-|
 
-    textctrl:
-      top = checkbox.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox3
+    V:|-5-{stack4:[combobox]-[editable]-
+      [radiobutton1][radiobutton2][radiobutton3]}-5-|
+    H:|-5-[stack4]-5-|
 
-    statictext:
-      top = textctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    V:[stack1..4(25)]
+  """
 
-    staticline:
-      top = statictext.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 2
-
-    datepickerctrl:
-      top = staticline.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
-
-    timepickerctrl:
-      top = datepickerctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
-
-    calendarctrl:
-      top = timepickerctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-
-    staticbox2:
-      top = panel.top
-      left = staticbox1.right + 10
-      right = panel.right
-      innerBottom = gauge.bottom + 5
-
-    spinctrl:
-      top = staticbox2.innerTop + 5
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    slider:
-      top = spinctrl.bottom + 10
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    gauge:
-      top = slider.bottom + 10
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    staticbox3:
-      top = staticbox2.bottom + 10
-      left = staticbox1.right + 10
-      right = panel.right
-      innerBottom = radiobutton3.bottom + 5
-
-    combobox:
-      top = staticbox3.innerTop + 5
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 25
-
-    editable:
-      top = combobox.bottom + 10
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 25
-
-    radiobutton1:
-      top = editable.bottom + 10
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    radiobutton2:
-      top = radiobutton1.bottom
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    radiobutton3:
-      top = radiobutton2.bottom
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    notebook:
-      top = staticbox3.bottom + 10
-      bottom = panel.bottom
-      left = staticbox3.left
-      right = panel.right
-
-  notebook.layout:
-    staticbitmap:
-      left = notebook.left
-      right = notebook.right
-      top = notebook.top
-      bottom = notebook.bottom
-
-    listbox:
-      left = notebook.left
-      right = notebook.right
-      top = notebook.top
-      bottom = notebook.bottom
+  notebook.autolayout """
+    HV:|[staticbitmap,listbox]|
+  """
 
 panel.wEvent_Size do ():
   layout()

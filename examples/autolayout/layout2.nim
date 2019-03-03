@@ -6,9 +6,9 @@
 #====================================================================
 
 when defined(cpu64):
-  {.link: "wNim64.res".}
+  {.link: "../wNim64.res".}
 else:
-  {.link: "wNim32.res".}
+  {.link: "../wNim32.res".}
 
 import wNim
 
@@ -27,34 +27,26 @@ var button5 = Button(panel, label="Buton5")
 var box = Resizable()
 
 proc layout1() =
-  panel.layout:
-    button1: centerX = panel.centerX; top = panel.top + 8
-    button2: centerX = panel.centerX; top = button1.bottom + 8
-    button3: centerX = panel.centerX; top = button2.bottom + 8
-    button4: centerX = panel.centerX; top = button3.bottom + 8
-    button5: centerX = panel.centerX; top = button4.bottom + 8
-    box:
-      top = 0
-      left = 0
-      width = button5.width + 16
-      bottom = button5.bottom + 8
+  panel.autolayout """
+    spacing: 8
+    H:|~[button1..5]~|
+    V:|-[button1]-[button2]-[button3]-[button4]-[button5]
+    H:[box(button1 + 8 * 2)]
+    V:[box(button1 * 5 + 8 * 6)]
+  """
 
   let boxSize = box.layoutSize
   frame.minClientSize = boxSize
   frame.maxClientSize = (wDefault, boxSize.height)
 
 proc layout2() =
-  panel.layout:
-    button1: centerY = panel.centerY; left = panel.left + 8
-    button2: centerY = panel.centerY; left = button1.right + 8
-    button3: centerY = panel.centerY; left = button2.right + 8
-    button4: centerY = panel.centerY; left = button3.right + 8
-    button5: centerY = panel.centerY; left = button4.right + 8
-    box:
-      top = 0
-      left = 0
-      right = button5.right + 8
-      height = button5.height + 16
+  panel.autolayout """
+    spacing: 8
+    V:|~[button1..5]~|
+    H:|-[button1]-[button2]-[button3]-[button4]-[button5]
+    V:[box(button1 + 8 * 2)]
+    H:[box(button1 * 5 + 8 * 6)]
+  """
 
   let boxSize = box.layoutSize
   frame.minClientSize = boxSize

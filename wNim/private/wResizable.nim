@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -22,7 +22,7 @@
 ##       height = panel.height / 2
 ##       width = panel.width / 2
 ##
-## Following identifiers can be used in the layout DSL:
+## Following identifiers can be used in the layout DSL as attributes:
 ## ================================  =============================================================
 ## Identifiers                       Description
 ## ================================  =============================================================
@@ -56,156 +56,261 @@
 ## :Seealso:
 ##   `wResizer <wResizer.html>`_
 
-proc getSize*(self: wResizable): wSize {.validate, property.} =
-  ## Returns the current size.
-  result.width = int round(self.mRight.value - self.mLeft.value)
-  result.height = int round(self.mBottom.value - self.mTop.value)
+proc getLayoutSize*(self: wResizable): wSize {.validate, property.} =
+  ## Returns the current layout size.
+  result.width = int round(self.mWidth.value)
+  result.height = int round(self.mHeight.value)
 
-proc getRect*(self: wResizable): wRect {.validate, property.} =
-  ## Returns the current rect.
+proc getLayoutRect*(self: wResizable): wRect {.validate, property.} =
+  ## Returns the current layout rect.
   result.x = int round(self.mLeft.value)
   result.y = int round(self.mTop.value)
-  result.width = int round(self.mRight.value - self.mLeft.value)
-  result.height = int round(self.mBottom.value - self.mTop.value)
+  result.width = int round(self.mWidth.value)
+  result.height = int round(self.mHeight.value)
+
+proc setLayoutSize*(self: wResizable, size: wSize) {.validate, property.} =
+  ## Sets the layout size.
+  self.mWidth.value = float size.width
+  self.mHeight.value = float size.height
+
+proc setLayoutRect*(self: wResizable, rect: wRect) {.validate, property.} =
+  ## Sets the layout rect.
+  self.mLeft.value = float rect.x
+  self.mTop.value = float rect.y
+  self.mWidth.value = float rect.width
+  self.mHeight.value = float rect.height
+
+method getClientSize(self: wResizable): wSize {.base.} =
+  # The base method used in wResizer.
+  # This method should be not public, only the wWindow.getClientSize() is public.
+  result = self.getLayoutSize()
+
+method clientSize(self: wResizable): wSize {.base.} =
+  # The base method used in wResizer.
+  # This method should be not public, only the wWindow.getClientSize() is public.
+  result = self.getLayoutSize()
 
 proc final*(self: wResizable) =
   ## Default finalizer for wResizable.
   discard
 
-proc init(self: wResizable) =
+proc init*(self: wResizable) =
+  ## Initializer.
   self.mLeft = newVariable()
-  self.mRight = newVariable()
   self.mTop = newVariable()
-  self.mBottom = newVariable()
+  self.mWidth = newVariable()
+  self.mHeight = newVariable()
 
 proc Resizable*(): wResizable {.inline.} =
   ## Constructor.
   new(result, final)
   result.init()
 
-proc left*(self: wResizable): Variable {.inline.} = self.mLeft
-proc right*(self: wResizable): Variable {.inline.} = self.mRight
-proc top*(self: wResizable): Variable {.inline.} = self.mTop
-proc bottom*(self: wResizable): Variable {.inline.} = self.mBottom
+template attributeTempaltes(): untyped =
+  template left(name: wResizable): untyped {.used.} = name.mLeft
+  template top(name: wResizable): untyped {.used.} = name.mTop
+  template right(name: wResizable): untyped {.used.} = name.mLeft + name.mWidth
+  template bottom(name: wResizable): untyped {.used.} = name.mTop + name.mHeight
+  template width(name: wResizable): untyped {.used.} = name.mWidth
+  template height(name: wResizable): untyped {.used.} = name.mHeight
+  template up(name: wResizable): untyped {.used.} = name.top
+  template down(name: wResizable): untyped {.used.} = name.bottom
+  template centerX(name: wResizable): untyped {.used.} = name.mWidth / 2 + name.mLeft
+  template centerY(name: wResizable): untyped {.used.} = name.mHeight / 2 + name.mTop
+  template defaultWidth(name: wResizable): untyped {.used.} = name.wWindow.defaultSize.width
+  template defaultHeight(name: wResizable): untyped {.used.} = name.wWindow.defaultSize.height
+  template bestWidth(name: wResizable): untyped {.used.} = name.wWindow.bestSize.width
+  template bestHeight(name: wResizable): untyped {.used.} = name.wWindow.bestSize.height
+  template innerLeft(name: wResizable): untyped {.used.} = name.left + name.wWindow.clientMargin(wLeft)
+  template innerTop(name: wResizable): untyped {.used.} = name.top + name.wWindow.clientMargin(wTop)
+  template innerRight(name: wResizable): untyped {.used.} = name.right - name.wWindow.clientMargin(wRight)
+  template innerBottom(name: wResizable): untyped {.used.} = name.bottom - name.wWindow.clientMargin(wBottom)
+  template innerUp(name: wResizable): untyped {.used.} = name.top + name.wWindow.clientMargin(wTop)
+  template innerDown(name: wResizable): untyped {.used.} = name.bottom - name.wWindow.clientMargin(wBottom)
+  template innerWidth(name: wResizable): untyped {.used.} = name.innerRight - name.innerLeft
+  template innerHeight(name: wResizable): untyped {.used.} = name.innerBottom - name.innerTop
 
-when not defined(wnimdoc): # this code crash nim doc generator, I don't know why
-  proc dslParser(parent: NimNode, x: NimNode): NimNode =
-    var code = "{.push hint[XDeclaredButNotUsed]: off.}\n"
-    code &= "when not declaredInScope(wNimResizer):\n"
-    code &= "  var wNimResizer = Resizer()\n"
-    code &= "else:\n"
-    code &= "  wNimResizer = Resizer()\n"
-    code &= "block:\n"
-    code &= "  let resizer = wNimResizer\n"
-    code &= "  var self: wResizable\n"
-    code &= "  template width(name: wResizable): untyped = (name.right - name.left)\n"
-    code &= "  template height(name: wResizable): untyped = (name.bottom - name.top)\n"
-    code &= "  template up(name: wResizable): untyped = name.top\n"
-    code &= "  template down(name: wResizable): untyped = name.bottom\n"
-    code &= "  template centerX(name: wResizable): untyped = ((name.right - name.left) / 2 + name.left)\n"
-    code &= "  template centerY(name: wResizable): untyped = ((name.bottom - name.top) / 2 + name.top)\n"
-    code &= "  template defaultWidth(name: wResizable): untyped = name.wWindow.defaultSize.width\n"
-    code &= "  template defaultHeight(name: wResizable): untyped = name.wWindow.defaultSize.height\n"
-    code &= "  template bestWidth(name: wResizable): untyped = name.wWindow.bestSize.width\n"
-    code &= "  template bestHeight(name: wResizable): untyped = name.wWindow.bestSize.height\n"
+proc layoutParser(x: NimNode): string =
+  const attributes = ["width", "height", "left", "top", "right", "bottom", "up",
+    "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "bestWidth",
+    "bestHeight", "innerLeft", "innerTop", "innerRight", "innerBottom",
+    "innerUp", "innerDown", "innerWidth", "innerHeight"]
 
-    # for align between siblings only, for example: StaticBox
-    code &= "  template innerLeft(name: wResizable): untyped = name.left + name.wWindow.clientMargin(wLeft)\n"
-    code &= "  template innerTop(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop)\n"
-    code &= "  template innerRight(name: wResizable): untyped = name.right - name.wWindow.clientMargin(wRight)\n"
-    code &= "  template innerBottom(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom)\n"
-    code &= "  template innerUp(name: wResizable): untyped = name.top + name.wWindow.clientMargin(wTop)\n"
-    code &= "  template innerDown(name: wResizable): untyped = name.bottom - name.wWindow.clientMargin(wBottom)\n"
-    code &= "  template innerWidth(name: wResizable): untyped = (name.innerRight - name.innerLeft)\n"
-    code &= "  template innerHeight(name: wResizable): untyped = (name.innerBottom - name.innerTop)\n"
+  const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "WEAKER"]
 
-    const attributes = ["width", "height", "left", "top", "right", "bottom", "up",
-      "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "bestWidth",
-      "bestHeight", "innerLeft", "innerTop", "innerRight", "innerBottom",
-      "innerUp", "innerDown", "innerWidth", "innerHeight"]
+  proc addSelfDot(x: NimNode): NimNode =
+    # Find all ident recursively, add "self." if the ident is a attribute
+    if x.kind == nnkIdent and $x in attributes:
+      result = newDotExpr(newIdentNode("self"), x)
+    else:
+      result = x
 
-    const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "WEAKER", "WEAKEST"]
+    for i in 0..<x.len:
+      if x[i].kind != nnkDotExpr:
+        let new = addSelfDot(x[i])
+        x.del(i)
+        x.insert(i, new)
 
-    proc addSelfDot(x: NimNode): NimNode =
-      # Find all ident recursively, add "self." if the ident is a attribute
-      if x.kind == nnkIdent and $x in attributes:
-        result = newDotExpr(newIdentNode("self"), x)
+  proc addConstraint(code: var string, x: NimNode, strength = "") =
+    if x.kind == nnkInfix:
+      ## enconter infix operator  a == b, a < b, etc.
+      if strength.len == 0:
+        code.add "resizer.addConstraint(" & x.repr & ")\n"
       else:
-        result = x
+        code.add "resizer.addConstraint(($1) | $2)\n" % [x.repr, strength]
 
-      for i in 0..<x.len:
-        if x[i].kind != nnkDotExpr:
-          let new = addSelfDot(x[i])
-          x.del(i)
-          x.insert(i, new)
+    elif x.kind == nnkBracket:
+      for item in x:
+        code.addConstraint(item, strength)
 
-    proc addConstraint(code: var string, x: NimNode, strength = "") =
-      if x.kind == nnkInfix:
-        ## enconter infix operator  a == b, a < b, etc.
-        if strength.len == 0:
-          code &= "  resizer.addConstraint(" & x.repr & ")\n"
-        else:
-          code &= "  resizer.addConstraint(($1) | $2)\n" % [x.repr, strength]
+    if x.kind == nnkAsgn:
+      ## enconter a = b, we should parse as a == b
+      code.addConstraint(infix(x[0], "==", x[1]), strength)
 
-      elif x.kind == nnkBracket:
-        for item in x:
+    elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
+      # enconter name: stmtlist or number: stmtlist
+      # if name is not strength, it should be a resizable object.
+      # if there is a number, consider it is the strength
+
+      if x[0].kind in nnkCharLit..nnkUInt64Lit:
+        for item in x[1]:
+          code.addConstraint(item, $x[0].intVal)
+
+      elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
+        for item in x[1]:
+          code.addConstraint(item, $x[0].floatVal)
+
+      elif $x[0] in strengthes:
+        for item in x[1]:
+          code.addConstraint(item, $x[0])
+
+      else:
+        code.add "self = $1\n" % [x[0].repr]
+        code.add "resizer.addObject($1)\n" % [x[0].repr]
+        for item in x[1]:
           code.addConstraint(item, strength)
 
-      if x.kind == nnkAsgn:
-        ## enconter a = b, we should parse as a == b
-        code.addConstraint(infix(x[0], "==", x[1]), strength)
+    elif x.kind == nnkStmtList:
+      for item in x:
+        code.addConstraint(item, strength)
 
-      elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
-        # enconter name: stmtlist or number: stmtlist
-        # if name is not strength, it should be a resizable object.
-        # if there is number, consider it is strength
-        if x[0].kind in nnkCharLit..nnkUInt64Lit:
-          for item in x[1]:
-            code.addConstraint(item, $x[0].intVal)
+  var code = ""
+  code.addConstraint(x.addSelfDot)
+  return code
 
-        elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
-          for item in x[1]:
-            code.addConstraint(item, $x[0].floatVal)
+macro layoutRealize(x: untyped): untyped =
+  parseStmt(layoutParser(x))
 
-        elif $x[0] in strengthes:
-          for item in x[1]:
-            code.addConstraint(item, $x[0])
+template layout*(parent: wResizable, x: untyped) =
+  ## Parses the layout DSL and rearrange the objects. This function only
+  ## evaluate the DSL and creates the constraints once.
 
-        else:
-          code &= "  self = $1\n" % [x[0].repr]
-          code &= "  resizer.addObject($1)\n" % [x[0].repr]
-          for item in x[1]:
-            code.addConstraint(item, strength)
+  # Here needs {.inject.} so that layoutRealize can catch the resizer and
+  # self, so add block for identifier hygiene.
+  block:
+    attributeTempaltes()
+    var resizer {.inject, global.}: wResizer
+    var self {.inject.}: wResizable
 
-      elif x.kind == nnkStmtList:
-        for item in x:
-          code.addConstraint(item, strength)
+    if resizer == nil:
+      resizer = Resizer(parent)
+      layoutRealize(x)
 
-    code.addConstraint(x.addSelfDot)
+    resizer.resolve()
+    resizer.rearrange()
 
-    if parent.kind != nnkNilLit:
-      code &= "  let size = $1.getClientSize()\n" % [$parent]
-      code &= "  resizer.addConstraint($1.left == 0)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.top == 0)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.width == size.width)\n" % [$parent]
-      code &= "  resizer.addConstraint($1.height == size.height)\n" % [$parent]
+template relayout*(parent: wResizable, x: untyped) =
+  ## Parses the layout DSL and rearrange the objects. This function evaluate
+  ## the DSL and creates the constraints every time.
+  ## If the value in the constraints is not constant (For example, if there is
+  ## object.bestWidth in DSL and the label of the object will change every
+  ## time), use this function instead of *layout*.
+  block:
+    attributeTempaltes()
+    var resizer {.inject.} = Resizer(parent)
+    var self{.inject.}: wResizable
 
-    code &= "{.pop.}\n"
-    parseStmt(code)
+    layoutRealize(x)
+    resizer.resolve()
+    resizer.rearrange()
 
-macro plan*(parent: wResizable, x: untyped): untyped =
-  ## Parses the layout DSL and return the wResizer object.
-  ## Use wResizer.resolve() and wResizer.rearrange() to do the change.
-  result = parent.dslParser(x)
-  result.add newIdentNode("wNimResizer")
+template plan*(parent: wResizable, x: untyped): untyped =
+  ## Similar to *layout*, but return the wResizer object.
+  ## Calls wResizer.resolve() and then wResizer.rearrange() to change the layout
+  ## in reality later. This function provides a chance to modify the resolved
+  ## values.
+  block:
+    attributeTempaltes()
+    var resizer {.inject, global.}: wResizer
+    var self{.inject.}: wResizable
 
-macro layout*(parent: wResizable, x: untyped): untyped =
-  ## Parses the layout DSL and rearrange the object.
-  result = parent.dslParser(x)
-  result.add newCall(newDotExpr(newIdentNode("wNimResizer"), newIdentNode("resolve")))
-  result.add newCall(newDotExpr(newIdentNode("wNimResizer"), newIdentNode("rearrange")))
+    if resizer == nil:
+      resizer = Resizer(parent)
+      layoutRealize(x)
 
-macro debug*(parent: wResizable, x: untyped): untyped =
-  ## Output the parsing result for debugging.
-  result = parent.dslParser(x)
-  echo result.repr
+    resizer
+
+template replan*(parent: wResizable, x: untyped): untyped =
+  ## Similar to *relayout*, but return the wResizer object.
+  ## Calls wResizer.resolve() and then wResizer.rearrange() to change the layout
+  ## in reality later. This function provides a chance to modify the resolved
+  ## values.
+  block:
+    attributeTempaltes()
+    var resizer {.inject.} = Resizer(parent)
+    var self{.inject.}: wResizable
+
+    layoutRealize(x)
+    resizer
+
+macro autolayout*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the layout VFL (Visual Format Language), and then use *layout*
+  ## function to deal with the result.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  parseStmt(parser.toString(templ="layout"))
+
+macro autorelayout*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the layout VFL (Visual Format Language), and then use *relayout*
+  ## function to deal with the result.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  parseStmt(parser.toString(templ="relayout"))
+
+macro autoplan*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the layout VFL (Visual Format Language), and then use *plan*
+  ## function to deal with the result.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  parseStmt(parser.toString(templ="plan"))
+
+macro autoreplan*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the layout VFL (Visual Format Language), and then use *replan*
+  ## function to deal with the result.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  parseStmt(parser.toString(templ="replan"))
+
+macro layoutDebug*(parent: wResizable, x: untyped): untyped =
+  ## Parses the layout DSL and returns the constraints in string literal for
+  ## debugging.
+  result = newStrLitNode(layoutParser(x))
+
+macro layoutDump*(parent: wResizable, x: untyped): untyped =
+  ## Parses the layout DSL and displays the constraints at compile time for
+  ## debugging.
+  echo layoutParser(x)
+
+macro autolayoutDebug*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the VFL (Visual Format Language) and returns the result in string
+  ## literal for debugging.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  result = newStrLitNode(parser.toString(templ="layout"))
+
+macro autolayoutDump*(parent: wResizable, input: static[string]): untyped =
+  ## Parses the VFL (Visual Format Language) and displays the result at compile
+  ## time for debugging.
+  var parser = initVflParser(parent.repr)
+  parser.parse(input)
+  echo parser.toString(templ="layout")

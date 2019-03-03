@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2018 Ward
+#                (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -125,11 +125,11 @@
 
 when not defined(wnimdoc):
   import tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net
-  import kiwi
+  import kiwi, wNim/autolayout
   import winim/winstr, winim/utils
   import winim/inc/[windef, winerror, winbase, winuser, wingdi]
   import winim/inc/[commctrl, commdlg, objbase, richedit, shellapi, gdiplus]
-  export winstr, utils, windef, winerror, winbase, winuser, wingdi, kiwi
+  export winstr, utils, windef, winerror, winbase, winuser, wingdi, kiwi, autolayout
 
   include wNim/private/wSymbolics
   include wNim/private/wMacro

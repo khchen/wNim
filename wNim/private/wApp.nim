@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -16,7 +16,8 @@ var wTheApp {.threadvar.}: wApp
 proc App*(): wApp =
   ## Constructor.
   if not wTheApp.isNil:
-    raise newException(wError, "allow only one instance of wApp")
+    # "allow only one instance of wApp"
+    return wTheApp
 
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES or ICC_INTERNET_CLASSES or
@@ -31,8 +32,14 @@ proc App*(): wApp =
   result.mTopLevelWindowList = @[]
   result.mWindowTable = initTable[HWND, wWindow]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
-  result.mPropagationSet = initSet[UINT]()
   result.mMessageCountTable = initCountTable[UINT]()
+
+  # initSet is deprecated since v0.20
+  when declared(initHashSet):
+    result.mPropagationSet = initHashSet[UINT]()
+  else:
+    result.mPropagationSet = initSet[UINT]()
+
   wTheApp = result
 
 proc wAppGetCurrentApp*(): wApp {.inline.} =

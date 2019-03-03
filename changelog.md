@@ -1,9 +1,13 @@
-Version 0.2.1
+Version 0.3
 -------------
-* Fix scroll bar bug in GUI controls.
-* Fix resource leak in wIcon.
-* Fix bug for wFrame.showModal().
+* Add autolayout submodule to parse Visual Format Language.
+* Significant improved layout DSL performance.
+* Add examples about autolayout.
+* Add wTextCtrl.setFont() to set default font for rich editor.
 * Add wListCtrl.setItemSpacing().
+* Add wWindow.getReturnCode() and wWindow.setReturnCode().
+* Update for Nim Compiler 0.19.9
+* Fix a lot of small bugs.
 
 Version 0.2
 -----------

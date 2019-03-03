@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -145,19 +145,21 @@ proc loadIconLibrary(str: string): tuple[module: HMODULE, index: int, isIcon: bo
 
   try:
     var tailSplit = rsplit(str, ",", maxsplit=1)
-    index = parseInt(tailSplit[1])
-    pefile = tailSplit[0]
-    isIcon = true
-    found = true
-  except IndexError, ValueError: discard
+    if tailSplit.len >= 2:
+      index = parseInt(tailSplit[1])
+      pefile = tailSplit[0]
+      isIcon = true
+      found = true
+  except ValueError: discard
 
   try:
     var tailSplit = rsplit(str, ":", maxsplit=1)
-    index = parseInt(tailSplit[1])
-    pefile = tailSplit[0]
-    isIcon = false
-    found = true
-  except IndexError, ValueError: discard
+    if tailSplit.len >= 2:
+      index = parseInt(tailSplit[1])
+      pefile = tailSplit[0]
+      isIcon = false
+      found = true
+  except ValueError: discard
 
   if found:
     if pefile.len != 0:

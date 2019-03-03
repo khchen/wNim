@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -88,8 +88,8 @@ const
   wSouth* = wDown
   wWest* = wLeft
   wEast* = wRight
-  wHorizontal* = wLeft
-  wVertical* = wUp
+  wHorizontal* = wLeft or wRight
+  wVertical* = wUp or wDown
   wBoth* = wHorizontal or wVertical
   wCenter* = wLeft or wRight
   wMiddle* = wUp or wDown
@@ -192,12 +192,13 @@ when not defined(wnimdoc):
       orientation: int
 
     wResizable* = ref object of RootObj
-      mLeft: Variable
-      mRight: Variable
-      mTop: Variable
-      mBottom: Variable
+      mLeft*: Variable
+      mTop*: Variable
+      mWidth*: Variable
+      mHeight*: Variable
 
     wResizer* = ref object of RootObj
+      mParent: wResizable
       mSolver: Solver
       mObjects: HashSet[wResizable]
 
@@ -267,6 +268,7 @@ when not defined(wnimdoc):
       mDraggableInfo: wDraggableInfo
       mDropTarget: wDropTarget
       mTipHwnd: HWND
+      mRetCode: int
 
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar

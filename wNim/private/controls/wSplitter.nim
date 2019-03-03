@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -264,7 +264,7 @@ proc attachPanel*(self: wSplitter, attach = true) {.validate, inline.} =
   self.mAttach2 = attach
   self.reattach()
 
-proc setSplitMode*(self: wSplitter, mode: int) {.validate, property, inline.} =
+proc setSplitMode*(self: wSplitter, mode: int) {.validate, property.} =
   ## Sets the split mode. Mode can be wSpHorizontal or wSpVertical.
   if mode in {wVertical, wSpVertical}:
     if not self.mIsVertical:

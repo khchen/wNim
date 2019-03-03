@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -206,9 +206,8 @@ proc endModal*(self: wFrame, retCode: int = 0) =
     topwin.enable()
   self.mDisableList = @[]
 
-  # use wEvent_AppQuit to end the loop in showModal
-  PostMessage(0, wEvent_AppQuit, WPARAM retCode, 0)
   self.hide()
+  self.setReturnCode(retCode)
 
 proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.} =
   ## Creates the system tray icon.

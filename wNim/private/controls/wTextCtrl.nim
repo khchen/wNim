@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -375,6 +375,24 @@ proc len*(self: wTextCtrl): int {.validate, inline.} =
 proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control. The same as appendText()
   self.appendText(text)
+
+proc setFont*(self: wTextCtrl, font: wFont) {.validate, property.} =
+  ## Sets the font for this text control.
+  wValidate(font)
+  if self.mRich:
+    var charformat = CHARFORMAT2(cbSize: sizeof(CHARFORMAT2))
+    charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS
+    charformat.yHeight = LONG(font.mPointSize * 20)
+    charformat.wWeight = WORD font.mWeight
+    charformat.szFaceName << +$font.mFaceName
+    charformat.bCharSet = BYTE font.mEncoding
+    charformat.bPitchAndFamily = BYTE font.mFamily
+    if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
+    if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
+    SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_DEFAULT, cast[LPARAM](&charformat))
+
+  else:
+    self.wWindow.setFont(font)
 
 iterator lines*(self: wTextCtrl): string {.validate.} =
   ## Iterates over each line in the control.

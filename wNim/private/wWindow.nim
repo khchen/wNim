@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -101,7 +101,7 @@ proc setWindowSize(self: wWindow, width, height: int) {.inline.} =
 proc setWindowPos(self: wWindow, x, y: int) {.inline.} =
   self.setWindowRect(x, y, 0, 0, SWP_NOSIZE)
 
-method getClientSize*(self: wWindow): wSize {.base, property.} =
+method getClientSize*(self: wWindow): wSize {.property.} =
   ## Returns the size of the window 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
@@ -743,7 +743,7 @@ proc setTransparent*(self: wWindow, alpha: range[0..255]) {.validate, property.}
   SetWindowLongPtr(self.mHwnd, GWL_EXSTYLE,
     WS_EX_LAYERED or GetWindowLongPtr(self.mHwnd, GWL_EXSTYLE))
 
-  SetLayeredWindowAttributes(self.mHwnd, 0, alpha, LWA_ALPHA)
+  SetLayeredWindowAttributes(self.mHwnd, 0, BYTE alpha, LWA_ALPHA)
 
 proc getTransparent*(self: wWindow): int {.validate, property.} =
   ## Get the alpha value of a transparent window. Return -1 if failed.
@@ -957,6 +957,13 @@ proc getDoubleBuffered*(self: wWindow): bool {.validate, property.} =
   ## Returns true if the window contents is double-buffered by the system
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and WS_EX_COMPOSITED) != 0
 
+proc setReturnCode*(self: wWindow, retCode: int) {.validate, property, inline.} =
+  ## Sets the return code for this window.
+  self.mRetCode = retCode
+
+proc getReturnCode*(self: wWindow): int {.validate, property, inline.} =
+  ## Gets the return code for this window.
+  result = self.mRetCode
 
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterates over each window's child.
@@ -1712,7 +1719,8 @@ proc wWindow_DoDestroy(event: wEvent) =
   # use our own wEvent_AppQuit here, because PostQuitMessage indicates system
   # the thread wishes to terminate. It disables the further creation of windows
   # (MessageBox etc).
-  PostMessage(0, wEvent_AppQuit, 0, 0)
+  if event.mWindow.isTopLevel:
+    PostMessage(0, wEvent_AppQuit, 0, 0)
 
 proc wWindow_DoNcDestroy(event: wEvent) =
   let self = event.mWindow

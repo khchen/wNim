@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2018 Ward
+#                 (c) Copyright 2017-2019 Ward
 #
 #====================================================================
 
@@ -299,7 +299,12 @@ proc init*(self: wMenuBar) {.validate.} =
     dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS)
   SetMenuInfo(self.mHmenu, menuInfo)
   self.mMenuList = @[]
-  self.mParentFrameSet = initSet[wFrame]()
+
+  # initSet is deprecated since v0.20
+  when declared(initHashSet):
+    self.mParentFrameSet = initHashSet[wFrame]()
+  else:
+    self.mParentFrameSet = initSet[wFrame]()
 
 proc MenuBar*(): wMenuBar {.inline.} =
   ## Construct an empty menubar.
