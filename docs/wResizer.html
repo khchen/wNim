@@ -1251,10 +1251,10 @@ function main() {
     title="rearrange(self: wResizer)"><wbr />rearrange<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final,wResizer"
     title="final(self: wResizer)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wResizer"
-    title="init(self: wResizer)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Resizer,"
-    title="Resizer(): wResizer"><wbr />Resizer<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init,wResizer,wResizable"
+    title="init(self: wResizer; parent: wResizable)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Resizer,wResizable"
+    title="Resizer(parent: wResizable): wResizer"><wbr />Resizer<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1309,7 +1309,7 @@ Add a constraint to the solver.
 Add an associated resizable object to the solver.
 
 </dd>
-<dt id="resolve"><a name="resolve,wResizer"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resolve</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wResizer</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="resolve"><a name="resolve,wResizer"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resolve</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wResizer</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Count the layout of the associated object.
 
@@ -1324,12 +1324,12 @@ Rearrange the layout of the associated window.
 Default finalizer for wResizer.
 
 </dd>
-<dt id="init"><a name="init,wResizer"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wResizer</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="init"><a name="init,wResizer,wResizable"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wResizer</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wResizable</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-
+Initializer.
 
 </dd>
-<dt id="Resizer"><a name="Resizer,"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Resizer</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wResizer</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dt id="Resizer"><a name="Resizer,wResizable"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Resizer</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wResizable</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wResizer</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Constructor.
 
@@ -1354,7 +1354,7 @@ Iterates over each associated object.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-07 18:34:18 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-03 09:51:04 UTC</small>
       </div>
     </div>
   </div>

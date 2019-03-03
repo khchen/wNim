@@ -1325,6 +1325,10 @@ function main() {
     title="setItemPosition(self: wListCtrl; index: int; pos: wPoint)"><wbr />set<wbr />Item<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getItemSpacing,wListCtrl"
     title="getItemSpacing(self: wListCtrl): wSize"><wbr />get<wbr />Item<wbr />Spacing<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setItemSpacing,wListCtrl,int,int"
+    title="setItemSpacing(self: wListCtrl; width: int; height: int)"><wbr />set<wbr />Item<wbr />Spacing<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setItemSpacing,wListCtrl,wSize"
+    title="setItemSpacing(self: wListCtrl; size: wSize)"><wbr />set<wbr />Item<wbr />Spacing<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTopItem,wListCtrl"
     title="getTopItem(self: wListCtrl): int"><wbr />get<wbr />Top<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getCountPerPage,wListCtrl"
@@ -1435,7 +1439,7 @@ function main() {
   <p class="module-desc">A list control presents lists in a number of formats: list view, report view, icon view and small icon view.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Appearance:</th><td><img src="images/wListCtrl.png" /></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
-<tr><td>wLcIcon</td><td>Multicolumn list view.</td></tr>
+<tr><td>wLcList</td><td>Multicolumn list view.</td></tr>
 <tr><td>wLcReport</td><td>Single or multicolumn report view, with optional header.</td></tr>
 <tr><td>wLcIcon</td><td>Large icon view, with optional labels.</td></tr>
 <tr><td>wLcSmallIcon</td><td>Small icon view, with optional labels.</td></tr>
@@ -1699,6 +1703,18 @@ Sets the position of the item, in icon or small icon view.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Retrieves the spacing between icons in pixels
+
+</dd>
+<dt id="setItemSpacing"><a name="setItemSpacing,wListCtrl,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setItemSpacing</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wListCtrl</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the spacing between icons.
+
+</dd>
+<dt id="setItemSpacing"><a name="setItemSpacing,wListCtrl,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setItemSpacing</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wListCtrl</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the spacing between icons.
 
 </dd>
 <dt id="getTopItem"><a name="getTopItem,wListCtrl"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getTopItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wListCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1971,7 +1987,7 @@ Iterates over each item in list control. Yields <tt class="docutils literal"><sp
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-07 18:34:47 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-03 09:51:28 UTC</small>
       </div>
     </div>
   </div>

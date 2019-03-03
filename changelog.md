@@ -5,7 +5,7 @@ Version 0.3
 * Add examples about autolayout.
 * Add wTextCtrl.setFont() to set default font for rich editor.
 * Add wListCtrl.setItemSpacing().
-* Add wWindow.getReturnCode() and wWindow.setReturnCode().
+* Add wFrame.getReturnCode() and wFrame.setReturnCode().
 * Update for Nim Compiler 0.19.9
 * Fix a lot of small bugs.
 

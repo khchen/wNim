@@ -268,7 +268,6 @@ when not defined(wnimdoc):
       mDraggableInfo: wDraggableInfo
       mDropTarget: wDropTarget
       mTipHwnd: HWND
-      mRetCode: int
 
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar
@@ -279,6 +278,7 @@ when not defined(wnimdoc):
       mTrayIconAdded: bool
       mTrayConn: wEventConnection
       mCreateConn: wEventConnection
+      mRetCode: int
 
     wPanel* = ref object of wWindow
 

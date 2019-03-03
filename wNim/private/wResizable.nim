@@ -49,12 +49,24 @@
 ## innerWidth                        Width of sibling's client area.
 ## innerHeight                       Height of sibling's client area.
 ## ================================  =============================================================
+##
+## wNim also support Visual Format Language. For example:
+##
+## .. code-block:: Nim
+##   panel.autolayout """
+##     V:|-{col1:[child1(child2)]-[child2]}-|
+##     V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+##     H:|-[col1(col2)]-[col2]-|
+##   """
+##
+## See autolayout module for details.
 #
 ## :Subclass:
 ##   `wWindow <wWindow.html>`_
 #
 ## :Seealso:
 ##   `wResizer <wResizer.html>`_
+##   `autolayout <autolayout.html>`_
 
 proc getLayoutSize*(self: wResizable): wSize {.validate, property.} =
   ## Returns the current layout size.
@@ -172,23 +184,24 @@ proc layoutParser(x: NimNode): string =
       # if name is not strength, it should be a resizable object.
       # if there is a number, consider it is the strength
 
-      if x[0].kind in nnkCharLit..nnkUInt64Lit:
-        for item in x[1]:
-          code.addConstraint(item, $x[0].intVal)
+      when not defined(wnimdoc): # this code crash nim doc generator
+        if x[0].kind in nnkCharLit..nnkUInt64Lit:
+          for item in x[1]:
+            code.addConstraint(item, $x[0].intVal)
 
-      elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
-        for item in x[1]:
-          code.addConstraint(item, $x[0].floatVal)
+        elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
+          for item in x[1]:
+            code.addConstraint(item, $x[0].floatVal)
 
-      elif $x[0] in strengthes:
-        for item in x[1]:
-          code.addConstraint(item, $x[0])
+        elif $x[0] in strengthes:
+          for item in x[1]:
+            code.addConstraint(item, $x[0])
 
-      else:
-        code.add "self = $1\n" % [x[0].repr]
-        code.add "resizer.addObject($1)\n" % [x[0].repr]
-        for item in x[1]:
-          code.addConstraint(item, strength)
+        else:
+          code.add "self = $1\n" % [x[0].repr]
+          code.add "resizer.addObject($1)\n" % [x[0].repr]
+          for item in x[1]:
+            code.addConstraint(item, strength)
 
     elif x.kind == nnkStmtList:
       for item in x:

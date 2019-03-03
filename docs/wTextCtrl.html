@@ -1339,6 +1339,8 @@ function main() {
     title="len(self: wTextCtrl): int"><wbr />len<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#add,wTextCtrl,string"
     title="add(self: wTextCtrl; text: string)"><wbr />add<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setFont,wTextCtrl,wFont"
+    title="setFont(self: wTextCtrl; font: wFont)"><wbr />set<wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final,wTextCtrl"
     title="final(self: wTextCtrl)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init,wTextCtrl,wWindow,string,wStyle"
@@ -1391,6 +1393,7 @@ function main() {
 <tr><td>wTeNoHideSel</td><td>Show the selection event when it doesn't have focus.</td></tr>
 <tr><td>wTeLeft</td><td>The text in the control will be left-justified (default).</td></tr>
 <tr><td>wTeCentre</td><td>The text in the control will be centered.</td></tr>
+<tr><td>wTeCenter</td><td>The text in the control will be centered.</td></tr>
 <tr><td>wTeRight</td><td>The text in the control will be right-justified.</td></tr>
 <tr><td>wTeDontWrap</td><td>Don't wrap at all, show horizontal scrollbar instead.</td></tr>
 <tr><td>wTeRich</td><td>Use rich text control under, this allows to have more than 64KB of text in the control.</td></tr>
@@ -1689,6 +1692,11 @@ Returns the number of characters in the control.
 Appends the text to the end of the text control. The same as appendText()
 
 </dd>
+<dt id="setFont"><a name="setFont,wTextCtrl,wFont"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setFont</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the font for this text control.
+
+</dd>
 <dt id="final"><a name="final,wTextCtrl"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
 Default finalizer for wTextCtrl.
@@ -1761,7 +1769,7 @@ Iterates over each line in the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-07 18:34:54 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-03 09:51:34 UTC</small>
       </div>
     </div>
   </div>

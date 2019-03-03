@@ -1277,6 +1277,10 @@ function main() {
     title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventHandler): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#shortcut,wFrame,int,int,wEventHandler_2"
     title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventHandler): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setReturnCode,wFrame,int"
+    title="setReturnCode(self: wFrame; retCode: int)"><wbr />set<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getReturnCode,wFrame"
+    title="getReturnCode(self: wFrame): int"><wbr />get<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal,wFrame"
     title="showModal(self: wFrame): int"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#endModal,wFrame,int"
@@ -1436,9 +1440,21 @@ Quickly bind a keyboard shortcut to an event handler. If this frame not yet have
 Quickly bind a keyboard shortcut to an event handler. If this frame not yet have a accelerator table, it will create a new one. This function use wCommandID between 64257..65535.
 
 </dd>
+<dt id="setReturnCode"><a name="setReturnCode,wFrame,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Sets the return code for this window.
+
+</dd>
+<dt id="getReturnCode"><a name="getReturnCode,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<dd>
+Gets the return code for this window.
+
+</dd>
 <dt id="showModal"><a name="showModal,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
 <dd>
-Shows the frame as an application-modal dialog. Program flow does not return until the dialog has been dismissed with EndModal.
+Shows the frame as an application-modal dialog. Program flow does not return until the dialog has been dismissed with endModal.
 
 </dd>
 <dt id="endModal"><a name="endModal,wFrame,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">endModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
@@ -1492,7 +1508,7 @@ Constructor, creating the frame.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-07 18:34:14 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-03 09:51:00 UTC</small>
       </div>
     </div>
   </div>

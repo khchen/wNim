@@ -5,11 +5,18 @@
 #
 #====================================================================
 
-## **autolayout** is a separated module for *wNim* to parse the **Visual Format
+## *autolayout* is a separated module for *wNim* to parse the **Visual Format
 ## Language** and output the *wNim* layout DSL. This code is designed to be used
 ## at both compile time and runtime. For more information about VFL, see
 ## `AutoLayout.js <https://github.com/IjzerenHein/autolayout.js>`_ and
 ## `Apple's Visual Format Language <https://tinyurl.com/y4gpqvrw>`_.
+##
+## Visual Format Language looking like this:
+##
+## .. code-block:: Nim
+##   V:|-{col1:[child1(child2)]-[child2]}-|
+##   V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+##   H:|-[col1(col2)]-[col2]-|
 ##
 ## Thanks to nim's powerful metaprogramming features. Now *wNim* can use Visual
 ## Format Language to design the GUI layout. And most the hard works are done
@@ -36,6 +43,11 @@
 ## * "spacing:" to specify the default spacing.
 ## * "variable:" to specify the variable name used in equal size spacers.
 ## * "outer:" to specify the outer object.
+##
+## To see more examples and try VFL, run examples/autolayout/autolayoutEditor.nim
+#
+## :Seealso:
+##   `wResizable <wResizable.html>`_
 
 import strutils, parseutils, tables, strformat, macros
 

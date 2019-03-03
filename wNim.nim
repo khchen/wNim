@@ -119,6 +119,10 @@
 ##  ---------
 ##  - `wKeyCodes <wKeyCodes.html>`_
 ##  - `wColors <wColors.html>`_
+##
+##  Autolayout
+##  ----------
+##  - `autolayout <autolayout.html>`_
 
 
 {.experimental, deadCodeElim: on.}

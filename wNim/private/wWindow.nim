@@ -957,14 +957,6 @@ proc getDoubleBuffered*(self: wWindow): bool {.validate, property.} =
   ## Returns true if the window contents is double-buffered by the system
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and WS_EX_COMPOSITED) != 0
 
-proc setReturnCode*(self: wWindow, retCode: int) {.validate, property, inline.} =
-  ## Sets the return code for this window.
-  self.mRetCode = retCode
-
-proc getReturnCode*(self: wWindow): int {.validate, property, inline.} =
-  ## Gets the return code for this window.
-  result = self.mRetCode
-
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterates over each window's child.
   for child in self.mChildren:

@@ -183,9 +183,17 @@ proc shortcut*(self: wFrame, flag: int, keyCode: int,
   ## This function use wCommandID between 64257..65535.
   return self.connect(self.shortcutId(flag, keyCode), handler)
 
+proc setReturnCode*(self: wFrame, retCode: int) {.validate, property, inline.} =
+  ## Sets the return code for this window.
+  self.mRetCode = retCode
+
+proc getReturnCode*(self: wFrame): int {.validate, property, inline.} =
+  ## Gets the return code for this window.
+  result = self.mRetCode
+
 proc showModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows the frame as an application-modal dialog.
-  ## Program flow does not return until the dialog has been dismissed with EndModal.
+  ## Program flow does not return until the dialog has been dismissed with endModal.
   self.mDisableList = newSeq[wWindow]()
 
   for topwin in wAppTopLevelWindows():
