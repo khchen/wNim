@@ -16,7 +16,7 @@ frame.show()
 app.mainLoop()
 ```
 
-Event handler:
+[Event handler](https://khchen.github.io/wNim/wEvent.html):
 ```nimrod
 button.wEvent_Button do ():
   frame.delete()
@@ -28,7 +28,7 @@ frame.wEvent_Size do ():
   layout()
 ```
 
-Layout DSL:
+[Layout DSL](https://khchen.github.io/wNim/wResizable.html):
 ```nimrod
 panel.layout:
   staticText:
@@ -39,7 +39,7 @@ panel.layout:
     bottom + 10 = panel.bottom
 ```
 
-[Autolayout](https://github.com/IjzerenHein/autolayout.js):
+[Autolayout](https://khchen.github.io/wNim/autolayout.html):
 ```nimrod
 panel.autolayout """
   V:|-{col1:[child1(child2)]-[child2]}-|
