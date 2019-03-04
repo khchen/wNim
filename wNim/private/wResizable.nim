@@ -225,7 +225,7 @@ template layout*(parent: wResizable, x: untyped) =
     var resizer {.inject, global.}: wResizer
     var self {.inject.}: wResizable
 
-    if resizer == nil:
+    if resizer == nil or resizer.mParent != parent:
       resizer = Resizer(parent)
       layoutRealize(x)
 

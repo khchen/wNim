@@ -217,6 +217,12 @@ proc endModal*(self: wFrame, retCode: int = 0) =
   self.hide()
   self.setReturnCode(retCode)
 
+  # sometimes the owner window will lost the foreground unexpectedly
+  # for example, call another system modal window in modal dialog
+  let owner = GetWindow(self.mHwnd, GW_OWNER)
+  if owner != 0:
+    SetForegroundWindow(owner)
+
 proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.} =
   ## Creates the system tray icon.
   wValidate(icon)

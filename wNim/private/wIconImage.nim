@@ -82,7 +82,11 @@ type
 
 converter GpImageToGpBitmap(x: ptr GpBitmap): ptr GpImage = cast[ptr GpImage](x)
 
-proc builtin_bswap32(a: uint32): uint32 {.importc: "__builtin_bswap32", nodecl, nosideeffect.}
+when defined(gcc):
+  proc bswap32(a: uint32): uint32 {.importc: "__builtin_bswap32", nodecl, nosideeffect.}
+else:
+  proc bswap32(x: uint32): uint32 =
+    (x shl 24) or ((x and 0xff00) shl 8) or ((x and 0xff0000) shr 8) or (x shr 24)
 
 proc hasAlphaBit(colorBit: pointer, size: int): bool =
   let colorBit = cast[ptr UncheckedArray[uint32]](colorBit)
@@ -579,7 +583,7 @@ proc getWidth*(self: wIconImage): int {.validate, property.} =
   ## Gets the width of the icon image in pixels.
   if self.isPng():
     let pPngHeader = cast[ptr PNGHEADER](&self.mIcon)
-    result = int builtin_bswap32(pPngHeader.width)
+    result = int bswap32(pPngHeader.width)
   else:
     let pBmpHeader = cast[ptr BITMAPINFOHEADER](&self.mIcon)
     result = int pBmpHeader.biWidth
@@ -588,7 +592,7 @@ proc getHeight*(self: wIconImage): int {.validate, property.} =
   ## Gets the height of the icon image in pixels.
   if self.isPng():
     let pPngHeader = cast[ptr PNGHEADER](&self.mIcon)
-    result = int builtin_bswap32(pPngHeader.height)
+    result = int bswap32(pPngHeader.height)
   else:
     let pBmpHeader = cast[ptr BITMAPINFOHEADER](&self.mIcon)
     result = int pBmpHeader.biHeight div 2

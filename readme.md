@@ -39,6 +39,15 @@ panel.layout:
     bottom + 10 = panel.bottom
 ```
 
+[Autolayout](https://github.com/IjzerenHein/autolayout.js):
+```nimrod
+panel.autolayout """
+  V:|-{col1:[child1(child2)]-[child2]}-|
+  V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+  H:|-[col1(col2)]-[col2]-|
+"""
+```
+
 Getter and Setter:
 ```nimrod
 let frame = Frame()

@@ -1,8 +1,10 @@
 Version 0.3
 -------------
-* Add autolayout submodule to parse Visual Format Language.
-* Significant improved layout DSL performance.
-* Add examples about autolayout.
+* Add autolayout module to parse Visual Format Language.
+* Modify wResizable to use autolayout module.
+* Improve wResizer, significant speed up wNim layout DSL performance.
+* Add example: autolayoutEditor.nim, and other examples to use autolayout.
+* Add example: pickicondialog.nim.
 * Add wTextCtrl.setFont() to set default font for rich editor.
 * Add wListCtrl.setItemSpacing().
 * Add wFrame.getReturnCode() and wFrame.setReturnCode().

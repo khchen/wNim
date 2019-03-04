@@ -56,7 +56,7 @@ notebook.addPage("Page1")
 notebook.addPage("Page2")
 notebook.addPage("Page3")
 
-const logo = staticRead(r"images\logo.png")
+const logo = staticRead(r"..\images\logo.png")
 notebook.page(0).backgroundColor = panel.backgroundColor
 notebook.page(1).backgroundColor = wGrey
 
