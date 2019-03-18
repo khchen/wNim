@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wMouseEvent</title>
+<title>wMouseEvent</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wMouseEvent</h1>
+    <h1 class="title">wMouseEvent</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,18 +1232,71 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
   <ul class="simple simple-toc" id="toc-list">
+<li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wEvent_Motion"
+    title="wEvent_Motion = 0x00000200"><wbr />w<wbr />Event_<wbr />Motion<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseMove"
+    title="wEvent_MouseMove = 0x00000200"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Move<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_LeftDown"
+    title="wEvent_LeftDown = 0x00000201"><wbr />w<wbr />Event_<wbr />Left<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_LeftUp"
+    title="wEvent_LeftUp = 0x00000202"><wbr />w<wbr />Event_<wbr />Left<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_LeftDoubleClick"
+    title="wEvent_LeftDoubleClick = 0x00000203"><wbr />w<wbr />Event_<wbr />Left<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_RightDown"
+    title="wEvent_RightDown = 0x00000204"><wbr />w<wbr />Event_<wbr />Right<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_RightUp"
+    title="wEvent_RightUp = 0x00000205"><wbr />w<wbr />Event_<wbr />Right<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_RightDoubleClick"
+    title="wEvent_RightDoubleClick = 0x00000206"><wbr />w<wbr />Event_<wbr />Right<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MiddleDown"
+    title="wEvent_MiddleDown = 0x00000207"><wbr />w<wbr />Event_<wbr />Middle<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MiddleUp"
+    title="wEvent_MiddleUp = 0x00000208"><wbr />w<wbr />Event_<wbr />Middle<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MiddleDoubleClick"
+    title="wEvent_MiddleDoubleClick = 0x00000209"><wbr />w<wbr />Event_<wbr />Middle<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseWheel"
+    title="wEvent_MouseWheel = 0x0000020A"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Wheel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseHorizontalWheel"
+    title="wEvent_MouseHorizontalWheel = 0x0000020E"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Horizontal<wbr />Wheel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcMouseMove"
+    title="wEvent_NcMouseMove = 0x000000A0"><wbr />w<wbr />Event_<wbr />Nc<wbr />Mouse<wbr />Move<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcMotion"
+    title="wEvent_NcMotion = 0x000000A0"><wbr />w<wbr />Event_<wbr />Nc<wbr />Motion<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcLeftDown"
+    title="wEvent_NcLeftDown = 0x000000A1"><wbr />w<wbr />Event_<wbr />Nc<wbr />Left<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcLeftUp"
+    title="wEvent_NcLeftUp = 0x000000A2"><wbr />w<wbr />Event_<wbr />Nc<wbr />Left<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcLeftDoubleClick"
+    title="wEvent_NcLeftDoubleClick = 0x000000A3"><wbr />w<wbr />Event_<wbr />Nc<wbr />Left<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcRightDown"
+    title="wEvent_NcRightDown = 0x000000A4"><wbr />w<wbr />Event_<wbr />Nc<wbr />Right<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcRightUp"
+    title="wEvent_NcRightUp = 0x000000A5"><wbr />w<wbr />Event_<wbr />Nc<wbr />Right<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcRightDoubleClick"
+    title="wEvent_NcRightDoubleClick = 0x000000A6"><wbr />w<wbr />Event_<wbr />Nc<wbr />Right<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcMiddleDown"
+    title="wEvent_NcMiddleDown = 0x000000A7"><wbr />w<wbr />Event_<wbr />Nc<wbr />Middle<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcMiddleUp"
+    title="wEvent_NcMiddleUp = 0x000000A8"><wbr />w<wbr />Event_<wbr />Nc<wbr />Middle<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcMiddleDoubleClick"
+    title="wEvent_NcMiddleDoubleClick = 0x000000A9"><wbr />w<wbr />Event_<wbr />Nc<wbr />Middle<wbr />Double<wbr />Click<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseLeave"
+    title="wEvent_MouseLeave = 0x000002A3"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Leave<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseHover"
+    title="wEvent_MouseHover = 0x000002A1"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Hover<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MouseEnter"
+    title="wEvent_MouseEnter = 32819"><wbr />w<wbr />Event_<wbr />Mouse<wbr />Enter<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
 <li>
   <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getWheelRotation.e,wMouseEvent"
+      <li><a class="reference" href="#getWheelRotation.e%2CwMouseEvent"
     title="getWheelRotation(self: wMouseEvent): int"><wbr />get<wbr />Wheel<wbr />Rotation<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1283,10 +1342,178 @@ function main() {
 <tr><td>wEvent_MouseHover</td><td>When the cursor hovers over the client area of the window for the period of time.</td></tr>
 </table></td></tr>
 </tbody></table></p>
-  <div class="section" id="14">
+  <div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wEvent_Motion"></a>
+<dt><pre><span class="Identifier">wEvent_Motion</span> <span class="Other">=</span> <span class="DecNumber">0x00000200</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseMove"></a>
+<dt><pre><span class="Identifier">wEvent_MouseMove</span> <span class="Other">=</span> <span class="DecNumber">0x00000200</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_LeftDown"></a>
+<dt><pre><span class="Identifier">wEvent_LeftDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000201</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_LeftUp"></a>
+<dt><pre><span class="Identifier">wEvent_LeftUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000202</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_LeftDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_LeftDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x00000203</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_RightDown"></a>
+<dt><pre><span class="Identifier">wEvent_RightDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000204</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_RightUp"></a>
+<dt><pre><span class="Identifier">wEvent_RightUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000205</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_RightDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_RightDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x00000206</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MiddleDown"></a>
+<dt><pre><span class="Identifier">wEvent_MiddleDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000207</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MiddleUp"></a>
+<dt><pre><span class="Identifier">wEvent_MiddleUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000208</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MiddleDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_MiddleDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x00000209</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseWheel"></a>
+<dt><pre><span class="Identifier">wEvent_MouseWheel</span> <span class="Other">=</span> <span class="DecNumber">0x0000020A</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseHorizontalWheel"></a>
+<dt><pre><span class="Identifier">wEvent_MouseHorizontalWheel</span> <span class="Other">=</span> <span class="DecNumber">0x0000020E</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcMouseMove"></a>
+<dt><pre><span class="Identifier">wEvent_NcMouseMove</span> <span class="Other">=</span> <span class="DecNumber">0x000000A0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcMotion"></a>
+<dt><pre><span class="Identifier">wEvent_NcMotion</span> <span class="Other">=</span> <span class="DecNumber">0x000000A0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcLeftDown"></a>
+<dt><pre><span class="Identifier">wEvent_NcLeftDown</span> <span class="Other">=</span> <span class="DecNumber">0x000000A1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcLeftUp"></a>
+<dt><pre><span class="Identifier">wEvent_NcLeftUp</span> <span class="Other">=</span> <span class="DecNumber">0x000000A2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcLeftDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_NcLeftDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x000000A3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcRightDown"></a>
+<dt><pre><span class="Identifier">wEvent_NcRightDown</span> <span class="Other">=</span> <span class="DecNumber">0x000000A4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcRightUp"></a>
+<dt><pre><span class="Identifier">wEvent_NcRightUp</span> <span class="Other">=</span> <span class="DecNumber">0x000000A5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcRightDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_NcRightDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x000000A6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcMiddleDown"></a>
+<dt><pre><span class="Identifier">wEvent_NcMiddleDown</span> <span class="Other">=</span> <span class="DecNumber">0x000000A7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcMiddleUp"></a>
+<dt><pre><span class="Identifier">wEvent_NcMiddleUp</span> <span class="Other">=</span> <span class="DecNumber">0x000000A8</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcMiddleDoubleClick"></a>
+<dt><pre><span class="Identifier">wEvent_NcMiddleDoubleClick</span> <span class="Other">=</span> <span class="DecNumber">0x000000A9</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseLeave"></a>
+<dt><pre><span class="Identifier">wEvent_MouseLeave</span> <span class="Other">=</span> <span class="DecNumber">0x000002A3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseHover"></a>
+<dt><pre><span class="Identifier">wEvent_MouseHover</span> <span class="Other">=</span> <span class="DecNumber">0x000002A1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MouseEnter"></a>
+<dt><pre><span class="Identifier">wEvent_MouseEnter</span> <span class="Other">=</span> <span class="DecNumber">32819</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
+<div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<dt id="getWheelRotation"><a name="getWheelRotation.e,wMouseEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getWheelRotation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMouseEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getWheelRotation.e,wMouseEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getWheelRotation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMouseEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get wheel rotation, positive or negative indicates direction of rotation.
 
@@ -1301,7 +1528,7 @@ Get wheel rotation, positive or negative indicates direction of rotation.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:16 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:49:13 UTC</small>
       </div>
     </div>
   </div>

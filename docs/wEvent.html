@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wEvent</title>
+<title>wEvent</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wEvent</h1>
+    <h1 class="title">wEvent</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,105 +1232,132 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
   <ul class="simple simple-toc" id="toc-list">
+<li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wEvent_PropagateMax"
+    title="wEvent_PropagateMax = 9223372036854775807"><wbr />w<wbr />Event_<wbr />Propagate<wbr />Max<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_PropagateNone"
+    title="wEvent_PropagateNone = 0"><wbr />w<wbr />Event_<wbr />Propagate<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_SetFocus"
+    title="wEvent_SetFocus = 0x00000007"><wbr />w<wbr />Event_<wbr />Set<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_KillFocus"
+    title="wEvent_KillFocus = 0x00000008"><wbr />w<wbr />Event_<wbr />Kill<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Show"
+    title="wEvent_Show = 0x00000018"><wbr />w<wbr />Event_<wbr />Show<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Activate"
+    title="wEvent_Activate = 0x00000006"><wbr />w<wbr />Event_<wbr />Activate<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Timer"
+    title="wEvent_Timer = 0x00000113"><wbr />w<wbr />Event_<wbr />Timer<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_MenuHighlight"
+    title="wEvent_MenuHighlight = 0x0000011F"><wbr />w<wbr />Event_<wbr />Menu<wbr />Highlight<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Paint"
+    title="wEvent_Paint = 0x0000000F"><wbr />w<wbr />Event_<wbr />Paint<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_NcPaint"
+    title="wEvent_NcPaint = 0x00000085"><wbr />w<wbr />Event_<wbr />Nc<wbr />Paint<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_HotKey"
+    title="wEvent_HotKey = 0x00000312"><wbr />w<wbr />Event_<wbr />Hot<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Close"
+    title="wEvent_Close = 32772"><wbr />w<wbr />Event_<wbr />Close<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_Destroy"
+    title="wEvent_Destroy = 32773"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_App"
+    title="wEvent_App = 33769"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Event,wWindow,UINT,WPARAM,LPARAM,HWND,int"
+      <li><a class="reference" href="#Event%2CwWindow%2CUINT%2CWPARAM%2CLPARAM%2CHWND%2Cint"
     title="Event(window: wWindow = nil; msg: UINT = 0; wParam: WPARAM = 0; lParam: LPARAM = 0;
       origin: HWND = 0; userData: int = 0): wEvent"><wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getEventObject,wEvent"
+  <li><a class="reference" href="#getEventObject%2CwEvent"
     title="getEventObject(self: wEvent): wWindow"><wbr />get<wbr />Event<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getWindow,wEvent"
+  <li><a class="reference" href="#getWindow%2CwEvent"
     title="getWindow(self: wEvent): wWindow"><wbr />get<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getEventType,wEvent"
+  <li><a class="reference" href="#getEventType%2CwEvent"
     title="getEventType(self: wEvent): UINT"><wbr />get<wbr />Event<wbr />Type<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getEventMessage,wEvent"
+  <li><a class="reference" href="#getEventMessage%2CwEvent"
     title="getEventMessage(self: wEvent): UINT"><wbr />get<wbr />Event<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getId,wEvent"
+  <li><a class="reference" href="#getId%2CwEvent"
     title="getId(self: wEvent): wCommandID"><wbr />get<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getIntId,wEvent"
+  <li><a class="reference" href="#getIntId%2CwEvent"
     title="getIntId(self: wEvent): int"><wbr />get<wbr />Int<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getTimerId,wEvent"
+  <li><a class="reference" href="#getTimerId%2CwEvent"
     title="getTimerId(self: wEvent): int"><wbr />get<wbr />Timer<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getlParam,wEvent"
+  <li><a class="reference" href="#getlParam%2CwEvent"
     title="getlParam(self: wEvent): LPARAM"><wbr />getl<wbr />Param<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getwParam,wEvent"
+  <li><a class="reference" href="#getwParam%2CwEvent"
     title="getwParam(self: wEvent): WPARAM"><wbr />getw<wbr />Param<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getResult,wEvent"
+  <li><a class="reference" href="#getResult%2CwEvent"
     title="getResult(self: wEvent): LRESULT"><wbr />get<wbr />Result<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setResult,wEvent,LRESULT"
+  <li><a class="reference" href="#setResult%2CwEvent%2CLRESULT"
     title="setResult(self: wEvent; ret: LRESULT)"><wbr />set<wbr />Result<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getUserData,wEvent"
+  <li><a class="reference" href="#getUserData%2CwEvent"
     title="getUserData(self: wEvent): int"><wbr />get<wbr />User<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setUserData,wEvent,int"
+  <li><a class="reference" href="#setUserData%2CwEvent%2Cint"
     title="setUserData(self: wEvent; userData: int)"><wbr />set<wbr />User<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#skip,wEvent"
+  <li><a class="reference" href="#skip%2CwEvent"
     title="skip(self: wEvent; skip = true)"><wbr />skip<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#skip=,wEvent,bool"
+  <li><a class="reference" href="#skip%3D%2CwEvent%2Cbool"
     title="skip=(self: wEvent; skip: bool)"><wbr />skip=<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#veto,wEvent"
+  <li><a class="reference" href="#veto%2CwEvent"
     title="veto(self: wEvent)"><wbr />veto<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#deny,wEvent"
+  <li><a class="reference" href="#deny%2CwEvent"
     title="deny(self: wEvent)"><wbr />deny<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#allow,wEvent"
+  <li><a class="reference" href="#allow%2CwEvent"
     title="allow(self: wEvent)"><wbr />allow<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#isAllowed,wEvent"
+  <li><a class="reference" href="#isAllowed%2CwEvent"
     title="isAllowed(self: wEvent): bool"><wbr />is<wbr />Allowed<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#stopPropagation,wEvent"
+  <li><a class="reference" href="#stopPropagation%2CwEvent"
     title="stopPropagation(self: wEvent): int"><wbr />stop<wbr />Propagation<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#resumePropagation,wEvent"
+  <li><a class="reference" href="#resumePropagation%2CwEvent"
     title="resumePropagation(self: wEvent; propagationLevel = wEvent_PropagateMax)"><wbr />resume<wbr />Propagation<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPropagationLevel,wEvent"
+  <li><a class="reference" href="#getPropagationLevel%2CwEvent"
     title="getPropagationLevel(self: wEvent): int"><wbr />get<wbr />Propagation<wbr />Level<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setPropagationLevel,wEvent,int"
+  <li><a class="reference" href="#setPropagationLevel%2CwEvent%2Cint"
     title="setPropagationLevel(self: wEvent; propagationLevel: int)"><wbr />set<wbr />Propagation<wbr />Level<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMouseScreenPos,wEvent"
+  <li><a class="reference" href="#getMouseScreenPos%2CwEvent"
     title="getMouseScreenPos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Screen<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMousePos,wEvent"
+  <li><a class="reference" href="#getMousePos%2CwEvent"
     title="getMousePos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getX,wEvent"
+  <li><a class="reference" href="#getX%2CwEvent"
     title="getX(self: wEvent): int"><wbr />get<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getY,wEvent"
+  <li><a class="reference" href="#getY%2CwEvent"
     title="getY(self: wEvent): int"><wbr />get<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#lCtrlDown,wEvent"
+  <li><a class="reference" href="#lCtrlDown%2CwEvent"
     title="lCtrlDown(self: wEvent): bool"><wbr />l<wbr />Ctrl<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#lShiftDown,wEvent"
+  <li><a class="reference" href="#lShiftDown%2CwEvent"
     title="lShiftDown(self: wEvent): bool"><wbr />l<wbr />Shift<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#lAltDown,wEvent"
+  <li><a class="reference" href="#lAltDown%2CwEvent"
     title="lAltDown(self: wEvent): bool"><wbr />l<wbr />Alt<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#lWinDown,wEvent"
+  <li><a class="reference" href="#lWinDown%2CwEvent"
     title="lWinDown(self: wEvent): bool"><wbr />l<wbr />Win<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rCtrlDown,wEvent"
+  <li><a class="reference" href="#rCtrlDown%2CwEvent"
     title="rCtrlDown(self: wEvent): bool"><wbr />r<wbr />Ctrl<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rShiftDown,wEvent"
+  <li><a class="reference" href="#rShiftDown%2CwEvent"
     title="rShiftDown(self: wEvent): bool"><wbr />r<wbr />Shift<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rAltDown,wEvent"
+  <li><a class="reference" href="#rAltDown%2CwEvent"
     title="rAltDown(self: wEvent): bool"><wbr />r<wbr />Alt<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rWinDown,wEvent"
+  <li><a class="reference" href="#rWinDown%2CwEvent"
     title="rWinDown(self: wEvent): bool"><wbr />r<wbr />Win<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#ctrlDown,wEvent"
+  <li><a class="reference" href="#ctrlDown%2CwEvent"
     title="ctrlDown(self: wEvent): bool"><wbr />ctrl<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#shiftDown,wEvent"
+  <li><a class="reference" href="#shiftDown%2CwEvent"
     title="shiftDown(self: wEvent): bool"><wbr />shift<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#altDown,wEvent"
+  <li><a class="reference" href="#altDown%2CwEvent"
     title="altDown(self: wEvent): bool"><wbr />alt<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#winDown,wEvent"
+  <li><a class="reference" href="#winDown%2CwEvent"
     title="winDown(self: wEvent): bool"><wbr />win<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#leftDown,wEvent"
+  <li><a class="reference" href="#leftDown%2CwEvent"
     title="leftDown(self: wEvent): bool"><wbr />left<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rightDown,wEvent"
+  <li><a class="reference" href="#rightDown%2CwEvent"
     title="rightDown(self: wEvent): bool"><wbr />right<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#middleDown,wEvent"
+  <li><a class="reference" href="#middleDown%2CwEvent"
     title="middleDown(self: wEvent): bool"><wbr />middle<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getKeyStatus,wEvent"
+  <li><a class="reference" href="#getKeyStatus%2CwEvent"
     title="getKeyStatus(self: wEvent): array[256, bool]"><wbr />get<wbr />Key<wbr />Status<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1332,67 +1365,67 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#shouldPropagate.e,wEvent"
+      <li><a class="reference" href="#shouldPropagate.e%2CwEvent"
     title="shouldPropagate(self: wEvent): bool"><wbr />should<wbr />Propagate<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getIndex.e,wEvent"
+  <li><a class="reference" href="#getIndex.e%2CwEvent"
     title="getIndex(self: wEvent): int"><wbr />get<wbr />Index<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPosition.e,wEvent"
+  <li><a class="reference" href="#getPosition.e%2CwEvent"
     title="getPosition(self: wEvent): wPoint"><wbr />get<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getKeyCode.e,wEvent"
+  <li><a class="reference" href="#getKeyCode.e%2CwEvent"
     title="getKeyCode(self: wEvent): int"><wbr />get<wbr />Key<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getSize.e,wEvent"
+  <li><a class="reference" href="#getSize.e%2CwEvent"
     title="getSize(self: wEvent): wSize"><wbr />get<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setPosition.e,wEvent,int,int"
+  <li><a class="reference" href="#setPosition.e%2CwEvent%2Cint%2Cint"
     title="setPosition(self: wEvent; x: int; y: int)"><wbr />set<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setPosition.e,wEvent,wPoint"
+  <li><a class="reference" href="#setPosition.e%2CwEvent%2CwPoint"
     title="setPosition(self: wEvent; pos: wPoint)"><wbr />set<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getOrientation.e,wEvent"
+  <li><a class="reference" href="#getOrientation.e%2CwEvent"
     title="getOrientation(self: wEvent): int"><wbr />get<wbr />Orientation<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getScrollPos.e,wEvent"
+  <li><a class="reference" href="#getScrollPos.e%2CwEvent"
     title="getScrollPos(self: wEvent): int"><wbr />get<wbr />Scroll<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getKind.e,wEvent"
+  <li><a class="reference" href="#getKind.e%2CwEvent"
     title="getKind(self: wEvent): int"><wbr />get<wbr />Kind<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getWheelRotation.e,wEvent"
+  <li><a class="reference" href="#getWheelRotation.e%2CwEvent"
     title="getWheelRotation(self: wEvent): int"><wbr />get<wbr />Wheel<wbr />Rotation<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getSpinPos.e,wEvent"
+  <li><a class="reference" href="#getSpinPos.e%2CwEvent"
     title="getSpinPos(self: wEvent): int"><wbr />get<wbr />Spin<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setSpinPos.e,wEvent,int"
+  <li><a class="reference" href="#setSpinPos.e%2CwEvent%2Cint"
     title="setSpinPos(self: wEvent; pos: int)"><wbr />set<wbr />Spin<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getSpinDelta.e,wEvent"
+  <li><a class="reference" href="#getSpinDelta.e%2CwEvent"
     title="getSpinDelta(self: wEvent): int"><wbr />get<wbr />Spin<wbr />Delta<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setSpinDelta.e,wEvent,int"
+  <li><a class="reference" href="#setSpinDelta.e%2CwEvent%2Cint"
     title="setSpinDelta(self: wEvent; delta: int)"><wbr />set<wbr />Spin<wbr />Delta<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getUrl.e,wEvent"
+  <li><a class="reference" href="#getUrl.e%2CwEvent"
     title="getUrl(self: wEvent): string"><wbr />get<wbr />Url<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getLinkId.e,wEvent"
+  <li><a class="reference" href="#getLinkId.e%2CwEvent"
     title="getLinkId(self: wEvent): string"><wbr />get<wbr />Link<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getVisited.e,wEvent"
+  <li><a class="reference" href="#getVisited.e%2CwEvent"
     title="getVisited(self: wEvent): bool"><wbr />get<wbr />Visited<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getCursor.e,wEvent"
+  <li><a class="reference" href="#getCursor.e%2CwEvent"
     title="getCursor(self: wEvent): wCursor"><wbr />get<wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setCursor.e,wEvent,wCursor"
+  <li><a class="reference" href="#setCursor.e%2CwEvent%2CwCursor"
     title="setCursor(self: wEvent; cursor: wCursor)"><wbr />set<wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getColumn.e,wEvent"
+  <li><a class="reference" href="#getColumn.e%2CwEvent"
     title="getColumn(self: wEvent): int"><wbr />get<wbr />Column<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getText.e,wEvent"
+  <li><a class="reference" href="#getText.e%2CwEvent"
     title="getText(self: wEvent): string"><wbr />get<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getItem.e,wEvent"
+  <li><a class="reference" href="#getItem.e%2CwEvent"
     title="getItem(self: wEvent): wTreeItem"><wbr />get<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getOldItem.e,wEvent"
+  <li><a class="reference" href="#getOldItem.e%2CwEvent"
     title="getOldItem(self: wEvent): wTreeItem"><wbr />get<wbr />Old<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getInsertMark.e,wEvent"
+  <li><a class="reference" href="#getInsertMark.e%2CwEvent"
     title="getInsertMark(self: wEvent): int"><wbr />get<wbr />Insert<wbr />Mark<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPoint.e,wEvent"
+  <li><a class="reference" href="#getPoint.e%2CwEvent"
     title="getPoint(self: wEvent): wPoint"><wbr />get<wbr />Point<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getDataObject.e,wEvent"
+  <li><a class="reference" href="#getDataObject.e%2CwEvent"
     title="getDataObject(self: wEvent): wDataObject"><wbr />get<wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getEffect.e,wEvent"
+  <li><a class="reference" href="#getEffect.e%2CwEvent"
     title="getEffect(self: wEvent): int"><wbr />get<wbr />Effect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setEffect.e,wEvent,int"
+  <li><a class="reference" href="#setEffect.e%2CwEvent%2Cint"
     title="setEffect(self: wEvent; effect: int)"><wbr />set<wbr />Effect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getValue.e,wEvent"
+  <li><a class="reference" href="#getValue.e%2CwEvent"
     title="getValue(self: wEvent): int"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setValue.e,wEvent,int"
+  <li><a class="reference" href="#setValue.e%2CwEvent%2Cint"
     title="setValue(self: wEvent; value: int)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1431,244 +1464,369 @@ function main() {
 <tr><td>wEvent_App</td><td>Used to define private event type, usually of the form wEvent_App+x.</td></tr>
 </table></td></tr>
 </tbody></table></p>
-  <div class="section" id="12">
+  <div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wEvent_PropagateMax"></a>
+<dt><pre><span class="Identifier">wEvent_PropagateMax</span> <span class="Other">=</span> <span class="DecNumber">9223372036854775807</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_PropagateNone"></a>
+<dt><pre><span class="Identifier">wEvent_PropagateNone</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_SetFocus"></a>
+<dt><pre><span class="Identifier">wEvent_SetFocus</span> <span class="Other">=</span> <span class="DecNumber">0x00000007</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_KillFocus"></a>
+<dt><pre><span class="Identifier">wEvent_KillFocus</span> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Show"></a>
+<dt><pre><span class="Identifier">wEvent_Show</span> <span class="Other">=</span> <span class="DecNumber">0x00000018</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Activate"></a>
+<dt><pre><span class="Identifier">wEvent_Activate</span> <span class="Other">=</span> <span class="DecNumber">0x00000006</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Timer"></a>
+<dt><pre><span class="Identifier">wEvent_Timer</span> <span class="Other">=</span> <span class="DecNumber">0x00000113</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_MenuHighlight"></a>
+<dt><pre><span class="Identifier">wEvent_MenuHighlight</span> <span class="Other">=</span> <span class="DecNumber">0x0000011F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Paint"></a>
+<dt><pre><span class="Identifier">wEvent_Paint</span> <span class="Other">=</span> <span class="DecNumber">0x0000000F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_NcPaint"></a>
+<dt><pre><span class="Identifier">wEvent_NcPaint</span> <span class="Other">=</span> <span class="DecNumber">0x00000085</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_HotKey"></a>
+<dt><pre><span class="Identifier">wEvent_HotKey</span> <span class="Other">=</span> <span class="DecNumber">0x00000312</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Close"></a>
+<dt><pre><span class="Identifier">wEvent_Close</span> <span class="Other">=</span> <span class="DecNumber">32772</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_Destroy"></a>
+<dt><pre><span class="Identifier">wEvent_Destroy</span> <span class="Other">=</span> <span class="DecNumber">32773</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wEvent_App"></a>
+<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">33769</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
+<div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="Event"><a name="Event,wWindow,UINT,WPARAM,LPARAM,HWND,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Event</span><span class="Other">(</span><span class="Identifier">window</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-          <span class="Identifier">origin</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEvent</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Event,wWindow,UINT,WPARAM,LPARAM,HWND,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Event</span><span class="Other">(</span><span class="Identifier">window</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+          <span class="Identifier">origin</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEvent</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
 </dd>
-<dt id="getEventObject"><a name="getEventObject,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getEventObject</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getEventObject,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getEventObject</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the object (usually a window) associated with the event
 
 </dd>
-<dt id="getWindow"><a name="getWindow,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getWindow</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getWindow,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWindow</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the window associated with the event. This proc is equal to getEventObject.
 
 </dd>
-<dt id="getEventType"><a name="getEventType,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getEventType</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getEventType,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getEventType</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the type of the given event, such as wEvent_Button, aka message code.
 
 </dd>
-<dt id="getEventMessage"><a name="getEventMessage,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getEventMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getEventMessage,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getEventMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the message code of the given event. The same as getEventType().
 
 </dd>
-<dt id="getId"><a name="getId,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getId,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the ID associated with this event, aka command ID or menu ID.
 
 </dd>
-<dt id="getIntId"><a name="getIntId,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getIntId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getIntId,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getIntId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the ID associated with this event, aka command ID or menu ID.
 
 </dd>
-<dt id="getTimerId"><a name="getTimerId,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getTimerId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getTimerId,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getTimerId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the timer ID. Only for wEvent_Timer event.
 
 </dd>
-<dt id="getlParam"><a name="getlParam,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getlParam</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getlParam,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getlParam</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the low-level LPARAM data of the associated windows message.
 
 </dd>
-<dt id="getwParam"><a name="getwParam,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getwParam</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getwParam,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getwParam</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the low-level WPARAM data of the associated windows message.
 
 </dd>
-<dt id="getResult"><a name="getResult,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">LRESULT</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getResult,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">LRESULT</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns data that will be sent to system after event handler exit.
 
 </dd>
-<dt id="setResult"><a name="setResult,wEvent,LRESULT"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">ret</span><span class="Other">:</span> <span class="Identifier">LRESULT</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setResult,wEvent,LRESULT"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">ret</span><span class="Other">:</span> <span class="Identifier">LRESULT</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the data that will be sent to system after event handler exit.
 
 </dd>
-<dt id="getUserData"><a name="getUserData,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getUserData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                  <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getUserData,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getUserData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the userdata associated with a event.
 
 </dd>
-<dt id="setUserData"><a name="setUserData,wEvent,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setUserData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setUserData,wEvent,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setUserData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the userdata associated with a event.
 
 </dd>
-<dt id="skip"><a name="skip,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">skip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="skip,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">skip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 This proc can be used inside an event handler to control whether further event handlers bound to this event will be called after the current one returns. It sometimes means skip the default behavior for a event.
 
 </dd>
-<dt id="skip="><a name="skip=,wEvent,bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">skip=</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="skip=,wEvent,bool"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">skip=</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">skip</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Nim style setter for skip
 
 </dd>
-<dt id="veto"><a name="veto,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">veto</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="veto,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">veto</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Prevents the change announced by this event from happening.
 
 </dd>
-<dt id="deny"><a name="deny,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">deny</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="deny,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">deny</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 The same as veto().
 
 </dd>
-<dt id="allow"><a name="allow,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">allow</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="allow,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">allow</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 This is the opposite of veto(): it explicitly allows the event to be processed.
 
 </dd>
-<dt id="isAllowed"><a name="isAllowed,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isAllowed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isAllowed,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isAllowed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the change is allowed (veto() hasn't been called) or false otherwise (if it was).
 
 </dd>
-<dt id="stopPropagation"><a name="stopPropagation,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">stopPropagation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="stopPropagation,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">stopPropagation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Stop the event from propagating to its parent window.
 
 </dd>
-<dt id="resumePropagation"><a name="resumePropagation,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resumePropagation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">propagationLevel</span> <span class="Other">=</span> <span class="Identifier">wEvent_PropagateMax</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="resumePropagation,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">resumePropagation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">propagationLevel</span> <span class="Other">=</span> <span class="Identifier">wEvent_PropagateMax</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the propagation level to the given value.
 
 </dd>
-<dt id="getPropagationLevel"><a name="getPropagationLevel,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getPropagationLevel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getPropagationLevel,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPropagationLevel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get how many levels the event can propagate.
 
 </dd>
-<dt id="setPropagationLevel"><a name="setPropagationLevel,wEvent,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setPropagationLevel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">propagationLevel</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setPropagationLevel,wEvent,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setPropagationLevel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">propagationLevel</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set how many levels the event can propagate.
 
 </dd>
-<dt id="getMouseScreenPos"><a name="getMouseScreenPos,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMouseScreenPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getMouseScreenPos,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMouseScreenPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get coordinate of the cursor. The coordinate is relative to the screen.
 
 </dd>
-<dt id="getMousePos"><a name="getMousePos,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMousePos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getMousePos,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMousePos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get coordinate of the cursor. The coordinate is relative to the origin of the client area.
 
 </dd>
-<dt id="getX"><a name="getX,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getX</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getX,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getX</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get x-coordinate of the cursor. The coordinate is relative to the origin of the client area.
 
 </dd>
-<dt id="getY"><a name="getY,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getY</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getY,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getY</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get y-coordinate of the cursor. The coordinate is relative to the origin of the client area.
 
 </dd>
-<dt id="lCtrlDown"><a name="lCtrlDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">lCtrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="lCtrlDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">lCtrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the left ctrl key is pressed.
 
 </dd>
-<dt id="lShiftDown"><a name="lShiftDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">lShiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="lShiftDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">lShiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the left shift key is pressed.
 
 </dd>
-<dt id="lAltDown"><a name="lAltDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">lAltDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="lAltDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">lAltDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the left alt key is pressed.
 
 </dd>
-<dt id="lWinDown"><a name="lWinDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">lWinDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="lWinDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">lWinDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the left win key is pressed.
 
 </dd>
-<dt id="rCtrlDown"><a name="rCtrlDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rCtrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rCtrlDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rCtrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the right ctrl key is pressed.
 
 </dd>
-<dt id="rShiftDown"><a name="rShiftDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rShiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rShiftDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rShiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the right shift key is pressed.
 
 </dd>
-<dt id="rAltDown"><a name="rAltDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rAltDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rAltDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rAltDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the right alt key is pressed.
 
 </dd>
-<dt id="rWinDown"><a name="rWinDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rWinDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rWinDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rWinDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the right win key is pressed.
 
 </dd>
-<dt id="ctrlDown"><a name="ctrlDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">ctrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="ctrlDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">ctrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if any ctrl key is pressed.
 
 </dd>
-<dt id="shiftDown"><a name="shiftDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">shiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="shiftDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">shiftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if any shift key is pressed.
 
 </dd>
-<dt id="altDown"><a name="altDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">altDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="altDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">altDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if any alt key is pressed.
 
 </dd>
-<dt id="winDown"><a name="winDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">winDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="winDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">winDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if any win key is pressed.
 
 </dd>
-<dt id="leftDown"><a name="leftDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">leftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="leftDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">leftDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the left mouse button is currently down.
 
 </dd>
-<dt id="rightDown"><a name="rightDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rightDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rightDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rightDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the right mouse button is currently down.
 
 </dd>
-<dt id="middleDown"><a name="middleDown,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">middleDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="middleDown,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">middleDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the middle mouse button is currently down.
 
 </dd>
-<dt id="getKeyStatus"><a name="getKeyStatus,wEvent"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getKeyStatus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">bool</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getKeyStatus,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getKeyStatus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">bool</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return an bool array with all the pressed keys. Using const defined in wKeyCodes.nim as the index. For example:<pre class="listing"><span class="Identifier">echo</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">keyStauts</span><span class="Punctuation">[</span><span class="Identifier">wKeyCtrl</span><span class="Punctuation">]</span></pre>
 
@@ -1678,7 +1836,8 @@ Return an bool array with all the pressed keys. Using const defined in wKeyCodes
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<dt id="shouldPropagate"><a name="shouldPropagate.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="shouldPropagate.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
   <span class="Keyword">if</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">eventType</span> <span class="Operator">==</span> <span class="Identifier">wEvent_Char</span><span class="Punctuation">:</span>
@@ -1687,152 +1846,182 @@ Test if this event should be propagated or not, i.e. if the propagation level is
     <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">procCall</span> <span class="Identifier">wEvent</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="getIndex"><a name="getIndex.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getIndex</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getIndex.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getIndex</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getPosition"><a name="getPosition.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getPosition.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getKeyCode"><a name="getKeyCode.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getKeyCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getKeyCode.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getKeyCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getSize"><a name="getSize.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSize.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setPosition"><a name="setPosition.e,wEvent,int,int"></a><pre><span class="Keyword">method</span> <span class="Identifier">setPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setPosition.e,wEvent,int,int"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setPosition"><a name="setPosition.e,wEvent,wPoint"></a><pre><span class="Keyword">method</span> <span class="Identifier">setPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setPosition.e,wEvent,wPoint"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setPosition</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getOrientation"><a name="getOrientation.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getOrientation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getOrientation.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getOrientation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getScrollPos"><a name="getScrollPos.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getScrollPos.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getKind"><a name="getKind.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getKind</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getKind.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getKind</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getWheelRotation"><a name="getWheelRotation.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getWheelRotation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getWheelRotation.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getWheelRotation</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getSpinPos"><a name="getSpinPos.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getSpinPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSpinPos.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getSpinPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setSpinPos"><a name="setSpinPos.e,wEvent,int"></a><pre><span class="Keyword">method</span> <span class="Identifier">setSpinPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setSpinPos.e,wEvent,int"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setSpinPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getSpinDelta"><a name="getSpinDelta.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getSpinDelta</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSpinDelta.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getSpinDelta</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setSpinDelta"><a name="setSpinDelta.e,wEvent,int"></a><pre><span class="Keyword">method</span> <span class="Identifier">setSpinDelta</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">delta</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setSpinDelta.e,wEvent,int"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setSpinDelta</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">delta</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getUrl"><a name="getUrl.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getUrl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getUrl.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getUrl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getLinkId"><a name="getLinkId.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getLinkId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getLinkId.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getLinkId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getVisited"><a name="getVisited.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getVisited.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getCursor"><a name="getCursor.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getCursor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getCursor.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getCursor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setCursor"><a name="setCursor.e,wEvent,wCursor"></a><pre><span class="Keyword">method</span> <span class="Identifier">setCursor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setCursor.e,wEvent,wCursor"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setCursor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getColumn"><a name="getColumn.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getColumn</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getColumn.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getColumn</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getText"><a name="getText.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getText.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getItem"><a name="getItem.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getItem.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getOldItem"><a name="getOldItem.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getOldItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getOldItem.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getOldItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getInsertMark"><a name="getInsertMark.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getInsertMark</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getInsertMark.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getInsertMark</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getPoint"><a name="getPoint.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getPoint</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getPoint.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getPoint</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getDataObject"><a name="getDataObject.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getDataObject</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getDataObject.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDataObject</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getEffect"><a name="getEffect.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getEffect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getEffect.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getEffect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setEffect"><a name="setEffect.e,wEvent,int"></a><pre><span class="Keyword">method</span> <span class="Identifier">setEffect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">effect</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setEffect.e,wEvent,int"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setEffect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">effect</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="getValue"><a name="getValue.e,wEvent"></a><pre><span class="Keyword">method</span> <span class="Identifier">getValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getValue.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
 </dd>
-<dt id="setValue"><a name="setValue.e,wEvent,int"></a><pre><span class="Keyword">method</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setValue.e,wEvent,int"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
@@ -1847,7 +2036,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:14 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:49:10 UTC</small>
       </div>
     </div>
   </div>

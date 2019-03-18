@@ -448,7 +448,7 @@ proc getTopItem*(self: wListCtrl): int {.validate, property.} =
 
 proc getCountPerPage*(self: wListCtrl): int {.validate, property.} =
   ## Gets the number of items that can fit vertically in the visible area
-  #  of the list control (list or report view) or the total number of items
+  ## of the list control (list or report view) or the total number of items
   ## in the list control (icon or small icon view).
   result = int SendMessage(self.mHwnd, LVM_GETCOUNTPERPAGE, 0, 0)
 
@@ -606,7 +606,7 @@ proc hitTest*(self: wListCtrl, x: int, y: int): tuple[index, col, flag: int]
   ## wListHittestOnItemLabel      Over an item's text.
   ## wListHittestOnItemIcon       Over an item's icon.
   ## wListHittestOnItemStateIcon  Over the checkbox of an item.
-  var info: LV_HITTESTINFO
+  var info: LVHITTESTINFO
   info.pt.x = x
   info.pt.y = y
   result.index = int SendMessage(self.mHwnd, LVM_SUBITEMHITTEST, 0, &info)

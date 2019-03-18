@@ -5,13 +5,10 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import strformat
-import wNim
+import
+  resource/resource,
+  wNim,
+  strformat
 
 type
   MenuID = enum
@@ -24,15 +21,13 @@ const defaultImage = staticRead(r"images\logo.png")
 var app = App()
 var data = DataObject(defaultText)
 
-var frame = Frame(title="wNim Drag-Drop Demo", style=wCaption or wSystemMenu or
-  wMinimizeBox or wModalFrame)
-
-frame.setIcon(Icon("", 0))
+var frame = Frame(title="wNim Drag-Drop Demo", size=(600, 350),
+  style=wDefaultFrameStyle or wDoubleBuffered)
+frame.icon = Icon("", 0) # load icon from exe file.
 
 var statusBar = StatusBar(frame)
 var menuBar = MenuBar(frame)
 var panel = Panel(frame)
-panel.margin = 20
 
 var menu = Menu(menuBar, "&File")
 menu.append(idText, "Load &Text", "Loads default text as current data.")
@@ -49,28 +44,35 @@ accel.add(wAccelCtrl, wKey_C, idCopy)
 accel.add(wAccelCtrl, wKey_V, idPaste)
 frame.acceleratorTable = accel
 
-var target = StaticText(panel, label="Drop Target", size=(100, 100),
+var target = StaticText(panel, label="Drop Target",
   style=wBorderStatic or wAlignCentre or wAlignMiddle)
 target.setDropTarget()
 
-var source = StaticText(panel, label="Drag Source", size=(100, 100), pos=(0, 120),
+var source = StaticText(panel, label="Drag Source",
   style=wBorderStatic or wAlignCentre or wAlignMiddle)
 
-var dataText = TextCtrl(panel, size=(400, 220), pos=(120, 0),
+var dataText = TextCtrl(panel,
   style=wInvisible or wBorderStatic or wTeMultiLine or wTeReadOnly or
   wTeRich or wTeDontWrap)
 
-var dataList = ListBox(panel, size=(400, 220), pos=(120, 0),
+var dataList = ListBox(panel,
   style=wInvisible or wLbNoSel or wLbNeededScroll)
 
-var dataBitmap = StaticBitmap(panel, size=(400, 220), pos=(120, 0),
+var dataBitmap = StaticBitmap(panel,
   style=wInvisible or wSbFit)
 
+proc layout() =
+  panel.autolayout """
+    spacing: 20
+    H:|-[target,source(100)]-[dataText,dataList,dataBitmap]-|
+    V:|-[target]-[source(target)]-|
+    V:|-[dataText,dataList,dataBitmap]-|
+  """
 
 proc displayData() =
   if data.isText():
     let text = data.getText()
-    dataText.setLabel(text)
+    dataText.setValue(text)
     statusBar.setStatusText(fmt"Got {text.len} characters.")
 
     dataText.show()
@@ -95,8 +97,6 @@ proc displayData() =
     dataBitmap.show()
     dataList.hide()
     dataText.hide()
-
-displayData()
 
 source.wEvent_MouseMove do (event: wEvent):
   if event.leftDown():
@@ -156,8 +156,11 @@ frame.idPaste do ():
   data = wGetClipboard()
   displayData()
 
-frame.clientSize = (560, 260)
+frame.wEvent_Size do ():
+  layout()
+
+layout()
+displayData()
 frame.center()
 frame.show()
 app.mainLoop()
-

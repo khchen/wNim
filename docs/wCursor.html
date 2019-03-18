@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wCursor</title>
+<title>wCursor</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wCursor</h1>
+    <h1 class="title">wCursor</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1225,13 +1231,6 @@ function main() {
         <a href="wNim.html">Main Page</a>
       </li>
     </ul>
-  </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
@@ -1252,50 +1251,52 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getHotspot,wCursor"
+      <li><a class="reference" href="#getHotspot%2CwCursor"
     title="getHotspot(self: wCursor): wPoint"><wbr />get<wbr />Hotspot<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getWidth,wCursor"
+  <li><a class="reference" href="#getSize%2CwCursor"
+    title="getSize(self: wCursor): wSize"><wbr />get<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getWidth%2CwCursor"
     title="getWidth(self: wCursor): int"><wbr />get<wbr />Width<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getHeight,wCursor"
+  <li><a class="reference" href="#getHeight%2CwCursor"
     title="getHeight(self: wCursor): int"><wbr />get<wbr />Height<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final,wCursor"
+  <li><a class="reference" href="#final%2CwCursor"
     title="final(self: wCursor)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,HCURSOR"
+  <li><a class="reference" href="#init%2CwCursor%2CHCURSOR"
     title="init(self: wCursor; hCursor: HCURSOR; copy = true; shared = false; hotspot = wDefaultPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,HCURSOR"
+  <li><a class="reference" href="#Cursor%2CHCURSOR"
     title="Cursor(hCursor: HCURSOR; copy = true; shared = false; hotspot = wDefaultPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,wStockCursor"
+  <li><a class="reference" href="#init%2CwCursor%2CwStockCursor"
     title="init(self: wCursor; id: wStockCursor)"><wbr />init<span class="attachedType" style="visibility:hidden">wStockCursor</span></a></li>
-  <li><a class="reference" href="#Cursor,wStockCursor"
+  <li><a class="reference" href="#Cursor%2CwStockCursor"
     title="Cursor(id: wStockCursor): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden">wStockCursor</span></a></li>
-  <li><a class="reference" href="#init,wCursor,wIconImage"
+  <li><a class="reference" href="#init%2CwCursor%2CwIconImage"
     title="init(self: wCursor; iconImage: wIconImage; size = wDefaultSize; hotspot = wDefaultPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,wIconImage"
+  <li><a class="reference" href="#Cursor%2CwIconImage"
     title="Cursor(iconImage: wIconImage; size = wDefaultSize; hotspot = wDefaultPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,wIcon,wPoint"
+  <li><a class="reference" href="#init%2CwCursor%2CwIcon%2CwPoint"
     title="init(self: wCursor; icon: wIcon; hotspot: wPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,wIcon,wPoint"
+  <li><a class="reference" href="#Cursor%2CwIcon%2CwPoint"
     title="Cursor(icon: wIcon; hotspot: wPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,wImage,wPoint"
+  <li><a class="reference" href="#init%2CwCursor%2CwImage%2CwPoint"
     title="init(self: wCursor; image: wImage; hotspot: wPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,wImage,wPoint"
+  <li><a class="reference" href="#Cursor%2CwImage%2CwPoint"
     title="Cursor(image: wImage; hotspot: wPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,wBitmap,wPoint"
+  <li><a class="reference" href="#init%2CwCursor%2CwBitmap%2CwPoint"
     title="init(self: wCursor; bmp: wBitmap; hotspot: wPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,wBitmap,wPoint"
+  <li><a class="reference" href="#Cursor%2CwBitmap%2CwPoint"
     title="Cursor(bmp: wBitmap; hotspot: wPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,wCursor"
+  <li><a class="reference" href="#init%2CwCursor%2CwCursor"
     title="init(self: wCursor; cursor: wCursor; hotspot = wDefaultPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,wCursor"
+  <li><a class="reference" href="#Cursor%2CwCursor"
     title="Cursor(cursor: wCursor; hotspot = wDefaultPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,pointer,int"
+  <li><a class="reference" href="#init%2CwCursor%2Cpointer%2Cint"
     title="init(self: wCursor; data: pointer; length: int; size = wDefaultSize;
      hotspot = wDefaultPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,pointer,int"
+  <li><a class="reference" href="#Cursor%2Cpointer%2Cint"
     title="Cursor(data: pointer; length: int; size = wDefaultSize; hotspot = wDefaultPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wCursor,string"
+  <li><a class="reference" href="#init%2CwCursor%2Cstring"
     title="init(self: wCursor; str: string; size = wDefaultSize; hotspot = wDefaultPoint)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Cursor,string"
+  <li><a class="reference" href="#Cursor%2Cstring"
     title="Cursor(str: string; size = wDefaultSize; hotspot = wDefaultPoint): wCursor"><wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1303,7 +1304,7 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#delete.e,wCursor"
+      <li><a class="reference" href="#delete.e%2CwCursor"
     title="delete(self: wCursor)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1336,7 +1337,8 @@ function main() {
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="wStockCursor"><a name="wStockCursor"></a><pre><span class="Identifier">wStockCursor</span> <span class="Other">=</span> <span class="Keyword">enum</span>
+<a id="wStockCursor"></a>
+<dt><pre><span class="Identifier">wStockCursor</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">wCursorArrow</span> <span class="Other">=</span> <span class="DecNumber">32512</span><span class="Other">,</span> <span class="Identifier">wCursorIbeam</span> <span class="Other">=</span> <span class="DecNumber">32513</span><span class="Other">,</span> <span class="Identifier">wCursorWait</span> <span class="Other">=</span> <span class="DecNumber">32514</span><span class="Other">,</span> <span class="Identifier">wCursorCross</span> <span class="Other">=</span> <span class="DecNumber">32515</span><span class="Other">,</span>
   <span class="Identifier">wCursorUpArrow</span> <span class="Other">=</span> <span class="DecNumber">32516</span><span class="Other">,</span> <span class="Identifier">wCursorSize</span> <span class="Other">=</span> <span class="DecNumber">32640</span><span class="Other">,</span> <span class="Identifier">wCursorIcon</span> <span class="Other">=</span> <span class="DecNumber">32641</span><span class="Other">,</span>
   <span class="Identifier">wCursorSizeNwse</span> <span class="Other">=</span> <span class="DecNumber">32642</span><span class="Other">,</span> <span class="Identifier">wCursorSizeNesw</span> <span class="Other">=</span> <span class="DecNumber">32643</span><span class="Other">,</span> <span class="Identifier">wCursorSizeWe</span> <span class="Other">=</span> <span class="DecNumber">32644</span><span class="Other">,</span>
@@ -1346,7 +1348,8 @@ function main() {
 
 
 </dd>
-<dt id="wCursorError"><a name="wCursorError"></a><pre><span class="Identifier">wCursorError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObjectError</span>
+<a id="wCursorError"></a>
+<dt><pre><span class="Identifier">wCursorError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObjectError</span>
   </pre></dt>
 <dd>
 An error raised when wCursor creation failure.
@@ -1357,129 +1360,153 @@ An error raised when wCursor creation failure.
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="getHotspot"><a name="getHotspot,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHotspot</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getHotspot,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHotspot</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the coordinates of the cursor hotspot.
 
 </dd>
-<dt id="getWidth"><a name="getWidth,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSize,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the size of the cursor.
+
+</dd>
+<a id="getWidth,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the width of the cursor in pixels.
 
 </dd>
-<dt id="getHeight"><a name="getHeight,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHeight</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getHeight,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHeight</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the height of the cursor in pixels.
 
 </dd>
-<dt id="final"><a name="final,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="final,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default finalizer for wCursor.
 
 </dd>
-<dt id="init"><a name="init,wCursor,HCURSOR"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hCursor</span><span class="Other">:</span> <span class="Identifier">HCURSOR</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
-         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,HCURSOR"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hCursor</span><span class="Other">:</span> <span class="Identifier">HCURSOR</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,HCURSOR"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">hCursor</span><span class="Other">:</span> <span class="Identifier">HCURSOR</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,HCURSOR"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">hCursor</span><span class="Other">:</span> <span class="Identifier">HCURSOR</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from Windows cursor handle. If <em>copy</em> is false, this only wrap it to wCursor object. It means the handle will be destroyed by wCursor when it is destroyed. So if you wrap a shared cursor handle into wCursor, you must set <em>shared</em> = true to avoid the handle being destroyed.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wStockCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wStockCursor</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wStockCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wStockCursor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wStockCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wStockCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wStockCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wStockCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor using a cursor identifier.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wIconImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
-         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wIconImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
+         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wIconImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wIconImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from an icon image. If <em>hotspot</em> is wDefaultPoint, it use the hotspot stored in wIconImage object. If it is wDefaultPoint too, the creation failure.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wIcon,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wIcon,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wIcon,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wIcon,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from the given wIcon object and hotspot.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from the given wImage object and hotspot.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wBitmap,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wBitmap,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wBitmap,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wBitmap,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">;</span> <span class="Identifier">hotspot</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from the given wBitmap object and hotspot.
 
 </dd>
-<dt id="init"><a name="init,wCursor,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Copy constructor. Hotspot can be changed if needed.
 
 </dd>
-<dt id="init"><a name="init,wCursor,pointer,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
-         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,pointer,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
+         <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,pointer,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,pointer,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a cursor from binary data of .ico, .cur, or .ani file.
 
 </dd>
-<dt id="init"><a name="init,wCursor,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wCursor,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Cursor"><a name="Cursor,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wCursorError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Cursor,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Cursor</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">hotspot</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 <p>Creates a cursor from a file. The file should be in format of .ico, .cur, .ani, or Windows PE file (.exe or .dll, etc). If str is not a valid file path, it will be regarded as the binary data of .ico, .cur, or .ani file.</p>
 <p>For Windows PE file (.exe or .dll), it allows string like &quot;shell32.dll,-10&quot; to specifies the icon index or &quot;shell32.dll:-1001&quot; to to specifies the cursor index. Use zero-based index to specified the resource position, and negative value to specified the resource identifier. Empty filename (e.g. &quot;,-1&quot;) to specified the current executable file.</p>
@@ -1491,7 +1518,8 @@ Initializer.
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<dt id="delete"><a name="delete.e,wCursor"></a><pre><span class="Keyword">method</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="delete.e,wCursor"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Nim's garbage collector will delete this object by default. However, sometimes you maybe want do that by yourself.
 
@@ -1506,7 +1534,7 @@ Nim's garbage collector will delete this object by default. However, sometimes y
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:11 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:49:05 UTC</small>
       </div>
     </div>
   </div>

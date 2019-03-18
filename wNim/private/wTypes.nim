@@ -65,16 +65,10 @@ const
     ## Used in wNim as default rect.
   wDefaultID*: wCommandID = wCommandID(-1)
     ## Used in wNim as default command ID.
+  wDefaultTime*: wTime = initTime(int64.low, 0)
+    ## Used in wNim as default time.
   wNotFound* = -1
-
-when Time is object: # in devel
-  const
-    wDefaultTime*: wTime = initTime(int64.low, 0)
-    ## Used in wNim as default time.
-else:
-  const
-    wDefaultTime*: wTime = Time int64.low
-    ## Used in wNim as default time.
+    ## Used in wNim as default value.
 
 const
   # Direction
@@ -122,7 +116,7 @@ type
 
     wIdHighest = 5999, wIdUser
 
-when not defined(wnimdoc):
+when not defined(Nimdoc):
   # Mutually recursive types are only possible within a single type section.
   # So we collect all type definition in this module.
   type
@@ -204,7 +198,6 @@ when not defined(wnimdoc):
 
     wDataObject* = ref object
       mObj: ptr IDataObject
-      mBmp: wBitmap
       mReleasable: bool
 
     wEventConnection = tuple

@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wFrame</title>
+<title>wFrame</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wFrame</h1>
+    <h1 class="title">wFrame</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,80 +1232,117 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
   <ul class="simple simple-toc" id="toc-list">
+<li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wIconize"
+    title="wIconize = 0x20000000"><wbr />w<wbr />Iconize<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCaption"
+    title="wCaption = 0x00C00000"><wbr />w<wbr />Caption<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMinimize"
+    title="wMinimize = 0x20000000"><wbr />w<wbr />Minimize<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMinimizeBox"
+    title="wMinimizeBox = 0x00020000"><wbr />w<wbr />Minimize<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMaximize"
+    title="wMaximize = 0x01000000"><wbr />w<wbr />Maximize<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMaximizeBox"
+    title="wMaximizeBox = 0x00010000"><wbr />w<wbr />Maximize<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSystemMenu"
+    title="wSystemMenu = 0x00080000"><wbr />w<wbr />System<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wResizeBorder"
+    title="wResizeBorder = 0x00040000"><wbr />w<wbr />Resize<wbr />Border<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStayOnTop"
+    title="wStayOnTop = 34359738368"><wbr />w<wbr />Stay<wbr />On<wbr />Top<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wModalFrame"
+    title="wModalFrame = 0x00000080"><wbr />w<wbr />Modal<wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wFrameToolWindow"
+    title="wFrameToolWindow = 549755813888"><wbr />w<wbr />Frame<wbr />Tool<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDefaultFrameStyle"
+    title="wDefaultFrameStyle = 13565952"><wbr />w<wbr />Default<wbr />Frame<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBallonNone"
+    title="wBallonNone = 0x00000000"><wbr />w<wbr />Ballon<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBallonInfo"
+    title="wBallonInfo = 0x00000001"><wbr />w<wbr />Ballon<wbr />Info<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBallonWarning"
+    title="wBallonWarning = 0x00000002"><wbr />w<wbr />Ballon<wbr />Warning<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBallonError"
+    title="wBallonError = 0x00000003"><wbr />w<wbr />Ballon<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#setMenuBar,wFrame,wMenuBar"
+      <li><a class="reference" href="#setMenuBar%2CwFrame%2CwMenuBar"
     title="setMenuBar(self: wFrame; menuBar: wMenuBar)"><wbr />set<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMenuBar,wFrame"
+  <li><a class="reference" href="#getMenuBar%2CwFrame"
     title="getMenuBar(self: wFrame): wMenuBar"><wbr />get<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setTopMost,wFrame"
+  <li><a class="reference" href="#setTopMost%2CwFrame"
     title="setTopMost(self: wFrame; top = true)"><wbr />set<wbr />Top<wbr />Most<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#createStatusBar,wFrame,int,wStyle,wCommandID"
+  <li><a class="reference" href="#createStatusBar%2CwFrame%2Cint%2CwStyle%2CwCommandID"
     title="createStatusBar(self: wFrame; number: int = 1; style: wStyle = 0; id: wCommandID = 0): wStatusBar"><wbr />create<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setIcon,wFrame,wIcon"
+  <li><a class="reference" href="#setIcon%2CwFrame%2CwIcon"
     title="setIcon(self: wFrame; icon: wIcon)"><wbr />set<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getIcon,wFrame"
+  <li><a class="reference" href="#getIcon%2CwFrame"
     title="getIcon(self: wFrame): wIcon"><wbr />get<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#minimize,wFrame"
+  <li><a class="reference" href="#minimize%2CwFrame"
     title="minimize(self: wFrame; flag = true)"><wbr />minimize<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#iconize,wFrame"
+  <li><a class="reference" href="#iconize%2CwFrame"
     title="iconize(self: wFrame; flag = true)"><wbr />iconize<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#maximize,wFrame"
+  <li><a class="reference" href="#maximize%2CwFrame"
     title="maximize(self: wFrame; flag = true)"><wbr />maximize<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#restore,wFrame"
+  <li><a class="reference" href="#restore%2CwFrame"
     title="restore(self: wFrame)"><wbr />restore<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#isIconized,wFrame"
+  <li><a class="reference" href="#isIconized%2CwFrame"
     title="isIconized(self: wFrame): bool"><wbr />is<wbr />Iconized<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#isMaximized,wFrame"
+  <li><a class="reference" href="#isMaximized%2CwFrame"
     title="isMaximized(self: wFrame): bool"><wbr />is<wbr />Maximized<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#enableCloseButton,wFrame"
+  <li><a class="reference" href="#enableCloseButton%2CwFrame"
     title="enableCloseButton(self: wFrame; flag = true)"><wbr />enable<wbr />Close<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#disableCloseButton,wFrame"
+  <li><a class="reference" href="#disableCloseButton%2CwFrame"
     title="disableCloseButton(self: wFrame)"><wbr />disable<wbr />Close<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#enableMaximizeButton,wFrame"
+  <li><a class="reference" href="#enableMaximizeButton%2CwFrame"
     title="enableMaximizeButton(self: wFrame; flag = true)"><wbr />enable<wbr />Maximize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#disableMaximizeButton,wFrame"
+  <li><a class="reference" href="#disableMaximizeButton%2CwFrame"
     title="disableMaximizeButton(self: wFrame)"><wbr />disable<wbr />Maximize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#enableMinimizeButton,wFrame"
+  <li><a class="reference" href="#enableMinimizeButton%2CwFrame"
     title="enableMinimizeButton(self: wFrame; flag = true)"><wbr />enable<wbr />Minimize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#disableMinimizeButton,wFrame"
+  <li><a class="reference" href="#disableMinimizeButton%2CwFrame"
     title="disableMinimizeButton(self: wFrame)"><wbr />disable<wbr />Minimize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#shortcut,wFrame,int,int,wEventHandler"
+  <li><a class="reference" href="#shortcut%2CwFrame%2Cint%2Cint%2CwEventHandler"
     title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventHandler): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#shortcut,wFrame,int,int,wEventHandler_2"
-    title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventHandler): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setReturnCode,wFrame,int"
+  <li><a class="reference" href="#setReturnCode%2CwFrame%2Cint"
     title="setReturnCode(self: wFrame; retCode: int)"><wbr />set<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getReturnCode,wFrame"
+  <li><a class="reference" href="#getReturnCode%2CwFrame"
     title="getReturnCode(self: wFrame): int"><wbr />get<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#showModal,wFrame"
+  <li><a class="reference" href="#showModal%2CwFrame"
     title="showModal(self: wFrame): int"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#endModal,wFrame,int"
+  <li><a class="reference" href="#endModal%2CwFrame%2Cint"
     title="endModal(self: wFrame; retCode: int = 0)"><wbr />end<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setTrayIcon,wFrame,wIcon,string"
+  <li><a class="reference" href="#setTrayIcon%2CwFrame%2CwIcon%2Cstring"
     title="setTrayIcon(self: wFrame; icon: wIcon; tooltip = &quot;&quot;)"><wbr />set<wbr />Tray<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#removeTrayIcon,wFrame"
+  <li><a class="reference" href="#removeTrayIcon%2CwFrame"
     title="removeTrayIcon(self: wFrame)"><wbr />remove<wbr />Tray<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#showBalloon,wFrame,string,string,int"
+  <li><a class="reference" href="#showBalloon%2CwFrame%2Cstring%2Cstring%2Cint"
     title="showBalloon(self: wFrame; title: string; text: string; timeout: int = 3000;
             flag = wBallonNone)"><wbr />show<wbr />Balloon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final,wFrame"
+  <li><a class="reference" href="#final%2CwFrame"
     title="final(self: wFrame)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wFrame,wWindow,string,wStyle,string"
+  <li><a class="reference" href="#init%2CwFrame%2CwWindow%2Cstring%2CwStyle%2Cstring"
     title="init(self: wFrame; owner: wWindow = nil; title = &quot;&quot;; pos = wDefaultPoint;
      size = wDefaultSize; style: wStyle = wDefaultFrameStyle; className = &quot;wFrame&quot;)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Frame,wWindow,string,wStyle,string"
+  <li><a class="reference" href="#Frame%2CwWindow%2Cstring%2CwStyle%2Cstring"
     title="Frame(owner: wWindow = nil; title = &quot;&quot;; pos = wDefaultPoint; size = wDefaultSize;
       style: wStyle = wDefaultFrameStyle; className = &quot;wFrame&quot;): wFrame"><wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+<li>
+  <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#getDefaultSize.e%2CwFrame"
+    title="getDefaultSize(self: wFrame): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1332,170 +1375,304 @@ function main() {
 </ul>
 </td></tr>
 </tbody></table></p>
-  <div class="section" id="12">
+  <div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wIconize"></a>
+<dt><pre><span class="Identifier">wIconize</span> <span class="Other">=</span> <span class="DecNumber">0x20000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wCaption"></a>
+<dt><pre><span class="Identifier">wCaption</span> <span class="Other">=</span> <span class="DecNumber">0x00C00000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wMinimize"></a>
+<dt><pre><span class="Identifier">wMinimize</span> <span class="Other">=</span> <span class="DecNumber">0x20000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wMinimizeBox"></a>
+<dt><pre><span class="Identifier">wMinimizeBox</span> <span class="Other">=</span> <span class="DecNumber">0x00020000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wMaximize"></a>
+<dt><pre><span class="Identifier">wMaximize</span> <span class="Other">=</span> <span class="DecNumber">0x01000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wMaximizeBox"></a>
+<dt><pre><span class="Identifier">wMaximizeBox</span> <span class="Other">=</span> <span class="DecNumber">0x00010000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wSystemMenu"></a>
+<dt><pre><span class="Identifier">wSystemMenu</span> <span class="Other">=</span> <span class="DecNumber">0x00080000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wResizeBorder"></a>
+<dt><pre><span class="Identifier">wResizeBorder</span> <span class="Other">=</span> <span class="DecNumber">0x00040000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wStayOnTop"></a>
+<dt><pre><span class="Identifier">wStayOnTop</span> <span class="Other">=</span> <span class="DecNumber">34359738368</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wModalFrame"></a>
+<dt><pre><span class="Identifier">wModalFrame</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wFrameToolWindow"></a>
+<dt><pre><span class="Identifier">wFrameToolWindow</span> <span class="Other">=</span> <span class="DecNumber">549755813888</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDefaultFrameStyle"></a>
+<dt><pre><span class="Identifier">wDefaultFrameStyle</span> <span class="Other">=</span> <span class="DecNumber">13565952</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBallonNone"></a>
+<dt><pre><span class="Identifier">wBallonNone</span> <span class="Other">=</span> <span class="DecNumber">0x00000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBallonInfo"></a>
+<dt><pre><span class="Identifier">wBallonInfo</span> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBallonWarning"></a>
+<dt><pre><span class="Identifier">wBallonWarning</span> <span class="Other">=</span> <span class="DecNumber">0x00000002</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBallonError"></a>
+<dt><pre><span class="Identifier">wBallonError</span> <span class="Other">=</span> <span class="DecNumber">0x00000003</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
+<div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="setMenuBar"><a name="setMenuBar,wFrame,wMenuBar"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">menuBar</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setMenuBar,wFrame,wMenuBar"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">menuBar</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Tells the frame to show the given menu bar.
 
 </dd>
-<dt id="getMenuBar"><a name="getMenuBar,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getMenuBar,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the menubar currently associated with the frame.
 
 </dd>
-<dt id="setTopMost"><a name="setTopMost,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setTopMost</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">top</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setTopMost,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setTopMost</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">top</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets whether the frame top most to all windows.
 
 </dd>
-<dt id="createStatusBar"><a name="createStatusBar,wFrame,int,wStyle,wCommandID"></a><pre><span class="Keyword">proc</span> <span class="Identifier">createStatusBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">number</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="createStatusBar,wFrame,int,wStyle,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">createStatusBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">number</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a status bar at the bottom of the frame.
 
 </dd>
-<dt id="setIcon"><a name="setIcon,wFrame,wIcon"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setIcon,wFrame,wIcon"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the icon for this frame.
 
 </dd>
-<dt id="getIcon"><a name="getIcon,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getIcon,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the standard icon.
 
 </dd>
-<dt id="minimize"><a name="minimize,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">minimize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="minimize,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">minimize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Minimizes or restores the frame
 
 </dd>
-<dt id="iconize"><a name="iconize,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">iconize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="iconize,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">iconize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Iconizes or restores the frame. The same as minimize().
 
 </dd>
-<dt id="maximize"><a name="maximize,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">maximize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="maximize,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">maximize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Maximizes or restores the frame.
 
 </dd>
-<dt id="restore"><a name="restore,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">restore</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="restore,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">restore</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Restore a previously iconized or maximized frame to its normal state.
 
 </dd>
-<dt id="isIconized"><a name="isIconized,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isIconized</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isIconized,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isIconized</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the frame is iconized.
 
 </dd>
-<dt id="isMaximized"><a name="isMaximized,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isMaximized</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isMaximized,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isMaximized</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the frame is maximized.
 
 </dd>
-<dt id="enableCloseButton"><a name="enableCloseButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">enableCloseButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="enableCloseButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableCloseButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Enables or disables the Close button.
 
 </dd>
-<dt id="disableCloseButton"><a name="disableCloseButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">disableCloseButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="disableCloseButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableCloseButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Disables the Close button.
 
 </dd>
-<dt id="enableMaximizeButton"><a name="enableMaximizeButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">enableMaximizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="enableMaximizeButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableMaximizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Enables or disables the Maximize button.
 
 </dd>
-<dt id="disableMaximizeButton"><a name="disableMaximizeButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">disableMaximizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="disableMaximizeButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableMaximizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Disables the Maximize button.
 
 </dd>
-<dt id="enableMinimizeButton"><a name="enableMinimizeButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">enableMinimizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="enableMinimizeButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableMinimizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Enables or disables the Minimize button.
 
 </dd>
-<dt id="disableMinimizeButton"><a name="disableMinimizeButton,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">disableMinimizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="disableMinimizeButton,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableMinimizeButton</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Disables the Minimize button.
 
 </dd>
-<dt id="shortcut"><a name="shortcut,wFrame,int,int,wEventHandler"></a><pre><span class="Keyword">proc</span> <span class="Identifier">shortcut</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="shortcut,wFrame,int,int,wEventHandler"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">shortcut</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Quickly bind a keyboard shortcut to an event handler. If this frame not yet have a accelerator table, it will create a new one. This function use wCommandID between 64257..65535.
 
 </dd>
-<dt id="shortcut"><a name="shortcut,wFrame,int,int,wEventHandler_2"></a><pre><span class="Keyword">proc</span> <span class="Identifier">shortcut</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
-<dd>
-Quickly bind a keyboard shortcut to an event handler. If this frame not yet have a accelerator table, it will create a new one. This function use wCommandID between 64257..65535.
-
-</dd>
-<dt id="setReturnCode"><a name="setReturnCode,wFrame,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setReturnCode,wFrame,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the return code for this window.
 
 </dd>
-<dt id="getReturnCode"><a name="getReturnCode,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getReturnCode,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the return code for this window.
 
 </dd>
-<dt id="showModal"><a name="showModal,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="showModal,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the frame as an application-modal dialog. Program flow does not return until the dialog has been dismissed with endModal.
 
 </dd>
-<dt id="endModal"><a name="endModal,wFrame,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">endModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="endModal,wFrame,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">endModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Ends a modal dialog, passing a value to be returned from the showModal() invocation.
 
 </dd>
-<dt id="setTrayIcon"><a name="setTrayIcon,wFrame,wIcon,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">tooltip</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setTrayIcon,wFrame,wIcon,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">;</span> <span class="Identifier">tooltip</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates the system tray icon.
 
 </dd>
-<dt id="removeTrayIcon"><a name="removeTrayIcon,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">removeTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="removeTrayIcon,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">removeTrayIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Removes the system tray icon.
 
 </dd>
-<dt id="showBalloon"><a name="showBalloon,wFrame,string,string,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">showBalloon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">title</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">timeout</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">3000</span><span class="Other">;</span>
-                <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">wBallonNone</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="showBalloon,wFrame,string,string,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showBalloon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">title</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">timeout</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">3000</span><span class="Other">;</span>
+                <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">wBallonNone</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Display a balloon notification. Only works when the frame already have a tray icon. <em>flag</em> is one of wBallonNone, wBallonInfo, wBallonWarning or wBallonError.
 
 </dd>
-<dt id="final"><a name="final,wFrame"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="final,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default finalizer for wFrame.
 
 </dd>
-<dt id="init"><a name="init,wFrame,wWindow,string,wStyle,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">title</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
-         <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wDefaultFrameStyle</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wFrame&quot;</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wFrame,wWindow,string,wStyle,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">title</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
+         <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wDefaultFrameStyle</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wFrame&quot;</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Frame"><a name="Frame,wWindow,string,wStyle,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Frame</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">title</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
-          <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wDefaultFrameStyle</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wFrame&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFrame</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Frame,wWindow,string,wStyle,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Frame</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">title</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
+          <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wDefaultFrameStyle</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wFrame&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFrame</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor, creating the frame.
+
+</dd>
+
+</dl></div>
+<div class="section" id="14">
+<h1><a class="toc-backref" href="#14">Methods</a></h1>
+<dl class="item">
+<a id="getDefaultSize.e,wFrame"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDefaultSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the system suggested size of a window (usually used for GUI controls).
 
 </dd>
 
@@ -1508,7 +1685,7 @@ Constructor, creating the frame.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:00 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:48:53 UTC</small>
       </div>
     </div>
   </div>

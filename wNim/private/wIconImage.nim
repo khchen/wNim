@@ -328,12 +328,11 @@ proc initRawGdipbmp(self: wIconImage, gdipbmp: ptr GpBitmap) =
   self.initRaw(width, height, 32, colorSize, colorBit, maskSize, monoMaskBit)
 
 proc initRawModuleGroupId(self: wIconImage, module: HMODULE, groupId: LPTSTR, size: wSize, isIcon: bool) =
-  when not defined(wnimdoc): # this code crash nim doc generator
-    var
-      (width, height) = size.toDefaultSize()
-      resource = FindResource(module, groupId, if isIcon: RT_GROUP_ICON else: RT_GROUP_CURSOR)
-      handle = LoadResource(module, resource)
-      p = LockResource(handle)
+  var
+    (width, height) = size.toDefaultSize()
+    resource = FindResource(module, groupId, if isIcon: RT_GROUP_ICON else: RT_GROUP_CURSOR)
+    handle = LoadResource(module, resource)
+    p = LockResource(handle)
 
   if resource != 0 and handle != 0 and p != nil:
     var
@@ -398,14 +397,13 @@ proc isIconBinary(data: pointer, length: int): bool =
 proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefaultSize) =
   if not isIconBinary(data, length): return
 
-  when not defined(wnimdoc): # this code crash nim doc generator
-    let
-      (width, height) = size.toDefaultSize()
-      iconDir = cast[ptr ICONDIR](data)
-      count = int iconDir.idCount
-      isIcon = iconDir.idType == 1
-      buffer = newString(sizeof(GRPICONDIR) + sizeof(GRPICONDIRENTRY) * count)
-      grpIconDir = cast[ptr GRPICONDIR](&buffer)
+  let
+    (width, height) = size.toDefaultSize()
+    iconDir = cast[ptr ICONDIR](data)
+    count = int iconDir.idCount
+    isIcon = iconDir.idType == 1
+    buffer = newString(sizeof(GRPICONDIR) + sizeof(GRPICONDIRENTRY) * count)
+    grpIconDir = cast[ptr GRPICONDIR](&buffer)
 
   grpIconDir.idReserved = iconDir.idReserved
   grpIconDir.idType = iconDir.idType
@@ -413,8 +411,7 @@ proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefault
 
   for i in 0..<count:
     copyMem(&grpIconDir.idEntries[i], &iconDir.idEntries[i], sizeof(GRPICONDIRENTRY))
-    when not defined(wnimdoc): # this code crash nim doc generator
-      grpIconDir.idEntries[i].nID = WORD(i + 1)
+    grpIconDir.idEntries[i].nID = WORD(i + 1)
 
   var index = LookupIconIdFromDirectoryEx(cast[PBYTE](grpIconDir), isIcon, width, height, 0)
   if index != 0:
@@ -628,8 +625,7 @@ proc IconImages*(data: pointer, length: int): seq[wIconImage] =
     count = int iconDir.idCount
     isIcon = iconDir.idType == 1
 
-  when not defined(wnimdoc): # this code crash nim doc generator
-    result = newSeq[wIconImage](count)
+  result = newSeq[wIconImage](count)
 
   for i in 0..<count:
     let

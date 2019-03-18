@@ -37,6 +37,7 @@
 ##   `wHyperLinkCtrl <wHyperLinkCtrl.html>`_
 ##   `wSplitter <wSplitter.html>`_
 ##   `wIpCtrl <wIpCtrl.html>`_
+##   `wRebar <wRebar.html>`_  (experimental)
 
 # forward declaration
 proc click*(self: wButton) {.inline.}

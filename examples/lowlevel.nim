@@ -5,17 +5,16 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
+import
+  resource/resource,
+  wNim,
+  winim/lean
 
-import winim/lean
-import wNim
+let
+  app = App()
+  frame = Frame(title="Hello World", size=(300, 200))
+  statusBar = StatusBar(frame)
 
-let app = App()
-let frame = Frame(title="Hello World", size=(300, 200))
-let statusBar = StatusBar(frame)
 frame.icon = Icon("", 0) # load icon from exe file.
 
 frame.WM_SYSCOMMAND do (event: wEvent):

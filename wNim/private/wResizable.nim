@@ -165,7 +165,7 @@ proc layoutParser(x: NimNode): string =
 
   proc addConstraint(code: var string, x: NimNode, strength = "") =
     if x.kind == nnkInfix:
-      ## enconter infix operator  a == b, a < b, etc.
+      # enconter infix operator  a == b, a < b, etc.
       if strength.len == 0:
         code.add "resizer.addConstraint(" & x.repr & ")\n"
       else:
@@ -176,32 +176,30 @@ proc layoutParser(x: NimNode): string =
         code.addConstraint(item, strength)
 
     if x.kind == nnkAsgn:
-      ## enconter a = b, we should parse as a == b
+      # enconter a = b, we should parse as a == b
       code.addConstraint(infix(x[0], "==", x[1]), strength)
 
     elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
       # enconter name: stmtlist or number: stmtlist
       # if name is not strength, it should be a resizable object.
       # if there is a number, consider it is the strength
+      if x[0].kind in nnkCharLit..nnkUInt64Lit:
+        for item in x[1]:
+          code.addConstraint(item, $x[0].intVal)
 
-      when not defined(wnimdoc): # this code crash nim doc generator
-        if x[0].kind in nnkCharLit..nnkUInt64Lit:
-          for item in x[1]:
-            code.addConstraint(item, $x[0].intVal)
+      elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
+        for item in x[1]:
+          code.addConstraint(item, $x[0].floatVal)
 
-        elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
-          for item in x[1]:
-            code.addConstraint(item, $x[0].floatVal)
+      elif $x[0] in strengthes:
+        for item in x[1]:
+          code.addConstraint(item, $x[0])
 
-        elif $x[0] in strengthes:
-          for item in x[1]:
-            code.addConstraint(item, $x[0])
-
-        else:
-          code.add "self = $1\n" % [x[0].repr]
-          code.add "resizer.addObject($1)\n" % [x[0].repr]
-          for item in x[1]:
-            code.addConstraint(item, strength)
+      else:
+        code.add "self = $1\n" % [x[0].repr]
+        code.add "resizer.addObject($1)\n" % [x[0].repr]
+        for item in x[1]:
+          code.addConstraint(item, strength)
 
     elif x.kind == nnkStmtList:
       for item in x:

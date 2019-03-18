@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wDataObject</title>
+<title>wDataObject</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wDataObject</h1>
+    <h1 class="title">wDataObject</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,13 +1232,6 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
@@ -1243,45 +1242,63 @@ function main() {
   </ul>
 </li>
 <li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wDragNone"
+    title="wDragNone = 0"><wbr />w<wbr />Drag<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragCopy"
+    title="wDragCopy = 1"><wbr />w<wbr />Drag<wbr />Copy<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragMove"
+    title="wDragMove = 2"><wbr />w<wbr />Drag<wbr />Move<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragLink"
+    title="wDragLink = 4"><wbr />w<wbr />Drag<wbr />Link<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragError"
+    title="wDragError = 8"><wbr />w<wbr />Drag<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragCancel"
+    title="wDragCancel = 16"><wbr />w<wbr />Drag<wbr />Cancel<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+<li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#isText,wDataObject"
+      <li><a class="reference" href="#isText%2CwDataObject"
     title="isText(self: wDataObject): bool"><wbr />is<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getText,wDataObject"
+  <li><a class="reference" href="#getText%2CwDataObject"
     title="getText(self: wDataObject): string"><wbr />get<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#isFiles,wDataObject"
+  <li><a class="reference" href="#isFiles%2CwDataObject"
     title="isFiles(self: wDataObject): bool"><wbr />is<wbr />Files<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getFiles,wDataObject"
+  <li><a class="reference" href="#getFiles%2CwDataObject"
     title="getFiles(self: wDataObject): seq[string]"><wbr />get<wbr />Files<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#isBitmap,wDataObject"
+  <li><a class="reference" href="#isBitmap%2CwDataObject"
     title="isBitmap(self: wDataObject): bool"><wbr />is<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getBitmap,wDataObject"
+  <li><a class="reference" href="#getBitmap%2CwDataObject"
     title="getBitmap(self: wDataObject): wBitmap"><wbr />get<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#doDragDrop,wDataObject,int"
-    title="doDragDrop(self: wDataObject; flags: int = wDragCopy or wDragMove or wDragLink): int"><wbr />do<wbr />Drag<wbr />Drop<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#delete,wDataObject"
+  <li><a class="reference" href="#doDragDrop%2CwDataObject%2Cint"
+    title="doDragDrop(self: wDataObject; flags: int = 3 or 4): int"><wbr />do<wbr />Drag<wbr />Drop<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#delete%2CwDataObject"
     title="delete(self: wDataObject)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final,wDataObject"
+  <li><a class="reference" href="#final%2CwDataObject"
     title="final(self: wDataObject)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wDataObject,ptr.IDataObject"
+  <li><a class="reference" href="#init%2CwDataObject%2Cptr.IDataObject"
     title="init(self: wDataObject; dataObj: ptr IDataObject)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#DataObject,ptr.IDataObject"
+  <li><a class="reference" href="#DataObject%2Cptr.IDataObject"
     title="DataObject(dataObj: ptr IDataObject): wDataObject"><wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wDataObject,string"
+  <li><a class="reference" href="#init%2CwDataObject%2Cstring"
     title="init(self: wDataObject; text: string)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#DataObject,string"
+  <li><a class="reference" href="#DataObject%2Cstring"
     title="DataObject(text: string): wDataObject"><wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wDataObject,openArray[string]"
+  <li><a class="reference" href="#init%2CwDataObject%2CopenArray%5Bstring%5D"
     title="init(self: wDataObject; files: openArray[string])"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#DataObject,openArray[string]"
+  <li><a class="reference" href="#DataObject%2CopenArray%5Bstring%5D"
     title="DataObject(files: openArray[string]): wDataObject"><wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wDataObject,wBitmap"
+  <li><a class="reference" href="#init%2CwDataObject%2CwBitmap"
     title="init(self: wDataObject; bmp: wBitmap)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#DataObject,wBitmap"
+  <li><a class="reference" href="#DataObject%2CwBitmap"
     title="DataObject(bmp: wBitmap): wDataObject"><wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wDataObject,wDataObject"
+  <li><a class="reference" href="#init%2CwDataObject%2CwDataObject"
     title="init(self: wDataObject; dataObj: wDataObject)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#DataObject,wDataObject"
+  <li><a class="reference" href="#DataObject%2CwDataObject"
     title="DataObject(dataObj: wDataObject): wDataObject"><wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1289,7 +1306,7 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#15" id="65">Iterators</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getFiles.i,wDataObject"
+      <li><a class="reference" href="#getFiles.i%2CwDataObject"
     title="getFiles(self: wDataObject): string"><wbr />get<wbr />Files<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1311,7 +1328,8 @@ function main() {
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="wDataObjectError"><a name="wDataObjectError"></a><pre><span class="Identifier">wDataObjectError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wError</span>
+<a id="wDataObjectError"></a>
+<dt><pre><span class="Identifier">wDataObjectError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wError</span>
   </pre></dt>
 <dd>
 An error raised when wDataObject creation or operation failure.
@@ -1319,113 +1337,162 @@ An error raised when wDataObject creation or operation failure.
 </dd>
 
 </dl></div>
+<div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wDragNone"></a>
+<dt><pre><span class="Identifier">wDragNone</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDragCopy"></a>
+<dt><pre><span class="Identifier">wDragCopy</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDragMove"></a>
+<dt><pre><span class="Identifier">wDragMove</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDragLink"></a>
+<dt><pre><span class="Identifier">wDragLink</span> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDragError"></a>
+<dt><pre><span class="Identifier">wDragError</span> <span class="Other">=</span> <span class="DecNumber">8</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDragCancel"></a>
+<dt><pre><span class="Identifier">wDragCancel</span> <span class="Other">=</span> <span class="DecNumber">16</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="isText"><a name="isText,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isText,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Checks the data is text or not.
 
 </dd>
-<dt id="getText"><a name="getText,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getText,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the data in text format.
 
 </dd>
-<dt id="isFiles"><a name="isFiles,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isFiles,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Checks the data is files list or not.
 
 </dd>
-<dt id="getFiles"><a name="getFiles,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getFiles,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the files list as seq.
 
 </dd>
-<dt id="isBitmap"><a name="isBitmap,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">isBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="isBitmap,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Checks the data is bitmap or not.
 
 </dd>
-<dt id="getBitmap"><a name="getBitmap,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBitmap</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getBitmap,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBitmap</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the data in bitmap format.
 
 </dd>
-<dt id="doDragDrop"><a name="doDragDrop,wDataObject,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">doDragDrop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Identifier">wDragCopy</span> <span class="Identifier">or</span> <span class="Identifier">wDragMove</span> <span class="Keyword">or</span> <span class="Identifier">wDragLink</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="doDragDrop,wDataObject,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">doDragDrop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">3</span> <span class="Keyword">or</span> <span class="DecNumber">4</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Starts the drag-and-drop operation which will terminate when the user releases the mouse. The result will be one of drag-drop effect, wDragCancel, or wDragError.
 
 </dd>
-<dt id="delete"><a name="delete,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="delete,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Nim's garbage collector will delete this object by default. However, sometimes you maybe want do that by yourself. Moreover, if the data object is still on the clipboard, delete it will force to flush it.
 
 </dd>
-<dt id="final"><a name="final,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="final,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default finalizer for wDataObject.
 
 </dd>
-<dt id="init"><a name="init,wDataObject,ptr.IDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wDataObject,ptr.IDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="DataObject"><a name="DataObject,ptr.IDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="DataObject,ptr.IDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
 </dd>
-<dt id="init"><a name="init,wDataObject,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-                                        <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wDataObject,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="DataObject"><a name="DataObject,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="DataObject,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor from text.
 
 </dd>
-<dt id="init"><a name="init,wDataObject,openArray[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">files</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wDataObject,openArray[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">files</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="DataObject"><a name="DataObject,openArray[string]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">files</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="DataObject,openArray[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">files</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor from files. The path must exist.
 
 </dd>
-<dt id="init"><a name="init,wDataObject,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-                                        <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wDataObject,wBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="DataObject"><a name="DataObject,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="DataObject,wBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor from bitmap.
 
 </dd>
-<dt id="init"><a name="init,wDataObject,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wDataObject,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="DataObject"><a name="DataObject,wDataObject"></a><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="DataObject,wDataObject"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Copy constructor.
 
@@ -1435,7 +1502,8 @@ Copy constructor.
 <div class="section" id="15">
 <h1><a class="toc-backref" href="#15">Iterators</a></h1>
 <dl class="item">
-<dt id="getFiles"><a name="getFiles.i,wDataObject"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getFiles.i,wDataObject"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">getFiles</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Iterate each file in this file list.
 
@@ -1450,7 +1518,7 @@ Iterate each file in this file list.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:50:59 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:48:53 UTC</small>
       </div>
     </div>
   </div>

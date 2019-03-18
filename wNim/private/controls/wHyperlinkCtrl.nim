@@ -136,7 +136,7 @@ proc setVisited*(self: wHyperLinkCtrl, flag = true, index = -1) {.validate, prop
     mask: LIF_ITEMINDEX or LIF_STATE,
     stateMask: LIS_VISITED,
     state: LIS_VISITED)
-  echo SendMessage(self.mHwnd, LM_SETITEM, 0, &item)
+  SendMessage(self.mHwnd, LM_SETITEM, 0, &item)
 
 method processNotify(self: wHyperLinkCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   if code == NM_CLICK or code == NM_RETURN:

@@ -124,101 +124,102 @@
 ##  ----------
 ##  - `autolayout <autolayout.html>`_
 
-
 {.experimental, deadCodeElim: on.}
 
-when not defined(wnimdoc):
-  import tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net
-  import kiwi, wNim/autolayout
-  import winim/winstr, winim/utils
-  import winim/inc/[windef, winerror, winbase, winuser, wingdi]
-  import winim/inc/[commctrl, commdlg, objbase, richedit, shellapi, gdiplus]
-  export winstr, utils, windef, winerror, winbase, winuser, wingdi, kiwi, autolayout
+import
+  tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net,
+  kiwi, winim/[winstr, utils], wNim/autolayout, wNim/private/wWinimx
+  # winim/inc/[windef, winbase, winerror, winuser, wingdi, commctrl, commdlg,
+  #   objbase, shellapi, gdiplus, richedit, uxtheme]
 
-  include wNim/private/wSymbolics
-  include wNim/private/wMacro
-  include wNim/private/wTypes
-  include wNim/private/consts/wKeyCodes
-  include wNim/private/consts/wColors
-  include wNim/private/wHelper
-  include wNim/private/wAcceleratorTable
-  include wNim/private/wApp
-  include wNim/private/wUtils
-  include wNim/private/events/wEvent
-  include wNim/private/events/wMouseEvent
-  include wNim/private/events/wKeyEvent
-  include wNim/private/events/wSizeEvent
-  include wNim/private/events/wMoveEvent
-  include wNim/private/events/wContextMenuEvent
-  include wNim/private/events/wScrollWinEvent
-  include wNim/private/events/wTrayEvent
-  include wNim/private/events/wNavigationEvent
-  include wNim/private/events/wSetCursorEvent
-  include wNim/private/events/wStatusBarEvent
-  include wNim/private/events/wCommandEvent
-  include wNim/private/events/wScrollEvent
-  include wNim/private/events/wSpinEvent
-  include wNim/private/events/wHyperLinkEvent
-  include wNim/private/events/wIpEvent
-  include wNim/private/events/wListEvent
-  include wNim/private/events/wTreeEvent
-  include wNim/private/events/wDragDropEvent
-  include wNim/private/wIconImage
-  include wNim/private/wImage
-  include wNim/private/gdiobjects/wGdiObject
-  include wNim/private/gdiobjects/wFont
-  include wNim/private/gdiobjects/wPen
-  include wNim/private/gdiobjects/wBrush
-  include wNim/private/gdiobjects/wBitmap
-  include wNim/private/gdiobjects/wIcon
-  include wNim/private/gdiobjects/wCursor
-  include wNim/private/gdiobjects/wPredefined
-  include wNim/private/wImageList
-  include wNim/private/wDataObject
-  include wNim/private/wResizer
-  include wNim/private/wResizable
-  include wNim/private/wWindow
-  include wNim/private/wPanel
-  include wNim/private/dc/wDC
-  include wNim/private/dc/wMemoryDC
-  include wNim/private/dc/wClientDC
-  include wNim/private/dc/wWindowDC
-  include wNim/private/dc/wScreenDC
-  include wNim/private/dc/wPaintDC
-  include wNim/private/menu/wMenuBar
-  include wNim/private/menu/wMenu
-  include wNim/private/menu/wMenuItem
-  include wNim/private/menu/wMenuBase
-  include wNim/private/controls/wControl
-  include wNim/private/controls/wStatusBar
-  include wNim/private/controls/wToolBar
-  include wNim/private/controls/wRebar
-  include wNim/private/controls/wButton
-  include wNim/private/controls/wCheckBox
-  include wNim/private/controls/wRadioButton
-  include wNim/private/controls/wStaticBox
-  include wNim/private/controls/wTextCtrl
-  include wNim/private/controls/wComboBox
-  include wNim/private/controls/wStaticText
-  include wNim/private/controls/wStaticBitmap
-  include wNim/private/controls/wStaticLine
-  include wNim/private/controls/wNoteBook
-  include wNim/private/controls/wSpinCtrl
-  include wNim/private/controls/wSpinButton
-  include wNim/private/controls/wSlider
-  include wNim/private/controls/wScrollBar
-  include wNim/private/controls/wGauge
-  include wNim/private/controls/wCalendarCtrl
-  include wNim/private/controls/wDatePickerCtrl
-  include wNim/private/controls/wTimePickerCtrl
-  include wNim/private/controls/wListBox
-  include wNim/private/controls/wListCtrl
-  include wNim/private/controls/wTreeCtrl
-  include wNim/private/controls/wHyperLinkCtrl
-  include wNim/private/controls/wSplitter
-  include wNim/private/controls/wIpCtrl
-  include wNim/private/wFrame
-  include wNim/private/dialogs/wMessageDialog
-  include wNim/private/dialogs/wDirDialog
-  include wNim/private/dialogs/wFileDialog
-  include wNim/private/dialogs/wColorDialog
+export
+  kiwi, winstr, utils, autolayout
+
+include
+  wNim/private/wSymbolics,
+  wNim/private/wMacro,
+  wNim/private/wTypes,
+  wNim/private/consts/wKeyCodes,
+  wNim/private/consts/wColors,
+  wNim/private/wHelper,
+  wNim/private/wAcceleratorTable,
+  wNim/private/wApp,
+  wNim/private/wUtils,
+  wNim/private/events/wEvent,
+  wNim/private/events/wMouseEvent,
+  wNim/private/events/wKeyEvent,
+  wNim/private/events/wSizeEvent,
+  wNim/private/events/wMoveEvent,
+  wNim/private/events/wContextMenuEvent,
+  wNim/private/events/wScrollWinEvent,
+  wNim/private/events/wTrayEvent,
+  wNim/private/events/wNavigationEvent,
+  wNim/private/events/wSetCursorEvent,
+  wNim/private/events/wStatusBarEvent,
+  wNim/private/events/wCommandEvent,
+  wNim/private/events/wScrollEvent,
+  wNim/private/events/wSpinEvent,
+  wNim/private/events/wHyperLinkEvent,
+  wNim/private/events/wIpEvent,
+  wNim/private/events/wListEvent,
+  wNim/private/events/wTreeEvent,
+  wNim/private/events/wDragDropEvent,
+  wNim/private/wIconImage,
+  wNim/private/wImage,
+  wNim/private/gdiobjects/wGdiObject,
+  wNim/private/gdiobjects/wFont,
+  wNim/private/gdiobjects/wPen,
+  wNim/private/gdiobjects/wBrush,
+  wNim/private/gdiobjects/wBitmap,
+  wNim/private/gdiobjects/wIcon,
+  wNim/private/gdiobjects/wCursor,
+  wNim/private/gdiobjects/wPredefined,
+  wNim/private/wImageList,
+  wNim/private/wDataObject,
+  wNim/private/wResizer,
+  wNim/private/wResizable,
+  wNim/private/wWindow,
+  wNim/private/wPanel,
+  wNim/private/dc/wDC,
+  wNim/private/dc/wMemoryDC,
+  wNim/private/dc/wClientDC,
+  wNim/private/dc/wWindowDC,
+  wNim/private/dc/wScreenDC,
+  wNim/private/dc/wPaintDC,
+  wNim/private/menu/wMenuBar,
+  wNim/private/menu/wMenu,
+  wNim/private/menu/wMenuItem,
+  wNim/private/menu/wMenuBase,
+  wNim/private/controls/wControl,
+  wNim/private/controls/wStatusBar,
+  wNim/private/controls/wToolBar,
+  wNim/private/controls/wRebar,
+  wNim/private/controls/wButton,
+  wNim/private/controls/wCheckBox,
+  wNim/private/controls/wRadioButton,
+  wNim/private/controls/wStaticBox,
+  wNim/private/controls/wTextCtrl,
+  wNim/private/controls/wComboBox,
+  wNim/private/controls/wStaticText,
+  wNim/private/controls/wStaticBitmap,
+  wNim/private/controls/wStaticLine,
+  wNim/private/controls/wNoteBook,
+  wNim/private/controls/wSpinCtrl,
+  wNim/private/controls/wSpinButton,
+  wNim/private/controls/wSlider,
+  wNim/private/controls/wScrollBar,
+  wNim/private/controls/wGauge,
+  wNim/private/controls/wCalendarCtrl,
+  wNim/private/controls/wDatePickerCtrl,
+  wNim/private/controls/wTimePickerCtrl,
+  wNim/private/controls/wListBox,
+  wNim/private/controls/wListCtrl,
+  wNim/private/controls/wTreeCtrl,
+  wNim/private/controls/wHyperLinkCtrl,
+  wNim/private/controls/wSplitter,
+  wNim/private/controls/wIpCtrl,
+  wNim/private/wFrame,
+  wNim/private/dialogs/wMessageDialog,
+  wNim/private/dialogs/wDirDialog,
+  wNim/private/dialogs/wFileDialog,
+  wNim/private/dialogs/wColorDialog

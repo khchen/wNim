@@ -5,12 +5,9 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import wNim
+import
+  resource/resource,
+  wNim
 
 proc passwordDialog(owner: wWindow): string =
   var password = ""
@@ -26,8 +23,8 @@ proc passwordDialog(owner: wWindow): string =
   const cancel = staticRead(r"images\cancel.ico")
 
   buttonOk.setDefault()
-  buttonOk.setBitmap(Bmp(ok))
-  buttonCancel.setBitmap(Bmp(cancel))
+  buttonOk.setIcon(Icon(ok))
+  buttonCancel.setIcon(Icon(cancel))
   dialog.icon = Icon(ok)
 
   dialog.wEvent_Close do ():

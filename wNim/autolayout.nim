@@ -63,6 +63,7 @@ type
     rules: OrderedTable[string, seq[VflRule]]
     # HashSet has some problem when run in vm, use Table instead
     stacks: Table[string, Table[string, bool]]
+    aliases: Table[string, string]
     currentStack: string
     rawRules: seq[string]
     lastItems: seq[string]
@@ -105,6 +106,7 @@ proc initVflParser*(parent = "panel", spacing = 10, variable = "variable"): VflP
   ## Initializer.
   result.rules = initOrderedTable[string, seq[VflRule]]()
   result.stacks = initTable[string, Table[string, bool]]()
+  result.aliases = initTable[string, string]()
   result.currentStack = ""
   result.rawRules = @[]
   result.lastSpace = "0"
@@ -134,6 +136,16 @@ proc closeHV(parser: var VflParser, raw: string, pos: int) =
     parser.resetHV(modeV, parser.hvValue)
     parser.parse(raw[parser.hvPos..<pos])
 
+iterator catchIdent(input: string, chars: set[char]): (int, int) =
+  var pos = 0
+  while pos < input.len:
+    case input[pos]
+    of IdentStartChars:
+      let start = pos
+      pos += input.skipWhile(chars, pos)
+      if start != pos: yield (start, pos-1)
+    else: pos.inc
+
 proc setup(parser: var VflParser, input: string, raw: string, pos: int) =
   var
     tokens = input.split(':', maxsplit=1)
@@ -161,6 +173,14 @@ proc setup(parser: var VflParser, input: string, raw: string, pos: int) =
     of "spacing": parser.defaultSpacing = value
     of "outer": parser.outer = if value == "nil": "" else: value
     of "c": parser.rawRules.add value
+    of "alias":
+      var key = ""
+      for start, last in value.catchIdent(IdentChars):
+        if key.len == 0:
+          key = value[start..last]
+        else:
+          parser.aliases[key] = value[start..last]
+          key = ""
     else: discard
 
 proc openStack(parser: var VflParser, name: string) =
@@ -189,21 +209,11 @@ proc parsePriority(parser: var VflParser, input: string): (string, string) =
   var tokens = input.rsplit('@', maxsplit=1)
   result = ((if tokens.len > 1: tokens[1] else: ""), tokens[0])
 
-iterator catchIdent(input: string): (int, int) =
-  var pos = 0
-  while pos < input.len:
-    case input[pos]
-    of IdentStartChars:
-      let start = pos
-      pos += input.skipWhile(IdentChars + {'.'}, pos)
-      if start != pos: yield (start, pos-1)
-    else: pos.inc
-
 proc parseValue(parser: var VflParser, input: string): string =
 
   proc addAttrib(parser: var VflParser, input: var string) =
     var replacements = newSeq[(int, int, string)]()
-    for start, last in input.catchIdent():
+    for start, last in input.catchIdent(IdentChars + {'.'}):
       let token = input[start..last]
       if '.' notin token: replacements.add (start, last, fmt"{token}.{parser.width}")
 
@@ -307,7 +317,7 @@ proc addChild(parser: var VflParser, child: string, value: string) =
 proc parseChild(parser: var VflParser, input: string) =
   proc replaceStack(parser: var VflParser, input: var string) =
     var replacements = newSeq[(int, int, string)]()
-    for start, last in input.catchIdent():
+    for start, last in input.catchIdent(IdentChars + {'.'}):
       var
         token = input[start..last]
         dot = token.find('.')
@@ -501,6 +511,14 @@ proc toString*(parser: VflParser, indent = 2, extraIndent = 0, templ = "layout")
     result.add spaces(indent + extraIndent)
     result.add rule
     result.add "\n"
+
+  var replacements = newSeq[(int, int, string)]()
+  for start, last in result.catchIdent(IdentChars):
+    let token = result[start..last]
+    if token in parser.aliases:
+      replacements.add (start, last, parser.aliases[token])
+
+  result.replace(replacements)
 
 proc autolayout*(input: string, indent = 2, extraIndent = 0, templ = "layout"): string =
   ## Parse the Visual Format Language and output the layout DSL in one action.

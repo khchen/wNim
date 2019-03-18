@@ -89,22 +89,23 @@ proc isVaildPath(str: string): bool =
   if str.len <= MAX_PATH and PathFileExists(str) != 0:
     result = true
 
-proc getTextFontSize(text: string, hFont: HANDLE): wSize =
+proc getTextFontSize(text: string, hFont: HANDLE, hwnd: HWND): wSize =
   var
-    hdc = GetDC(0)
+    text = +$text
+    hdc = GetDC(hwnd)
     prev = SelectObject(hdc, hFont)
     size: SIZE
 
   GetTextExtentPoint32(hdc, text, text.len, size)
   SelectObject(hdc, prev)
-  ReleaseDC(0, hdc)
+  ReleaseDC(hwnd, hdc)
 
   result.height = size.cy
   result.width = size.cx
 
-proc getAverageASCIILetterSize(hFont: HANDLE): wSize =
+proc getAverageASCIILetterSize(hFont: HANDLE, hwnd: HWND): wSize =
   result = getTextFontSize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-    hFont)
+    hFont, hWnd)
   result.width = (result.width div 26 + 1) div 2
 
 var hwndComboBoxForCountSize {.threadvar.}: HWND
@@ -121,18 +122,18 @@ proc getLineControlDefaultHeight(hFont: HANDLE): int =
   GetWindowRect(hwndComboBoxForCountSize, r)
   result = r.bottom - r.top
 
-proc getTextFontSizeWithCheckMark(text: string, hFont: HANDLE): wSize =
+proc getTextFontSizeWithCheckMark(text: string, hFont: HANDLE, hwnd: HWND): wSize =
   let
-    hdc = GetDC(0)
+    hdc = GetDC(hwnd)
     prev = SelectObject(hdc, hFont)
     checkWidth = 12 * GetDeviceCaps(hdc, LOGPIXELSX).int div 96 + 1
     checkHeight = 12 * GetDeviceCaps(hdc, LOGPIXELSY).int div 96 + 1
   var textOffset: INT
   GetCharWidth(hdc, '0'.UINT, '0'.UINT, addr textOffset)
   SelectObject(hdc, prev)
-  ReleaseDC(0, hdc)
+  ReleaseDC(hwnd, hdc)
 
-  result = getTextFontSize(text & " ", hFont)
+  result = getTextFontSize(text & " ", hFont, hwnd)
   result.width += checkWidth + textOffset.int div 2
   if result.width < checkHeight: result.width = checkHeight
 
@@ -284,6 +285,20 @@ proc getThemeBackgroundColor*(hWnd: HWND): wColor =
     except: discard
 
   return gResult
+
+proc getSize(iconInfo: ICONINFO): wSize =
+  var bitmapInfo: BITMAP
+  if iconInfo.hbmColor != 0:
+    let hbm = iconInfo.hbmColor
+    if GetObject(hbm, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
+      result.width = int bitmapInfo.bmWidth
+      result.height = int bitmapInfo.bmHeight
+
+  elif iconInfo.hbmMask != 0:
+    let hbm = iconInfo.hbmMask
+    if GetObject(hbm, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
+      result.width = int bitmapInfo.bmWidth
+      result.height = int bitmapInfo.bmHeight div 2
 
 
 # todo

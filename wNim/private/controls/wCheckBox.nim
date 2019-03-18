@@ -44,7 +44,7 @@ const
 method getBestSize*(self: wCheckBox): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   # BCM_GETIDEALSIZE not works correct on BS_AUTO3STATE
-  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle)
+  result = getTextFontSizeWithCheckMark(self.label, self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
 method getDefaultSize*(self: wCheckBox): wSize {.property.} =

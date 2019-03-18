@@ -21,7 +21,7 @@ proc App*(): wApp =
 
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES or ICC_INTERNET_CLASSES or
-    ICC_LINK_CLASS or ICC_BAR_CLASSES)
+    ICC_LINK_CLASS or ICC_BAR_CLASSES or ICC_COOL_CLASSES)
   InitCommonControlsEx(ctrl)
   OleInitialize(nil)
 

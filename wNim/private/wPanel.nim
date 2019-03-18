@@ -22,7 +22,6 @@ proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSi
     style: wStyle = 0, className = "wPanel") {.validate, inline.} =
   ## Initializer.
   wValidate(parent)
-
   self.wWindow.initVerbosely(parent=parent, pos=pos, size=size,
     style=style, className=className, bgColor=GetSysColor(COLOR_BTNFACE))
 

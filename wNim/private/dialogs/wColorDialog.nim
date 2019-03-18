@@ -23,8 +23,8 @@
 
 const
   wCdFullOpen* = CC_FULLOPEN
-  wCdCenter* = 0x10000000 shl 32
-  wCdScreenCenter* = 0x20000000 shl 32
+  wCdCenter* = int64 0x10000000 shl 32
+  wCdScreenCenter* = int64 0x20000000 shl 32
 
 proc final*(self: wColorDialog) =
   ## Default finalizer for wColorDialog.

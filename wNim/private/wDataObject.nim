@@ -35,6 +35,93 @@ type
   wDataObjectError* = object of wError
     ## An error raised when wDataObject creation or operation failure.
 
+# The obj returned from SHCreateFileDataObject() only suport BMP in Windows 10
+# So here we implement our own IDataObject to support it.
+type
+  BmpDataObject {.pure.} = object
+    lpVtbl: ptr IDataObjectVtbl
+    vtbl: IDataObjectVtbl
+    refCount: LONG
+    bmp: HBITMAP
+
+converter BmpDataObjectToIUnknown*(x: ptr BmpDataObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter BmpDataObjectToIDataObject*(x: ptr BmpDataObject): ptr IDataObject = cast[ptr IDataObject](x)
+
+proc newBmpDataObject(bmp: HBITMAP): ptr BmpDataObject =
+  result = cast[ptr BmpDataObject](alloc0(sizeof(BmpDataObject)))
+  if result == nil: return
+
+  result.lpVtbl = &result.vtbl
+  result.bmp = CopyImage(bmp, IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE)
+  result.refCount = 1
+
+  result.vtbl.AddRef = proc(self: ptr IUnknown): ULONG {.stdcall.} =
+    let obj = cast[ptr BmpDataObject](self)
+    discard InterlockedIncrement(&obj.refCount)
+    return obj.refCount
+
+  result.vtbl.Release = proc(self: ptr IUnknown): ULONG {.stdcall.} =
+    let obj = cast[ptr BmpDataObject](self)
+    discard InterlockedDecrement(&obj.refCount)
+    if obj.refCount == 0:
+      DeleteObject(obj.bmp)
+      dealloc(obj)
+      return 0
+
+    return obj.refCount
+
+  result.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
+    if IsEqualIID(riid, &IID_IUnknown) or IsEqualIID(riid, &IID_IDataObject):
+      ppvObject[] = self
+      self.AddRef()
+      return S_OK
+    else:
+      ppvObject[] = nil
+      return E_NOINTERFACE
+
+  result.vtbl.GetData = proc(self: ptr IDataObject, pformatetcIn: ptr FORMATETC, pmedium: ptr STGMEDIUM): HRESULT {.stdcall.} =
+    if pformatetcIn.cfFormat == CF_BITMAP and (pformatetcIn.tymed and TYMED_GDI) != 0:
+      let obj = cast[ptr BmpDataObject](self)
+      pmedium.tymed = TYMED_GDI
+      pmedium.u.hBitmap = CopyImage(obj.bmp, IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE)
+      pmedium.pUnkForRelease = nil
+      return S_OK
+
+    return E_FAIL
+
+  result.vtbl.GetDataHere = proc(self: ptr IDataObject, pformatetc: ptr FORMATETC, pmedium: ptr STGMEDIUM): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
+  result.vtbl.QueryGetData = proc(self: ptr IDataObject, pformatetc: ptr FORMATETC): HRESULT {.stdcall.} =
+    if pformatetc.cfFormat == CF_BITMAP:
+      return S_OK
+
+    return E_NOTIMPL
+
+  result.vtbl.GetCanonicalFormatEtc = proc(self: ptr IDataObject, pformatectIn: ptr FORMATETC, pformatetcOut: ptr FORMATETC): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
+  result.vtbl.SetData = proc(self: ptr IDataObject, pformatetc: ptr FORMATETC, pmedium: ptr STGMEDIUM, fRelease: WINBOOL): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
+  result.vtbl.EnumFormatEtc = proc(self: ptr IDataObject, dwDirection: DWORD, ppenumFormatEtc: ptr ptr IEnumFORMATETC): HRESULT {.stdcall.} =
+    if dwDirection == DATADIR_GET:
+      var formatetc = [
+        FORMATETC(cfFormat: CF_BITMAP, dwAspect: DVASPECT_CONTENT, lindex: -1, tymed: TYMED_GDI),
+      ]
+      return SHCreateStdEnumFmtEtc(UINT formatetc.len, &formatetc[0], ppenumFormatEtc)
+    else:
+      return E_NOTIMPL
+
+  result.vtbl.DAdvise = proc(self: ptr IDataObject, pformatetc: ptr FORMATETC, advf: DWORD, pAdvSink: ptr IAdviseSink, pdwConnection: ptr DWORD): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
+  result.vtbl.DUnadvise = proc(self: ptr IDataObject, dwConnection: DWORD): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
+  result.vtbl.EnumDAdvise = proc(self: ptr IDataObject, ppenumAdvise: ptr ptr IEnumSTATDATA): HRESULT {.stdcall.} =
+    return E_NOTIMPL
+
 proc error(self: wDataObject) {.inline.} =
   raise newException(wDataObjectError, "wDataObject creation failure")
 
@@ -161,16 +248,14 @@ proc doDragDrop*(self: wDataObject, flags: int = wDragCopy or wDragMove or
   # 1. It provides a generic drag image.
   # 2. The Shell creates a drop source object for you.
   #    (According to MSDN, vista later, howevere, Windows XP also works)
-  when not defined(wnimdoc):
-    # I don't know why the docgen don't like following code, the proc will disappear
-    var effect: DWORD
-    result = case SHDoDragDrop(0, self.mObj, nil, flags, &effect)
-    of DRAGDROP_S_DROP:
-      effect
-    of DRAGDROP_S_CANCEL:
-      wDragCancel
-    else:
-      wDragError
+  var effect: DWORD
+  result = case SHDoDragDrop(0, self.mObj, nil, flags, &effect)
+  of DRAGDROP_S_DROP:
+    effect
+  of DRAGDROP_S_CANCEL:
+    wDragCancel
+  else:
+    wDragError
 
 proc delete*(self: wDataObject) {.validate.} =
   ## Nim's garbage collector will delete this object by default.
@@ -184,7 +269,6 @@ proc delete*(self: wDataObject) {.validate.} =
     self.mObj.Release()
 
   self.mObj = nil
-  self.mBmp = nil
 
 proc final*(self: wDataObject) {.validate.} =
   ## Default finalizer for wDataObject.
@@ -290,20 +374,10 @@ proc DataObject*(files: openarray[string]): wDataObject {.inline.} =
 proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
-  ensureSHCreateFileDataObject()
-  if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
+
+  self.mObj = newBmpDataObject(bmp.handle)
+  if self.mObj == nil: self.error()
   self.mReleasable = true
-  self.mBmp = Bmp(bmp)
-
-  var format = FORMATETC(
-    cfFormat: CF_BITMAP,
-    dwAspect: DVASPECT_CONTENT,
-    lindex: -1,
-    tymed: TYMED_GDI)
-
-  var medium = STGMEDIUM(tymed: TYMED_GDI)
-  medium.u.hBitmap = self.mBmp.mHandle
-  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
 proc DataObject*(bmp: wBitmap): wDataObject {.inline.} =
   ## Constructor from bitmap.
@@ -319,7 +393,6 @@ proc init*(self: wDataObject, dataObj: wDataObject) {.validate.} =
   elif dataObj.isFiles():
     self.init(dataObj.getFiles())
   elif dataObj.isBitmap():
-    # don't add self it become wBitmap.init
     self.init(dataObj.getBitmap())
   else:
     self.error()
@@ -329,10 +402,3 @@ proc DataObject*(dataObj: wDataObject): wDataObject {.inline.} =
   wValidate(dataObj)
   new(result, final)
   result.init(dataObj)
-
-
-
-
-
-
-

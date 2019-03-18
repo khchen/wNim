@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wImage</title>
+<title>wImage</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wImage</h1>
+    <h1 class="title">wImage</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,13 +1232,6 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
@@ -1243,135 +1242,209 @@ function main() {
   </ul>
 </li>
 <li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wImageQualityNearest"
+    title="wImageQualityNearest = 5"><wbr />w<wbr />Image<wbr />Quality<wbr />Nearest<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageQualityBilinear"
+    title="wImageQualityBilinear = 6"><wbr />w<wbr />Image<wbr />Quality<wbr />Bilinear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageQualityBicubic"
+    title="wImageQualityBicubic = 7"><wbr />w<wbr />Image<wbr />Quality<wbr />Bicubic<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageQualityNormal"
+    title="wImageQualityNormal = 0"><wbr />w<wbr />Image<wbr />Quality<wbr />Normal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageQualityHigh"
+    title="wImageQualityHigh = 2"><wbr />w<wbr />Image<wbr />Quality<wbr />High<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageQualityLow"
+    title="wImageQualityLow = 1"><wbr />w<wbr />Image<wbr />Quality<wbr />Low<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotateNoneFlipNone"
+    title="wImageRotateNoneFlipNone = 0"><wbr />w<wbr />Image<wbr />Rotate<wbr />None<wbr />Flip<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotateNoneFlipX"
+    title="wImageRotateNoneFlipX = 4"><wbr />w<wbr />Image<wbr />Rotate<wbr />None<wbr />Flip<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotateNoneFlipY"
+    title="wImageRotateNoneFlipY = 6"><wbr />w<wbr />Image<wbr />Rotate<wbr />None<wbr />Flip<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotateNoneFlipXY"
+    title="wImageRotateNoneFlipXY = 2"><wbr />w<wbr />Image<wbr />Rotate<wbr />None<wbr />Flip<wbr />XY<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate90FlipNone"
+    title="wImageRotate90FlipNone = 1"><wbr />w<wbr />Image<wbr />Rotate90Flip<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate90FlipX"
+    title="wImageRotate90FlipX = 5"><wbr />w<wbr />Image<wbr />Rotate90Flip<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate90FlipY"
+    title="wImageRotate90FlipY = 7"><wbr />w<wbr />Image<wbr />Rotate90Flip<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate90FlipXY"
+    title="wImageRotate90FlipXY = 3"><wbr />w<wbr />Image<wbr />Rotate90Flip<wbr />XY<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate180FlipNone"
+    title="wImageRotate180FlipNone = 2"><wbr />w<wbr />Image<wbr />Rotate180Flip<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate180FlipX"
+    title="wImageRotate180FlipX = 6"><wbr />w<wbr />Image<wbr />Rotate180Flip<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate180FlipY"
+    title="wImageRotate180FlipY = 4"><wbr />w<wbr />Image<wbr />Rotate180Flip<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate180FlipXY"
+    title="wImageRotate180FlipXY = 0"><wbr />w<wbr />Image<wbr />Rotate180Flip<wbr />XY<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate270FlipNone"
+    title="wImageRotate270FlipNone = 3"><wbr />w<wbr />Image<wbr />Rotate270Flip<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate270FlipX"
+    title="wImageRotate270FlipX = 7"><wbr />w<wbr />Image<wbr />Rotate270Flip<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate270FlipY"
+    title="wImageRotate270FlipY = 5"><wbr />w<wbr />Image<wbr />Rotate270Flip<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageRotate270FlipXY"
+    title="wImageRotate270FlipXY = 1"><wbr />w<wbr />Image<wbr />Rotate270Flip<wbr />XY<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_BMP"
+    title="wIMAGE_TYPE_BMP = &quot;BMP&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />BMP<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_GIF"
+    title="wIMAGE_TYPE_GIF = &quot;GIF&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />GIF<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_JPEG"
+    title="wIMAGE_TYPE_JPEG = &quot;JPG&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />JPEG<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_PNG"
+    title="wIMAGE_TYPE_PNG = &quot;PNG&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />PNG<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_TIFF"
+    title="wIMAGE_TYPE_TIFF = &quot;TIF&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />TIFF<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIMAGE_TYPE_ICO"
+    title="wIMAGE_TYPE_ICO = &quot;ICO&quot;"><wbr />w<wbr />IMAGE_<wbr />TYPE_<wbr />ICO<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_BMP"
+    title="wBITMAP_TYPE_BMP = &quot;BMP&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />BMP<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_GIF"
+    title="wBITMAP_TYPE_GIF = &quot;GIF&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />GIF<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_JPEG"
+    title="wBITMAP_TYPE_JPEG = &quot;JPG&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />JPEG<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_PNG"
+    title="wBITMAP_TYPE_PNG = &quot;PNG&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />PNG<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_TIFF"
+    title="wBITMAP_TYPE_TIFF = &quot;TIF&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />TIFF<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBITMAP_TYPE_ICO"
+    title="wBITMAP_TYPE_ICO = &quot;ICO&quot;"><wbr />w<wbr />BITMAP_<wbr />TYPE_<wbr />ICO<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+<li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#delete,wImage"
+      <li><a class="reference" href="#delete%2CwImage"
     title="delete(self: wImage)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getHandle,wImage"
+  <li><a class="reference" href="#getHandle%2CwImage"
     title="getHandle(self: wImage): ptr GpBitmap"><wbr />get<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getWidth,wImage"
+  <li><a class="reference" href="#getWidth%2CwImage"
     title="getWidth(self: wImage): int"><wbr />get<wbr />Width<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getHeight,wImage"
+  <li><a class="reference" href="#getHeight%2CwImage"
     title="getHeight(self: wImage): int"><wbr />get<wbr />Height<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getSize,wImage"
+  <li><a class="reference" href="#getSize%2CwImage"
     title="getSize(self: wImage): wSize"><wbr />get<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPixel,wImage,int,int"
+  <li><a class="reference" href="#getPixel%2CwImage%2Cint%2Cint"
     title="getPixel(self: wImage; x: int; y: int): ARGB"><wbr />get<wbr />Pixel<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPixel,wImage,wPoint"
+  <li><a class="reference" href="#getPixel%2CwImage%2CwPoint"
     title="getPixel(self: wImage; pos: wPoint): ARGB"><wbr />get<wbr />Pixel<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setPixel,wImage,int,int,ARGB"
+  <li><a class="reference" href="#setPixel%2CwImage%2Cint%2Cint%2CARGB"
     title="setPixel(self: wImage; x: int; y: int; color: ARGB)"><wbr />set<wbr />Pixel<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setPixel,wImage,wPoint,ARGB"
+  <li><a class="reference" href="#setPixel%2CwImage%2CwPoint%2CARGB"
     title="setPixel(self: wImage; pos: wPoint; color: ARGB)"><wbr />set<wbr />Pixel<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getRed,wImage,int,int"
+  <li><a class="reference" href="#getRed%2CwImage%2Cint%2Cint"
     title="getRed(self: wImage; x: int; y: int): byte"><wbr />get<wbr />Red<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getRed,wImage,wPoint"
+  <li><a class="reference" href="#getRed%2CwImage%2CwPoint"
     title="getRed(self: wImage; pos: wPoint): byte"><wbr />get<wbr />Red<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getGreen,wImage,int,int"
+  <li><a class="reference" href="#getGreen%2CwImage%2Cint%2Cint"
     title="getGreen(self: wImage; x: int; y: int): byte"><wbr />get<wbr />Green<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getGreen,wImage,wPoint"
+  <li><a class="reference" href="#getGreen%2CwImage%2CwPoint"
     title="getGreen(self: wImage; pos: wPoint): byte"><wbr />get<wbr />Green<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getBlue,wImage,int,int"
+  <li><a class="reference" href="#getBlue%2CwImage%2Cint%2Cint"
     title="getBlue(self: wImage; x: int; y: int): byte"><wbr />get<wbr />Blue<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getBlue,wImage,wPoint"
+  <li><a class="reference" href="#getBlue%2CwImage%2CwPoint"
     title="getBlue(self: wImage; pos: wPoint): byte"><wbr />get<wbr />Blue<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getAlpha,wImage,int,int"
+  <li><a class="reference" href="#getAlpha%2CwImage%2Cint%2Cint"
     title="getAlpha(self: wImage; x: int; y: int): byte"><wbr />get<wbr />Alpha<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getAlpha,wImage,wPoint"
+  <li><a class="reference" href="#getAlpha%2CwImage%2CwPoint"
     title="getAlpha(self: wImage; pos: wPoint): byte"><wbr />get<wbr />Alpha<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#saveFile,wImage,string,string,range[]"
+  <li><a class="reference" href="#saveFile%2CwImage%2Cstring%2Cstring%2Crange%5B%5D"
     title="saveFile(self: wImage; filename: string; fileType = &quot;&quot;; quality: range[0 .. 100] = 90)"><wbr />save<wbr />File<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#saveData,wImage,string,range[]"
+  <li><a class="reference" href="#saveData%2CwImage%2Cstring%2Crange%5B%5D"
     title="saveData(self: wImage; fileType: string; quality: range[0 .. 100] = 90): string"><wbr />save<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final,wImage"
+  <li><a class="reference" href="#final%2CwImage"
     title="final(self: wImage)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,ptr.GpBitmap"
+  <li><a class="reference" href="#init%2CwImage%2Cptr.GpBitmap"
     title="init(self: wImage; gdip: ptr GpBitmap; copy = true)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,ptr.GpBitmap"
+  <li><a class="reference" href="#Image%2Cptr.GpBitmap"
     title="Image(gdip: ptr GpBitmap; copy = true): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wImage"
+  <li><a class="reference" href="#init%2CwImage%2CwImage"
     title="init(self: wImage; image: wImage)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wImage"
+  <li><a class="reference" href="#Image%2CwImage"
     title="Image(image: wImage): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wBitmap"
+  <li><a class="reference" href="#init%2CwImage%2CwBitmap"
     title="init(self: wImage; bmp: wBitmap)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wBitmap"
+  <li><a class="reference" href="#Image%2CwBitmap"
     title="Image(bmp: wBitmap): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,pointer,int"
+  <li><a class="reference" href="#init%2CwImage%2Cpointer%2Cint"
     title="init(self: wImage; data: pointer; length: int)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,pointer,int"
+  <li><a class="reference" href="#Image%2Cpointer%2Cint"
     title="Image(data: pointer; length: int): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,string"
+  <li><a class="reference" href="#init%2CwImage%2Cstring"
     title="init(self: wImage; str: string)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,string"
+  <li><a class="reference" href="#Image%2Cstring"
     title="Image(str: string): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,int,int"
+  <li><a class="reference" href="#init%2CwImage%2Cint%2Cint"
     title="init(self: wImage; width: int; height: int)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,int,int"
+  <li><a class="reference" href="#Image%2Cint%2Cint"
     title="Image(width: int; height: int): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wSize"
+  <li><a class="reference" href="#init%2CwImage%2CwSize"
     title="init(self: wImage; size: wSize)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wSize"
+  <li><a class="reference" href="#Image%2CwSize"
     title="Image(size: wSize): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wIconImage"
+  <li><a class="reference" href="#init%2CwImage%2CwIconImage"
     title="init(self: wImage; iconImage: wIconImage)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wIconImage"
+  <li><a class="reference" href="#Image%2CwIconImage"
     title="Image(iconImage: wIconImage): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wIcon"
+  <li><a class="reference" href="#init%2CwImage%2CwIcon"
     title="init(self: wImage; icon: wIcon)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wIcon"
+  <li><a class="reference" href="#Image%2CwIcon"
     title="Image(icon: wIcon): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init,wImage,wCursor"
+  <li><a class="reference" href="#init%2CwImage%2CwCursor"
     title="init(self: wImage; cursor: wCursor)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Image,wCursor"
+  <li><a class="reference" href="#Image%2CwCursor"
     title="Image(cursor: wCursor): wImage"><wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#scale,wImage,int,int"
+  <li><a class="reference" href="#scale%2CwImage%2Cint%2Cint"
     title="scale(self: wImage; width, height: int; quality = wImageQualityNormal): wImage"><wbr />scale<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#scale,wImage,wSize"
+  <li><a class="reference" href="#scale%2CwImage%2CwSize"
     title="scale(self: wImage; size: wSize; quality = wImageQualityNormal): wImage"><wbr />scale<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rescale,wImage,int,int"
+  <li><a class="reference" href="#rescale%2CwImage%2Cint%2Cint"
     title="rescale(self: wImage; width, height: int; quality = wImageQualityNormal)"><wbr />rescale<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rescale,wImage,wSize"
+  <li><a class="reference" href="#rescale%2CwImage%2CwSize"
     title="rescale(self: wImage; size: wSize; quality = wImageQualityNormal)"><wbr />rescale<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#size,wImage,int,int,int,int,int"
+  <li><a class="reference" href="#size%2CwImage%2Cint%2Cint%2Cint%2Cint%2Cint"
     title="size(self: wImage; width, height: int; x, y: int = 0; align = 0): wImage"><wbr />size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#resize,wImage,int,int,int,int,int"
+  <li><a class="reference" href="#resize%2CwImage%2Cint%2Cint%2Cint%2Cint%2Cint"
     title="resize(self: wImage; width, height: int; x, y: int = 0; align = 0)"><wbr />resize<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#transform,wImage,float,float,float,float,float"
+  <li><a class="reference" href="#transform%2CwImage%2Cfloat%2Cfloat%2Cfloat%2Cfloat%2Cfloat"
     title="transform(self: wImage; scaleX, scaleY: float = 1; angle, deltaX, deltaY: float = 0;
           quality = wImageQualityNormal): wImage"><wbr />transform<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#retransform,wImage,float,float,float,float,float"
+  <li><a class="reference" href="#retransform%2CwImage%2Cfloat%2Cfloat%2Cfloat%2Cfloat%2Cfloat"
     title="retransform(self: wImage; scaleX, scaleY: float = 1; angle, deltaX, deltaY: float = 0;
             quality = wImageQualityNormal)"><wbr />retransform<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#paste,wImage,wImage,int,int,int"
+  <li><a class="reference" href="#paste%2CwImage%2CwImage%2Cint%2Cint%2Cint"
     title="paste(self: wImage; image: wImage; x, y: int = 0; align = 0)"><wbr />paste<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#paste,wImage,wImage,wPoint,int"
+  <li><a class="reference" href="#paste%2CwImage%2CwImage%2CwPoint%2Cint"
     title="paste(self: wImage; image: wImage; pos: wPoint; align = 0)"><wbr />paste<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rotateFlip,wImage,int"
+  <li><a class="reference" href="#rotateFlip%2CwImage%2Cint"
     title="rotateFlip(self: wImage; flag: int)"><wbr />rotate<wbr />Flip<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#rotateFlip,wImage,int,bool,bool"
+  <li><a class="reference" href="#rotateFlip%2CwImage%2Cint%2Cbool%2Cbool"
     title="rotateFlip(self: wImage; angle: int; flipX: bool; flipY: bool)"><wbr />rotate<wbr />Flip<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getSubImage,wImage,wRect"
+  <li><a class="reference" href="#getSubImage%2CwImage%2CwRect"
     title="getSubImage(self: wImage; rect: wRect): wImage"><wbr />get<wbr />Sub<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#crop,wImage,int,int,int,int"
+  <li><a class="reference" href="#crop%2CwImage%2Cint%2Cint%2Cint%2Cint"
     title="crop(self: wImage; x, y, width, height: int): wImage"><wbr />crop<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#blur,wImage,range[]"
+  <li><a class="reference" href="#blur%2CwImage%2Crange%5B%5D"
     title="blur(self: wImage; radius: range[0 .. 255] = 0; expandEdge = true)"><wbr />blur<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#brightnessContrast,wImage,range[],range[]"
+  <li><a class="reference" href="#brightnessContrast%2CwImage%2Crange%5B%5D%2Crange%5B%5D"
     title="brightnessContrast(self: wImage; brightness: range[-255 .. 255] = 0;
                    contrast: range[-100 .. 100] = 0)"><wbr />brightness<wbr />Contrast<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#sharpen,wImage,range[],range[]"
+  <li><a class="reference" href="#sharpen%2CwImage%2Crange%5B%5D%2Crange%5B%5D"
     title="sharpen(self: wImage; radius: range[0 .. 255] = 0; amount: range[0 .. 100] = 0)"><wbr />sharpen<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#tint,wImage,range[],range[]"
+  <li><a class="reference" href="#tint%2CwImage%2Crange%5B%5D%2Crange%5B%5D"
     title="tint(self: wImage; hue: range[-180 .. 180] = 0; amount: range[0 .. 100] = 0)"><wbr />tint<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#hueSaturationLightness,wImage,range[],range[],range[]"
+  <li><a class="reference" href="#hueSaturationLightness%2CwImage%2Crange%5B%5D%2Crange%5B%5D%2Crange%5B%5D"
     title="hueSaturationLightness(self: wImage; hue: range[-180 .. 180] = 0;
                        saturation: range[-100 .. 100] = 0;
                        lightness: range[-100 .. 100] = 0)"><wbr />hue<wbr />Saturation<wbr />Lightness<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#colorBalance,wImage,range[],range[],range[]"
+  <li><a class="reference" href="#colorBalance%2CwImage%2Crange%5B%5D%2Crange%5B%5D%2Crange%5B%5D"
     title="colorBalance(self: wImage; cyanRed: range[-100 .. 100] = 0;
              magentaGreen: range[-100 .. 100] = 0; yellowBlue: range[-100 .. 100] = 0)"><wbr />color<wbr />Balance<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#levels,wImage,range[],range[],range[]"
+  <li><a class="reference" href="#levels%2CwImage%2Crange%5B%5D%2Crange%5B%5D%2Crange%5B%5D"
     title="levels(self: wImage; highlight: range[0 .. 100] = 0; midtone: range[-100 .. 100] = 0;
        shadow: range[0 .. 100] = 0)"><wbr />levels<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1380,9 +1453,9 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#15" id="65">Iterators</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getEncoders.i,wImage"
+      <li><a class="reference" href="#getEncoders.i%2CwImage"
     title="getEncoders(self: wImage): string"><wbr />get<wbr />Encoders<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getDecoders.i,wImage"
+  <li><a class="reference" href="#getDecoders.i%2CwImage"
     title="getDecoders(self: wImage): string"><wbr />get<wbr />Decoders<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1424,7 +1497,8 @@ function main() {
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="wImageError"><a name="wImageError"></a><pre><span class="Identifier">wImageError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wError</span>
+<a id="wImageError"></a>
+<dt><pre><span class="Identifier">wImageError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wError</span>
   </pre></dt>
 <dd>
 An error raised when wImage creation or operation failure.
@@ -1432,368 +1506,610 @@ An error raised when wImage creation or operation failure.
 </dd>
 
 </dl></div>
+<div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wImageQualityNearest"></a>
+<dt><pre><span class="Identifier">wImageQualityNearest</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageQualityBilinear"></a>
+<dt><pre><span class="Identifier">wImageQualityBilinear</span> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageQualityBicubic"></a>
+<dt><pre><span class="Identifier">wImageQualityBicubic</span> <span class="Other">=</span> <span class="DecNumber">7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageQualityNormal"></a>
+<dt><pre><span class="Identifier">wImageQualityNormal</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageQualityHigh"></a>
+<dt><pre><span class="Identifier">wImageQualityHigh</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageQualityLow"></a>
+<dt><pre><span class="Identifier">wImageQualityLow</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotateNoneFlipNone"></a>
+<dt><pre><span class="Identifier">wImageRotateNoneFlipNone</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotateNoneFlipX"></a>
+<dt><pre><span class="Identifier">wImageRotateNoneFlipX</span> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotateNoneFlipY"></a>
+<dt><pre><span class="Identifier">wImageRotateNoneFlipY</span> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotateNoneFlipXY"></a>
+<dt><pre><span class="Identifier">wImageRotateNoneFlipXY</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate90FlipNone"></a>
+<dt><pre><span class="Identifier">wImageRotate90FlipNone</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate90FlipX"></a>
+<dt><pre><span class="Identifier">wImageRotate90FlipX</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate90FlipY"></a>
+<dt><pre><span class="Identifier">wImageRotate90FlipY</span> <span class="Other">=</span> <span class="DecNumber">7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate90FlipXY"></a>
+<dt><pre><span class="Identifier">wImageRotate90FlipXY</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate180FlipNone"></a>
+<dt><pre><span class="Identifier">wImageRotate180FlipNone</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate180FlipX"></a>
+<dt><pre><span class="Identifier">wImageRotate180FlipX</span> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate180FlipY"></a>
+<dt><pre><span class="Identifier">wImageRotate180FlipY</span> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate180FlipXY"></a>
+<dt><pre><span class="Identifier">wImageRotate180FlipXY</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate270FlipNone"></a>
+<dt><pre><span class="Identifier">wImageRotate270FlipNone</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate270FlipX"></a>
+<dt><pre><span class="Identifier">wImageRotate270FlipX</span> <span class="Other">=</span> <span class="DecNumber">7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate270FlipY"></a>
+<dt><pre><span class="Identifier">wImageRotate270FlipY</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wImageRotate270FlipXY"></a>
+<dt><pre><span class="Identifier">wImageRotate270FlipXY</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_BMP"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_BMP</span> <span class="Other">=</span> <span class="StringLit">&quot;BMP&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_GIF"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_GIF</span> <span class="Other">=</span> <span class="StringLit">&quot;GIF&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_JPEG"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_JPEG</span> <span class="Other">=</span> <span class="StringLit">&quot;JPG&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_PNG"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_PNG</span> <span class="Other">=</span> <span class="StringLit">&quot;PNG&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_TIFF"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_TIFF</span> <span class="Other">=</span> <span class="StringLit">&quot;TIF&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wIMAGE_TYPE_ICO"></a>
+<dt><pre><span class="Identifier">wIMAGE_TYPE_ICO</span> <span class="Other">=</span> <span class="StringLit">&quot;ICO&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_BMP"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_BMP</span> <span class="Other">=</span> <span class="StringLit">&quot;BMP&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_GIF"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_GIF</span> <span class="Other">=</span> <span class="StringLit">&quot;GIF&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_JPEG"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_JPEG</span> <span class="Other">=</span> <span class="StringLit">&quot;JPG&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_PNG"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_PNG</span> <span class="Other">=</span> <span class="StringLit">&quot;PNG&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_TIFF"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_TIFF</span> <span class="Other">=</span> <span class="StringLit">&quot;TIF&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wBITMAP_TYPE_ICO"></a>
+<dt><pre><span class="Identifier">wBITMAP_TYPE_ICO</span> <span class="Other">=</span> <span class="StringLit">&quot;ICO&quot;</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="delete"><a name="delete,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="delete,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Nim's garbage collector will delete this object by default. However, sometimes you maybe want do that by yourself.
 
 </dd>
-<dt id="getHandle"><a name="getHandle,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHandle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getHandle,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHandle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the real resource handle of gdiplus bitmap.
 
 </dd>
-<dt id="getWidth"><a name="getWidth,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-                               <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getWidth,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the width of the image in pixels.
 
 </dd>
-<dt id="getHeight"><a name="getHeight,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getHeight</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-                                <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getHeight,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHeight</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the height of the image in pixels.
 
 </dd>
-<dt id="getSize"><a name="getSize,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSize,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the size of the image in pixels.
 
 </dd>
-<dt id="getPixel"><a name="getPixel,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ARGB</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getPixel,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ARGB</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the ARGB value at given pixel location.
 
 </dd>
-<dt id="getPixel"><a name="getPixel,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ARGB</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getPixel,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ARGB</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the ARGB value at given pixel location.
 
 </dd>
-<dt id="setPixel"><a name="setPixel,wImage,int,int,ARGB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">ARGB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setPixel,wImage,int,int,ARGB"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">ARGB</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the ARGB value at given pixel location.
 
 </dd>
-<dt id="setPixel"><a name="setPixel,wImage,wPoint,ARGB"></a><pre><span class="Keyword">proc</span> <span class="Identifier">setPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">ARGB</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="setPixel,wImage,wPoint,ARGB"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setPixel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">ARGB</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the ARGB value at given pixel location.
 
 </dd>
-<dt id="getRed"><a name="getRed,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getRed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getRed,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getRed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the red intensity at the given coordinate.
 
 </dd>
-<dt id="getRed"><a name="getRed,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getRed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getRed,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getRed</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the red intensity at the given coordinate.
 
 </dd>
-<dt id="getGreen"><a name="getGreen,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getGreen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getGreen,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getGreen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the green intensity at the given coordinate.
 
 </dd>
-<dt id="getGreen"><a name="getGreen,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getGreen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getGreen,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getGreen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the green intensity at the given coordinate.
 
 </dd>
-<dt id="getBlue"><a name="getBlue,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getBlue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getBlue,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBlue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the blue intensity at the given coordinate.
 
 </dd>
-<dt id="getBlue"><a name="getBlue,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getBlue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getBlue,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBlue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the blue intensity at the given coordinate.
 
 </dd>
-<dt id="getAlpha"><a name="getAlpha,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getAlpha</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getAlpha,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getAlpha</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return alpha value at given pixel location.
 
 </dd>
-<dt id="getAlpha"><a name="getAlpha,wImage,wPoint"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getAlpha</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getAlpha,wImage,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getAlpha</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">byte</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return alpha value at given pixel location.
 
 </dd>
-<dt id="saveFile"><a name="saveFile,wImage,string,string,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">saveFile</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">fileType</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-             <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="saveFile,wImage,string,string,range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">saveFile</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">fileType</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+             <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Saves an image into the file. If fileType is empty, use extension name as fileType. Use getEncoders iterator to list the supported format.
 
 </dd>
-<dt id="saveData"><a name="saveData,wImage,string,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">saveData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">fileType</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="saveData,wImage,string,range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">saveData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">fileType</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">quality</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Saves an image into binary data (stored as string). Use getEncoders iterator to list the supported format.
 
 </dd>
-<dt id="final"><a name="final,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="final,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default finalizer for wImage.
 
 </dd>
-<dt id="init"><a name="init,wImage,ptr.GpBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,ptr.GpBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,ptr.GpBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,ptr.GpBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from a gdiplus bitmap handle. If copy is false, this only wrap it to wImage object. It means the handle will be destroyed by wImage when it is destroyed.
 
 </dd>
-<dt id="init"><a name="init,wImage,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from wImage object, aka. copy constructors.
 
 </dd>
-<dt id="init"><a name="init,wImage,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wBitmap"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wBitmap"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from wBitmap object.
 
 </dd>
-<dt id="init"><a name="init,wImage,pointer,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,pointer,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,pointer,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,pointer,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">;</span> <span class="Identifier">length</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from binary image data. Use getDecoders iterator to list the supported format.
 
 </dd>
-<dt id="init"><a name="init,wImage,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-                                  <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,string"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-                              <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">str</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from a file. Use getDecoders iterator to list the supported format. If str is not a valid file path, it will be regarded as the binary data in memory. For example:<pre class="listing"><span class="Keyword">const</span> <span class="Identifier">data</span> <span class="Operator">=</span> <span class="Identifier">staticRead</span><span class="Punctuation">(</span><span class="StringLit">&quot;test.png&quot;</span><span class="Punctuation">)</span>
 <span class="Keyword">var</span> <span class="Identifier">image</span> <span class="Operator">=</span> <span class="Identifier">Image</span><span class="Punctuation">(</span><span class="Identifier">data</span><span class="Punctuation">)</span></pre>
 
 </dd>
-<dt id="init"><a name="init,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an empty image with the given size.
 
 </dd>
-<dt id="init"><a name="init,wImage,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-                                  <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-                                  <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wSize"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wSize"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an empty image with the given size.
 
 </dd>
-<dt id="init"><a name="init,wImage,wIconImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wIconImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wIconImage"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wIconImage"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">iconImage</span><span class="Other">:</span> <span class="Identifier">wIconImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from a wIconImage object.
 
 </dd>
-<dt id="init"><a name="init,wImage,wIcon"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wIcon"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wIcon"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wIcon"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">icon</span><span class="Other">:</span> <span class="Identifier">wIcon</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from wIcon object.
 
 </dd>
-<dt id="init"><a name="init,wImage,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="init,wImage,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
-<dt id="Image"><a name="Image,wCursor"></a><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="Image,wCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Image</span><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <span class="Identifier">wCursor</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates an image from wCursor object.
 
 </dd>
-<dt id="scale"><a name="scale,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">scale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="scale,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">scale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns a scaled version of the image.
 
 </dd>
-<dt id="scale"><a name="scale,wImage,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">scale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="scale,wImage,wSize"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">scale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns a scaled version of the image.
 
 </dd>
-<dt id="rescale"><a name="rescale,wImage,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rescale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rescale,wImage,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rescale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Changes the size of the image in-place by scaling it.
 
 </dd>
-<dt id="rescale"><a name="rescale,wImage,wSize"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rescale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rescale,wImage,wSize"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rescale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Changes the size of the image in-place by scaling it.
+Changes the size of the image in-place by scaling it. Returns a resized version of this image without scaling it. The image is pasted into a new image at the position pos or by given align. align can be combine of wRight, wCenter, wLeft, wUp, wMiddle, wDown.
 
 </dd>
-<dt id="size"><a name="size,wImage,int,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">size</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="size,wImage,int,int,int,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">size</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns a resized version of this image without scaling it.
+Returns a resized version of this image without scaling it. Changes the size of the image in-place without scaling it.
 
 </dd>
-<dt id="resize"><a name="resize,wImage,int,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">resize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="resize,wImage,int,int,int,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">resize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Changes the size of the image in-place without scaling it.
 
 </dd>
-<dt id="transform"><a name="transform,wImage,float,float,float,float,float"></a><pre><span class="Keyword">proc</span> <span class="Identifier">transform</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">scaleX</span><span class="Other">,</span> <span class="Identifier">scaleY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span>
-              <span class="Identifier">angle</span><span class="Other">,</span> <span class="Identifier">deltaX</span><span class="Other">,</span> <span class="Identifier">deltaY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="transform,wImage,float,float,float,float,float"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">transform</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">scaleX</span><span class="Other">,</span> <span class="Identifier">scaleY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span>
+              <span class="Identifier">angle</span><span class="Other">,</span> <span class="Identifier">deltaX</span><span class="Other">,</span> <span class="Identifier">deltaY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returned a transformed version of this image by given parameters.
 
 </dd>
-<dt id="retransform"><a name="retransform,wImage,float,float,float,float,float"></a><pre><span class="Keyword">proc</span> <span class="Identifier">retransform</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">scaleX</span><span class="Other">,</span> <span class="Identifier">scaleY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span>
-                <span class="Identifier">angle</span><span class="Other">,</span> <span class="Identifier">deltaX</span><span class="Other">,</span> <span class="Identifier">deltaY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="retransform,wImage,float,float,float,float,float"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">retransform</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">scaleX</span><span class="Other">,</span> <span class="Identifier">scaleY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span>
+                <span class="Identifier">angle</span><span class="Other">,</span> <span class="Identifier">deltaX</span><span class="Other">,</span> <span class="Identifier">deltaY</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">quality</span> <span class="Other">=</span> <span class="Identifier">wImageQualityNormal</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Transforms the image in-place.
 
 </dd>
-<dt id="paste"><a name="paste,wImage,wImage,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">paste</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="paste,wImage,wImage,int,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">paste</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Copy the data of the given image to the specified position in this image.
 
 </dd>
-<dt id="paste"><a name="paste,wImage,wImage,wPoint,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">paste</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="paste,wImage,wImage,wPoint,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">paste</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Copy the data of the given image to the specified position in this image.
 
 </dd>
-<dt id="rotateFlip"><a name="rotateFlip,wImage,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rotateFlip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-                                      <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rotateFlip,wImage,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rotateFlip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Rotates or flip the image.
 
 </dd>
-<dt id="rotateFlip"><a name="rotateFlip,wImage,int,bool,bool"></a><pre><span class="Keyword">proc</span> <span class="Identifier">rotateFlip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">angle</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">flipX</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">flipY</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="rotateFlip,wImage,int,bool,bool"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">rotateFlip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">angle</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">flipX</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">;</span> <span class="Identifier">flipY</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Rotates or flip the image. Angle should be one of 0, 90, 180, 270.
 
 </dd>
-<dt id="getSubImage"><a name="getSubImage,wImage,wRect"></a><pre><span class="Keyword">proc</span> <span class="Identifier">getSubImage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getSubImage,wImage,wRect"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getSubImage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns a sub image of the current one as long as the rect belongs entirely to the image.
 
 </dd>
-<dt id="crop"><a name="crop,wImage,int,int,int,int"></a><pre><span class="Keyword">proc</span> <span class="Identifier">crop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">,</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="crop,wImage,int,int,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">crop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">,</span> <span class="Identifier">width</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns a cropped image of the current one as long as the rect belongs entirely to the image.
 
 </dd>
-<dt id="blur"><a name="blur,wImage,range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">blur</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">radius</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">expandEdge</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="blur,wImage,range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">blur</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">radius</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">expandEdge</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Blur effect (Windows Vista or later).
 
 </dd>
-<dt id="brightnessContrast"><a name="brightnessContrast,wImage,range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">brightnessContrast</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">brightness</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">255</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                       <span class="Identifier">contrast</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="brightnessContrast,wImage,range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">brightnessContrast</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">brightness</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">255</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+                       <span class="Identifier">contrast</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Brightness or contrast adjustment (Windows Vista or later).
 
 </dd>
-<dt id="sharpen"><a name="sharpen,wImage,range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">sharpen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">radius</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">amount</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma">
-    <span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="sharpen,wImage,range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">sharpen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">radius</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">amount</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sharpen effect (Windows Vista or later).
 
 </dd>
-<dt id="tint"><a name="tint,wImage,range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">tint</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">180</span> <span class="Operator">..</span> <span class="DecNumber">180</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">amount</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="tint,wImage,range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">tint</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">180</span> <span class="Operator">..</span> <span class="DecNumber">180</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">amount</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Tint effect (Windows Vista or later).
 
 </dd>
-<dt id="hueSaturationLightness"><a name="hueSaturationLightness,wImage,range[],range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">hueSaturationLightness</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">180</span> <span class="Operator">..</span> <span class="DecNumber">180</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+<a id="hueSaturationLightness,wImage,range[],range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hueSaturationLightness</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">hue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">180</span> <span class="Operator">..</span> <span class="DecNumber">180</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
                            <span class="Identifier">saturation</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                           <span class="Identifier">lightness</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+                           <span class="Identifier">lightness</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Hue, saturation, or lightness adjustment (Windows Vista or later).
 
 </dd>
-<dt id="colorBalance"><a name="colorBalance,wImage,range[],range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">colorBalance</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">cyanRed</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+<a id="colorBalance,wImage,range[],range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">colorBalance</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">cyanRed</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
                  <span class="Identifier">magentaGreen</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                 <span class="Identifier">yellowBlue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+                 <span class="Identifier">yellowBlue</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Color balance adjustment (Windows Vista or later).
 
 </dd>
-<dt id="levels"><a name="levels,wImage,range[],range[],range[]"></a><pre><span class="Keyword">proc</span> <span class="Identifier">levels</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">highlight</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-           <span class="Identifier">midtone</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">shadow</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="levels,wImage,range[],range[],range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">levels</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">highlight</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
+           <span class="Identifier">midtone</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="Operator">-</span><span class="DecNumber">100</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">shadow</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">100</span><span class="Other">]</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Light, midtone, or dark adjustment (Windows Vista or later).
 
@@ -1803,14 +2119,14 @@ Light, midtone, or dark adjustment (Windows Vista or later).
 <div class="section" id="15">
 <h1><a class="toc-backref" href="#15">Iterators</a></h1>
 <dl class="item">
-<dt id="getEncoders"><a name="getEncoders.i,wImage"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getEncoders</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getEncoders.i,wImage"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">getEncoders</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Iterates over each available image encoder on system.
 
 </dd>
-<dt id="getDecoders"><a name="getDecoders.i,wImage"></a><pre><span class="Keyword">iterator</span> <span class="Identifier">getDecoders</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other pragmabegin">{.</span><div class="pragma"><span class="Identifier">validate</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></div><span class="Other pragmaend">.}</span></pre></dt>
+<a id="getDecoders.i,wImage"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">getDecoders</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Iterates over each available image decoder on system.
 
@@ -1825,7 +2141,7 @@ Iterates over each available image decoder on system.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:48:55 UTC</small>
       </div>
     </div>
   </div>

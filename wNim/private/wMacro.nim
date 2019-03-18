@@ -7,66 +7,6 @@
 
 ## Some macros used in wNim.
 
-proc wnimRename(x: NimNode, old, new: string): NimNode =
-  result = x
-
-  if x.kind == nnkIdent and $x == old:
-    result = newIdentNode(new)
-
-  else:
-    for i in 0..<x.len:
-      let node = wnimRename(x[i], old, new)
-      x.del(i)
-      x.insert(i, node)
-
-proc wnimAdd(list: var NimNode, x: NimNode, parent: string, grand: string,
-    count: var int) =
-
-  if (x.kind == nnkCall and x.len == 2 and
-      x[0].kind == nnkIdent and
-      x[1].kind == nnkStmtList) or
-      (x.kind == nnkIdent):
-
-    let class = (if x.kind == nnkIdent: $x else: $x[0])
-    var name = "anonymous_" & class.toLowerAscii() & $count
-    var param = (if parent.len == 0: "" else: parent)
-    count.inc
-
-    if x.kind == nnkCall:
-      for node in x[1]:
-        if node.kind == nnkAsgn and node[0].kind == nnkIdent:
-          if node[1].kind == nnkIdent and $node[0] == "name":
-            name = $node[1]
-          else:
-            if param.len > 0: param &= ", "
-            param &= node.repr
-
-    list.add(parseExpr("let $1 = $2($3)" % [name, class, param]))
-
-    if x.kind == nnkCall:
-      for node in x[1]:
-        if not (node.kind == nnkAsgn and node[0].kind == nnkIdent):
-          list.wnimAdd(node, name, parent, count)
-
-  else:
-    list.add(x.wnimRename("this", parent).wnimRename("super", grand))
-
-macro wNim*(x: untyped): untyped =
-  ## An experimental DSL for creation wNim GUI app.
-  result = newStmtList()
-  var count = 1
-  for node in x:
-    result.wnimAdd(node, "", "", count)
-
-macro wNim_Debug*(x: untyped): untyped =
-  ## Debug the wNim DSL.
-  result = newStmtList()
-  var count = 1
-  for node in x:
-    result.wnimAdd(node, "", "", count)
-
-  echo result.repr
-
 macro DefineIncrement(start: int, x: untyped): untyped =
   var index = int start.intVal
   result = newStmtList()
@@ -77,7 +17,7 @@ macro DefineIncrement(start: int, x: untyped): untyped =
 macro property*(x: untyped): untyped =
   ## Add property macro to proc as pragma so that getters/setters can access
   ## as nim's style.
-  when defined(wnimdoc):
+  when defined(Nimdoc):
     result = x
   else:
     var procname = $x.name
@@ -122,7 +62,7 @@ macro property*(x: untyped): untyped =
 
 macro validate*(x: untyped): untyped =
   ## Add validate macro to a proc as pragma to ensure *self* is not nil.
-  when defined(wnimdoc):
+  when defined(Nimdoc):
     result = x
   else:
     var call = newCall(newIdentNode("wValidate"), newIdentNode("self"))

@@ -13,8 +13,9 @@
 #    as initializer and finalizer.
 # 3. Provides an Object() proc to quickly get the ref object.
 
-import wNim
-import winim/inc/shellapi # for ShellExecute()
+import
+  wNim,
+  winim/inc/[winuser, shellapi]
 
 # Define event message starting from wEvent_App.
 const
@@ -166,10 +167,7 @@ proc HyperLink*(parent: wWindow, id = wDefaultID, label: string, url: string,
   result.init(parent, id, label, url, pos, size, style)
 
 when isMainModule:
-  when defined(cpu64):
-    {.link: "wNim64.res".}
-  else:
-    {.link: "wNim32.res".}
+  import resource/resource
 
   var app = App()
   var frame = Frame()

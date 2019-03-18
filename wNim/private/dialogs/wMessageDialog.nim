@@ -63,7 +63,7 @@ const
   wButton3_Default* = MB_DEFBUTTON3
   wButton4_Default* = MB_DEFBUTTON4
   # defined in wFrame.nim
-  # wStayOnTop* = WS_EX_TOPMOST shl 32
+  # wStayOnTop* = int64 WS_EX_TOPMOST shl 32
 
 proc final*(self: wMessageDialog) =
   ## Default finalizer for wMessageDialog.

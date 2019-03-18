@@ -36,7 +36,7 @@ const
 
 method getBestSize*(self: wRadioButton): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle)
+  result = getTextFontSizeWithCheckMark(self.label, self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
 method getDefaultSize*(self: wRadioButton): wSize {.property.} =

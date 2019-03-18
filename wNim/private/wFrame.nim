@@ -55,9 +55,9 @@ const
   wMaximizeBox* = WS_MAXIMIZEBOX
   wSystemMenu* = WS_SYSMENU
   wResizeBorder* = WS_SIZEBOX
-  wStayOnTop* = WS_EX_TOPMOST shl 32
+  wStayOnTop* = int64 WS_EX_TOPMOST shl 32
   wModalFrame* = DS_MODALFRAME
-  wFrameToolWindow* = WS_EX_TOOLWINDOW shl 32
+  wFrameToolWindow* = int64 WS_EX_TOOLWINDOW shl 32
   wDefaultFrameStyle* = wMinimizeBox or wMaximizeBox or wResizeBorder or
     wSystemMenu or wCaption
   # balloon icon

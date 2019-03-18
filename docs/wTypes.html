@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wTypes</title>
+<title>wTypes</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wTypes</h1>
+    <h1 class="title">wTypes</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1225,13 +1231,6 @@ function main() {
         <a href="wNim.html">Main Page</a>
       </li>
     </ul>
-  </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
@@ -1276,7 +1275,7 @@ function main() {
       <li><a class="reference" href="#wDefault"
     title="wDefault = -2147483648"><wbr />w<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultFloat"
-    title="wDefaultFloat = nan"><wbr />w<wbr />Default<wbr />Float<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wDefaultFloat = 0x7FF7FFFFFFFFFFFF&apos;f64"><wbr />w<wbr />Default<wbr />Float<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultPoint"
     title="wDefaultPoint: wPoint = (-2147483648, -2147483648)"><wbr />w<wbr />Default<wbr />Point<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultPosition"
@@ -1287,6 +1286,8 @@ function main() {
     title="wDefaultRect: wRect = (-2147483648, -2147483648, -2147483648, -2147483648)"><wbr />w<wbr />Default<wbr />Rect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultID"
     title="wDefaultID: wCommandID = -1"><wbr />w<wbr />Default<wbr />ID<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDefaultTime"
+    title="wDefaultTime: wTime"><wbr />w<wbr />Default<wbr />Time<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wNotFound"
     title="wNotFound = -1"><wbr />w<wbr />Not<wbr />Found<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wLeft"
@@ -1323,10 +1324,10 @@ function main() {
   </ul>
 </li>
 <li>
-  <a class="reference reference-toplevel" href="#16" id="66">Converters</a>
+  <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#converterIntEnumTowCommandID.c,"
-    title="converterIntEnumTowCommandID(x: int | enum): wCommandID"><wbr />converter<wbr />Int<wbr />Enum<wbr />Tow<wbr />Command<wbr />ID<span class="attachedType" style="visibility:hidden">wCommandID</span></a></li>
+      <li><a class="reference" href="#hash%2Cref."
+    title="hash(o: ref object): Hash"><wbr />hash<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1336,57 +1337,67 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">Basic types definition for wNim.</p>
+  <p class="module-desc">Basic types definition for wNim.We usually use the enum for where need a command ID. see the examples.</p>
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<dt id="wSize"><a name="wSize"></a><pre><span class="Identifier">wSize</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+<a id="wSize"></a>
+<dt><pre><span class="Identifier">wSize</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
 A data structure contains integer width and height.
 
 </dd>
-<dt id="wPoint"><a name="wPoint"></a><pre><span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+<a id="wPoint"></a>
+<dt><pre><span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
 A data structure contains integer x and y.
 
 </dd>
-<dt id="wRect"><a name="wRect"></a><pre><span class="Identifier">wRect</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+<a id="wRect"></a>
+<dt><pre><span class="Identifier">wRect</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
 A data structure contains x, y, width, and height.
 
 </dd>
-<dt id="wDirection"><a name="wDirection"></a><pre><span class="Identifier">wDirection</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">left</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">up</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">down</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
+<a id="wDirection"></a>
+<dt><pre><span class="Identifier">wDirection</span> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">left</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">up</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">down</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
 A data structure contains left, up, right, down.
 
 </dd>
-<dt id="wError"><a name="wError"></a><pre><span class="Identifier">wError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span>
+<a id="wError"></a>
+<dt><pre><span class="Identifier">wError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span>
   </pre></dt>
 <dd>
 Base of exception use in wNim.
 
 </dd>
-<dt id="wCommandID"><a name="wCommandID"></a><pre><span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">int</span></pre></dt>
+<a id="wCommandID"></a>
+<dt><pre><span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 A integer number used in menus or GUI controls as the ID.
 
 </dd>
-<dt id="wStyle"><a name="wStyle"></a><pre><span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">int64</span></pre></dt>
+<a id="wStyle"></a>
+<dt><pre><span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">int64</span></pre></dt>
 <dd>
 The wNim window style type. It simply combine of windows' style and exstyle.
 
 </dd>
-<dt id="wColor"><a name="wColor"></a><pre><span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">int32</span></pre></dt>
+<a id="wColor"></a>
+<dt><pre><span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">int32</span></pre></dt>
 <dd>
 Representing a combination of Red, Green, and Blue (RGB) intensity values. Same as windows' COLORREF.
 
 </dd>
-<dt id="wTime"><a name="wTime"></a><pre><span class="Identifier">wTime</span> <span class="Other">=</span> <span class="Identifier">Time</span></pre></dt>
+<a id="wTime"></a>
+<dt><pre><span class="Identifier">wTime</span> <span class="Other">=</span> <span class="Identifier">Time</span></pre></dt>
 <dd>
 Represents a point in time.
 
 </dd>
-<dt id="wId"><a name="wId"></a><pre><span class="Identifier">wId</span> <span class="Other">=</span> <span class="Keyword">enum</span>
+<a id="wId"></a>
+<dt><pre><span class="Identifier">wId</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">wIdZero</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">wIdLowest</span> <span class="Other">=</span> <span class="DecNumber">4999</span><span class="Other">,</span> <span class="Identifier">wIdOpen</span><span class="Other">,</span> <span class="Identifier">wIdClose</span><span class="Other">,</span> <span class="Identifier">wIdNew</span><span class="Other">,</span> <span class="Identifier">wIdSave</span><span class="Other">,</span> <span class="Identifier">wIdSaveAS</span><span class="Other">,</span> <span class="Identifier">wIdRevert</span><span class="Other">,</span>
   <span class="Identifier">wIdExit</span><span class="Other">,</span> <span class="Identifier">wIdUndo</span><span class="Other">,</span> <span class="Identifier">wIdRedo</span><span class="Other">,</span> <span class="Identifier">wIdHelp</span><span class="Other">,</span> <span class="Identifier">wIdPrint</span><span class="Other">,</span> <span class="Identifier">wIdPrintSetup</span><span class="Other">,</span> <span class="Identifier">wIdPreview</span><span class="Other">,</span> <span class="Identifier">wIdAbout</span><span class="Other">,</span>
   <span class="Identifier">wIdHelpContents</span><span class="Other">,</span> <span class="Identifier">wIdHelpCommands</span><span class="Other">,</span> <span class="Identifier">wIdHelpProcedures</span><span class="Other">,</span> <span class="Identifier">wIdCloseAll</span><span class="Other">,</span> <span class="Identifier">wIdDelete</span><span class="Other">,</span>
@@ -1406,129 +1417,159 @@ Predefined names to use as menus or controls ID.
 <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
-<dt id="wDefault"><a name="wDefault"></a><pre><span class="Identifier">wDefault</span> <span class="Other">=</span> <span class="DecNumber">-2147483648</span></pre></dt>
+<a id="wDefault"></a>
+<dt><pre><span class="Identifier">wDefault</span> <span class="Other">=</span> <span class="DecNumber">-2147483648</span></pre></dt>
 <dd>
 Used in wNim as default value.
 
 </dd>
-<dt id="wDefaultFloat"><a name="wDefaultFloat"></a><pre><span class="Identifier">wDefaultFloat</span> <span class="Other">=</span> <span class="FloatNumber">nan</span></pre></dt>
+<a id="wDefaultFloat"></a>
+<dt><pre><span class="Identifier">wDefaultFloat</span> <span class="Other">=</span> <span class="FloatNumber">0x7FF7FFFFFFFFFFFF'f64</span></pre></dt>
 <dd>
 Used in wNim as default float value.
 
 </dd>
-<dt id="wDefaultPoint"><a name="wDefaultPoint"></a><pre><span class="Identifier">wDefaultPoint</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
+<a id="wDefaultPoint"></a>
+<dt><pre><span class="Identifier">wDefaultPoint</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
 <dd>
 Used in wNim as default point.
 
 </dd>
-<dt id="wDefaultPosition"><a name="wDefaultPosition"></a><pre><span class="Identifier">wDefaultPosition</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
+<a id="wDefaultPosition"></a>
+<dt><pre><span class="Identifier">wDefaultPosition</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
 <dd>
 Used in wNim as default position.
 
 </dd>
-<dt id="wDefaultSize"><a name="wDefaultSize"></a><pre><span class="Identifier">wDefaultSize</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
+<a id="wDefaultSize"></a>
+<dt><pre><span class="Identifier">wDefaultSize</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
 <dd>
 Used in wNim as default size.
 
 </dd>
-<dt id="wDefaultRect"><a name="wDefaultRect"></a><pre><span class="Identifier">wDefaultRect</span><span class="Other">:</span> <span class="Identifier">wRect</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
+<a id="wDefaultRect"></a>
+<dt><pre><span class="Identifier">wDefaultRect</span><span class="Other">:</span> <span class="Identifier">wRect</span> <span class="Other">=</span> <span class="Other">(</span><span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">,</span> <span class="DecNumber">-2147483648</span><span class="Other">)</span></pre></dt>
 <dd>
 Used in wNim as default rect.
 
 </dd>
-<dt id="wDefaultID"><a name="wDefaultID"></a><pre><span class="Identifier">wDefaultID</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="DecNumber">-1</span></pre></dt>
+<a id="wDefaultID"></a>
+<dt><pre><span class="Identifier">wDefaultID</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="DecNumber">-1</span></pre></dt>
 <dd>
 Used in wNim as default command ID.
 
 </dd>
-<dt id="wNotFound"><a name="wNotFound"></a><pre><span class="Identifier">wNotFound</span> <span class="Other">=</span> <span class="DecNumber">-1</span></pre></dt>
+<a id="wDefaultTime"></a>
+<dt><pre><span class="Identifier">wDefaultTime</span><span class="Other">:</span> <span class="Identifier">wTime</span></pre></dt>
+<dd>
+Used in wNim as default time.
+
+</dd>
+<a id="wNotFound"></a>
+<dt><pre><span class="Identifier">wNotFound</span> <span class="Other">=</span> <span class="DecNumber">-1</span></pre></dt>
+<dd>
+Used in wNim as default value.
+
+</dd>
+<a id="wLeft"></a>
+<dt><pre><span class="Identifier">wLeft</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wLeft"><a name="wLeft"></a><pre><span class="Identifier">wLeft</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
+<a id="wRight"></a>
+<dt><pre><span class="Identifier">wRight</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wRight"><a name="wRight"></a><pre><span class="Identifier">wRight</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
+<a id="wUp"></a>
+<dt><pre><span class="Identifier">wUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wUp"><a name="wUp"></a><pre><span class="Identifier">wUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
+<a id="wDown"></a>
+<dt><pre><span class="Identifier">wDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wDown"><a name="wDown"></a><pre><span class="Identifier">wDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+<a id="wTop"></a>
+<dt><pre><span class="Identifier">wTop</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wTop"><a name="wTop"></a><pre><span class="Identifier">wTop</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
+<a id="wBottom"></a>
+<dt><pre><span class="Identifier">wBottom</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wBottom"><a name="wBottom"></a><pre><span class="Identifier">wBottom</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+<a id="wNorth"></a>
+<dt><pre><span class="Identifier">wNorth</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wNorth"><a name="wNorth"></a><pre><span class="Identifier">wNorth</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
+<a id="wSouth"></a>
+<dt><pre><span class="Identifier">wSouth</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wSouth"><a name="wSouth"></a><pre><span class="Identifier">wSouth</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+<a id="wWest"></a>
+<dt><pre><span class="Identifier">wWest</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wWest"><a name="wWest"></a><pre><span class="Identifier">wWest</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
+<a id="wEast"></a>
+<dt><pre><span class="Identifier">wEast</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wEast"><a name="wEast"></a><pre><span class="Identifier">wEast</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
+<a id="wHorizontal"></a>
+<dt><pre><span class="Identifier">wHorizontal</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wHorizontal"><a name="wHorizontal"></a><pre><span class="Identifier">wHorizontal</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
+<a id="wVertical"></a>
+<dt><pre><span class="Identifier">wVertical</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wVertical"><a name="wVertical"></a><pre><span class="Identifier">wVertical</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
+<a id="wBoth"></a>
+<dt><pre><span class="Identifier">wBoth</span> <span class="Other">=</span> <span class="DecNumber">240</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wBoth"><a name="wBoth"></a><pre><span class="Identifier">wBoth</span> <span class="Other">=</span> <span class="DecNumber">240</span></pre></dt>
+<a id="wCenter"></a>
+<dt><pre><span class="Identifier">wCenter</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
 <dd>
 
 
 </dd>
-<dt id="wCenter"><a name="wCenter"></a><pre><span class="Identifier">wCenter</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
-<dd>
-
-
-</dd>
-<dt id="wMiddle"><a name="wMiddle"></a><pre><span class="Identifier">wMiddle</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
+<a id="wMiddle"></a>
+<dt><pre><span class="Identifier">wMiddle</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
 <dd>
 
 
 </dd>
 
 </dl></div>
-<div class="section" id="16">
-<h1><a class="toc-backref" href="#16">Converters</a></h1>
+<div class="section" id="12">
+<h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="converterIntEnumTowCommandID"><a name="converterIntEnumTowCommandID.c,"></a><pre><span class="Keyword">converter</span> <span class="Identifier">converterIntEnumTowCommandID</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Operator">|</span> <span class="Keyword">enum</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCommandID</span></pre></dt>
+<a id="hash,ref."></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hash</span><span class="Other">(</span><span class="Identifier">o</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Hash</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-We usually use the enum for where need a command ID. see the examples.
+
 
 </dd>
 
@@ -1541,7 +1582,7 @@ We usually use the enum for where need a command ID. see the examples.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:04 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:48:58 UTC</small>
       </div>
     </div>
   </div>

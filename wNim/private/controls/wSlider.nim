@@ -52,7 +52,7 @@ proc isVertical*(self: wSlider): bool {.validate, inline.} =
 
 method getDefaultSize*(self: wSlider): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getAverageASCIILetterSize(self.mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   var x, y: int32
   if self.isVertical():
     x = 15

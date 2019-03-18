@@ -48,8 +48,8 @@ const
   wSpCenter* = ES_CENTER
   wSpRight* = ES_RIGHT
   # avoid style clash
-  wSpArrowKeys* = 0x10000000 shl 32
-  wSpWrap* = 0x20000000 shl 32
+  wSpArrowKeys* = int64 0x10000000 shl 32
+  wSpWrap* = int64 0x20000000 shl 32
 
 method getWindowRect(self: wSpinCtrl, sizeOnly = false): wRect =
   result = procCall wWindow(self).getWindowRect()
@@ -106,7 +106,7 @@ method getDefaultSize*(self: wSpinCtrl): wSize {.property.} =
 
 method getBestSize*(self: wSpinCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSize("0000  ", self.mFont.mHandle)
+  result = getTextFontSize("0000  ", self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
   result.width += self.mUpdownWidth
 

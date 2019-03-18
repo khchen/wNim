@@ -127,7 +127,8 @@ proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
   var font = if font != nil: font else: parent.mFont
 
   if size.width == wDefault:
-    size.width = getTextFontSize(" 222 . 222 . 222 . 222 ", font.mHandle).width
+    size.width = getTextFontSize(" 222 . 222 . 222 . 222 ", font.mHandle,
+      self.mHwnd).width
 
   if size.height == wDefault:
     size.height = getLineControlDefaultHeight(font.mHandle)

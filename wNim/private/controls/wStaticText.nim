@@ -44,7 +44,7 @@ const
 
 method getBestSize*(self: wStaticText): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSize(self.getLabel(), self.mFont.mHandle)
+  result = getTextFontSize(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.width += 2
   result.height += 2
 

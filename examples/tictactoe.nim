@@ -5,14 +5,11 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import random, sets, strformat
-import mcts/[gamebase, engine_tictactoe]
-import wNim
+import
+  resource/resource,
+  wNim,
+  random, sets, strformat,
+  mcts/[gamebase, engine_tictactoe]
 
 type
   MenuId = enum idNew = 100, idExit, idAi1, idAi2

@@ -15,7 +15,7 @@
 ##   `wControl <wControl.html>`_
 
 proc getLabelSize(self: wStaticBox): wSize {.property.} =
-  result = getTextFontSize(self.getLabel() & "  ", self.mFont.mHandle)
+  result = getTextFontSize(self.getLabel() & "  ", self.mFont.mHandle, self.mHwnd)
 
 method getBestSize*(self: wStaticBox): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.

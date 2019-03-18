@@ -5,12 +5,9 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import wNim
+import
+  resource/resource,
+  wNim
 
 type
   MenuID = enum

@@ -143,13 +143,14 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
     weight = wFontWeightNormal, italic = false, underline = false,
     faceName = "", encoding = wFontEncodingDefault) {.validate.} =
   ## Initializer.
+  var
+    nonclientMetrics = NONCLIENTMETRICS(cbSize: sizeof(NONCLIENTMETRICS).UINT)
+    lf: LOGFONT
 
-  # use lfMessageFont in nonclientMetrics instead of DEFAULT_GUI_FONT
-  var nonclientMetrics = NONCLIENTMETRICS(cbSize: sizeof(NONCLIENTMETRICS).UINT)
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, addr nonclientMetrics, 0)
-
-  var lf: LOGFONT = nonclientMetrics.lfMessageFont
-  # GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), addr lf)
+  if SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, addr nonclientMetrics, 0):
+    lf = nonclientMetrics.lfMessageFont
+  else:
+    GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), addr lf)
 
   if pointSize.classify != fcNaN:
     lf.lfHeight = -round(pointSize * wGetDPI().float / 72'f).LONG

@@ -5,15 +5,13 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
+import
+  resource/resource,
+  wNim,
+  strutils, os,
+  winim/inc/[windef, winuser, shellapi]
 
-import wNim
 import strformat except `&`
-import strutils, os
-import winim/inc/shellapi # for ExtractIconEx and PathCompactPath
 
 proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   const iconFiles = ["accessibilitycpl.dll", "explorer.exe", "gameux.dll",
@@ -28,7 +26,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     menu = Menu()
     panel = Panel(dialog)
     staticText = StaticText(panel, style=wBorderStatic or wAlignLeftNoWordWrap)
-    browse = Button(panel, label="Browse")
+    select = Button(panel, label="Select File")
     listCtrl = ListCtrl(panel, style=wLcIcon or wLcAutoArrange or
       wLcSingleSel or wBorderSunken)
     combo = ComboBox(panel, value="48 x 48",
@@ -106,26 +104,29 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
 
       except: discard
 
+  menu.append(1, "Browse...")
+  menu.appendSeparator()
+
   for i, file in iconFiles:
     # MSDN: If this value is –1 and phiconLarge and phiconSmall are both NULL,
     # the function returns the total number of icons
     let n = ExtractIconEx(file, -1, nil, nil, 0)
     if n != 0:
-      menu.append(i + 1, fmt"{file} ({n})")
+      menu.append(i + 2, fmt"{file} ({n})")
 
   dialog.icon = Icon("shell32.dll,22")
-  browse.setDropdownMenu(menu)
+  select.setDropdownMenu(menu)
   ok.setDefault()
   showIcons()
 
   dialog.wEvent_Size do (event: wEvent):
     panel.autolayout """
       spacing: 12
-      H:|-[staticText]-[browse(browse.defaultWidth)]-|
+      H:|-[staticText]-[select(select.defaultWidth)]-|
       H:|-[listCtrl]-|
       H:|-[combo(combo.bestWidth)]->[ok(cancel)]-[cancel(cancel.bestWidth+48)]-|
       V:|-[staticText(staticText.defaultHeight)]-[listCtrl]-[combo(combo.bestHeight)]-|
-      V:|-[browse(staticText.height)]-[listCtrl]-[ok,cancel(combo.height)]-|
+      V:|-[select(staticText.height)]-[listCtrl]-[ok,cancel(combo.height)]-|
     """
 
     let n = ok.size.width + cancel.size.width + combo.size.width + 12 * 4
@@ -133,24 +134,29 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     showFilename()
 
   dialog.wEvent_Menu do (event: wEvent):
-    let i = (int event.id) - 1
-    if i >= 0 and i < iconFiles.len:
-      currentFile = iconFiles[i]
-      showFilename()
-      showIcons()
+    var i = int event.id
+    if i == 1:
+      var files = FileDialog(dialog, "Select Icon Files",
+        defaultDir=getCurrentDir(), wildcard="Icon Files|*.ico;*.cur;*.dll;*.exe",
+        style=wFdOpen or wFdFileMustExist).showResult()
+
+      if files.len == 1:
+        currentFile = files[0]
+        showFilename()
+        showIcons()
+
+    else:
+      i -= 2
+      if i >= 0 and i < iconFiles.len:
+        currentFile = iconFiles[i]
+        showFilename()
+        showIcons()
 
   dialog.wEvent_ComboBox do ():
     showIcons()
 
-  browse.wEvent_Button do ():
-    var files = FileDialog(dialog, "Select Icon Files",
-      defaultDir=getCurrentDir(), wildcard="Icon Files|*.ico;*.cur;*.dll;*.exe",
-      style=wFdOpen or wFdFileMustExist).showResult()
-
-    if files.len == 1:
-      currentFile = files[0]
-      showFilename()
-      showIcons()
+  select.wEvent_Button do ():
+    select.showDropdownMenu()
 
   cancel.wEvent_Button do ():
     dialog.close()

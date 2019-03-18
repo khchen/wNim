@@ -133,11 +133,11 @@ proc drawRectangle*(self: wDC, x, y, width, height: int) =
   Rectangle(self.mHdc, x, y, x2, y2)
 
 proc drawRectangle*(self: wDC, point: wPoint, size: wSize) =
-  ## ## Draws a rectangle with the given corner coordinate and size.
+  ## Draws a rectangle with the given corner coordinate and size.
   self.drawRectangle(point.x, point.y, size.width, size.height)
 
 proc drawRectangle*(self: wDC, rect: wRect) =
-  ## ## Draws a rectangle with the given corner coordinate and size.
+  ## Draws a rectangle with the given corner coordinate and size.
   self.drawRectangle(rect.x, rect.y, rect.width, rect.height)
 
 proc drawEllipse*(self: wDC, x, y, width, height: int) =

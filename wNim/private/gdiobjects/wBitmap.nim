@@ -24,13 +24,14 @@ type
 proc error(self: wBitmap) {.inline.} =
   raise newException(wBitmapError, "wBitmap creation failure")
 
-proc final(self: wBitmap) =
+proc final*(self: wBitmap) =
   ## Default finalizer for wBitmap.
   self.delete()
 
 proc init*(self: wBitmap, width, height: int, depth: int = 0) {.validate.} =
   ## Initializer.
   assert depth == 0 or depth == 24 or depth == 32
+
   self.wGdiObject.init()
 
   self.mWidth = width

@@ -13,10 +13,11 @@
 ## become draggable. Of course it only works if the margin size near to the splitter
 ## is not zero.
 ##
-## Notice: wSplitter turns on double buffering of the both panels by default to
-## avoid flicker during resizing. However, a few controls don't suppoort it,
-## for example, report view mode of wListCtrl. You muse turn off it if you want
-## to use these controls.
+## Notice: To avoid flicker during resizing, add wDoubleBuffered or wClipChildren
+## style depends on what controls you want to place into the panels. For most case,
+## wDoubleBuffered is prefered, however, a few controls don't suppoort it. For
+## example, report view mode of wListCtrl. Moreover, different version of Windows
+## treats it differently. So please try and choose the best result by yourself.
 #
 ## :Appearance:
 ##   .. image:: images/wSplitter.png
@@ -47,7 +48,7 @@ const
   # wSpHorizontal*
   # wSpVertical*
   wSpNoBorder* = 0
-  wSpButton* = 0x10000000 shl 32
+  wSpButton* = int64 0x10000000 shl 32
   wSpBorder* = wBorderSimple
   wSp3dBorder* = wBorderStatic
 
@@ -340,15 +341,14 @@ proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
   self.wWindow.initVerbosely(parent=parent, id=id, style=style and wInvisible,
     className=className, bgColor=GetSysColor(COLOR_ACTIVEBORDER))
 
-  self.mPanel1 = Panel(parent, style=wInvisible)
-  self.mPanel2 = Panel(parent, style=wInvisible)
+  var panelStyle = wInvisible
+  if (style and wClipChildren) != 0: panelStyle = panelStyle or wClipChildren
+  if (style and wDoubleBuffered) != 0: panelStyle = panelStyle or wDoubleBuffered
+  self.mPanel1 = Panel(parent, style=panelStyle)
+  self.mPanel2 = Panel(parent, style=panelStyle)
+
   self.splitterResize(pos)
   self.splitterResetCursor()
-
-  # add dobule buffer to avoid flickering during resizing
-  # however, listctrl not support, how to fix?
-  self.mPanel1.setDoubleBuffered(true)
-  self.mPanel2.setDoubleBuffered(true)
 
   if (style and wInvisible) == 0:
     self.show()

@@ -39,10 +39,7 @@ proc MyFrame(title: string): wMyFrame {.inline.} =
   result.init(title)
 
 when isMainModule:
-  when defined(cpu64):
-    {.link: "wNim64.res".}
-  else:
-    {.link: "wNim32.res".}
+  import resource/resource
 
   let app = App()
   let frame = MyFrame("Hello World")

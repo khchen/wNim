@@ -35,7 +35,7 @@ proc isVertical*(self: wScrollBar): bool {.validate, inline.} =
 
 method getDefaultSize*(self: wScrollBar): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getAverageASCIILetterSize(self.mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
 
   if self.isVertical():
     result.width = GetSystemMetrics(SM_CXVSCROLL)

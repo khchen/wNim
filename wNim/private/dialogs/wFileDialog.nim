@@ -27,7 +27,7 @@
 
 const
   wFdOpen* = 0
-  wFdSave* = 0x1 shl 32
+  wFdSave* = int64 0x1 shl 32
   wFdOverwritePrompt* = OFN_OVERWRITEPROMPT
   wFdCreatePrompt* = OFN_CREATEPROMPT
   wFdNoFollow* = OFN_NODEREFERENCELINKS

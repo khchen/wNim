@@ -113,10 +113,7 @@ proc init*(self: wCursor, hCursor: HCURSOR, copy = true, shared = false,
     self.mDeletable = false
 
   else:
-    var
-      iconInfo: ICONINFO
-      bitmapInfo: BITMAP
-
+    var iconInfo: ICONINFO
     if GetIconInfo(hCursor, iconInfo) != 0:
       defer:
         DeleteObject(iconInfo.hbmColor)
@@ -130,17 +127,15 @@ proc init*(self: wCursor, hCursor: HCURSOR, copy = true, shared = false,
         iconInfo.yHotspot = hotspot.y
         self.mHotspot = hotspot
 
-      if GetObject(iconInfo.hbmColor, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
-        self.mWidth = int bitmapInfo.bmWidth
-        self.mHeight = int bitmapInfo.bmHeight
+      (self.mWidth, self.mHeight) = iconInfo.getSize()
 
-        if copy:
-          self.mHandle = CreateIconIndirect(iconInfo)
-          self.mIconResource = true
-          self.mDeletable = true
-        else:
-          self.mHandle = hCursor
-          self.mDeletable = not shared
+      if copy:
+        self.mHandle = CreateIconIndirect(iconInfo)
+        self.mIconResource = true
+        self.mDeletable = true
+      else:
+        self.mHandle = hCursor
+        self.mDeletable = not shared
 
     if self.mHandle == 0: self.error()
 

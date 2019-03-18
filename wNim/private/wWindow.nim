@@ -55,17 +55,17 @@ proc setScrollPos*(self: wScrollBar, position: int)
 
 const
   wBorderSimple* = WS_BORDER
-  wBorderSunken* = WS_EX_CLIENTEDGE shl 32
-  wBorderRaised* = WS_EX_WINDOWEDGE shl 32
-  wBorderStatic* = WS_EX_STATICEDGE shl 32
-  wBorderDouble* = WS_EX_DLGMODALFRAME shl 32
-  wTransparentWindow* = WS_EX_TRANSPARENT shl 32
-  wDoubleBuffered* = WS_EX_COMPOSITED shl 32
+  wBorderSunken* = int64 WS_EX_CLIENTEDGE shl 32
+  wBorderRaised* = int64 WS_EX_WINDOWEDGE shl 32
+  wBorderStatic* = int64 WS_EX_STATICEDGE shl 32
+  wBorderDouble* = int64 WS_EX_DLGMODALFRAME shl 32
+  wTransparentWindow* = int64 WS_EX_TRANSPARENT shl 32
+  wDoubleBuffered* = int64 WS_EX_COMPOSITED shl 32
   wVScroll* = WS_VSCROLL
   wHScroll* = WS_HSCROLL
   wClipChildren* = WS_CLIPCHILDREN
-  wHideTaskbar* = 0x10000000 shl 32
-  wInvisible* = 0x20000000 shl 32
+  wHideTaskbar* = int64 0x10000000 shl 32
+  wInvisible* = int64 0x20000000 shl 32
   wPopup* = int64 cast[uint32](WS_POPUP) # WS_POPUP is 0x80000000L
   wPopupWindow* = int64 cast[uint32](WS_POPUPWINDOW)
 
@@ -731,7 +731,7 @@ proc setLabel*(self: wWindow, label: string) {.validate, property, inline.} =
   wValidate(label)
   SetWindowText(self.mHwnd, label)
 
-proc setFont*(self: wWindow, font: wFont) {.validate, property.} =
+method setFont*(self: wWindow, font: wFont) {.base, validate, property.} =
   ## Sets the font for this window.
   wValidate(font)
   self.mFont = font
@@ -955,7 +955,7 @@ proc setDoubleBuffered*(self: wWindow, on = true) {.validate, property.} =
 
 proc getDoubleBuffered*(self: wWindow): bool {.validate, property.} =
   ## Returns true if the window contents is double-buffered by the system
-  result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and WS_EX_COMPOSITED) != 0
+  result = (GetWindowLongPtr(self.mHwnd, GWL_EXSTYLE) and WS_EX_COMPOSITED) != 0
 
 iterator children*(self: wWindow): wWindow {.validate.} =
   ## Iterates over each window's child.
@@ -1247,7 +1247,7 @@ proc disconnect*(self: wWindow, id: wCommandID, limit = -1) {.validate.} =
 
 proc systemDisconnect(self: wWindow, connection: wEventConnection) =
   # Used internally, disconnects the specified connection that returned by
-  ## systemConnect().
+  # systemConnect().
   let msg = connection.msg
   self.mSystemConnectionTable.withValue(msg, list):
     for node in list.nodes:
@@ -1972,18 +1972,20 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     raise newException(wError, className & " window creation failure")
 
   wAppWindowAdd(self)
+  var font: wFont
   if parent.isNil:
     wAppTopLevelWindowAdd(self)
+    font = wDefaultFont
   else:
-    self.mFont = parent.mFont
     parent.mChildren.add(self)
+    font = parent.mFont
+
+  # call window's setFont method. for rich edit, it need more work than WM_SETFONT
+  self.setFont(font)
 
   # preapre something after window creating but before set size.
   # aka WM_CREATE for wnim window.
   self.trigger()
-
-  if self.mFont == nil: self.mFont = wDefaultFont
-  SendMessage(self.mHwnd, WM_SETFONT, self.mFont.mHandle, 1)
 
   # set size after window create and font setting ok
   # because getDefaultSize usually use font to calculate size

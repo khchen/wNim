@@ -5,13 +5,10 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import strutils
-import wNim
+import
+  resource/resource,
+  wNim,
+  strutils
 
 type
   wScribble = ref object of wFrame

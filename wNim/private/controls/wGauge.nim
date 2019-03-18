@@ -29,11 +29,11 @@ const
   wGaHorizontal* = 0
   wGaVertical* = PBS_VERTICAL
   wGaSmooth* = PBS_SMOOTH
-  wGaProgress* = 0x10000000 shl 32
+  wGaProgress* = int64 0x10000000 shl 32
 
 method getDefaultSize*(self: wGauge): wSize {.property.} =
   ## Returns the default size for the control.
-  result = getAverageASCIILetterSize(self.mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   result.width = MulDiv(result.width.int32, 107, 4)
   result.height = MulDiv(result.height.int32, 8, 8)
 

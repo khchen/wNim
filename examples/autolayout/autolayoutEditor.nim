@@ -5,13 +5,10 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "../wNim64.res".}
-else:
-  {.link: "../wNim32.res".}
-
-import strutils, macros
-import wNim
+import
+  ../resource/resource,
+  wNim,
+  strutils, macros
 
 type
   MenuID = enum
@@ -233,7 +230,7 @@ generateExamples:
       V:[stack1..4(25)]
     """
 
-var splitter = Splitter(frame, style=wSpHorizontal, size=(8, 8))
+var splitter = Splitter(frame, style=wSpHorizontal or wDoubleBuffered, size=(8, 8))
 var statusBar = StatusBar(frame)
 var menuBar = MenuBar(frame)
 

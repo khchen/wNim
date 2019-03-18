@@ -99,11 +99,10 @@ proc init*(self: wIcon, image: wImage, size = wDefaultSize) {.validate.} =
   wValidate(image)
 
   try:
-    when not defined(wnimdoc): # this code crash nim doc generator
-      var
-        image = image
-        isRescale = false
-        (width, height) = image.getSize()
+    var
+      image = image
+      isRescale = false
+      (width, height) = image.getSize()
 
     if size.width > 0 and size.width != width:
       isRescale = true
@@ -173,10 +172,7 @@ proc Icon*(str: string, size = wDefaultSize): wIcon {.inline.} =
 proc init*(self: wIcon, hIcon: HICON, copy = true, shared = false) {.validate.} =
   ## Initializer.
   self.wGdiObject.init()
-  var
-    iconInfo: ICONINFO
-    bitmapInfo: BITMAP
-
+  var iconInfo: ICONINFO
   if GetIconInfo(hIcon, iconInfo) != 0:
     defer:
       DeleteObject(iconInfo.hbmColor)
@@ -186,16 +182,14 @@ proc init*(self: wIcon, hIcon: HICON, copy = true, shared = false) {.validate.} 
     iconInfo.xHotspot = 0
     iconInfo.yHotspot = 0
 
-    if GetObject(iconInfo.hbmColor, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
-      self.mWidth = int bitmapInfo.bmWidth
-      self.mHeight = int bitmapInfo.bmHeight
+    (self.mWidth, self.mHeight) = iconInfo.getSize()
 
-      if copy:
-        self.mHandle = CreateIconIndirect(iconInfo)
-        self.mDeletable = true
-      else:
-        self.mHandle = hIcon
-        self.mDeletable = not shared
+    if copy:
+      self.mHandle = CreateIconIndirect(iconInfo)
+      self.mDeletable = true
+    else:
+      self.mHandle = hIcon
+      self.mDeletable = not shared
 
   if self.mHandle == 0: self.error()
 

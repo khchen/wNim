@@ -40,7 +40,9 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
   ## Adds a control to the rebar.
   wValidate(control)
 
-  var rbBand = REBARBANDINFO(cbSize: sizeof(REBARBANDINFO))
+  var rbBand: REBARBANDINFO
+  # only REBARBANDINFO_V5_SIZE works from XP to Win10
+  rbBand.cbSize = cast[int](addr rbBand.cxHeader) - cast[int](addr rbBand)
   rbBand.fMask = RBBIM_STYLE or RBBIM_CHILD or RBBIM_CHILDSIZE or
     RBBIM_SIZE or RBBIM_IMAGE
   rbBand.fStyle = RBBS_CHILDEDGE or RBBS_GRIPPERALWAYS

@@ -46,7 +46,7 @@ method getDefaultSize*(self: wButton): wSize {.property.} =
   # button's default size is 50x14 DLUs
   # don't use GetDialogBaseUnits, it count by DEFAULT_GUI_FONT only
   # don't use tmAveCharWidth, it only approximates
-  result = getAverageASCIILetterSize(self.mFont.mHandle)
+  result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   result.width = MulDiv(result.width, 50, 4)
   result.height = MulDiv(result.height, 14, 8)
 
@@ -58,7 +58,7 @@ method getBestSize*(self: wButton): wSize {.property.} =
     result.height = size.cy
 
   else: # fail, no visual styles ?
-    result = getTextFontSize(self.getLabel(), self.mFont.mHandle)
+    result = getTextFontSize(self.getLabel(), self.mFont.mHandle, self.mHwnd)
     result.height += 2
     result.width += 2
 
@@ -161,6 +161,28 @@ proc getBitmap*(self: wButton): wBitmap {.validate, property.} =
     SelectObject(hdc, prev)
     DeleteDC(hdc)
 
+proc setIcon*(self: wButton, icon: wIcon, direction = -1)
+    {.validate, property.} =
+  ## Sets the icon to display in the button.
+  wValidate(icon)
+  let direction = (if direction == -1: self.mImgData.uAlign else: wLeft)
+
+  if self.mImgData.himl != 0:
+    ImageList_Destroy(self.mImgData.himl)
+
+  self.mImgData.himl = ImageList_Create(icon.mWidth, icon.mHeight,
+      ILC_COLOR32, 1, 1)
+
+  if self.mImgData.himl != 0:
+    ImageList_ReplaceIcon(self.mImgData.himl, -1, icon.mHandle)
+    self.setBitmapPosition(direction)
+
+proc getIcon*(self: wButton): wIcon {.validate, property.} =
+  ## Return the icon shown by the button. Notice: it create a copy of the icon.
+  if self.mImgData.himl != 0:
+    var hIcon = ImageList_GetIcon(self.mImgData.himl, 0, ILD_TRANSPARENT)
+    result = Icon(hIcon, copy=false)
+
 proc setDefault*(self: wButton, flag = true) {.validate, property.} =
   ## This sets the button to be the default item.
   self.mDefault = flag
@@ -174,11 +196,19 @@ proc setDefault*(self: wButton, flag = true) {.validate, property.} =
 proc setDropdownMenu*(self: wButton, menu: wMenu = nil) {.validate, property.} =
   ## Sets a dropdown menu for a button, or nil to cancel it.
   if menu != nil:
-    self.addWindowStyle(BS_SPLITBUTTON)
+    when not defined(useWinXP):
+      self.addWindowStyle(BS_SPLITBUTTON)
     self.mMenu = menu
   else:
-    self.clearWindowStyle(BS_SPLITBUTTON)
+    when not defined(useWinXP):
+      self.clearWindowStyle(BS_SPLITBUTTON)
     self.mMenu = nil
+
+proc showDropdownMenu*(self: wButton) {.validate.} =
+  ## Show a dropdown menu for a button.
+  if self.mMenu != nil:
+    let rect = self.getWindowRect(sizeOnly=true)
+    self.popupMenu(self.mMenu, 0, rect.height)
 
 proc click*(self: wButton) {.validate, inline.} =
   ## Simulates the user clicking a button.

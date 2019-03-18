@@ -5,13 +5,10 @@
 #
 #====================================================================
 
-when defined(cpu64):
-  {.link: "wNim64.res".}
-else:
-  {.link: "wNim32.res".}
-
-import strformat
-import wNim
+import
+  resource/resource,
+  wNim,
+  strformat
 
 type
   # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.

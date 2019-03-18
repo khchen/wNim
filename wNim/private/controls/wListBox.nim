@@ -271,7 +271,7 @@ proc countSize(self: wListBox, minItem: int, rate: float): wSize =
   proc countWidth(rate: float): int =
     result = lineHeight # minimum width
     for text in self.items():
-      let size = getTextFontSize(text, self.mFont.mHandle)
+      let size = getTextFontSize(text, self.mFont.mHandle, self.mHwnd)
       result = max(result, int(size.width.float * rate) + 8)
 
   let itemHeight = int SendMessage(self.mHwnd, LB_GETITEMHEIGHT, 0, 0)

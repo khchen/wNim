@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>Module wKeyCodes</title>
+<title>wKeyCodes</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -57,7 +57,7 @@ body {
   line-height: 20px;
   color: #444;
   letter-spacing: 0.15px;
-  background-color: rgba(252, 248, 244, 0.45); }
+  background-color: #FDFBFA; }
 
 /* Skeleton grid */
 .container {
@@ -192,10 +192,10 @@ dd > pre {
   table-layout: fixed; }
 
 /* Nim search input */
-div#searchInput {
+div#searchInputDiv {
   margin-bottom: 8px;
 }
-div#searchInput input#searchInput {
+div#searchInputDiv input#searchInput {
   width: 10em;
 }
 div.search-groupby {
@@ -1143,7 +1143,7 @@ dt pre > span.Identifier ~ span.Identifier, dt pre > span.Operator ~ span.Identi
   color: inherit;
   font-weight: inherit; }
 
-dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator {
+dt pre > span.Operator ~ span.Identifier {
   color: inherit;
   font-weight: inherit; }
 
@@ -1158,15 +1158,6 @@ dt pre > span.Operator ~ span.Identifier, dt pre > span.Operator ~ span.Operator
   background-repeat: no-repeat;
   background-image: url("data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAUAAAAF////AP///wD///8A////AP///wD///8A////AP///wD///8A////AAAAAAIAAABbAAAAlQAAAKIAAACbAAAAmwAAAKIAAACVAAAAWwAAAAL///8A////AP///wD///8A////AAAAABQAAADAAAAAYwAAAA3///8A////AP///wD///8AAAAADQAAAGMAAADAAAAAFP///wD///8A////AP///wAAAACdAAAAOv///wD///8A////AP///wD///8A////AP///wD///8AAAAAOgAAAJ3///8A////AP///wAAAAAnAAAAcP///wAAAAAoAAAASv///wD///8A////AP///wAAAABKAAAAKP///wAAAABwAAAAJ////wD///8AAAAAgQAAABwAAACIAAAAkAAAAJMAAACtAAAAFQAAABUAAACtAAAAkwAAAJAAAACIAAAAHAAAAIH///8A////AAAAAKQAAACrAAAAaP///wD///8AAAAARQAAANIAAADSAAAARf///wD///8AAAAAaAAAAKsAAACk////AAAAADMAAACcAAAAnQAAABj///8A////AP///wAAAAAYAAAAGP///wD///8A////AAAAABgAAACdAAAAnAAAADMAAAB1AAAAwwAAAP8AAADpAAAAsQAAAE4AAAAb////AP///wAAAAAbAAAATgAAALEAAADpAAAA/wAAAMMAAAB1AAAAtwAAAOkAAAD/AAAA/wAAAP8AAADvAAAA3gAAAN4AAADeAAAA3gAAAO8AAAD/AAAA/wAAAP8AAADpAAAAtwAAAGUAAAA/AAAA3wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAADfAAAAPwAAAGX///8A////AAAAAEgAAADtAAAAvwAAAL0AAADGAAAA7wAAAO8AAADGAAAAvQAAAL8AAADtAAAASP///wD///8A////AP///wD///8AAAAAO////wD///8A////AAAAAIcAAACH////AP///wD///8AAAAAO////wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAP//AAD4HwAA7/cAAN/7AAD//wAAoYUAAJ55AACf+QAAh+EAAAAAAADAAwAA4AcAAP5/AAD//wAA//8AAA==");
   margin-bottom: -5px; }
-div.pragma {
-  display: none;
-}
-span.pragmabegin {
-  cursor: pointer;
-}
-span.pragmaend {
-  cursor: pointer;
-}
 
 div.search_results {
   background-color: antiquewhite;
@@ -1179,32 +1170,47 @@ div#global-links ul {
   margin-left: 0;
   list-style-type: none;
 }
-</style>
 
-<script type="text/javascript" src="../dochack.js"></script>
+span.pragmadots {
+  /* Position: relative frees us up to make the dots
+  look really nice without fucking up the layout and
+  causing bulging in the parent container */
+  position: relative;
+  /* 1px down looks slightly nicer */
+  top: 1px;
 
-<script type="text/javascript">
-function togglepragma(d) {
-  if (d.style.display != 'inline')
-    d.style.display = 'inline';
-  else
-    d.style.display = 'none';
+  padding: 2px;
+  background-color: #D3D3D3;
+  border-radius: 4px;
+  margin: 0 2px;
+  cursor: pointer;
+
+  /* For some reason on Chrome, making the font size
+  smaller than 1em is causing the parent container to
+  bulge slightly. So, we're stuck with inheriting 1em,
+  which is sad, because 0.8em looks better... */
+}
+span.pragmadots:hover {
+  background-color: #DBDBDB;
+}
+span.pragmawrap {
+  display: none;
 }
 
+</style>
+
+<script type="text/javascript" src="dochack.js"></script>
+
+<script type="text/javascript">
 function main() {
-  var elements = document.getElementsByClassName("pragmabegin");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.nextSibling);
-    };
-  }
-  var elements = document.getElementsByClassName("pragmaend");
-  for (var i = 0; i < elements.length; ++i) {
-    var e = elements[i];
-    e.onclick = function(event) {
-      togglepragma(event.target.previousSibling);
-    };
+  var pragmaDots = document.getElementsByClassName("pragmadots");
+  for (var i = 0; i < pragmaDots.length; i++) {
+    pragmaDots[i].onclick = function(event) {
+      // Hide tease
+      event.target.parentNode.style.display = "none";
+      // Show actual
+      event.target.parentNode.nextElementSibling.style.display = "inline";
+    }
   }
 }
 </script>
@@ -1213,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">Module wKeyCodes</h1>
+    <h1 class="title">wKeyCodes</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1226,19 +1232,1682 @@ function main() {
       </li>
     </ul>
   </div>
-  <div class="search-groupby">
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
-  
+  <ul class="simple simple-toc" id="toc-list">
+<li>
+  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wKey_None"
+    title="wKey_None = 0"><wbr />w<wbr />Key_<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LButton"
+    title="wKey_LButton = 0x00000001"><wbr />w<wbr />Key_<wbr />LButton<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RButton"
+    title="wKey_RButton = 0x00000002"><wbr />w<wbr />Key_<wbr />RButton<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Cancel"
+    title="wKey_Cancel = 0x00000003"><wbr />w<wbr />Key_<wbr />Cancel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_MButton"
+    title="wKey_MButton = 0x00000004"><wbr />w<wbr />Key_<wbr />MButton<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_XButton1"
+    title="wKey_XButton1 = 0x00000005"><wbr />w<wbr />Key_<wbr />XButton1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_XButton2"
+    title="wKey_XButton2 = 0x00000006"><wbr />w<wbr />Key_<wbr />XButton2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Back"
+    title="wKey_Back = 0x00000008"><wbr />w<wbr />Key_<wbr />Back<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Tab"
+    title="wKey_Tab = 0x00000009"><wbr />w<wbr />Key_<wbr />Tab<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Clear"
+    title="wKey_Clear = 0x0000000C"><wbr />w<wbr />Key_<wbr />Clear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Return"
+    title="wKey_Return = 0x0000000D"><wbr />w<wbr />Key_<wbr />Return<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Enter"
+    title="wKey_Enter = 0x0000000D"><wbr />w<wbr />Key_<wbr />Enter<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Shift"
+    title="wKey_Shift = 0x00000010"><wbr />w<wbr />Key_<wbr />Shift<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Control"
+    title="wKey_Control = 0x00000011"><wbr />w<wbr />Key_<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Ctrl"
+    title="wKey_Ctrl = 0x00000011"><wbr />w<wbr />Key_<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Menu"
+    title="wKey_Menu = 0x00000012"><wbr />w<wbr />Key_<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Alt"
+    title="wKey_Alt = 0x00000012"><wbr />w<wbr />Key_<wbr />Alt<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Pause"
+    title="wKey_Pause = 0x00000013"><wbr />w<wbr />Key_<wbr />Pause<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Capital"
+    title="wKey_Capital = 0x00000014"><wbr />w<wbr />Key_<wbr />Capital<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Kana"
+    title="wKey_Kana = 0x00000015"><wbr />w<wbr />Key_<wbr />Kana<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Hangeul"
+    title="wKey_Hangeul = 0x00000015"><wbr />w<wbr />Key_<wbr />Hangeul<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Hangul"
+    title="wKey_Hangul = 0x00000015"><wbr />w<wbr />Key_<wbr />Hangul<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Junja"
+    title="wKey_Junja = 0x00000017"><wbr />w<wbr />Key_<wbr />Junja<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Final"
+    title="wKey_Final = 0x00000018"><wbr />w<wbr />Key_<wbr />Final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Hanja"
+    title="wKey_Hanja = 0x00000019"><wbr />w<wbr />Key_<wbr />Hanja<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Kanji"
+    title="wKey_Kanji = 0x00000019"><wbr />w<wbr />Key_<wbr />Kanji<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Escape"
+    title="wKey_Escape = 0x0000001B"><wbr />w<wbr />Key_<wbr />Escape<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Esc"
+    title="wKey_Esc = 0x0000001B"><wbr />w<wbr />Key_<wbr />Esc<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Convert"
+    title="wKey_Convert = 0x0000001C"><wbr />w<wbr />Key_<wbr />Convert<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_NonConvert"
+    title="wKey_NonConvert = 0x0000001D"><wbr />w<wbr />Key_<wbr />Non<wbr />Convert<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Accept"
+    title="wKey_Accept = 0x0000001E"><wbr />w<wbr />Key_<wbr />Accept<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_ModeChange"
+    title="wKey_ModeChange = 0x0000001F"><wbr />w<wbr />Key_<wbr />Mode<wbr />Change<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Space"
+    title="wKey_Space = 0x00000020"><wbr />w<wbr />Key_<wbr />Space<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Prior"
+    title="wKey_Prior = 0x00000021"><wbr />w<wbr />Key_<wbr />Prior<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_PgUp"
+    title="wKey_PgUp = 0x00000021"><wbr />w<wbr />Key_<wbr />Pg<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Next"
+    title="wKey_Next = 0x00000022"><wbr />w<wbr />Key_<wbr />Next<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_PgDn"
+    title="wKey_PgDn = 0x00000022"><wbr />w<wbr />Key_<wbr />Pg<wbr />Dn<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_End"
+    title="wKey_End = 0x00000023"><wbr />w<wbr />Key_<wbr />End<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Home"
+    title="wKey_Home = 0x00000024"><wbr />w<wbr />Key_<wbr />Home<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Left"
+    title="wKey_Left = 0x00000025"><wbr />w<wbr />Key_<wbr />Left<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Up"
+    title="wKey_Up = 0x00000026"><wbr />w<wbr />Key_<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Right"
+    title="wKey_Right = 0x00000027"><wbr />w<wbr />Key_<wbr />Right<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Down"
+    title="wKey_Down = 0x00000028"><wbr />w<wbr />Key_<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Select"
+    title="wKey_Select = 0x00000029"><wbr />w<wbr />Key_<wbr />Select<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Print"
+    title="wKey_Print = 0x0000002A"><wbr />w<wbr />Key_<wbr />Print<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Execute"
+    title="wKey_Execute = 0x0000002B"><wbr />w<wbr />Key_<wbr />Execute<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Snapshot"
+    title="wKey_Snapshot = 0x0000002C"><wbr />w<wbr />Key_<wbr />Snapshot<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Insert"
+    title="wKey_Insert = 0x0000002D"><wbr />w<wbr />Key_<wbr />Insert<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Delete"
+    title="wKey_Delete = 0x0000002E"><wbr />w<wbr />Key_<wbr />Delete<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Help"
+    title="wKey_Help = 0x0000002F"><wbr />w<wbr />Key_<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LWin"
+    title="wKey_LWin = 0x0000005B"><wbr />w<wbr />Key_<wbr />LWin<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RWin"
+    title="wKey_RWin = 0x0000005C"><wbr />w<wbr />Key_<wbr />RWin<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Apps"
+    title="wKey_Apps = 0x0000005D"><wbr />w<wbr />Key_<wbr />Apps<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Sleep"
+    title="wKey_Sleep = 0x0000005F"><wbr />w<wbr />Key_<wbr />Sleep<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad0"
+    title="wKey_Numpad0 = 0x00000060"><wbr />w<wbr />Key_<wbr />Numpad0<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad1"
+    title="wKey_Numpad1 = 0x00000061"><wbr />w<wbr />Key_<wbr />Numpad1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad2"
+    title="wKey_Numpad2 = 0x00000062"><wbr />w<wbr />Key_<wbr />Numpad2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad3"
+    title="wKey_Numpad3 = 0x00000063"><wbr />w<wbr />Key_<wbr />Numpad3<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad4"
+    title="wKey_Numpad4 = 0x00000064"><wbr />w<wbr />Key_<wbr />Numpad4<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad5"
+    title="wKey_Numpad5 = 0x00000065"><wbr />w<wbr />Key_<wbr />Numpad5<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad6"
+    title="wKey_Numpad6 = 0x00000066"><wbr />w<wbr />Key_<wbr />Numpad6<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad7"
+    title="wKey_Numpad7 = 0x00000067"><wbr />w<wbr />Key_<wbr />Numpad7<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad8"
+    title="wKey_Numpad8 = 0x00000068"><wbr />w<wbr />Key_<wbr />Numpad8<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numpad9"
+    title="wKey_Numpad9 = 0x00000069"><wbr />w<wbr />Key_<wbr />Numpad9<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Multiply"
+    title="wKey_Multiply = 0x0000006A"><wbr />w<wbr />Key_<wbr />Multiply<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Add"
+    title="wKey_Add = 0x0000006B"><wbr />w<wbr />Key_<wbr />Add<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Separator"
+    title="wKey_Separator = 0x0000006C"><wbr />w<wbr />Key_<wbr />Separator<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Subtract"
+    title="wKey_Subtract = 0x0000006D"><wbr />w<wbr />Key_<wbr />Subtract<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Decimal"
+    title="wKey_Decimal = 0x0000006E"><wbr />w<wbr />Key_<wbr />Decimal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Divide"
+    title="wKey_Divide = 0x0000006F"><wbr />w<wbr />Key_<wbr />Divide<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F1"
+    title="wKey_F1 = 0x00000070"><wbr />w<wbr />Key_<wbr />F1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F2"
+    title="wKey_F2 = 0x00000071"><wbr />w<wbr />Key_<wbr />F2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F3"
+    title="wKey_F3 = 0x00000072"><wbr />w<wbr />Key_<wbr />F3<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F4"
+    title="wKey_F4 = 0x00000073"><wbr />w<wbr />Key_<wbr />F4<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F5"
+    title="wKey_F5 = 0x00000074"><wbr />w<wbr />Key_<wbr />F5<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F6"
+    title="wKey_F6 = 0x00000075"><wbr />w<wbr />Key_<wbr />F6<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F7"
+    title="wKey_F7 = 0x00000076"><wbr />w<wbr />Key_<wbr />F7<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F8"
+    title="wKey_F8 = 0x00000077"><wbr />w<wbr />Key_<wbr />F8<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F9"
+    title="wKey_F9 = 0x00000078"><wbr />w<wbr />Key_<wbr />F9<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F10"
+    title="wKey_F10 = 0x00000079"><wbr />w<wbr />Key_<wbr />F10<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F11"
+    title="wKey_F11 = 0x0000007A"><wbr />w<wbr />Key_<wbr />F11<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F12"
+    title="wKey_F12 = 0x0000007B"><wbr />w<wbr />Key_<wbr />F12<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F13"
+    title="wKey_F13 = 0x0000007C"><wbr />w<wbr />Key_<wbr />F13<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F14"
+    title="wKey_F14 = 0x0000007D"><wbr />w<wbr />Key_<wbr />F14<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F15"
+    title="wKey_F15 = 0x0000007E"><wbr />w<wbr />Key_<wbr />F15<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F16"
+    title="wKey_F16 = 0x0000007F"><wbr />w<wbr />Key_<wbr />F16<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F17"
+    title="wKey_F17 = 0x00000080"><wbr />w<wbr />Key_<wbr />F17<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F18"
+    title="wKey_F18 = 0x00000081"><wbr />w<wbr />Key_<wbr />F18<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F19"
+    title="wKey_F19 = 0x00000082"><wbr />w<wbr />Key_<wbr />F19<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F20"
+    title="wKey_F20 = 0x00000083"><wbr />w<wbr />Key_<wbr />F20<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F21"
+    title="wKey_F21 = 0x00000084"><wbr />w<wbr />Key_<wbr />F21<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F22"
+    title="wKey_F22 = 0x00000085"><wbr />w<wbr />Key_<wbr />F22<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F23"
+    title="wKey_F23 = 0x00000086"><wbr />w<wbr />Key_<wbr />F23<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F24"
+    title="wKey_F24 = 0x00000087"><wbr />w<wbr />Key_<wbr />F24<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Numlock"
+    title="wKey_Numlock = 0x00000090"><wbr />w<wbr />Key_<wbr />Numlock<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Scroll"
+    title="wKey_Scroll = 0x00000091"><wbr />w<wbr />Key_<wbr />Scroll<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemNecEqual"
+    title="wKey_OemNecEqual = 0x00000092"><wbr />w<wbr />Key_<wbr />Oem<wbr />Nec<wbr />Equal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFjJisho"
+    title="wKey_OemFjJisho = 0x00000092"><wbr />w<wbr />Key_<wbr />Oem<wbr />Fj<wbr />Jisho<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFjMasshou"
+    title="wKey_OemFjMasshou = 0x00000093"><wbr />w<wbr />Key_<wbr />Oem<wbr />Fj<wbr />Masshou<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFjTouroku"
+    title="wKey_OemFjTouroku = 0x00000094"><wbr />w<wbr />Key_<wbr />Oem<wbr />Fj<wbr />Touroku<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFjLoya"
+    title="wKey_OemFjLoya = 0x00000095"><wbr />w<wbr />Key_<wbr />Oem<wbr />Fj<wbr />Loya<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFjRoya"
+    title="wKey_OemFjRoya = 0x00000096"><wbr />w<wbr />Key_<wbr />Oem<wbr />Fj<wbr />Roya<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LShift"
+    title="wKey_LShift = 0x000000A0"><wbr />w<wbr />Key_<wbr />LShift<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RShift"
+    title="wKey_RShift = 0x000000A1"><wbr />w<wbr />Key_<wbr />RShift<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LControl"
+    title="wKey_LControl = 0x000000A2"><wbr />w<wbr />Key_<wbr />LControl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RControl"
+    title="wKey_RControl = 0x000000A3"><wbr />w<wbr />Key_<wbr />RControl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LMenu"
+    title="wKey_LMenu = 0x000000A4"><wbr />w<wbr />Key_<wbr />LMenu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RMenu"
+    title="wKey_RMenu = 0x000000A5"><wbr />w<wbr />Key_<wbr />RMenu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LCtrl"
+    title="wKey_LCtrl = 0x000000A2"><wbr />w<wbr />Key_<wbr />LCtrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RCtrl"
+    title="wKey_RCtrl = 0x000000A3"><wbr />w<wbr />Key_<wbr />RCtrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LAlt"
+    title="wKey_LAlt = 0x000000A4"><wbr />w<wbr />Key_<wbr />LAlt<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_RAlt"
+    title="wKey_RAlt = 0x000000A5"><wbr />w<wbr />Key_<wbr />RAlt<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserBack"
+    title="wKey_BrowserBack = 0x000000A6"><wbr />w<wbr />Key_<wbr />Browser<wbr />Back<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserForward"
+    title="wKey_BrowserForward = 0x000000A7"><wbr />w<wbr />Key_<wbr />Browser<wbr />Forward<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserRefresh"
+    title="wKey_BrowserRefresh = 0x000000A8"><wbr />w<wbr />Key_<wbr />Browser<wbr />Refresh<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserStop"
+    title="wKey_BrowserStop = 0x000000A9"><wbr />w<wbr />Key_<wbr />Browser<wbr />Stop<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserSearch"
+    title="wKey_BrowserSearch = 0x000000AA"><wbr />w<wbr />Key_<wbr />Browser<wbr />Search<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserFavorites"
+    title="wKey_BrowserFavorites = 0x000000AB"><wbr />w<wbr />Key_<wbr />Browser<wbr />Favorites<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_BrowserHome"
+    title="wKey_BrowserHome = 0x000000AC"><wbr />w<wbr />Key_<wbr />Browser<wbr />Home<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_VolumeMute"
+    title="wKey_VolumeMute = 0x000000AD"><wbr />w<wbr />Key_<wbr />Volume<wbr />Mute<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_VolumeDown"
+    title="wKey_VolumeDown = 0x000000AE"><wbr />w<wbr />Key_<wbr />Volume<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_VolumeUp"
+    title="wKey_VolumeUp = 0x000000AF"><wbr />w<wbr />Key_<wbr />Volume<wbr />Up<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_MediaNextTrack"
+    title="wKey_MediaNextTrack = 0x000000B0"><wbr />w<wbr />Key_<wbr />Media<wbr />Next<wbr />Track<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_MediaPrevTrack"
+    title="wKey_MediaPrevTrack = 0x000000B1"><wbr />w<wbr />Key_<wbr />Media<wbr />Prev<wbr />Track<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_MediaStop"
+    title="wKey_MediaStop = 0x000000B2"><wbr />w<wbr />Key_<wbr />Media<wbr />Stop<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_MediaPlayPause"
+    title="wKey_MediaPlayPause = 0x000000B3"><wbr />w<wbr />Key_<wbr />Media<wbr />Play<wbr />Pause<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LaunchMail"
+    title="wKey_LaunchMail = 0x000000B4"><wbr />w<wbr />Key_<wbr />Launch<wbr />Mail<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LaunchMediaSelect"
+    title="wKey_LaunchMediaSelect = 0x000000B5"><wbr />w<wbr />Key_<wbr />Launch<wbr />Media<wbr />Select<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LaunchApp1"
+    title="wKey_LaunchApp1 = 0x000000B6"><wbr />w<wbr />Key_<wbr />Launch<wbr />App1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_LaunchApp2"
+    title="wKey_LaunchApp2 = 0x000000B7"><wbr />w<wbr />Key_<wbr />Launch<wbr />App2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem1"
+    title="wKey_Oem1 = 0x000000BA"><wbr />w<wbr />Key_<wbr />Oem1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemPlus"
+    title="wKey_OemPlus = 0x000000BB"><wbr />w<wbr />Key_<wbr />Oem<wbr />Plus<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemComma"
+    title="wKey_OemComma = 0x000000BC"><wbr />w<wbr />Key_<wbr />Oem<wbr />Comma<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemMinus"
+    title="wKey_OemMinus = 0x000000BD"><wbr />w<wbr />Key_<wbr />Oem<wbr />Minus<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemPeriod"
+    title="wKey_OemPeriod = 0x000000BE"><wbr />w<wbr />Key_<wbr />Oem<wbr />Period<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem2"
+    title="wKey_Oem2 = 0x000000BF"><wbr />w<wbr />Key_<wbr />Oem2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem3"
+    title="wKey_Oem3 = 0x000000C0"><wbr />w<wbr />Key_<wbr />Oem3<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem4"
+    title="wKey_Oem4 = 0x000000DB"><wbr />w<wbr />Key_<wbr />Oem4<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem5"
+    title="wKey_Oem5 = 0x000000DC"><wbr />w<wbr />Key_<wbr />Oem5<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem6"
+    title="wKey_Oem6 = 0x000000DD"><wbr />w<wbr />Key_<wbr />Oem6<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem7"
+    title="wKey_Oem7 = 0x000000DE"><wbr />w<wbr />Key_<wbr />Oem7<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem8"
+    title="wKey_Oem8 = 0x000000DF"><wbr />w<wbr />Key_<wbr />Oem8<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemAx"
+    title="wKey_OemAx = 0x000000E1"><wbr />w<wbr />Key_<wbr />Oem<wbr />Ax<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Oem102"
+    title="wKey_Oem102 = 0x000000E2"><wbr />w<wbr />Key_<wbr />Oem102<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_IcoHelp"
+    title="wKey_IcoHelp = 0x000000E3"><wbr />w<wbr />Key_<wbr />Ico<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Ico00"
+    title="wKey_Ico00 = 0x000000E4"><wbr />w<wbr />Key_<wbr />Ico00<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_ProcessKey"
+    title="wKey_ProcessKey = 0x000000E5"><wbr />w<wbr />Key_<wbr />Process<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_IcoClear"
+    title="wKey_IcoClear = 0x000000E6"><wbr />w<wbr />Key_<wbr />Ico<wbr />Clear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Packet"
+    title="wKey_Packet = 0x000000E7"><wbr />w<wbr />Key_<wbr />Packet<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemReset"
+    title="wKey_OemReset = 0x000000E9"><wbr />w<wbr />Key_<wbr />Oem<wbr />Reset<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemJump"
+    title="wKey_OemJump = 0x000000EA"><wbr />w<wbr />Key_<wbr />Oem<wbr />Jump<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemPa1"
+    title="wKey_OemPa1 = 0x000000EB"><wbr />w<wbr />Key_<wbr />Oem<wbr />Pa1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemPa2"
+    title="wKey_OemPa2 = 0x000000EC"><wbr />w<wbr />Key_<wbr />Oem<wbr />Pa2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemPa3"
+    title="wKey_OemPa3 = 0x000000ED"><wbr />w<wbr />Key_<wbr />Oem<wbr />Pa3<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemWsctrl"
+    title="wKey_OemWsctrl = 0x000000EE"><wbr />w<wbr />Key_<wbr />Oem<wbr />Wsctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemCusel"
+    title="wKey_OemCusel = 0x000000EF"><wbr />w<wbr />Key_<wbr />Oem<wbr />Cusel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemAttn"
+    title="wKey_OemAttn = 0x000000F0"><wbr />w<wbr />Key_<wbr />Oem<wbr />Attn<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemFinish"
+    title="wKey_OemFinish = 0x000000F1"><wbr />w<wbr />Key_<wbr />Oem<wbr />Finish<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemCopy"
+    title="wKey_OemCopy = 0x000000F2"><wbr />w<wbr />Key_<wbr />Oem<wbr />Copy<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemAuto"
+    title="wKey_OemAuto = 0x000000F3"><wbr />w<wbr />Key_<wbr />Oem<wbr />Auto<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemEnlw"
+    title="wKey_OemEnlw = 0x000000F4"><wbr />w<wbr />Key_<wbr />Oem<wbr />Enlw<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemBacktab"
+    title="wKey_OemBacktab = 0x000000F5"><wbr />w<wbr />Key_<wbr />Oem<wbr />Backtab<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Attn"
+    title="wKey_Attn = 0x000000F6"><wbr />w<wbr />Key_<wbr />Attn<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Crsel"
+    title="wKey_Crsel = 0x000000F7"><wbr />w<wbr />Key_<wbr />Crsel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Exsel"
+    title="wKey_Exsel = 0x000000F8"><wbr />w<wbr />Key_<wbr />Exsel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Ereof"
+    title="wKey_Ereof = 0x000000F9"><wbr />w<wbr />Key_<wbr />Ereof<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Play"
+    title="wKey_Play = 0x000000FA"><wbr />w<wbr />Key_<wbr />Play<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Zoom"
+    title="wKey_Zoom = 0x000000FB"><wbr />w<wbr />Key_<wbr />Zoom<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Noname"
+    title="wKey_Noname = 0x000000FC"><wbr />w<wbr />Key_<wbr />Noname<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Pa1"
+    title="wKey_Pa1 = 0x000000FD"><wbr />w<wbr />Key_<wbr />Pa1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_OemClear"
+    title="wKey_OemClear = 0x000000FE"><wbr />w<wbr />Key_<wbr />Oem<wbr />Clear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_A"
+    title="wKey_A = 65"><wbr />w<wbr />Key_<wbr />A<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_B"
+    title="wKey_B = 66"><wbr />w<wbr />Key_<wbr />B<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_C"
+    title="wKey_C = 67"><wbr />w<wbr />Key_<wbr />C<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_D"
+    title="wKey_D = 68"><wbr />w<wbr />Key_<wbr />D<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_E"
+    title="wKey_E = 69"><wbr />w<wbr />Key_<wbr />E<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_F"
+    title="wKey_F = 70"><wbr />w<wbr />Key_<wbr />F<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_G"
+    title="wKey_G = 71"><wbr />w<wbr />Key_<wbr />G<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_H"
+    title="wKey_H = 72"><wbr />w<wbr />Key_<wbr />H<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_I"
+    title="wKey_I = 73"><wbr />w<wbr />Key_<wbr />I<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_J"
+    title="wKey_J = 74"><wbr />w<wbr />Key_<wbr />J<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_K"
+    title="wKey_K = 75"><wbr />w<wbr />Key_<wbr />K<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_L"
+    title="wKey_L = 76"><wbr />w<wbr />Key_<wbr />L<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_M"
+    title="wKey_M = 77"><wbr />w<wbr />Key_<wbr />M<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_N"
+    title="wKey_N = 78"><wbr />w<wbr />Key_<wbr />N<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_O"
+    title="wKey_O = 79"><wbr />w<wbr />Key_<wbr />O<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_P"
+    title="wKey_P = 80"><wbr />w<wbr />Key_<wbr />P<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Q"
+    title="wKey_Q = 81"><wbr />w<wbr />Key_<wbr />Q<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_R"
+    title="wKey_R = 82"><wbr />w<wbr />Key_<wbr />R<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_S"
+    title="wKey_S = 83"><wbr />w<wbr />Key_<wbr />S<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_T"
+    title="wKey_T = 84"><wbr />w<wbr />Key_<wbr />T<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_U"
+    title="wKey_U = 85"><wbr />w<wbr />Key_<wbr />U<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_V"
+    title="wKey_V = 86"><wbr />w<wbr />Key_<wbr />V<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_W"
+    title="wKey_W = 87"><wbr />w<wbr />Key_<wbr />W<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_X"
+    title="wKey_X = 88"><wbr />w<wbr />Key_<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Y"
+    title="wKey_Y = 89"><wbr />w<wbr />Key_<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_Z"
+    title="wKey_Z = 90"><wbr />w<wbr />Key_<wbr />Z<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_0"
+    title="wKey_0 = 48"><wbr />w<wbr />Key_<wbr />0<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_1"
+    title="wKey_1 = 49"><wbr />w<wbr />Key_<wbr />1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_2"
+    title="wKey_2 = 50"><wbr />w<wbr />Key_<wbr />2<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_3"
+    title="wKey_3 = 51"><wbr />w<wbr />Key_<wbr />3<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_4"
+    title="wKey_4 = 52"><wbr />w<wbr />Key_<wbr />4<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_5"
+    title="wKey_5 = 53"><wbr />w<wbr />Key_<wbr />5<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_6"
+    title="wKey_6 = 54"><wbr />w<wbr />Key_<wbr />6<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_7"
+    title="wKey_7 = 55"><wbr />w<wbr />Key_<wbr />7<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_8"
+    title="wKey_8 = 56"><wbr />w<wbr />Key_<wbr />8<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKey_9"
+    title="wKey_9 = 57"><wbr />w<wbr />Key_<wbr />9<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+
+</ul>
+
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   <p class="module-desc">The key-code used in wNim functions. These constants are in fact Windows' virtual-key codes.</p>
-  
+  <div class="section" id="10">
+<h1><a class="toc-backref" href="#10">Consts</a></h1>
+<dl class="item">
+<a id="wKey_None"></a>
+<dt><pre><span class="Identifier">wKey_None</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LButton"></a>
+<dt><pre><span class="Identifier">wKey_LButton</span> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RButton"></a>
+<dt><pre><span class="Identifier">wKey_RButton</span> <span class="Other">=</span> <span class="DecNumber">0x00000002</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Cancel"></a>
+<dt><pre><span class="Identifier">wKey_Cancel</span> <span class="Other">=</span> <span class="DecNumber">0x00000003</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_MButton"></a>
+<dt><pre><span class="Identifier">wKey_MButton</span> <span class="Other">=</span> <span class="DecNumber">0x00000004</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_XButton1"></a>
+<dt><pre><span class="Identifier">wKey_XButton1</span> <span class="Other">=</span> <span class="DecNumber">0x00000005</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_XButton2"></a>
+<dt><pre><span class="Identifier">wKey_XButton2</span> <span class="Other">=</span> <span class="DecNumber">0x00000006</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Back"></a>
+<dt><pre><span class="Identifier">wKey_Back</span> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Tab"></a>
+<dt><pre><span class="Identifier">wKey_Tab</span> <span class="Other">=</span> <span class="DecNumber">0x00000009</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Clear"></a>
+<dt><pre><span class="Identifier">wKey_Clear</span> <span class="Other">=</span> <span class="DecNumber">0x0000000C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Return"></a>
+<dt><pre><span class="Identifier">wKey_Return</span> <span class="Other">=</span> <span class="DecNumber">0x0000000D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Enter"></a>
+<dt><pre><span class="Identifier">wKey_Enter</span> <span class="Other">=</span> <span class="DecNumber">0x0000000D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Shift"></a>
+<dt><pre><span class="Identifier">wKey_Shift</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Control"></a>
+<dt><pre><span class="Identifier">wKey_Control</span> <span class="Other">=</span> <span class="DecNumber">0x00000011</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Ctrl"></a>
+<dt><pre><span class="Identifier">wKey_Ctrl</span> <span class="Other">=</span> <span class="DecNumber">0x00000011</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Menu"></a>
+<dt><pre><span class="Identifier">wKey_Menu</span> <span class="Other">=</span> <span class="DecNumber">0x00000012</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Alt"></a>
+<dt><pre><span class="Identifier">wKey_Alt</span> <span class="Other">=</span> <span class="DecNumber">0x00000012</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Pause"></a>
+<dt><pre><span class="Identifier">wKey_Pause</span> <span class="Other">=</span> <span class="DecNumber">0x00000013</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Capital"></a>
+<dt><pre><span class="Identifier">wKey_Capital</span> <span class="Other">=</span> <span class="DecNumber">0x00000014</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Kana"></a>
+<dt><pre><span class="Identifier">wKey_Kana</span> <span class="Other">=</span> <span class="DecNumber">0x00000015</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Hangeul"></a>
+<dt><pre><span class="Identifier">wKey_Hangeul</span> <span class="Other">=</span> <span class="DecNumber">0x00000015</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Hangul"></a>
+<dt><pre><span class="Identifier">wKey_Hangul</span> <span class="Other">=</span> <span class="DecNumber">0x00000015</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Junja"></a>
+<dt><pre><span class="Identifier">wKey_Junja</span> <span class="Other">=</span> <span class="DecNumber">0x00000017</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Final"></a>
+<dt><pre><span class="Identifier">wKey_Final</span> <span class="Other">=</span> <span class="DecNumber">0x00000018</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Hanja"></a>
+<dt><pre><span class="Identifier">wKey_Hanja</span> <span class="Other">=</span> <span class="DecNumber">0x00000019</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Kanji"></a>
+<dt><pre><span class="Identifier">wKey_Kanji</span> <span class="Other">=</span> <span class="DecNumber">0x00000019</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Escape"></a>
+<dt><pre><span class="Identifier">wKey_Escape</span> <span class="Other">=</span> <span class="DecNumber">0x0000001B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Esc"></a>
+<dt><pre><span class="Identifier">wKey_Esc</span> <span class="Other">=</span> <span class="DecNumber">0x0000001B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Convert"></a>
+<dt><pre><span class="Identifier">wKey_Convert</span> <span class="Other">=</span> <span class="DecNumber">0x0000001C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_NonConvert"></a>
+<dt><pre><span class="Identifier">wKey_NonConvert</span> <span class="Other">=</span> <span class="DecNumber">0x0000001D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Accept"></a>
+<dt><pre><span class="Identifier">wKey_Accept</span> <span class="Other">=</span> <span class="DecNumber">0x0000001E</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_ModeChange"></a>
+<dt><pre><span class="Identifier">wKey_ModeChange</span> <span class="Other">=</span> <span class="DecNumber">0x0000001F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Space"></a>
+<dt><pre><span class="Identifier">wKey_Space</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Prior"></a>
+<dt><pre><span class="Identifier">wKey_Prior</span> <span class="Other">=</span> <span class="DecNumber">0x00000021</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_PgUp"></a>
+<dt><pre><span class="Identifier">wKey_PgUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000021</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Next"></a>
+<dt><pre><span class="Identifier">wKey_Next</span> <span class="Other">=</span> <span class="DecNumber">0x00000022</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_PgDn"></a>
+<dt><pre><span class="Identifier">wKey_PgDn</span> <span class="Other">=</span> <span class="DecNumber">0x00000022</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_End"></a>
+<dt><pre><span class="Identifier">wKey_End</span> <span class="Other">=</span> <span class="DecNumber">0x00000023</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Home"></a>
+<dt><pre><span class="Identifier">wKey_Home</span> <span class="Other">=</span> <span class="DecNumber">0x00000024</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Left"></a>
+<dt><pre><span class="Identifier">wKey_Left</span> <span class="Other">=</span> <span class="DecNumber">0x00000025</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Up"></a>
+<dt><pre><span class="Identifier">wKey_Up</span> <span class="Other">=</span> <span class="DecNumber">0x00000026</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Right"></a>
+<dt><pre><span class="Identifier">wKey_Right</span> <span class="Other">=</span> <span class="DecNumber">0x00000027</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Down"></a>
+<dt><pre><span class="Identifier">wKey_Down</span> <span class="Other">=</span> <span class="DecNumber">0x00000028</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Select"></a>
+<dt><pre><span class="Identifier">wKey_Select</span> <span class="Other">=</span> <span class="DecNumber">0x00000029</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Print"></a>
+<dt><pre><span class="Identifier">wKey_Print</span> <span class="Other">=</span> <span class="DecNumber">0x0000002A</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Execute"></a>
+<dt><pre><span class="Identifier">wKey_Execute</span> <span class="Other">=</span> <span class="DecNumber">0x0000002B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Snapshot"></a>
+<dt><pre><span class="Identifier">wKey_Snapshot</span> <span class="Other">=</span> <span class="DecNumber">0x0000002C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Insert"></a>
+<dt><pre><span class="Identifier">wKey_Insert</span> <span class="Other">=</span> <span class="DecNumber">0x0000002D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Delete"></a>
+<dt><pre><span class="Identifier">wKey_Delete</span> <span class="Other">=</span> <span class="DecNumber">0x0000002E</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Help"></a>
+<dt><pre><span class="Identifier">wKey_Help</span> <span class="Other">=</span> <span class="DecNumber">0x0000002F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LWin"></a>
+<dt><pre><span class="Identifier">wKey_LWin</span> <span class="Other">=</span> <span class="DecNumber">0x0000005B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RWin"></a>
+<dt><pre><span class="Identifier">wKey_RWin</span> <span class="Other">=</span> <span class="DecNumber">0x0000005C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Apps"></a>
+<dt><pre><span class="Identifier">wKey_Apps</span> <span class="Other">=</span> <span class="DecNumber">0x0000005D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Sleep"></a>
+<dt><pre><span class="Identifier">wKey_Sleep</span> <span class="Other">=</span> <span class="DecNumber">0x0000005F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad0"></a>
+<dt><pre><span class="Identifier">wKey_Numpad0</span> <span class="Other">=</span> <span class="DecNumber">0x00000060</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad1"></a>
+<dt><pre><span class="Identifier">wKey_Numpad1</span> <span class="Other">=</span> <span class="DecNumber">0x00000061</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad2"></a>
+<dt><pre><span class="Identifier">wKey_Numpad2</span> <span class="Other">=</span> <span class="DecNumber">0x00000062</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad3"></a>
+<dt><pre><span class="Identifier">wKey_Numpad3</span> <span class="Other">=</span> <span class="DecNumber">0x00000063</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad4"></a>
+<dt><pre><span class="Identifier">wKey_Numpad4</span> <span class="Other">=</span> <span class="DecNumber">0x00000064</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad5"></a>
+<dt><pre><span class="Identifier">wKey_Numpad5</span> <span class="Other">=</span> <span class="DecNumber">0x00000065</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad6"></a>
+<dt><pre><span class="Identifier">wKey_Numpad6</span> <span class="Other">=</span> <span class="DecNumber">0x00000066</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad7"></a>
+<dt><pre><span class="Identifier">wKey_Numpad7</span> <span class="Other">=</span> <span class="DecNumber">0x00000067</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad8"></a>
+<dt><pre><span class="Identifier">wKey_Numpad8</span> <span class="Other">=</span> <span class="DecNumber">0x00000068</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numpad9"></a>
+<dt><pre><span class="Identifier">wKey_Numpad9</span> <span class="Other">=</span> <span class="DecNumber">0x00000069</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Multiply"></a>
+<dt><pre><span class="Identifier">wKey_Multiply</span> <span class="Other">=</span> <span class="DecNumber">0x0000006A</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Add"></a>
+<dt><pre><span class="Identifier">wKey_Add</span> <span class="Other">=</span> <span class="DecNumber">0x0000006B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Separator"></a>
+<dt><pre><span class="Identifier">wKey_Separator</span> <span class="Other">=</span> <span class="DecNumber">0x0000006C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Subtract"></a>
+<dt><pre><span class="Identifier">wKey_Subtract</span> <span class="Other">=</span> <span class="DecNumber">0x0000006D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Decimal"></a>
+<dt><pre><span class="Identifier">wKey_Decimal</span> <span class="Other">=</span> <span class="DecNumber">0x0000006E</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Divide"></a>
+<dt><pre><span class="Identifier">wKey_Divide</span> <span class="Other">=</span> <span class="DecNumber">0x0000006F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F1"></a>
+<dt><pre><span class="Identifier">wKey_F1</span> <span class="Other">=</span> <span class="DecNumber">0x00000070</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F2"></a>
+<dt><pre><span class="Identifier">wKey_F2</span> <span class="Other">=</span> <span class="DecNumber">0x00000071</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F3"></a>
+<dt><pre><span class="Identifier">wKey_F3</span> <span class="Other">=</span> <span class="DecNumber">0x00000072</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F4"></a>
+<dt><pre><span class="Identifier">wKey_F4</span> <span class="Other">=</span> <span class="DecNumber">0x00000073</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F5"></a>
+<dt><pre><span class="Identifier">wKey_F5</span> <span class="Other">=</span> <span class="DecNumber">0x00000074</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F6"></a>
+<dt><pre><span class="Identifier">wKey_F6</span> <span class="Other">=</span> <span class="DecNumber">0x00000075</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F7"></a>
+<dt><pre><span class="Identifier">wKey_F7</span> <span class="Other">=</span> <span class="DecNumber">0x00000076</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F8"></a>
+<dt><pre><span class="Identifier">wKey_F8</span> <span class="Other">=</span> <span class="DecNumber">0x00000077</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F9"></a>
+<dt><pre><span class="Identifier">wKey_F9</span> <span class="Other">=</span> <span class="DecNumber">0x00000078</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F10"></a>
+<dt><pre><span class="Identifier">wKey_F10</span> <span class="Other">=</span> <span class="DecNumber">0x00000079</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F11"></a>
+<dt><pre><span class="Identifier">wKey_F11</span> <span class="Other">=</span> <span class="DecNumber">0x0000007A</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F12"></a>
+<dt><pre><span class="Identifier">wKey_F12</span> <span class="Other">=</span> <span class="DecNumber">0x0000007B</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F13"></a>
+<dt><pre><span class="Identifier">wKey_F13</span> <span class="Other">=</span> <span class="DecNumber">0x0000007C</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F14"></a>
+<dt><pre><span class="Identifier">wKey_F14</span> <span class="Other">=</span> <span class="DecNumber">0x0000007D</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F15"></a>
+<dt><pre><span class="Identifier">wKey_F15</span> <span class="Other">=</span> <span class="DecNumber">0x0000007E</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F16"></a>
+<dt><pre><span class="Identifier">wKey_F16</span> <span class="Other">=</span> <span class="DecNumber">0x0000007F</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F17"></a>
+<dt><pre><span class="Identifier">wKey_F17</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F18"></a>
+<dt><pre><span class="Identifier">wKey_F18</span> <span class="Other">=</span> <span class="DecNumber">0x00000081</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F19"></a>
+<dt><pre><span class="Identifier">wKey_F19</span> <span class="Other">=</span> <span class="DecNumber">0x00000082</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F20"></a>
+<dt><pre><span class="Identifier">wKey_F20</span> <span class="Other">=</span> <span class="DecNumber">0x00000083</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F21"></a>
+<dt><pre><span class="Identifier">wKey_F21</span> <span class="Other">=</span> <span class="DecNumber">0x00000084</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F22"></a>
+<dt><pre><span class="Identifier">wKey_F22</span> <span class="Other">=</span> <span class="DecNumber">0x00000085</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F23"></a>
+<dt><pre><span class="Identifier">wKey_F23</span> <span class="Other">=</span> <span class="DecNumber">0x00000086</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F24"></a>
+<dt><pre><span class="Identifier">wKey_F24</span> <span class="Other">=</span> <span class="DecNumber">0x00000087</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Numlock"></a>
+<dt><pre><span class="Identifier">wKey_Numlock</span> <span class="Other">=</span> <span class="DecNumber">0x00000090</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Scroll"></a>
+<dt><pre><span class="Identifier">wKey_Scroll</span> <span class="Other">=</span> <span class="DecNumber">0x00000091</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemNecEqual"></a>
+<dt><pre><span class="Identifier">wKey_OemNecEqual</span> <span class="Other">=</span> <span class="DecNumber">0x00000092</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFjJisho"></a>
+<dt><pre><span class="Identifier">wKey_OemFjJisho</span> <span class="Other">=</span> <span class="DecNumber">0x00000092</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFjMasshou"></a>
+<dt><pre><span class="Identifier">wKey_OemFjMasshou</span> <span class="Other">=</span> <span class="DecNumber">0x00000093</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFjTouroku"></a>
+<dt><pre><span class="Identifier">wKey_OemFjTouroku</span> <span class="Other">=</span> <span class="DecNumber">0x00000094</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFjLoya"></a>
+<dt><pre><span class="Identifier">wKey_OemFjLoya</span> <span class="Other">=</span> <span class="DecNumber">0x00000095</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFjRoya"></a>
+<dt><pre><span class="Identifier">wKey_OemFjRoya</span> <span class="Other">=</span> <span class="DecNumber">0x00000096</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LShift"></a>
+<dt><pre><span class="Identifier">wKey_LShift</span> <span class="Other">=</span> <span class="DecNumber">0x000000A0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RShift"></a>
+<dt><pre><span class="Identifier">wKey_RShift</span> <span class="Other">=</span> <span class="DecNumber">0x000000A1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LControl"></a>
+<dt><pre><span class="Identifier">wKey_LControl</span> <span class="Other">=</span> <span class="DecNumber">0x000000A2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RControl"></a>
+<dt><pre><span class="Identifier">wKey_RControl</span> <span class="Other">=</span> <span class="DecNumber">0x000000A3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LMenu"></a>
+<dt><pre><span class="Identifier">wKey_LMenu</span> <span class="Other">=</span> <span class="DecNumber">0x000000A4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RMenu"></a>
+<dt><pre><span class="Identifier">wKey_RMenu</span> <span class="Other">=</span> <span class="DecNumber">0x000000A5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LCtrl"></a>
+<dt><pre><span class="Identifier">wKey_LCtrl</span> <span class="Other">=</span> <span class="DecNumber">0x000000A2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RCtrl"></a>
+<dt><pre><span class="Identifier">wKey_RCtrl</span> <span class="Other">=</span> <span class="DecNumber">0x000000A3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LAlt"></a>
+<dt><pre><span class="Identifier">wKey_LAlt</span> <span class="Other">=</span> <span class="DecNumber">0x000000A4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_RAlt"></a>
+<dt><pre><span class="Identifier">wKey_RAlt</span> <span class="Other">=</span> <span class="DecNumber">0x000000A5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserBack"></a>
+<dt><pre><span class="Identifier">wKey_BrowserBack</span> <span class="Other">=</span> <span class="DecNumber">0x000000A6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserForward"></a>
+<dt><pre><span class="Identifier">wKey_BrowserForward</span> <span class="Other">=</span> <span class="DecNumber">0x000000A7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserRefresh"></a>
+<dt><pre><span class="Identifier">wKey_BrowserRefresh</span> <span class="Other">=</span> <span class="DecNumber">0x000000A8</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserStop"></a>
+<dt><pre><span class="Identifier">wKey_BrowserStop</span> <span class="Other">=</span> <span class="DecNumber">0x000000A9</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserSearch"></a>
+<dt><pre><span class="Identifier">wKey_BrowserSearch</span> <span class="Other">=</span> <span class="DecNumber">0x000000AA</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserFavorites"></a>
+<dt><pre><span class="Identifier">wKey_BrowserFavorites</span> <span class="Other">=</span> <span class="DecNumber">0x000000AB</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_BrowserHome"></a>
+<dt><pre><span class="Identifier">wKey_BrowserHome</span> <span class="Other">=</span> <span class="DecNumber">0x000000AC</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_VolumeMute"></a>
+<dt><pre><span class="Identifier">wKey_VolumeMute</span> <span class="Other">=</span> <span class="DecNumber">0x000000AD</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_VolumeDown"></a>
+<dt><pre><span class="Identifier">wKey_VolumeDown</span> <span class="Other">=</span> <span class="DecNumber">0x000000AE</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_VolumeUp"></a>
+<dt><pre><span class="Identifier">wKey_VolumeUp</span> <span class="Other">=</span> <span class="DecNumber">0x000000AF</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_MediaNextTrack"></a>
+<dt><pre><span class="Identifier">wKey_MediaNextTrack</span> <span class="Other">=</span> <span class="DecNumber">0x000000B0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_MediaPrevTrack"></a>
+<dt><pre><span class="Identifier">wKey_MediaPrevTrack</span> <span class="Other">=</span> <span class="DecNumber">0x000000B1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_MediaStop"></a>
+<dt><pre><span class="Identifier">wKey_MediaStop</span> <span class="Other">=</span> <span class="DecNumber">0x000000B2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_MediaPlayPause"></a>
+<dt><pre><span class="Identifier">wKey_MediaPlayPause</span> <span class="Other">=</span> <span class="DecNumber">0x000000B3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LaunchMail"></a>
+<dt><pre><span class="Identifier">wKey_LaunchMail</span> <span class="Other">=</span> <span class="DecNumber">0x000000B4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LaunchMediaSelect"></a>
+<dt><pre><span class="Identifier">wKey_LaunchMediaSelect</span> <span class="Other">=</span> <span class="DecNumber">0x000000B5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LaunchApp1"></a>
+<dt><pre><span class="Identifier">wKey_LaunchApp1</span> <span class="Other">=</span> <span class="DecNumber">0x000000B6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_LaunchApp2"></a>
+<dt><pre><span class="Identifier">wKey_LaunchApp2</span> <span class="Other">=</span> <span class="DecNumber">0x000000B7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem1"></a>
+<dt><pre><span class="Identifier">wKey_Oem1</span> <span class="Other">=</span> <span class="DecNumber">0x000000BA</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemPlus"></a>
+<dt><pre><span class="Identifier">wKey_OemPlus</span> <span class="Other">=</span> <span class="DecNumber">0x000000BB</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemComma"></a>
+<dt><pre><span class="Identifier">wKey_OemComma</span> <span class="Other">=</span> <span class="DecNumber">0x000000BC</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemMinus"></a>
+<dt><pre><span class="Identifier">wKey_OemMinus</span> <span class="Other">=</span> <span class="DecNumber">0x000000BD</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemPeriod"></a>
+<dt><pre><span class="Identifier">wKey_OemPeriod</span> <span class="Other">=</span> <span class="DecNumber">0x000000BE</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem2"></a>
+<dt><pre><span class="Identifier">wKey_Oem2</span> <span class="Other">=</span> <span class="DecNumber">0x000000BF</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem3"></a>
+<dt><pre><span class="Identifier">wKey_Oem3</span> <span class="Other">=</span> <span class="DecNumber">0x000000C0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem4"></a>
+<dt><pre><span class="Identifier">wKey_Oem4</span> <span class="Other">=</span> <span class="DecNumber">0x000000DB</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem5"></a>
+<dt><pre><span class="Identifier">wKey_Oem5</span> <span class="Other">=</span> <span class="DecNumber">0x000000DC</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem6"></a>
+<dt><pre><span class="Identifier">wKey_Oem6</span> <span class="Other">=</span> <span class="DecNumber">0x000000DD</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem7"></a>
+<dt><pre><span class="Identifier">wKey_Oem7</span> <span class="Other">=</span> <span class="DecNumber">0x000000DE</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem8"></a>
+<dt><pre><span class="Identifier">wKey_Oem8</span> <span class="Other">=</span> <span class="DecNumber">0x000000DF</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemAx"></a>
+<dt><pre><span class="Identifier">wKey_OemAx</span> <span class="Other">=</span> <span class="DecNumber">0x000000E1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Oem102"></a>
+<dt><pre><span class="Identifier">wKey_Oem102</span> <span class="Other">=</span> <span class="DecNumber">0x000000E2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_IcoHelp"></a>
+<dt><pre><span class="Identifier">wKey_IcoHelp</span> <span class="Other">=</span> <span class="DecNumber">0x000000E3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Ico00"></a>
+<dt><pre><span class="Identifier">wKey_Ico00</span> <span class="Other">=</span> <span class="DecNumber">0x000000E4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_ProcessKey"></a>
+<dt><pre><span class="Identifier">wKey_ProcessKey</span> <span class="Other">=</span> <span class="DecNumber">0x000000E5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_IcoClear"></a>
+<dt><pre><span class="Identifier">wKey_IcoClear</span> <span class="Other">=</span> <span class="DecNumber">0x000000E6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Packet"></a>
+<dt><pre><span class="Identifier">wKey_Packet</span> <span class="Other">=</span> <span class="DecNumber">0x000000E7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemReset"></a>
+<dt><pre><span class="Identifier">wKey_OemReset</span> <span class="Other">=</span> <span class="DecNumber">0x000000E9</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemJump"></a>
+<dt><pre><span class="Identifier">wKey_OemJump</span> <span class="Other">=</span> <span class="DecNumber">0x000000EA</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemPa1"></a>
+<dt><pre><span class="Identifier">wKey_OemPa1</span> <span class="Other">=</span> <span class="DecNumber">0x000000EB</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemPa2"></a>
+<dt><pre><span class="Identifier">wKey_OemPa2</span> <span class="Other">=</span> <span class="DecNumber">0x000000EC</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemPa3"></a>
+<dt><pre><span class="Identifier">wKey_OemPa3</span> <span class="Other">=</span> <span class="DecNumber">0x000000ED</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemWsctrl"></a>
+<dt><pre><span class="Identifier">wKey_OemWsctrl</span> <span class="Other">=</span> <span class="DecNumber">0x000000EE</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemCusel"></a>
+<dt><pre><span class="Identifier">wKey_OemCusel</span> <span class="Other">=</span> <span class="DecNumber">0x000000EF</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemAttn"></a>
+<dt><pre><span class="Identifier">wKey_OemAttn</span> <span class="Other">=</span> <span class="DecNumber">0x000000F0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemFinish"></a>
+<dt><pre><span class="Identifier">wKey_OemFinish</span> <span class="Other">=</span> <span class="DecNumber">0x000000F1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemCopy"></a>
+<dt><pre><span class="Identifier">wKey_OemCopy</span> <span class="Other">=</span> <span class="DecNumber">0x000000F2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemAuto"></a>
+<dt><pre><span class="Identifier">wKey_OemAuto</span> <span class="Other">=</span> <span class="DecNumber">0x000000F3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemEnlw"></a>
+<dt><pre><span class="Identifier">wKey_OemEnlw</span> <span class="Other">=</span> <span class="DecNumber">0x000000F4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemBacktab"></a>
+<dt><pre><span class="Identifier">wKey_OemBacktab</span> <span class="Other">=</span> <span class="DecNumber">0x000000F5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Attn"></a>
+<dt><pre><span class="Identifier">wKey_Attn</span> <span class="Other">=</span> <span class="DecNumber">0x000000F6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Crsel"></a>
+<dt><pre><span class="Identifier">wKey_Crsel</span> <span class="Other">=</span> <span class="DecNumber">0x000000F7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Exsel"></a>
+<dt><pre><span class="Identifier">wKey_Exsel</span> <span class="Other">=</span> <span class="DecNumber">0x000000F8</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Ereof"></a>
+<dt><pre><span class="Identifier">wKey_Ereof</span> <span class="Other">=</span> <span class="DecNumber">0x000000F9</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Play"></a>
+<dt><pre><span class="Identifier">wKey_Play</span> <span class="Other">=</span> <span class="DecNumber">0x000000FA</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Zoom"></a>
+<dt><pre><span class="Identifier">wKey_Zoom</span> <span class="Other">=</span> <span class="DecNumber">0x000000FB</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Noname"></a>
+<dt><pre><span class="Identifier">wKey_Noname</span> <span class="Other">=</span> <span class="DecNumber">0x000000FC</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Pa1"></a>
+<dt><pre><span class="Identifier">wKey_Pa1</span> <span class="Other">=</span> <span class="DecNumber">0x000000FD</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_OemClear"></a>
+<dt><pre><span class="Identifier">wKey_OemClear</span> <span class="Other">=</span> <span class="DecNumber">0x000000FE</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_A"></a>
+<dt><pre><span class="Identifier">wKey_A</span> <span class="Other">=</span> <span class="DecNumber">65</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_B"></a>
+<dt><pre><span class="Identifier">wKey_B</span> <span class="Other">=</span> <span class="DecNumber">66</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_C"></a>
+<dt><pre><span class="Identifier">wKey_C</span> <span class="Other">=</span> <span class="DecNumber">67</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_D"></a>
+<dt><pre><span class="Identifier">wKey_D</span> <span class="Other">=</span> <span class="DecNumber">68</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_E"></a>
+<dt><pre><span class="Identifier">wKey_E</span> <span class="Other">=</span> <span class="DecNumber">69</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_F"></a>
+<dt><pre><span class="Identifier">wKey_F</span> <span class="Other">=</span> <span class="DecNumber">70</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_G"></a>
+<dt><pre><span class="Identifier">wKey_G</span> <span class="Other">=</span> <span class="DecNumber">71</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_H"></a>
+<dt><pre><span class="Identifier">wKey_H</span> <span class="Other">=</span> <span class="DecNumber">72</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_I"></a>
+<dt><pre><span class="Identifier">wKey_I</span> <span class="Other">=</span> <span class="DecNumber">73</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_J"></a>
+<dt><pre><span class="Identifier">wKey_J</span> <span class="Other">=</span> <span class="DecNumber">74</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_K"></a>
+<dt><pre><span class="Identifier">wKey_K</span> <span class="Other">=</span> <span class="DecNumber">75</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_L"></a>
+<dt><pre><span class="Identifier">wKey_L</span> <span class="Other">=</span> <span class="DecNumber">76</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_M"></a>
+<dt><pre><span class="Identifier">wKey_M</span> <span class="Other">=</span> <span class="DecNumber">77</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_N"></a>
+<dt><pre><span class="Identifier">wKey_N</span> <span class="Other">=</span> <span class="DecNumber">78</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_O"></a>
+<dt><pre><span class="Identifier">wKey_O</span> <span class="Other">=</span> <span class="DecNumber">79</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_P"></a>
+<dt><pre><span class="Identifier">wKey_P</span> <span class="Other">=</span> <span class="DecNumber">80</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Q"></a>
+<dt><pre><span class="Identifier">wKey_Q</span> <span class="Other">=</span> <span class="DecNumber">81</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_R"></a>
+<dt><pre><span class="Identifier">wKey_R</span> <span class="Other">=</span> <span class="DecNumber">82</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_S"></a>
+<dt><pre><span class="Identifier">wKey_S</span> <span class="Other">=</span> <span class="DecNumber">83</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_T"></a>
+<dt><pre><span class="Identifier">wKey_T</span> <span class="Other">=</span> <span class="DecNumber">84</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_U"></a>
+<dt><pre><span class="Identifier">wKey_U</span> <span class="Other">=</span> <span class="DecNumber">85</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_V"></a>
+<dt><pre><span class="Identifier">wKey_V</span> <span class="Other">=</span> <span class="DecNumber">86</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_W"></a>
+<dt><pre><span class="Identifier">wKey_W</span> <span class="Other">=</span> <span class="DecNumber">87</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_X"></a>
+<dt><pre><span class="Identifier">wKey_X</span> <span class="Other">=</span> <span class="DecNumber">88</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Y"></a>
+<dt><pre><span class="Identifier">wKey_Y</span> <span class="Other">=</span> <span class="DecNumber">89</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_Z"></a>
+<dt><pre><span class="Identifier">wKey_Z</span> <span class="Other">=</span> <span class="DecNumber">90</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_0"></a>
+<dt><pre><span class="Identifier">wKey_0</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_1"></a>
+<dt><pre><span class="Identifier">wKey_1</span> <span class="Other">=</span> <span class="DecNumber">49</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_2"></a>
+<dt><pre><span class="Identifier">wKey_2</span> <span class="Other">=</span> <span class="DecNumber">50</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_3"></a>
+<dt><pre><span class="Identifier">wKey_3</span> <span class="Other">=</span> <span class="DecNumber">51</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_4"></a>
+<dt><pre><span class="Identifier">wKey_4</span> <span class="Other">=</span> <span class="DecNumber">52</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_5"></a>
+<dt><pre><span class="Identifier">wKey_5</span> <span class="Other">=</span> <span class="DecNumber">53</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_6"></a>
+<dt><pre><span class="Identifier">wKey_6</span> <span class="Other">=</span> <span class="DecNumber">54</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_7"></a>
+<dt><pre><span class="Identifier">wKey_7</span> <span class="Other">=</span> <span class="DecNumber">55</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_8"></a>
+<dt><pre><span class="Identifier">wKey_8</span> <span class="Other">=</span> <span class="DecNumber">56</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wKey_9"></a>
+<dt><pre><span class="Identifier">wKey_9</span> <span class="Other">=</span> <span class="DecNumber">57</span></pre></dt>
+<dd>
+
+
+</dd>
+
+</dl></div>
+
   </div>
 </div>
 
@@ -1246,7 +2915,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-03 09:51:37 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-18 22:49:44 UTC</small>
       </div>
     </div>
   </div>

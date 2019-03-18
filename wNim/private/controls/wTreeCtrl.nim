@@ -49,7 +49,7 @@ const
   wTrFullRowHighLight* = TVS_FULLROWSELECT
   wTrLinesAtRoot* = TVS_LINESATROOT
   wTrCheckBox* = TVS_CHECKBOXES
-  wTrTwistButtons* = 0x10000000 shl 32
+  wTrTwistButtons* = int64 0x10000000 shl 32
   wTrNoHScroll* = TVS_NOHSCROLL
   wTrNoScroll* = TVS_NOSCROLL
   wTrSingleExpand* = TVS_SINGLEEXPAND
@@ -955,7 +955,7 @@ proc beginDrag(self: wTreeCtrl, hItem: HTREEITEM, pos: wPoint) =
 
 proc dragging(self: wTreeCtrl, pos: wPoint) =
   ImageList_DragMove(pos.x, pos.y)
-  ImageList_DragShowNoLock(false)
+  ImageList_DragShowNolock(false)
   var item = self.hitTest(pos).item
   if item.isOk():
     self.mCurrentInsertItem = item.mHandle
@@ -1200,6 +1200,9 @@ proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
 
   self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="",
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+
+  # a tree control by default have white background, not parent's background
+  self.setBackgroundColor(wWhite)
 
   if (style and wTrTwistButtons) != 0:
     type SetWindowTheme = proc (hwnd: HWND, pszSubAppName: LPCWSTR,
