@@ -2367,7 +2367,6 @@ const
   NM_RDBLCLK* = NM_FIRST-6
   NM_SETFOCUS* = NM_FIRST-7
   NM_KILLFOCUS* = NM_FIRST-8
-  NM_CUSTOMDRAW* = NM_FIRST-12
   LVN_FIRST* = 0-100
   HDN_FIRST* = 0-300
   TVN_FIRST* = 0-400
@@ -2382,6 +2381,7 @@ const
   BCN_FIRST* = 0-1250
   ILC_MASK* = 0x1
   ILC_COLOR32* = 0x20
+  ILD_TRANSPARENT* = 0x1
   HDI_WIDTH* = 0x1
   HDM_HITTEST* = HDM_FIRST+6
   HDN_ITEMCHANGINGA* = HDN_FIRST-0
@@ -2918,6 +2918,7 @@ proc ImageList_Draw*(himl: HIMAGELIST, i: int32, hdcDst: HDC, x: int32, y: int32
 proc ImageList_Replace*(himl: HIMAGELIST, i: int32, hbmImage: HBITMAP, hbmMask: HBITMAP): WINBOOL {.winapi, stdcall, dynlib: "comctl32", importc.}
 proc ImageList_AddMasked*(himl: HIMAGELIST, hbmImage: HBITMAP, crMask: COLORREF): int32 {.winapi, stdcall, dynlib: "comctl32", importc.}
 proc ImageList_Remove*(himl: HIMAGELIST, i: int32): WINBOOL {.winapi, stdcall, dynlib: "comctl32", importc.}
+proc ImageList_GetIcon*(himl: HIMAGELIST, i: int32, flags: UINT): HICON {.winapi, stdcall, dynlib: "comctl32", importc.}
 proc ImageList_BeginDrag*(himlTrack: HIMAGELIST, iTrack: int32, dxHotspot: int32, dyHotspot: int32): WINBOOL {.winapi, stdcall, dynlib: "comctl32", importc.}
 proc ImageList_EndDrag*(): void {.winapi, stdcall, dynlib: "comctl32", importc.}
 proc ImageList_DragEnter*(hwndLock: HWND, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "comctl32", importc.}
@@ -3458,6 +3459,7 @@ type
   SFGAOF* = ULONG
   SICHINTF* = DWORD
   FILEOPENDIALOGOPTIONS* = DWORD
+  HTHEME* = HANDLE
   NOTIFYICONDATAA_UNION1* {.pure, union.} = object
     uTimeout*: UINT
     uVersion*: UINT
@@ -3808,6 +3810,13 @@ when winimAnsi:
 const
   requestSize* = 0
   TABP_BODY* = 10
+proc OpenThemeData*(hwnd: HWND, pszClassList: LPCWSTR): HTHEME {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc CloseThemeData*(hTheme: HTHEME): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc GetThemeColor*(hTheme: HTHEME, iPartId: int32, iStateId: int32, iPropId: int32, pColor: ptr COLORREF): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc SetWindowTheme*(hwnd: HWND, pszSubAppName: LPCWSTR, pszSubIdList: LPCWSTR): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc IsThemeActive*(): WINBOOL {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc IsAppThemed*(): WINBOOL {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc GetCurrentThemeName*(pszThemeFileName: LPWSTR, cchMaxNameChars: int32, pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR, cchMaxSizeChars: int32): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
 type
   InterpolationMode* = int32
   GpMatrixOrder* = int32
