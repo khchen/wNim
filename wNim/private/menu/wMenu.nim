@@ -39,28 +39,12 @@ proc detach*(self: wMenu, parentMenu: wMenu) {.validate.} =
 
 proc detach*(self: wMenu) {.validate.} =
   ## Detach a menu from all menubar and menu(as submenu).
-  for menuBase in self.mParentMenuCountTable.keys:
+  for menuBase in wAppMenuBase():
     if menuBase of wMenuBar:
       self.detach(wMenuBar(menuBase))
 
     elif menuBase of wMenu:
       self.detach(wMenu(menuBase))
-
-proc delete*(self: wMenu) {.validate.} =
-  ## Delete the menu.
-  # DestroyMenu not work well if self is someone's submenu
-  self.detach()
-  if self.mHmenu != 0:
-    for i in 0..<GetMenuItemCount(self.mHmenu):
-      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-    DestroyMenu(self.mHmenu)
-
-    for i in 0..<self.mItemList.len:
-      if self.mItemList[i].mSubmenu != nil:
-        self.mItemList[i].mSubmenu.mParentMenuCountTable.inc(self, -1)
-
-    self.mItemList = @[]
-    self.mHmenu = 0
 
 proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
     help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
@@ -76,7 +60,6 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
 
   if pos < 0: pos = count
   elif pos > count: pos = count
-  item.mParentMenu = self
 
   var menuItemInfo = MENUITEMINFO(
     cbSize: sizeof(MENUITEMINFO),
@@ -112,8 +95,6 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
 
   if InsertMenuItem(self.mHmenu, pos, true, menuItemInfo) != 0:
     self.mItemList.insert(item, pos)
-    if submenu != nil:
-      submenu.mParentMenuCountTable.inc(self, 1)
     result = item
 
 proc insert*(self: wMenu, pos: int = -1, item: wMenuItem): wMenuItem
@@ -278,8 +259,6 @@ proc remove*(self: wMenu, pos: int) {.validate.} =
   ## Use destroy() if you want to delete a submenu.
   if pos >= 0 and pos < self.mItemList.len:
     if RemoveMenu(self.mHmenu, pos, MF_BYPOSITION) != 0:
-      if self.mItemList[pos].mSubmenu != nil:
-        self.mItemList[pos].mSubmenu.mParentMenuCountTable.inc(self, -1)
       self.mItemList.delete(pos)
 
 proc remove*(self: wMenu, submenu: wMenu) {.validate.} =
@@ -293,16 +272,6 @@ proc remove*(self: wMenu, submenu: wMenu) {.validate.} =
 proc delete*(self: wMenu, pos: int) {.validate.} =
   ## Deletes the menu item from the menu. Same as remove().
   self.remove(pos)
-
-proc destroy*(self: wMenu, pos: int) {.validate.} =
-  ## Destroy the menu item from the menu.
-  ## If the item is a submenu, it will be deleted.
-  ## Use remove() if you want to keep the submenu.
-  if pos >= 0 and pos < self.mItemList.len:
-    if DeleteMenu(self.mHmenu, pos, MF_BYPOSITION) != 0:
-      if self.mItemList[pos].mSubmenu != nil:
-        self.mItemList[pos].mSubmenu.delete()
-      self.mItemList.delete(pos)
 
 proc getKind*(self: wMenu, pos: int): wMenuItemKind {.validate, property.} =
   ## Returns the item kind at the position, one of wMenuItemNormal,
@@ -435,9 +404,12 @@ proc enable*(self: wMenu, pos: int, flag = true) {.validate.} =
     wEnableMenu(self.mHmenu, pos, flag)
 
     # it need to refresh if the menu in menubar
-    for menuBase in self.mParentMenuCountTable.keys:
+    for menuBase in wAppMenuBase():
       if menuBase of wMenuBar:
-        wMenuBar(menuBase).refresh()
+        let menuBar = wMenuBar(menuBase)
+        let pos = menuBar.find(self)
+        if pos != wNotFound:
+          menuBar.refresh()
 
 proc disable*(self: wMenu, pos: int) {.validate, inline.} =
   ## Disables (greys out) a menu item.
@@ -450,16 +422,16 @@ proc isEnabled*(self: wMenu, pos: int): bool {.validate.} =
 
 proc enable*(self: wMenu, flag = true) {.validate.} =
   ## Enables or disables (greys out) this menu.
-  for menuBase in self.mParentMenuCountTable.keys:
+  for menuBase in wAppMenuBase():
     if menuBase of wMenuBar:
       let menuBar = wMenuBar(menuBase)
-      for pos in menuBar.find(self):
-        menuBar.enable(pos, flag)
+      let pos = menuBar.find(self)
+      if pos != wNotFound: menuBar.enable(pos, flag)
 
     elif menuBase of wMenu:
       let menu = wMenu(menuBase)
-      for pos in menu.find(self):
-        menu.enable(pos, flag)
+      let pos = menu.find(self)
+      if pos != wNotFound: menu.enable(pos, flag)
 
 proc disable*(self: wMenu) {.validate, inline.} =
   ## Disables (greys out) this menu.
@@ -501,14 +473,18 @@ proc getHandle*(self: wMenu): HMENU {.validate, property, inline.} =
   result = self.mHmenu
 
 proc getTitle*(self: wMenu): string {.validate, property.} =
-  ## Returns the title of the menu, a title means it's label in menuBar.
-  ## (find fist match if a menu attach to more than one frame).
-  for menuBase in self.mParentMenuCountTable.keys:
+  ## Returns the title of the menu, a title means it's label in menuBar or menu.
+  ## (find fist match if a menu attach to more than one menuBar or menu).
+  for menuBase in wAppMenuBase():
     if menuBase of wMenuBar:
       let menuBar = wMenuBar(menuBase)
       let pos = menuBar.find(self)
-      if pos != wNotFound:
-        return menuBar.getLabel(pos)
+      if pos != wNotFound: return menuBar.getLabel(pos)
+
+    elif menuBase of wMenu:
+      let menu = wMenu(menuBase)
+      let pos = menu.find(self)
+      if pos != wNotFound: return menu.getText(pos)
 
 proc getCount*(self: wMenu): int {.validate, property, inline.} =
   ## Returns the number of items in the menu.
@@ -528,6 +504,27 @@ proc len*(self: wMenu): int {.validate, inline.} =
   ## This shoud be equal to getCount() in most case.
   result = self.mItemList.len
 
+proc delete*(self: wMenu) {.validate.} =
+  ## Delete the menu.
+  if self.mHmenu != 0:
+    self.detach()
+    self.wAppMenuBaseDelete()
+    for i in 0..<self.getCount():
+      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+    DestroyMenu(self.mHmenu)
+
+    self.mItemList = @[]
+    self.mHmenu = 0
+
+proc destroy*(self: wMenu, pos: int) {.validate.} =
+  ## Destroy the menu item from the menu.
+  ## If the item is a submenu, it will be deleted.
+  ## Use remove() if you want to keep the submenu.
+  if pos >= 0 and pos < self.mItemList.len:
+    if self.mItemList[pos].mSubmenu != nil:
+      self.mItemList[pos].mSubmenu.delete()
+    self.mItemList.delete(pos)
+
 proc final*(self: wMenu) =
   ## Default finalizer for wMenu.
   self.delete()
@@ -542,7 +539,7 @@ proc init*(self: wMenu) {.validate.} =
     dwMenuData: cast[ULONG_PTR](self))
   SetMenuInfo(self.mHmenu, menuInfo)
   self.mItemList = @[]
-  self.mParentMenuCountTable = initCountTable[wMenuBase]()
+  self.wAppMenuBaseAdd()
 
 proc Menu*(): wMenu {.inline.} =
   ## Construct an empty menu.

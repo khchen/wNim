@@ -922,6 +922,11 @@ proc TreeEvent(self: wTreeCtrl, msg: UINT, lParam: LPARAM): wTreeEvent =
     event.mHandle = pnmtv.itemNew.hItem
     event.mOldHandle = pnmtv.itemOld.hItem
 
+  of wEvent_TreeDeleteItem:
+    let pnmtv = cast[LPNMTREEVIEW](lParam)
+    event.mHandle = pnmtv.itemOld.hItem
+    event.mOldHandle = pnmtv.itemOld.hItem
+
   else:
     let pnmtv = cast[LPNMTREEVIEW](lParam)
     event.mHandle = pnmtv.itemNew.hItem

@@ -52,6 +52,8 @@
 # forward declarations
 proc getScrollInfo(self: wScrollBar): SCROLLINFO
 proc setScrollPos*(self: wScrollBar, position: int)
+proc toggle*(self: wMenu, pos: int)
+proc check*(self: wMenu, pos: int, flag = true)
 
 const
   wBorderSimple* = WS_BORDER
@@ -1838,6 +1840,82 @@ proc wWindow_OnSetCursor(event: wEvent) =
       SetCursor(hCursor)
       processed = true
 
+proc wWindow_OnMenuCommand(event: wEvent) =
+  let self = event.mWindow
+  var processed = false
+  defer: event.skip(if processed: false else: true)
+
+  let
+    pos = int event.mWparam
+    hmenu = cast[HMENU](event.mLparam)
+
+  var menuInfo = MENUINFO(cbSize: sizeof(MENUINFO), fMask: MIM_MENUDATA)
+  GetMenuInfo(hmenu, menuInfo)
+  if menuInfo.dwMenuData != 0:
+    let
+      menu = cast[wMenu](menuInfo.dwMenuData)
+      item = menu.mItemList[pos]
+
+    if item.mKind == wMenuItemCheck:
+      menu.toggle(pos)
+
+    elif item.mKind == wMenuItemRadio:
+      menu.check(pos)
+
+    # convet to wEvent_Menu message.
+    processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId), 0,
+      event.mResult)
+
+when defined(useWinXP):
+  # under Windows XP, menu icon must draw by outself
+  proc wWindow_OnMeasureItem(event: wEvent) =
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    var pStruct = cast[LPMEASUREITEMSTRUCT](event.mLparam)
+    if pStruct.CtlType == ODT_MENU and pStruct.itemData != 0:
+      # here pStruct.itemData maybe a wMenu or a wMenuItem
+      let
+        menu = cast[wMenu](pStruct.itemData)
+        bmp = (if IsMenu(menu.mHmenu): menu.mBitmap else: cast[wMenuItem](pStruct.itemData).mBitmap)
+        iconHeight = GetSystemMetrics(SM_CYMENUSIZE)
+        iconWidth = GetSystemMetrics(SM_CXMENUSIZE)
+
+      if bmp != nil:
+        pStruct.itemHeight = max(bmp.mHeight + 2, iconHeight)
+        pStruct.itemWidth = max(bmp.mWidth + 4, iconWidth)
+        event.mResult = TRUE
+        processed = true
+
+  proc wWindow_OndrawItem(event: wEvent) =
+    var processed = false
+    defer: event.skip(if processed: false else: true)
+
+    var pStruct = cast[LPDRAWITEMSTRUCT](event.mLparam)
+    if pStruct.CtlType == ODT_MENU and pStruct.itemData != 0:
+      let
+        menu = cast[wMenu](pStruct.itemData)
+        bmp = (if IsMenu(menu.mHmenu): menu.mBitmap else: cast[wMenuItem](pStruct.itemData).mBitmap)
+
+      if bmp != nil:
+        let
+          width = bmp.mWidth
+          height = bmp.mHeight
+          memdc = CreateCompatibleDC(0)
+          prev = SelectObject(memdc, bmp.mHandle)
+          x = (pStruct.rcItem.right - pStruct.rcItem.left - width) div 2
+          y = (pStruct.rcItem.bottom - pStruct.rcItem.top - height) div 2
+
+        var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: 255,
+          AlphaFormat: AC_SRC_ALPHA)
+
+        AlphaBlend(pStruct.hDC, x, y, width, height, memdc, 0, 0, width, height, bf)
+
+        SelectObject(memdc, prev)
+        DeleteDC(memdc)
+        event.mResult = TRUE
+        processed = true
+
 proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT
     {.stdcall.} =
   # assign to WNDCLASSEX.lpfnWndProc to invoke event handler
@@ -2018,6 +2096,13 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   self.hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
   self.hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
   self.hardConnect(WM_SETCURSOR, wWindow_OnSetCursor)
+
+  # Since a wWindow can popupMenu, it should be able to handle the menu message
+  # So move menu message handler from wFrame to wWindow, except wEvent_MenuHighlight
+  self.hardConnect(WM_MENUCOMMAND, wWindow_OnMenuCommand)
+  when defined(useWinXP):
+    self.hardConnect(WM_MEASUREITEM, wWindow_OnMeasureItem)
+    self.hardConnect(WM_DRAWITEM, wWindow_OndrawItem)
 
 proc init*(self: wWindow, hWnd: HWND) {.validate.} =
   ## Initializer.

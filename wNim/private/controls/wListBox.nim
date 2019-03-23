@@ -261,6 +261,22 @@ proc isSorted*(self: wListBox): bool {.validate, inline.} =
   ## Return true if the listbox has wLbSort style.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and LBS_SORT) != 0
 
+proc setData*(self: wListBox, index: int, data: int) {.validate, property,
+    inline.} =
+  ## Associates application-defined data with this item.
+  SendMessage(self.mHwnd, LB_SETITEMDATA, index, data)
+
+proc getData*(self: wListBox, index: int): int {.validate, property.} =
+  ## Gets the application-defined data associated with this item.
+  result = int SendMessage(self.mHwnd, LB_GETITEMDATA, index, 0)
+
+proc getRect*(self: wListBox, index: int): wRect {.validate, property.} =
+  ## Returns the rectangle representing the item's size and position,
+  ## in physical coordinates.
+  var rect: RECT
+  if LB_ERR != SendMessage(self.mHwnd, LB_GETITEMRECT, index, &rect):
+    result = toWRect(rect)
+
 proc countSize(self: wListBox, minItem: int, rate: float): wSize =
   const maxItem = 10
   let

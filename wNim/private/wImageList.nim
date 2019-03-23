@@ -76,6 +76,37 @@ proc getSize*(self: wImageList): wSize {.validate, property.} =
   result.width = cx
   result.height = cy
 
+proc getBitmap*(self: wImageList, index: int): wBitmap {.validate, property.} =
+  ## Create the bitmap from specified index.
+  var
+    width, height: int32
+    info: IMAGEINFO
+    bm: BITMAP
+    ret: wBitmap
+
+  # need to create new bitmap, don't just warp info.hbmImage
+  if index <= self.getImageCount() and
+      ImageList_GetIconSize(self.mHandle, &width, &height) != 0 and
+      ImageList_GetImageInfo(self.mHandle, 0, &info) != 0 and
+      GetObject(info.hbmImage, sizeof(BITMAP), &bm) != 0:
+
+    result = Bmp(width, height, int bm.bmBitsPixel)
+    let
+      hdc = CreateCompatibleDC(0)
+      prev = SelectObject(hdc, result.mHandle)
+
+    defer:
+      SelectObject(hdc, prev)
+      DeleteDC(hdc)
+
+    discard ImageList_Draw(self.mHandle, index, hdc, 0, 0, 0)
+
+proc getIcon*(self: wImageList, index: int): wIcon {.validate, property.} =
+  ## Create the icon from specified index.
+  if index <= self.getImageCount():
+    var hIcon = ImageList_GetIcon(self.mHandle, 0, ILD_TRANSPARENT)
+    result = Icon(hIcon, copy=false)
+
 proc len*(self: wImageList): int {.validate.} =
   result = self.getImageCount()
 

@@ -123,10 +123,20 @@ when not defined(Nimdoc):
     wEventHandler = proc (event: wEvent)
     wEventNeatHandler = proc ()
 
+    # 0.4.1
+    # wNim use wMenu.mParentMenuCountTable and wMenuItem.mParentMenu to find the
+    # parent of menu/menuitem before. However, it seems let the data struct too
+    # complicated, so that the GC will crash somehow. I think there is still some
+    # bugs in the GC, both refc and markAndSweep. But it is hard to trace and
+    # analysis. From now on, wNim use wApp.mMenuBaseTable as a kind of weakrefs
+    # to find the parent of menu/menuitem. It is indeed more time consuming,
+    # however, what program has ten thousand menus or even more? The most
+    # important is, it don't crash the GC.
     wApp* = ref object of RootObj
       mInstance: HANDLE
       mTopLevelWindowList: seq[wWindow]
       mWindowTable: Table[HWND, wWindow]
+      mMenuBaseTable: Table[HMENU, pointer]
       mGDIStockSeq: seq[wGdiObject]
       mPropagationSet: HashSet[UINT]
       mMessageCountTable: CountTable[UINT]
@@ -436,7 +446,7 @@ when not defined(Nimdoc):
     wMenu* = ref object of wMenuBase
       mBitmap: wBitmap
       mItemList: seq[wMenuItem]
-      mParentMenuCountTable: CountTable[wMenuBase]
+      # mParentMenuCountTable: CountTable[wMenuBase]
 
     wMenuBar* = ref object of wMenuBase
       mMenuList: seq[wMenu]
@@ -456,7 +466,9 @@ when not defined(Nimdoc):
       mHelp: string
       mBitmap: wBitmap
       mSubmenu: wMenu
-      mParentMenu: wMenu
+      # mParentMenu: wMenu
+
+    wNewMenu* = ref object of wMenu
 
     wImage* = ref object of RootObj
       mGdipBmp: ptr GpBitmap

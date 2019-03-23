@@ -13,14 +13,19 @@
 
 template withPosAtParentMenu(body: untyped) =
   mixin self
-  if self.mParentMenu != nil:
-    let pos {.inject.} = self.mParentMenu.find(self)
-    if pos != wNotFound:
-      body
+  for menuBase in wAppMenuBase():
+    if menuBase of wMenu:
+      let parent {.inject.} = wMenu(menuBase)
+      let pos {.inject.} = parent.find(self)
+
+      if pos != wNotFound:
+        body
+        break
 
 proc getMenu*(self: wMenuItem): wMenu {.validate, property, inline.} =
   ## Returns the menu this item is in, or NULL if this item is not attached.
-  result = self.mParentMenu
+  withPosAtParentMenu:
+    result = parent
 
 proc getKind*(self: wMenuItem): wMenuItemKind {.validate, property, inline.} =
   ## Returns the item kind, one of wMenuItemNormal, wMenuItemCheck,
@@ -43,7 +48,7 @@ proc setText*(self: wMenuItem, text: string) {.validate, property.} =
   ## Sets the text for the menu item.
   wValidate(text)
   withPosAtParentMenu:
-    self.mParentMenu.setText(pos, text)
+    parent.setText(pos, text)
 
 proc setLabel*(self: wMenuItem, text: string) {.validate, property.} =
   ## Sets the text for the menu item.
@@ -69,7 +74,7 @@ proc getBitmap*(self: wMenuItem): wBitmap {.validate, property, inline.} =
 proc setBitmap*(self: wMenuItem, bitmap: wBitmap = nil) {.validate, property.} =
   ## Sets the bitmap for the menu item, nil for clear the bitmap.
   withPosAtParentMenu:
-    self.mParentMenu.setBitmap(pos, bitmap)
+    parent.setBitmap(pos, bitmap)
 
 proc getId*(self: wMenuItem): wCommandID {.validate, property, inline.} =
   ## Returns the menu item identifier.
@@ -78,7 +83,7 @@ proc getId*(self: wMenuItem): wCommandID {.validate, property, inline.} =
 proc setId*(self: wMenuItem, id: wCommandID) {.validate, property.} =
   ## Sets the id for the menu item.
   withPosAtParentMenu:
-    self.mParentMenu.setId(pos, id)
+    parent.setId(pos, id)
 
 proc isCheck*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of check item.
@@ -99,7 +104,7 @@ proc isSubMenu*(self: wMenuItem): bool {.validate.} =
 proc enable*(self: wMenuItem, flag = true) {.validate.} =
   ## Enables or disables (greys out) a menu item.
   withPosAtParentMenu:
-    self.mParentMenu.enable(pos, flag)
+    parent.enable(pos, flag)
 
 proc disable*(self: wMenuItem) {.validate, inline.} =
   ## Disables (greys out) a menu item.
@@ -108,22 +113,27 @@ proc disable*(self: wMenuItem) {.validate, inline.} =
 proc isEnabled*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is enabled.
   withPosAtParentMenu:
-    result = self.mParentMenu.isEnabled(pos)
+    result = parent.isEnabled(pos)
 
 proc check*(self: wMenuItem, flag = true) {.validate.} =
   ## Checks or unchecks the menu item.
   withPosAtParentMenu:
-    self.mParentMenu.check(pos, flag)
+    parent.check(pos, flag)
 
 proc isChecked*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is checked.
   withPosAtParentMenu:
-    result = self.mParentMenu.isChecked(pos)
+    result = parent.isChecked(pos)
 
 proc toggle*(self: wMenuItem) {.validate.} =
   ## Toggle the menu item.
   withPosAtParentMenu:
-    self.mParentMenu.toggle(pos)
+    parent.toggle(pos)
+
+proc detach*(self: wMenuItem) {.validate.} =
+  ## Detach a menu item from all menu.
+  withPosAtParentMenu:
+    parent.remove(pos)
 
 proc final*(self: wMenuItem) {.validate.} =
   ## Default finalizer for wMenuItem.

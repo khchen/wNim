@@ -80,6 +80,11 @@ type
     x: WORD
     y: WORD
 
+const
+  # don't use sizeof(ICONDIR) because tcc don't supprot size of UncheckedArray
+  IcondirSize = 6
+  GrpIcondirSize = 6
+
 converter GpImageToGpBitmap(x: ptr GpBitmap): ptr GpImage = cast[ptr GpImage](x)
 
 when defined(gcc):
@@ -381,13 +386,13 @@ proc initRawModuleIndex(self: wIconImage, module: HMODULE, index: int, size: wSi
     self.initRawModuleGroupId(module, MAKEINTRESOURCE(-index), size, isIcon)
 
 proc isIconBinary(data: pointer, length: int): bool =
-  if length < sizeof(ICONDIR): return false
+  if length < IcondirSize: return false
 
   let iconDir = cast[ptr ICONDIR](data)
   if iconDir.idReserved != 0 or iconDir.idType notin {1, 2}: return false
 
   let count = int iconDir.idCount
-  if length < sizeof(ICONDIR) + sizeof(ICONDIRENTRY) * count: return false
+  if length < IcondirSize + sizeof(ICONDIRENTRY) * count: return false
 
   let endOfData = iconDir.idEntries[count-1].dwBytesInRes + iconDir.idEntries[count-1].dwImageOffset
   if length < endOfData: return false
@@ -402,7 +407,7 @@ proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefault
     iconDir = cast[ptr ICONDIR](data)
     count = int iconDir.idCount
     isIcon = iconDir.idType == 1
-    buffer = newString(sizeof(GRPICONDIR) + sizeof(GRPICONDIRENTRY) * count)
+    buffer = newString(GrpIcondirSize + sizeof(GRPICONDIRENTRY) * count)
     grpIconDir = cast[ptr GRPICONDIR](&buffer)
 
   grpIconDir.idReserved = iconDir.idReserved
@@ -722,7 +727,7 @@ proc IconImages*(str: string): seq[wIconImage] =
 proc save*(icons: openarray[wIconImage], isIcon = true): string =
   ## Stores multiple icon images to a .ico or .cur format data depends on
   ## *isIcon*.
-  var headerSize = sizeof(ICONDIR) + icons.len * sizeof(ICONDIRENTRY)
+  var headerSize = IcondirSize + icons.len * sizeof(ICONDIRENTRY)
   var header = newString(headerSize)
   var offset = headerSize
 

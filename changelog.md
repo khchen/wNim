@@ -1,5 +1,14 @@
-Version 0.4
+Version 0.4.1
 -------------
+* Add: wListBox.setData(), wListBox.getData(), wListBox.getRect()
+* Add: wMenuItem.detach()
+* Add: wImageList.getBitmap(), wImageList.getIcon()
+* Fix: TCC don't support size of UncheckArray
+* Fix: wMenu/wMenuItem let the GC crash.
+* Fix: menu event sent to wWindow instead of wFrame.
+
+Version 0.4
+-----------
 * Speed up compile time (use import file generate by winimx).
 * Fix Windows XP compatibility.
 * Add autolayout keyword: alias.

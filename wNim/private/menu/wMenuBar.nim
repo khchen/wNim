@@ -87,7 +87,6 @@ proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
 
   if InsertMenuItem(self.mHmenu, pos, true, menuItemInfo) != 0:
     self.mMenuList.insert(menu, pos)
-    menu.mParentMenuCountTable.inc(self, 1)
     self.refresh()
 
 proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil)
@@ -221,7 +220,6 @@ proc remove*(self: wMenuBar, pos: int): wMenu {.validate, discardable.} =
   if pos >= 0 and pos < self.mMenuList.len:
     if RemoveMenu(self.mHmenu, pos, MF_BYPOSITION) != 0:
       result = self.mMenuList[pos]
-      result.mParentMenuCountTable.inc(self, -1)
       self.mMenuList.delete(pos)
     self.refresh()
 
@@ -241,22 +239,6 @@ proc replace*(self: wMenuBar, pos: int, menu: wMenu, text: string,
   if pos >= 0 and pos < self.mMenuList.len:
     result = self.remove(pos)
     self.insert(pos, menu=menu, text=text, bitmap=bitmap)
-
-proc delete*(self: wMenuBar) {.validate.} =
-  ## Delete the menubar.
-  self.detach()
-  if self.mHmenu != 0:
-    # use GetMenuItemCount(self.mHmenu) instead of mMenuList.len to ensure we
-    # remove all menu.
-    for i in 0..<GetMenuItemCount(self.mHmenu):
-      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-    DestroyMenu(self.mHmenu)
-
-    for i in 0..<self.mMenuList.len:
-      self.mMenuList[i].mParentMenuCountTable.inc(self, -1)
-
-    self.mMenuList = @[]
-    self.mHmenu = 0
 
 proc getHandle*(self: wMenuBar): HMENU {.validate, property, inline.} =
   ## Get system handle of this menubar.
@@ -286,6 +268,18 @@ proc len*(self: wMenuBar): int {.validate, inline.} =
   ## This shoud be equal to getCount in most case.
   result = self.mMenuList.len
 
+proc delete*(self: wMenuBar) {.validate.} =
+  ## Delete the menubar.
+  if self.mHmenu != 0:
+    self.detach()
+    self.wAppMenuBaseDelete()
+    for i in 0..<self.getCount():
+      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+    DestroyMenu(self.mHmenu)
+
+    self.mMenuList = @[]
+    self.mHmenu = 0
+
 proc final*(self: wMenuBar) =
   ## Default finalizer for wMenuBar.
   self.delete()
@@ -299,6 +293,7 @@ proc init*(self: wMenuBar) {.validate.} =
     dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS)
   SetMenuInfo(self.mHmenu, menuInfo)
   self.mMenuList = @[]
+  self.wAppMenuBaseAdd()
 
   # initSet is deprecated since v0.20
   when declared(initHashSet):

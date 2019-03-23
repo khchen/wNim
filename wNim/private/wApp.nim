@@ -31,6 +31,7 @@ proc App*(): wApp =
   result.mAccelExists = false
   result.mTopLevelWindowList = @[]
   result.mWindowTable = initTable[HWND, wWindow]()
+  result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initCountTable[UINT]()
 
@@ -87,6 +88,12 @@ proc wAppHasMessage(msg: UINT): bool {.inline.} =
 proc wAppAccelOn() {.inline.} =
   wTheApp.mAccelExists = true
 
+proc wAppMenuBaseAdd(menu: wMenuBase) {.inline.} =
+  wTheApp.mMenuBaseTable[menu.mHmenu] = cast[pointer](menu)
+
+proc wAppMenuBaseDelete(menu: wMenuBase) {.inline.} =
+  wTheApp.mMenuBaseTable.del(menu.mHmenu)
+
 template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
   if sn > wTheApp.mGDIStockSeq.high:
     wTheApp.mGDIStockSeq.setlen(sn+1)
@@ -99,6 +106,12 @@ template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
 iterator wAppWindows(): wWindow {.inline.} =
   for hwnd, win in wTheApp.mWindowTable:
     yield win
+
+iterator wAppMenuBase(): wMenuBase =
+  for hMenu in wTheApp.mMenuBaseTable.keys:
+    if IsMenu(hMenu):
+      let menuBase = cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
+      yield menuBase
 
 proc MessageLoop(isMainLoop: bool = true): int =
   var msg: MSG
