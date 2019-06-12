@@ -17,6 +17,10 @@ proc wGetMousePosition*(): wPoint =
     result.x = mousePos.x
     result.y = mousePos.y
 
+proc wSetMousePosition*(pos: wPoint) =
+  ## Sets the mouse position
+  SetCursorPos(int32 pos.x, int32 pos.y)
+
 proc wGetMessagePosition*(): wPoint =
   ## Returns the mouse position in screen coordinates.
   var val = GetMessagePos()

@@ -200,3 +200,8 @@ proc toggle*(self: wMenuBase, id: wCommandID) {.validate.} =
   ## Toggle the menu item.
   withMenuPos(id):
     menu.toggle(pos)
+
+proc MenuBase*(hMenu: HMENU): wMenuBase {.inline.} =
+  ## Return the wMenuBase object of specific hMenu handle or nil if not exists.
+  ## Notice: This is not a constructor and for low level use only.
+  result = wAppGetMenuBase(hMenu)

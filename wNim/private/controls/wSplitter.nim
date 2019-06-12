@@ -29,6 +29,8 @@
 ##   ==============================  =============================================================
 ##   Styles                          Description
 ##   ==============================  =============================================================
+##   wSpVertical                     Specifies a vertical splitter.
+##   wSpHorizontal                   Specifies a horizontal splitter.
 ##   wSpNoBorder                     No border (default).
 ##   wSpButton                       Draws the splitter button style.
 ##   wSpBorder                       Draws a standard border.

@@ -113,6 +113,10 @@ iterator wAppMenuBase(): wMenuBase =
       let menuBase = cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
       yield menuBase
 
+proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline.} =
+  if hMenu in wTheApp.mMenuBaseTable:
+    return cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
+
 proc MessageLoop(isMainLoop: bool = true): int =
   var msg: MSG
   while true:

@@ -133,6 +133,14 @@ proc getSelection*(self: wListBox): int {.validate, property, inline.} =
   ## selected. Don't use in multiple-selection list box.
   result = int SendMessage(self.mHwnd, LB_GETCURSEL, 0, 0)
 
+proc getFocused*(self: wListBox): int {.validate, property, inline.} =
+  ## Returns the index of current focused item.
+  result = int SendMessage(self.mHwnd, LB_GETCARETINDEX, 0, 0)
+
+proc setFocused*(self: wListBox, index: int) {.validate, property, inline.} =
+  ## Sets focused item.
+  SendMessage(self.mHwnd, LB_SETCARETINDEX, index, FALSE)
+
 iterator getSelections*(self: wListBox): int {.validate.} =
   ## Iterates over each index of the selected items.
   if (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and LBS_MULTIPLESEL) != 0:
@@ -344,6 +352,8 @@ proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
         self.processMessage(wEvent_ListBox, event.mWparam, event.mLparam)
       of LBN_DBLCLK:
         self.processMessage(wEvent_ListBoxDoubleClick, event.mWparam, event.mLparam)
+      of LBN_SETFOCUS:
+        self.processMessage(wEvent_CommandSetFocus, event.mWparam, event.mLparam)
       else: discard
 
   self.hardConnect(wEvent_Navigation) do (event: wEvent):

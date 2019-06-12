@@ -1,14 +1,17 @@
-Version 0.4.1
+Version 0.5.0
 -------------
-* Add: wListBox.setData(), wListBox.getData(), wListBox.getRect()
-* Add: wMenuItem.detach()
-* Add: wImageList.getBitmap(), wImageList.getIcon()
+* wWindow: add hasFocus(), improve popupMenu()
+* wListBox: add setData(), getData(), getRect(), getFocused(), setFocused()
+* wMenuItem: add detach(), getData(), setData()
+* wImageList: add getBitmap(), getIcon()
+* wSplitter: add wSpVertical, wSpHorizontal
+* wTreeCtrl: add wTrShowSelectAlways
 * Fix: TCC don't support size of UncheckArray
 * Fix: wMenu/wMenuItem let the GC crash.
 * Fix: menu event sent to wWindow instead of wFrame.
 
-Version 0.4
------------
+Version 0.4.0
+-------------
 * Speed up compile time (use import file generate by winimx).
 * Fix Windows XP compatibility.
 * Add autolayout keyword: alias.
@@ -16,8 +19,8 @@ Version 0.4
 * Remove experimental GUI DSL.
 * Don't maintain compatibility with Nim Compiler 0.18 anymore.
 
-Version 0.3
------------
+Version 0.3.0
+-------------
 * Add autolayout module to parse Visual Format Language.
 * Modify wResizable to use autolayout module.
 * Improve wResizer, significant speed up wNim layout DSL performance.
@@ -29,8 +32,8 @@ Version 0.3
 * Update for Nim Compiler 0.19.9
 * Fix a lot of small bugs.
 
-Version 0.2
------------
+Version 0.2.0
+-------------
 * Add wIconImage class.
 * wImage, wBitmap, wIcon, and wCursor can convert between each other now.
 * Remove deprecated "this" pragma.

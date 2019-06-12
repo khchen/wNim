@@ -591,6 +591,14 @@ proc isFocusable*(self: wWindow): bool {.validate, inline.} =
 
     result = true
 
+proc hasFocus*(self: wWindow): bool {.validate.} =
+  ## Returns true if the window or it's child window has the focus.
+  var hwnd = GetFocus()
+  while hwnd != 0:
+    if hwnd == self.mHwnd:
+      return true
+    hwnd = GetParent(hwnd)
+
 proc captureMouse*(self: wWindow) {.validate, inline.} =
   ## Directs all mouse input to this window.
   SetCapture(self.mHwnd)
@@ -902,27 +910,47 @@ proc center*(self: wWindow, direction = wBoth) {.validate.} =
 
     self.setWindowPos(rect.x, rect.y)
 
-proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint)
-    {.validate.} =
+proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
+    recurse = true) {.validate.} =
   ## Pops up the given menu at the specified coordinates.
   wValidate(menu)
   var pos = self.clientToScreen(pos)
   if pos.x == wDefault or pos.y == wDefault:
     pos = wGetMousePosition()
 
-  # Q135788, so when you click outside the popup menu, the popup menu disappears correctly.
-  if self.isTopLevel():
-    SetForegroundWindow(self.mHwnd)
+  # MSDN: Call GetSystemMetrics with SM_MENUDROPALIGNMENT to determine the correct horizontal
+  # alignment flag (TPM_LEFTALIGN or TPM_RIGHTALIGN) and/or horizontal animation direction flag
+  # (TPM_HORPOSANIMATION or TPM_HORNEGANIMATION) to pass to TrackPopupMenu or TrackPopupMenuEx.
 
-  TrackPopupMenu(menu.mHmenu, TPM_RECURSE or TPM_RIGHTBUTTON,
-    pos.x, pos.y, 0, self.mHwnd, nil)
+  # Q135788/MSDN, To display a context menu for a notification icon, the current window must be the
+  # foreground window before the application calls TrackPopupMenu or TrackPopupMenuEx. However, when
+  # the current window is the foreground window, the second time this menu is displayed, it appears
+  # and then immediately disappears. To correct this, you must force a task switch to the application
+  # that called TrackPopupMenu.
+  var
+    attached = false
+    topParent = self.getTopParent()
+    foreId = GetWindowThreadProcessId(GetForegroundWindow(), nil)
+    curId = GetCurrentThreadId()
+    flag = TPM_LEFTBUTTON or (if recurse: TPM_RECURSE else: 0) or
+      (if GetSystemMetrics(SM_MENUDROPALIGNMENT) != 0:
+        TPM_RIGHTALIGN or TPM_HORNEGANIMATION else: TPM_LEFTALIGN or TPM_HORPOSANIMATION)
 
-  if self.isTopLevel():
-    PostMessage(self.mHwnd, WM_NULL, 0, 0)
+  if SetForegroundWindow(topParent.mHwnd) == 0:
+    AttachThreadInput(curId, foreId, TRUE)
+    SetForegroundWindow(topParent.mHwnd)
+    attached = true
 
-proc popupMenu*(self: wWindow, menu: wMenu, x, y: int) {.validate, inline.} =
+  TrackPopupMenu(menu.mHmenu, flag, pos.x, pos.y, 0, self.mHwnd, nil)
+
+  PostMessage(topParent.mHwnd, WM_NULL, 0, 0)
+  if attached:
+    AttachThreadInput(curId, foreId, FALSE)
+
+proc popupMenu*(self: wWindow, menu: wMenu, x: int, y: int, recurse = true)
+    {.validate, inline.} =
   ## Pops up the given menu at the specified coordinates.
-  self.popupMenu(menu, (x, y))
+  self.popupMenu(menu, (x, y), recurse)
 
 proc startTimer*(self: wWindow, seconds: float, id = 1) {.validate, inline.} =
   ## Start a timer. It generates wEvent_Timer event to the window.
@@ -1856,15 +1884,21 @@ proc wWindow_OnMenuCommand(event: wEvent) =
       menu = cast[wMenu](menuInfo.dwMenuData)
       item = menu.mItemList[pos]
 
-    if item.mKind == wMenuItemCheck:
-      menu.toggle(pos)
+    if event.mMsg == WM_MENURBUTTONUP:
+      # convet to wEvent_MenuRightClick message.
+      processed = self.processMessage(wEvent_MenuRightClick, cast[WPARAM](item.mId),
+        cast[LPARAM](item), event.mResult)
 
-    elif item.mKind == wMenuItemRadio:
-      menu.check(pos)
+    else:
+      if item.mKind == wMenuItemCheck:
+        menu.toggle(pos)
 
-    # convet to wEvent_Menu message.
-    processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId), 0,
-      event.mResult)
+      elif item.mKind == wMenuItemRadio:
+        menu.check(pos)
+
+      # convet to wEvent_Menu message.
+      processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId),
+        cast[LPARAM](item), event.mResult)
 
 when defined(useWinXP):
   # under Windows XP, menu icon must draw by outself
@@ -2100,6 +2134,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   # Since a wWindow can popupMenu, it should be able to handle the menu message
   # So move menu message handler from wFrame to wWindow, except wEvent_MenuHighlight
   self.hardConnect(WM_MENUCOMMAND, wWindow_OnMenuCommand)
+  self.hardConnect(WM_MENURBUTTONUP, wWindow_OnMenuCommand)
   when defined(useWinXP):
     self.hardConnect(WM_MEASUREITEM, wWindow_OnMeasureItem)
     self.hardConnect(WM_DRAWITEM, wWindow_OndrawItem)

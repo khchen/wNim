@@ -27,7 +27,7 @@
 ##   wEvent_TreeItemCollapsing       The item is being collapsed. This event can be vetoed.
 ##   wEvent_TreeItemExpanded         The item has been expanded.
 ##   wEvent_TreeItemExpanding        The item is being expanded. This event can be vetoed.
-##   wEvent_TreeItemRightClick       The user has clicked the item with the middle mouse button.
+##   wEvent_TreeItemRightClick       The user has clicked the item with the right mouse button.
 ##   wEvent_TreeSelChanged           Selection has changed.
 ##   wEvent_TreeSelChanging          Selection is changing. This event can be vetoed.
 ##   wEvent_TreeItemMenu             The context menu for the selected item has been requested,
@@ -61,7 +61,8 @@ method getItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
   result.mHandle = self.mHandle
 
 method getOldItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
-  ## Returns the old item (valid for wEvent_TreeSelChanging and wEvent_TreeSelChanged events).
+  ## Returns the old item (valid for wEvent_TreeSelChanging, wEvent_TreeSelChanged,
+  ## and wEvent_TreeEndDrag events).
   result.mTreeCtrl = self.mTreeCtrl
   result.mHandle = self.mOldHandle
 

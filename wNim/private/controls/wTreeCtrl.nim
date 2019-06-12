@@ -53,6 +53,7 @@ const
   wTrNoHScroll* = TVS_NOHSCROLL
   wTrNoScroll* = TVS_NOSCROLL
   wTrSingleExpand* = TVS_SINGLEEXPAND
+  wTrShowSelectAlways* = TVS_SHOWSELALWAYS
   # Tree item states
   wTreeItemStateBold* = TVIS_BOLD
   wTreeItemStateCut* = TVIS_CUT
@@ -95,6 +96,10 @@ proc TreeItem*(treeCtrl: wTreeCtrl, handle: HTREEITEM): wTreeItem {.inline.} =
   ## Default constructor.
   result.mTreeCtrl = treeCtrl
   result.mHandle = handle
+
+proc `==`*(a, b: wTreeItem): bool {.inline.} =
+  ## Checks for equality between two wTreeItem.
+  result = (a.mTreeCtrl == b.mTreeCtrl and a.mHandle == b.mHandle)
 
 proc isOk*(self: wTreeItem): bool {.inline.} =
   ## Returns true if this instance is referencing a valid tree item.
@@ -942,6 +947,7 @@ proc isReallyOnItem(self: wTreeCtrl, flags: int): bool =
 
 proc beginDrag(self: wTreeCtrl, hItem: HTREEITEM, pos: wPoint) =
   self.mDragging = true
+  self.mCurrentDraggingItem = hItem
   # select the item before Drag'n'Drop is nature behavior?
   TreeView_SelectItem(self.mHwnd, hItem)
 
@@ -993,15 +999,18 @@ proc cancelDrag*(self: wTreeCtrl) {.validate.} =
     TreeView_SetInsertMark(self.mHwnd, 0, 0)
     TreeView_SelectDropTarget(self.mHwnd, 0)
     self.mDragging = false
+    self.mCurrentDraggingItem = 0
     self.releaseMouse()
 
 proc endDrag*(self: wTreeCtrl) {.validate.} =
   ## Ends Drag'n'Drop action.
   # let this public so that user can end Drag'n'Drop programmatically.
   if self.mDragging:
+    let draggingItem = self.mCurrentDraggingItem
     self.cancelDrag()
     let event = self.TreeEvent(wEvent_TreeEndDrag, self.mCurrentInsertItem)
     event.mInsertMark = self.mCurrentInsertMark
+    event.mOldHandle = draggingItem
     self.processEvent(event)
 
 method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,

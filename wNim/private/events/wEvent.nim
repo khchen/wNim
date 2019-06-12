@@ -484,3 +484,5 @@ method getValue*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method setValue*(self: wEvent, value: int) {.base, property.} = discard
   ## Method needs to be overridden.
+method getMenuItem*(self: wEvent): wMenuItem {.base, property.} = discard
+  ## Method needs to be overridden.

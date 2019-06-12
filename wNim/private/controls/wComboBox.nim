@@ -115,7 +115,7 @@ proc append*(self: wComboBox, text: string) {.validate, inline.} =
   SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))
 
 proc append*(self: wComboBox, list: openarray[string]) {.validate, inline.} =
-  ## ## Appends multiple strings in the same time.
+  ## Appends multiple strings in the same time.
   for text in list:
     self.append(text)
 

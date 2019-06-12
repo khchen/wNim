@@ -210,7 +210,7 @@ when not defined(Nimdoc):
       mObj: ptr IDataObject
       mReleasable: bool
 
-    wEventConnection = tuple
+    wEventConnection* = tuple
       msg: UINT
       id: wCommandID
       handler: wEventHandler
@@ -410,6 +410,7 @@ when not defined(Nimdoc):
       mTextCtrl: wTextCtrl
       mEnableInsertMark: bool
       mDragging: bool
+      mCurrentDraggingItem: HTREEITEM
       mCurrentInsertMark: int
       mCurrentInsertItem: HTREEITEM
 
@@ -466,6 +467,7 @@ when not defined(Nimdoc):
       mHelp: string
       mBitmap: wBitmap
       mSubmenu: wMenu
+      mData: int
       # mParentMenu: wMenu
 
     wNewMenu* = ref object of wMenu

@@ -610,6 +610,10 @@ type
     dwContextHelpID*: DWORD
     dwMenuData*: ULONG_PTR
   LPMENUINFO* = ptr MENUINFO
+  TPMPARAMS* {.pure.} = object
+    cbSize*: UINT
+    rcExclude*: RECT
+  LPTPMPARAMS* = ptr TPMPARAMS
   LPCMENUINFO* = ptr MENUINFO
   MENUITEMINFOA* {.pure.} = object
     cbSize*: UINT
@@ -952,6 +956,7 @@ const
   WM_HSCROLL* = 0x0114
   WM_VSCROLL* = 0x0115
   WM_MENUSELECT* = 0x011F
+  WM_MENURBUTTONUP* = 0x0122
   WM_MENUCOMMAND* = 0x0126
   WM_UPDATEUISTATE* = 0x0128
   UIS_CLEAR* = 2
@@ -1058,6 +1063,7 @@ const
   SM_CYCURSOR* = 14
   SM_CYVSCROLL* = 20
   SM_CXHSCROLL* = 21
+  SM_MENUDROPALIGNMENT* = 40
   SM_CXSMICON* = 49
   SM_CYSMICON* = 50
   SM_CXMENUSIZE* = 54
@@ -1076,8 +1082,12 @@ const
   MIIM_BITMAP* = 0x00000080
   MIIM_FTYPE* = 0x00000100
   HBMMENU_CALLBACK* = HBITMAP(-1)
-  TPM_RIGHTBUTTON* = 0x0002
+  TPM_LEFTBUTTON* = 0x0000
+  TPM_LEFTALIGN* = 0x0000
+  TPM_RIGHTALIGN* = 0x0008
   TPM_RECURSE* = 0x0001
+  TPM_HORPOSANIMATION* = 0x0400
+  TPM_HORNEGANIMATION* = 0x0800
   RDW_INVALIDATE* = 0x0001
   RDW_ERASE* = 0x0004
   RDW_ALLCHILDREN* = 0x0080
@@ -1206,6 +1216,7 @@ const
   LB_ERR* = -1
   LBN_SELCHANGE* = 1
   LBN_DBLCLK* = 2
+  LBN_SETFOCUS* = 4
   LB_ADDSTRING* = 0x0180
   LB_INSERTSTRING* = 0x0181
   LB_DELETESTRING* = 0x0182
@@ -1223,6 +1234,8 @@ const
   LB_GETITEMRECT* = 0x0198
   LB_GETITEMDATA* = 0x0199
   LB_SETITEMDATA* = 0x019A
+  LB_SETCARETINDEX* = 0x019E
+  LB_GETCARETINDEX* = 0x019F
   LB_GETITEMHEIGHT* = 0x01A1
   LB_ITEMFROMPOINT* = 0x01A9
   LBS_NOTIFY* = 0x0001
@@ -1279,6 +1292,7 @@ proc TranslateMessage*(lpMsg: ptr MSG): WINBOOL {.winapi, stdcall, dynlib: "user
 proc RegisterHotKey*(hWnd: HWND, id: int32, fsModifiers: UINT, vk: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc UnregisterHotKey*(hWnd: HWND, id: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMessagePos*(): DWORD {.winapi, stdcall, dynlib: "user32", importc.}
+proc AttachThreadInput*(idAttach: DWORD, idAttachTo: DWORD, fAttach: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc PostQuitMessage*(nExitCode: int32): VOID {.winapi, stdcall, dynlib: "user32", importc.}
 proc IsWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc IsMenu*(hMenu: HMENU): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1318,11 +1332,12 @@ proc EnableMenuItem*(hMenu: HMENU, uIDEnableItem: UINT, uEnable: UINT): WINBOOL 
 proc GetSubMenu*(hMenu: HMENU, nPos: int32): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMenuItemCount*(hMenu: HMENU): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc RemoveMenu*(hMenu: HMENU, uPosition: UINT, uFlags: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
-proc DeleteMenu*(hMenu: HMENU, uPosition: UINT, uFlags: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc TrackPopupMenu*(hMenu: HMENU, uFlags: UINT, x: int32, y: int32, nReserved: int32, hWnd: HWND, prcRect: ptr RECT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc TrackPopupMenuEx*(P1: HMENU, P2: UINT, P3: int32, P4: int32, P5: HWND, P6: LPTPMPARAMS): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMenuInfo*(P1: HMENU, P2: LPMENUINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetMenuInfo*(P1: HMENU, P2: LPCMENUINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc UpdateWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetForegroundWindow*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetForegroundWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetDC*(hWnd: HWND): HDC {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetWindowDC*(hWnd: HWND): HDC {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1336,6 +1351,7 @@ proc ShowScrollBar*(hWnd: HWND, wBar: int32, bShow: WINBOOL): WINBOOL {.winapi, 
 proc EnableScrollBar*(hWnd: HWND, wSBflags: UINT, wArrows: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetClientRect*(hWnd: HWND, lpRect: LPRECT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetWindowRect*(hWnd: HWND, lpRect: LPRECT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc SetCursorPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetCursor*(hCursor: HCURSOR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetCursorPos*(lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ClientToScreen*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1348,6 +1364,7 @@ proc GetDesktopWindow*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetParent*(hWnd: HWND): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetParent*(hWndChild: HWND, hWndNewParent: HWND): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc EnumChildWindows*(hWndParent: HWND, lpEnumFunc: WNDENUMPROC, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetWindowThreadProcessId*(hWnd: HWND, lpdwProcessId: LPDWORD): DWORD {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetWindow*(hWnd: HWND, uCmd: UINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc UnhookWindowsHookEx*(hhk: HHOOK): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc CallNextHookEx*(hhk: HHOOK, nCode: int32, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc.}
@@ -2709,6 +2726,7 @@ const
   TVS_HASLINES* = 0x2
   TVS_LINESATROOT* = 0x4
   TVS_EDITLABELS* = 0x8
+  TVS_SHOWSELALWAYS* = 0x20
   TVS_CHECKBOXES* = 0x100
   TVS_SINGLEEXPAND* = 0x400
   TVS_FULLROWSELECT* = 0x1000

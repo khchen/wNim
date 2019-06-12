@@ -97,6 +97,7 @@
 
 DefineIncrement(wEvent_CommandFirst):
   wEvent_Menu
+  wEvent_MenuRightClick
   wEvent_Button
   wEvent_ButtonEnter
   wEvent_ButtonLeave
@@ -140,3 +141,7 @@ const
 
 proc isCommandEvent(msg: UINT): bool {.inline.} =
   msg in wEvent_CommandFirst..wEvent_CommandLast
+
+method getMenuItem*(self: wCommandEvent): wMenuItem {.property, inline.} =
+  ## Returns the menu item (valid forwEvent_Menu and wEvent_MenuRightClick).
+  result = cast[wMenuItem](self.mLparam)

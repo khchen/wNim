@@ -85,6 +85,14 @@ proc setId*(self: wMenuItem, id: wCommandID) {.validate, property.} =
   withPosAtParentMenu:
     parent.setId(pos, id)
 
+proc getData*(self: wMenuItem): int {.validate, property, inline.} =
+  ## Returns the data associated with the item.
+  result = self.mData
+
+proc setData*(self: wMenuItem, data: int) {.validate, property.} =
+  ## Sets the item associated data.
+  self.mData = data
+
 proc isCheck*(self: wMenuItem): bool {.validate.} =
   ## Determines whether a menu item is a kind of check item.
   result = self.mKind == wMenuItemCheck
