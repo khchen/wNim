@@ -215,7 +215,7 @@ include
   wNim/private/controls/wListBox,
   wNim/private/controls/wListCtrl,
   wNim/private/controls/wTreeCtrl,
-  wNim/private/controls/wHyperLinkCtrl,
+  wNim/private/controls/wHyperlinkCtrl,
   wNim/private/controls/wSplitter,
   wNim/private/controls/wIpCtrl,
   wNim/private/wFrame,
