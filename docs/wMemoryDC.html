@@ -1251,7 +1251,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">A memory device context provides a means to draw graphics onto a bitmap. Notice that the memory DC must be deleted (or the bitmap selected out of it) before a bitmap can be reselected into another memory DC. And, before performing any other operations on the bitmap data, the bitmap must be selected out of the memory DC:<pre class="listing"><span class="Identifier">temp_dc</span><span class="Operator">.</span><span class="Identifier">selectObject</span><span class="Punctuation">(</span><span class="Identifier">wNilBitmap</span><span class="Punctuation">)</span> <span class="Comment"># here wNilBitmap is a predefined bitmap</span></pre><p>Like other DC object, wMemoryDC need nim's destructors to release the resource. For nim version 0.18.0, you must compile with --newruntime option to get destructor works.</p>
+  <p class="module-desc">A memory device context provides a means to draw graphics onto a bitmap. Notice that the memory DC must be deleted (or the bitmap selected out of it) before a bitmap can be reselected into another memory DC. And, before performing any other operations on the bitmap data, the bitmap must be selected out of the memory DC:<pre class="listing"><span class="Identifier">temp_dc</span><span class="Operator">.</span><span class="Identifier">selectObject</span><span class="Punctuation">(</span><span class="Identifier">wNilBitmap</span><span class="Punctuation">)</span> <span class="Comment"># here wNilBitmap is a predefined bitmap</span></pre><p>Like other DC object, wMemoryDC need nim's destructors to release the resource.</p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wDC.html">wDC</a></td></tr>
 </tbody></table></p>
   <div class="section" id="12">
@@ -1285,7 +1285,7 @@ Nim's destructors will delete this object by default. However, sometimes you may
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:23 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:28:07 UTC</small>
       </div>
     </div>
   </div>

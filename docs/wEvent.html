@@ -1427,6 +1427,8 @@ function main() {
     title="getValue(self: wEvent): int"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setValue.e%2CwEvent%2Cint"
     title="setValue(self: wEvent; value: int)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getMenuItem.e%2CwEvent"
+    title="getMenuItem(self: wEvent): wMenuItem"><wbr />get<wbr />Menu<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1889,7 +1891,8 @@ Method needs to be overridden.
 
 </dd>
 <a id="getScrollPos.e,wEvent"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
@@ -1943,7 +1946,8 @@ Method needs to be overridden.
 
 </dd>
 <a id="getVisited.e,wEvent"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
@@ -2026,6 +2030,12 @@ Method needs to be overridden.
 Method needs to be overridden.
 
 </dd>
+<a id="getMenuItem.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getMenuItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Method needs to be overridden.
+
+</dd>
 
 </dl></div>
 
@@ -2036,7 +2046,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:10 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:51 UTC</small>
       </div>
     </div>
   </div>

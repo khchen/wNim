@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-# Here we develop a wHyperLink GUI control as custom control example.
+# Here we develop a wHyperlink GUI control as custom control example.
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
@@ -23,7 +23,7 @@ const
 
 # Use wStaticText as a base class to develop the contorl.
 type
-  wHyperLink* = ref object of wStaticText
+  wHyperlink* = ref object of wStaticText
     mUrl: string
     mMarkedColor: wColor
     mVisitedColor: wColor
@@ -36,69 +36,69 @@ type
 
 # Add validate macro to ensure self is not nil.
 # Add property macro so that getters/setters can access as nim's style.
-# For example, if we have setFont(self: wHyperLink, font: wFont) {.property.},
+# For example, if we have setFont(self: wHyperlink, font: wFont) {.property.},
 # then we can just write self.font = Font(10)
 
-proc getVisitedOrNormalColor(self: wHyperLink): wColor {.validate, property.} =
+proc getVisitedOrNormalColor(self: wHyperlink): wColor {.validate, property.} =
   result = if self.mIsVisited: self.mVisitedColor else: self.mNormalColor
 
-proc setFont*(self: wHyperLink, font: wFont) {.validate, property.} =
+proc setFont*(self: wHyperlink, font: wFont) {.validate, property.} =
   self.wWindow.setFont(font)
   self.mNormalFont = font
   self.fit()
 
-proc getHoverFont*(self: wHyperLink): wFont {.validate, property.} =
+proc getHoverFont*(self: wHyperlink): wFont {.validate, property.} =
   result = self.mHoverFont
 
-proc setHoverFont*(self: wHyperLink, font: wFont) {.validate, property.} =
+proc setHoverFont*(self: wHyperlink, font: wFont) {.validate, property.} =
   self.mHoverFont = font
   if self.mIsMouseHover:
     self.wWindow.setFont(self.mHoverFont)
     self.fit()
 
-proc getMarkedColor*(self: wHyperLink): wColor {.validate, property.} =
+proc getMarkedColor*(self: wHyperlink): wColor {.validate, property.} =
   result = self.mMarkedColor
 
-proc setMarkedColor*(self: wHyperLink, color: wColor) {.validate, property.} =
+proc setMarkedColor*(self: wHyperlink, color: wColor) {.validate, property.} =
   self.mMarkedColor = color
   if self.mIsPressed:
     self.setForegroundColor(self.mMarkedColor)
     self.refresh()
 
-proc getNormalColor*(self: wHyperLink): wColor {.validate, property.} =
+proc getNormalColor*(self: wHyperlink): wColor {.validate, property.} =
   result = self.mNormalColor
 
-proc setNormalColor*(self: wHyperLink, color: wColor) {.validate, property.} =
+proc setNormalColor*(self: wHyperlink, color: wColor) {.validate, property.} =
   self.mNormalColor = color
   if not self.mIsPressed:
     self.setForegroundColor(self.visitedOrNormalColor)
     self.refresh()
 
-proc getVisitedColor*(self: wHyperLink): wColor {.validate, property.} =
+proc getVisitedColor*(self: wHyperlink): wColor {.validate, property.} =
   result = self.mVisitedColor
 
-proc setVisitedColor*(self: wHyperLink, color: wColor) {.validate, property.} =
+proc setVisitedColor*(self: wHyperlink, color: wColor) {.validate, property.} =
   self.mVisitedColor = color
   if not self.mIsPressed:
     self.setForegroundColor(self.visitedOrNormalColor)
     self.refresh()
 
-proc getUrl*(self: wHyperLink): string {.validate, property.} =
+proc getUrl*(self: wHyperlink): string {.validate, property.} =
   result = self.mUrl
 
-proc setUrl*(self: wHyperLink, url: string) {.validate, property.} =
+proc setUrl*(self: wHyperlink, url: string) {.validate, property.} =
   self.mUrl = url
 
-proc setVisited*(self: wHyperLink, isVisited = true) {.validate, property.} =
+proc setVisited*(self: wHyperlink, isVisited = true) {.validate, property.} =
   self.mIsVisited = isVisited
 
-proc getVisited*(self: wHyperLink): bool {.validate, property.} =
+proc getVisited*(self: wHyperlink): bool {.validate, property.} =
   result = self.mIsVisited
 
-proc final*(self: wHyperLink) =
+proc final*(self: wHyperlink) =
   self.wStaticText.final()
 
-proc init*(self: wHyperLink, parent: wWindow, id = wDefaultID, label: string,
+proc init*(self: wHyperlink, parent: wWindow, id = wDefaultID, label: string,
     url: string, pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
   self.wStaticText.init(parent, id, label, pos, size, style)
@@ -159,8 +159,8 @@ proc init*(self: wHyperLink, parent: wWindow, id = wDefaultID, label: string,
           ShellExecute(0, "open", self.mUrl, nil, nil, SW_SHOW)
       self.mIsVisited = true
 
-proc HyperLink*(parent: wWindow, id = wDefaultID, label: string, url: string,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperLink
+proc Hyperlink*(parent: wWindow, id = wDefaultID, label: string, url: string,
+    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wHyperlink
     {.discardable.} =
 
   new(result, final)
@@ -175,7 +175,7 @@ when isMainModule:
 
   var statusBar = StatusBar(frame)
   var panel = Panel(frame)
-  var hyperlink = HyperLink(panel, label="Google", url="https://www.google.com",
+  var hyperlink = Hyperlink(panel, label="Google", url="https://www.google.com",
     pos=(20, 20))
 
   hyperlink.font = Font(18)

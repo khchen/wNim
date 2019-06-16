@@ -1392,6 +1392,8 @@ function main() {
     title="setFocus(self: wWindow)"><wbr />set<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isFocusable%2CwWindow"
     title="isFocusable(self: wWindow): bool"><wbr />is<wbr />Focusable<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#hasFocus%2CwWindow"
+    title="hasFocus(self: wWindow): bool"><wbr />has<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#captureMouse%2CwWindow"
     title="captureMouse(self: wWindow)"><wbr />capture<wbr />Mouse<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#releaseMouse%2CwWindow"
@@ -1466,9 +1468,9 @@ function main() {
   <li><a class="reference" href="#center%2CwWindow"
     title="center(self: wWindow; direction = wBoth)"><wbr />center<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2CwPoint"
-    title="popupMenu(self: wWindow; menu: wMenu; pos: wPoint = wDefaultPoint)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="popupMenu(self: wWindow; menu: wMenu; pos: wPoint = wDefaultPoint; recurse = true)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2Cint%2Cint"
-    title="popupMenu(self: wWindow; menu: wMenu; x, y: int)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="popupMenu(self: wWindow; menu: wMenu; x: int; y: int; recurse = true)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#startTimer%2CwWindow%2Cfloat%2Cint"
     title="startTimer(self: wWindow; seconds: float; id = 1)"><wbr />start<wbr />Timer<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#stopTimer%2CwWindow%2Cint"
@@ -2090,6 +2092,12 @@ This sets the window to receive keyboard input.
 Can this window itself have focus?
 
 </dd>
+<a id="hasFocus,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hasFocus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns true if the window or it's child window has the focus.
+
+</dd>
 <a id="captureMouse,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">captureMouse</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2326,15 +2334,15 @@ Centers the window. <em>direction</em> is a bitwise combination of wHorizontal a
 
 </dd>
 <a id="popupMenu,wWindow,wMenu,wPoint"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">recurse</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Pops up the given menu at the specified coordinates.
 
 </dd>
 <a id="popupMenu,wWindow,wMenu,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">recurse</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Pops up the given menu at the specified coordinates.
 
@@ -2616,7 +2624,7 @@ Iterates over each window's sibling.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:00 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:38 UTC</small>
       </div>
     </div>
   </div>

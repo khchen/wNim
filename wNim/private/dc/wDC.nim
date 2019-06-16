@@ -16,8 +16,6 @@
 ##
 ## In wNim, wDC and it's subclasses are defined as **object** instead
 ## **ref object**. So they need nim's destructors to release the resource.
-## For nim version 0.18.0, you must compile with --newruntime option to get
-## destructor works.
 #
 ## :Subclasses:
 ##   `wPaintDC <wPaintDC.html>`_

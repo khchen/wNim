@@ -301,7 +301,7 @@ proc focusPrev(self: wNoteBook): bool =
     SendMessage(self.mHwnd, TCM_SETCURFOCUS, index, 0)
     return true
 
-method release(self: wNoteBook) =
+method release(self: wNoteBook) {.locks: "unknown".} =
   # Don't need to delete self.mImageList
   # let GC to delete it is ok.
   self.mImageList = nil

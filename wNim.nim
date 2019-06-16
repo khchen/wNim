@@ -21,6 +21,7 @@
 ##  - `wResizable <wResizable.html>`_
 ##  - `wDataObject <wDataObject.html>`_
 ##  - `wAcceleratorTable <wAcceleratorTable.html>`_
+##  - `wUtils <wUtils.html>`_
 ##
 ##  Windows
 ##  -------
@@ -110,7 +111,7 @@
 ##  - `wCommandEvent <wCommandEvent.html>`_
 ##  - `wScrollEvent <wScrollEvent.html>`_
 ##  - `wSpinEvent <wSpinEvent.html>`_
-##  - `wHyperLinkEvent <wHyperLinkEvent.html>`_
+##  - `wHyperlinkEvent <wHyperlinkEvent.html>`_
 ##  - `wListEvent <wListEvent.html>`_
 ##  - `wTreeEvent <wTreeEvent.html>`_
 ##  - `wIpEvent <wIpEvent.html>`_
@@ -128,12 +129,15 @@
 
 import
   tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net,
-  kiwi, winim/[winstr, utils], wNim/autolayout, wNim/private/wWinimx
+  winim/[winstr, utils], wNim/autolayout, wNim/private/wWinimx,
+  wNim/private/kiwi/[variable, constraint, term, expression, symbolics,
+  solver, strength]
   # winim/inc/[windef, winbase, winerror, winuser, wingdi, commctrl, commdlg,
   #   objbase, shellapi, gdiplus, richedit, uxtheme]
 
 export
-  kiwi, winstr, utils, autolayout
+  winstr, utils, autolayout, variable, constraint, term, expression, symbolics,
+  solver, strength
 
 include
   wNim/private/wSymbolics,
@@ -159,7 +163,7 @@ include
   wNim/private/events/wCommandEvent,
   wNim/private/events/wScrollEvent,
   wNim/private/events/wSpinEvent,
-  wNim/private/events/wHyperLinkEvent,
+  wNim/private/events/wHyperlinkEvent,
   wNim/private/events/wIpEvent,
   wNim/private/events/wListEvent,
   wNim/private/events/wTreeEvent,
@@ -186,6 +190,7 @@ include
   wNim/private/dc/wWindowDC,
   wNim/private/dc/wScreenDC,
   wNim/private/dc/wPaintDC,
+  wNim/private/dc/hotfix,
   wNim/private/menu/wMenuBar,
   wNim/private/menu/wMenu,
   wNim/private/menu/wMenuItem,
@@ -215,7 +220,7 @@ include
   wNim/private/controls/wListBox,
   wNim/private/controls/wListCtrl,
   wNim/private/controls/wTreeCtrl,
-  wNim/private/controls/wHyperLinkCtrl,
+  wNim/private/controls/wHyperlinkCtrl,
   wNim/private/controls/wSplitter,
   wNim/private/controls/wIpCtrl,
   wNim/private/wFrame,

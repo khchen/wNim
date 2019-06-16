@@ -1199,7 +1199,7 @@ proc final*(self: wTreeCtrl) =
   ## Default finalizer for wTreeCtrl.
   discard
 
-method release(self: wTreeCtrl) =
+method release(self: wTreeCtrl) {.locks: "unknown".} =
   self.mImageListNormal = nil
   self.mImageListState = nil
 

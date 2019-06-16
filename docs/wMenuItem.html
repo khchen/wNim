@@ -1264,6 +1264,10 @@ function main() {
     title="getId(self: wMenuItem): wCommandID"><wbr />get<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setId%2CwMenuItem%2CwCommandID"
     title="setId(self: wMenuItem; id: wCommandID)"><wbr />set<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getData%2CwMenuItem"
+    title="getData(self: wMenuItem): int"><wbr />get<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setData%2CwMenuItem%2Cint"
+    title="setData(self: wMenuItem; data: int)"><wbr />set<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isCheck%2CwMenuItem"
     title="isCheck(self: wMenuItem): bool"><wbr />is<wbr />Check<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isRadio%2CwMenuItem"
@@ -1284,6 +1288,8 @@ function main() {
     title="isChecked(self: wMenuItem): bool"><wbr />is<wbr />Checked<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toggle%2CwMenuItem"
     title="toggle(self: wMenuItem)"><wbr />toggle<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#detach%2CwMenuItem"
+    title="detach(self: wMenuItem)"><wbr />detach<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwMenuItem"
     title="final(self: wMenuItem)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwMenuItem%2CwCommandID%2Cstring%2Cstring%2CwBitmap%2CwMenu"
@@ -1397,6 +1403,18 @@ Returns the menu item identifier.
 Sets the id for the menu item.
 
 </dd>
+<a id="getData,wMenuItem"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the data associated with the item.
+
+</dd>
+<a id="setData,wMenuItem,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the item associated data.
+
+</dd>
 <a id="isCheck,wMenuItem"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">isCheck</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1457,6 +1475,12 @@ Determines whether a menu item is checked.
 Toggle the menu item.
 
 </dd>
+<a id="detach,wMenuItem"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">detach</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Detach a menu item from all menu.
+
+</dd>
 <a id="final,wMenuItem"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1488,7 +1512,7 @@ Constructor.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:03 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:42 UTC</small>
       </div>
     </div>
   </div>

@@ -88,7 +88,7 @@ proc isListEvent(msg: UINT): bool {.inline.}
 proc isTreeEvent(msg: UINT): bool {.inline.}
 proc isStatusBarEvent(msg: UINT): bool {.inline.}
 proc isSpinEvent(msg: UINT): bool {.inline.}
-proc isHyperLinkEvent(msg: UINT): bool {.inline.}
+proc isHyperlinkEvent(msg: UINT): bool {.inline.}
 proc isIpEvent(msg: UINT): bool {.inline.}
 proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
@@ -130,7 +130,7 @@ const
   wEvent_ListFirst = WM_APP + 700
   wEvent_TreeFirst = WM_APP + 750
   wEvent_SpinFirst = WM_APP + 800
-  wEvent_HyperLinkFirst = WM_APP + 850
+  wEvent_HyperlinkFirst = WM_APP + 850
   wEvent_IpFirst = WM_APP + 900
   wEvent_CommandLast = WM_APP + 1000
   wEvent_App* = wEvent_CommandLast + 1
@@ -185,8 +185,8 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
   elif msg.isSpinEvent():
     result = CreateEvent(wSpinEvent)
 
-  elif msg.isHyperLinkEvent():
-    result = CreateEvent(wHyperLinkEvent)
+  elif msg.isHyperlinkEvent():
+    result = CreateEvent(wHyperlinkEvent)
 
   elif msg.isIpEvent():
     result = CreateEvent(wIpEvent)
@@ -438,7 +438,7 @@ method setPosition*(self: wEvent, pos: wPoint) {.base, property.} = discard
   ## Method needs to be overridden.
 method getOrientation*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
-method getScrollPos*(self: wEvent): int {.base, property.} = discard
+method getScrollPos*(self: wEvent): int {.base, property, locks: "unknown".} = discard
   ## Method needs to be overridden.
 method getKind*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
@@ -456,7 +456,7 @@ method getUrl*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
 method getLinkId*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
-method getVisited*(self: wEvent): bool {.base, property.} = discard
+method getVisited*(self: wEvent): bool {.base, property, locks: "unknown".} = discard
   ## Method needs to be overridden.
 method getCursor*(self: wEvent): wCursor {.base, property.} = discard
   ## Method needs to be overridden.

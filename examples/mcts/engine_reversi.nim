@@ -16,7 +16,7 @@ type
     P1 = "O"
     P2 = "X"
     BLOCK = " "
-  Move* = uint8
+  Move* = int8
   Board* = array[Edge * Edge, Player]
   State* = ref object
     move*: Move

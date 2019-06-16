@@ -1260,6 +1260,10 @@ function main() {
     title="getImageCount(self: wImageList): int"><wbr />get<wbr />Image<wbr />Count<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getSize%2CwImageList"
     title="getSize(self: wImageList): wSize"><wbr />get<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getBitmap%2CwImageList%2Cint"
+    title="getBitmap(self: wImageList; index: int): wBitmap"><wbr />get<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getIcon%2CwImageList%2Cint"
+    title="getIcon(self: wImageList; index: int): wIcon"><wbr />get<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delete%2CwImageList"
     title="delete(self: wImageList)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwImageList"
@@ -1366,6 +1370,20 @@ Returns the number of images in the list.
 Retrieves the size of the images in the list.
 
 </dd>
+<a id="getBitmap,wImageList,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBitmap</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBitmap</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Create the bitmap from specified index.
+
+</dd>
+<a id="getIcon,wImageList,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Create the icon from specified index.
+
+</dd>
 <a id="delete,wImageList"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1416,7 +1434,7 @@ Constructor specifying the image size, whether image masks should be created, an
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:48:56 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:33 UTC</small>
       </div>
     </div>
   </div>

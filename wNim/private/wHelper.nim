@@ -5,9 +5,12 @@
 #
 #====================================================================
 
-converter DWORDToInt(x: DWORD): int = int x
+# converter DWORDToInt(x: DWORD): int = int x
 converter IntToDWORD(x: int): DWORD = DWORD x
 converter PtrPtrObjectToPtrPointer(x: ptr ptr object): ptr pointer = cast[ptr pointer](x)
+
+template `^$`(x: untyped): untyped = winstr.`$`(x)
+  # `$` cause ambiguous call since 0.2.0, use ^$ instead
 
 proc `-`(a, b: wPoint): wPoint =
   result = (a.x - b.x, a.y - b.y)

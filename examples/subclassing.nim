@@ -11,7 +11,7 @@ import wNim
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
 # 2. Every class have init(self: wObject) and final(self: wObject)
 #    as initializer and finalizer.
-# 3. Provides na Object() proc to quickly get the ref object.
+# 3. Provides an Object() proc to quickly get the ref object.
 
 type
   wMyFrame = ref object of wFrame

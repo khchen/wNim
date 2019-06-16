@@ -1,14 +1,18 @@
 Version 0.5.0
 -------------
-* wWindow: add hasFocus(), improve popupMenu()
-* wListBox: add setData(), getData(), getRect(), getFocused(), setFocused()
-* wMenuItem: add detach(), getData(), setData()
-* wImageList: add getBitmap(), getIcon()
-* wSplitter: add wSpVertical, wSpHorizontal
-* wTreeCtrl: add wTrShowSelectAlways
-* Fix: TCC don't support size of UncheckArray
+* Update for Nim Compiler 0.20.0.
+* wWindow: add hasFocus(), improve popupMenu().
+* wListBox: add setData(), getData(), getRect(), getFocused(), setFocused().
+* wMenuItem: add detach(), getData(), setData().
+* wImageList: add getBitmap(), getIcon().
+* wSplitter: add wSpVertical, wSpHorizontal.
+* wTreeCtrl: add wTrShowSelectAlways.
+* wUtils: add wSetMousePosition().
+* Docs: add wUtils.html page.
+* Fix: TCC don't support size of UncheckArray.
 * Fix: wMenu/wMenuItem let the GC crash.
-* Fix: menu event sent to wWindow instead of wFrame.
+* Fix: Menu event sent to wWindow instead of wFrame.
+* Fix: Rename all HyperLink to Hyperlink.
 
 Version 0.4.0
 -------------

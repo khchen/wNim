@@ -1268,7 +1268,7 @@ function main() {
 <tr><td>wEvent_TreeItemCollapsing</td><td>The item is being collapsed. This event can be vetoed.</td></tr>
 <tr><td>wEvent_TreeItemExpanded</td><td>The item has been expanded.</td></tr>
 <tr><td>wEvent_TreeItemExpanding</td><td>The item is being expanded. This event can be vetoed.</td></tr>
-<tr><td>wEvent_TreeItemRightClick</td><td>The user has clicked the item with the middle mouse button.</td></tr>
+<tr><td>wEvent_TreeItemRightClick</td><td>The user has clicked the item with the right mouse button.</td></tr>
 <tr><td>wEvent_TreeSelChanged</td><td>Selection has changed.</td></tr>
 <tr><td>wEvent_TreeSelChanging</td><td>Selection is changing. This event can be vetoed.</td></tr>
 <tr><td>wEvent_TreeItemMenu</td><td>The context menu for the selected item has been requested, either by a right click or by using the menu key.</td></tr>
@@ -1286,7 +1286,7 @@ Returns the item.
 <a id="getOldItem.e,wTreeEvent"></a>
 <dt><pre><span class="Keyword">method</span> <span class="Identifier">getOldItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns the old item (valid for wEvent_TreeSelChanging and wEvent_TreeSelChanged events).
+Returns the old item (valid for wEvent_TreeSelChanging, wEvent_TreeSelChanged, and wEvent_TreeEndDrag events).
 
 </dd>
 <a id="getText.e,wTreeEvent"></a>
@@ -1317,7 +1317,7 @@ Returns the position of the mouse pointer if the event is a drag or menu-context
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:19 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:28:01 UTC</small>
       </div>
     </div>
   </div>

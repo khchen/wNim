@@ -132,7 +132,7 @@ proc initFromNative(self: wFont, lf: var LOGFONT) =
 
   self.mPointSize = -(lf.lfHeight * 72 / wGetDPI())
   self.mWeight = lf.lfWeight
-  self.mFaceName = $lf.lfFaceName
+  self.mFaceName = ^$lf.lfFaceName
   self.mFaceName.nullTerminate()
   self.mEncoding = int lf.lfCharSet
   self.mFamily = int(lf.lfPitchAndFamily and 0b000)

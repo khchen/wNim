@@ -215,7 +215,7 @@ proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete().
   self.delete()
 
-method release(self: wWindow) {.base, inline.} =
+method release(self: wWindow) {.base, inline, locks: "unknown".} =
   # override this if a window need extra code to release the resource
   # delete only destroy the window
   # really resoruce clear is in WM_NCDESTROY
@@ -1091,7 +1091,7 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM = 0,
   result = self.processMessage(msg, wParam, lParam, dummy)
 
 method processNotify(self: wWindow, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.base.} =
+    ret: var LRESULT): bool {.base, locks: "unknown".} =
   # subclass can override this to process the nofity message
   discard
 

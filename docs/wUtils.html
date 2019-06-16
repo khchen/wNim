@@ -1238,6 +1238,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#wGetMousePosition"
     title="wGetMousePosition(): wPoint"><wbr />w<wbr />Get<wbr />Mouse<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSetMousePosition%2CwPoint"
+    title="wSetMousePosition(pos: wPoint)"><wbr />w<wbr />Set<wbr />Mouse<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wGetMessagePosition"
     title="wGetMessagePosition(): wPoint"><wbr />w<wbr />Get<wbr />Message<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wGetKeyState%2Cint"
@@ -1273,6 +1275,12 @@ function main() {
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">wGetMousePosition</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the mouse position in screen coordinates.
+
+</dd>
+<a id="wSetMousePosition,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wSetMousePosition</span><span class="Other">(</span><span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the mouse position
 
 </dd>
 <a id="wGetMessagePosition"></a>
@@ -1339,7 +1347,7 @@ Flushes the clipboard: this means that the data which is currently on clipboard 
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:48:59 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:37 UTC</small>
       </div>
     </div>
   </div>

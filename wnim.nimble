@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.4.1"
+version       = "0.5.0"
 author        = "Ward"
 description   = "wNim - Nim\'s Windows GUI framework"
 license       = "MIT"
@@ -8,7 +8,7 @@ skipDirs      = @["examples", "docs"]
 
 # Dependencies
 
-requires "nim >= 0.19.0", "winim >= 3.0", "kiwi >= 0.1.0"
+requires "nim >= 0.19.0", "winim >= 3.1.1"
 
 # Examples
 
@@ -32,7 +32,7 @@ task example, "Build all the examples":
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/subclassing"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/tictactoe"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/toolbar"
-  exec "nim c -d:release --opt:size --passL:-s --app:gui examples/wHyperLink"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui examples/wHyperlink"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayout/autolayoutEditor"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayout/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayout/layout1"
@@ -61,7 +61,7 @@ task xpexample, "Build all the examples for Windows XP":
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/subclassing"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/tictactoe"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/toolbar"
-  exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/wHyperLink"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/wHyperlink"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayout/autolayoutEditor"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayout/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayout/layout1"

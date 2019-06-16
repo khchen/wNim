@@ -69,9 +69,12 @@ iterator wAppTopLevelWindows(): wWindow {.inline.} =
 proc wAppWindowDelete(win: wWindow) =
   wTheApp.mWindowTable.del(win.mHwnd)
 
-  for index, w in wTheApp.mTopLevelWindowList:
-    if w == win:
-      wTheApp.mTopLevelWindowList.del(index)
+  var index = 0
+  while index < wTheApp.mTopLevelWindowList.len:
+    if wTheApp.mTopLevelWindowList[index] == win:
+      wTheApp.mTopLevelWindowList.del index
+    else:
+      index.inc
 
 proc wAppIsMessagePropagation(msg: UINT): bool {.inline.} =
   result = msg in wTheApp.mPropagationSet

@@ -1282,8 +1282,6 @@ function main() {
     title="remove(self: wMenuBar; menu: wMenu)"><wbr />remove<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#replace%2CwMenuBar%2Cint%2CwMenu%2Cstring%2CwBitmap"
     title="replace(self: wMenuBar; pos: int; menu: wMenu; text: string; bitmap: wBitmap = nil): wMenu"><wbr />replace<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#delete%2CwMenuBar"
-    title="delete(self: wMenuBar)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getHandle%2CwMenuBar"
     title="getHandle(self: wMenuBar): HMENU"><wbr />get<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getCount%2CwMenuBar"
@@ -1292,6 +1290,8 @@ function main() {
     title="`[]`(self: wMenuBar; pos: int): wMenu"><wbr />`[]`<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#len%2CwMenuBar"
     title="len(self: wMenuBar): int"><wbr />len<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#delete%2CwMenuBar"
+    title="delete(self: wMenuBar)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwMenuBar"
     title="final(self: wMenuBar)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwMenuBar"
@@ -1474,12 +1474,6 @@ Find and remove all the menu object from the menubar.
 Replaces the menu at the given position with another one. Return the old menu object.
 
 </dd>
-<a id="delete,wMenuBar"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Delete the menubar.
-
-</dd>
 <a id="getHandle,wMenuBar"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHandle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HMENU</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1502,6 +1496,12 @@ Returns the menu at pos. Raise error if index out of bounds.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">len</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the number of wMenu objects in this menubar. This shoud be equal to getCount in most case.
+
+</dd>
+<a id="delete,wMenuBar"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Delete the menubar.
 
 </dd>
 <a id="final,wMenuBar"></a>
@@ -1574,7 +1574,7 @@ Items iterator for menus in a menubar. Iterates over each menu of menubar. Yield
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:40 UTC</small>
       </div>
     </div>
   </div>

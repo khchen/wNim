@@ -9,8 +9,6 @@
 ## whole area of a window.
 ##
 ## Like other DC object, wWindowDC need nim's destructors to release the resource.
-## For nim version 0.18.0, you must compile with --newruntime option to get
-## destructor works.
 #
 ## :Superclass:
 ##   `wDC <wDC.html>`_
@@ -32,4 +30,5 @@ proc delete*(self: var wWindowDC) =
     ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
     self.mHdc = 0
 
-proc `=destroy`(self: var wWindowDC) = self.delete()
+proc `=destroy`(self: var wWindowDC) =
+  self.delete()

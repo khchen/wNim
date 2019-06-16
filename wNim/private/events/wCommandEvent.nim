@@ -18,7 +18,7 @@
 ##   `wSpinEvent <wSpinEvent.html>`_
 ##   `wListEvent <wListEvent.html>`_
 ##   `wTreeEvent <wTreeEvent.html>`_
-##   `wHyperLinkEvent <wHyperLinkEvent.html>`_
+##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
 #
 ## :Events:
 ##   ==============================  =============================================================

@@ -924,7 +924,7 @@ proc final*(self: wListCtrl) =
   ## Default finalizer for wListCtrl.
   discard
 
-method release(self: wListCtrl) =
+method release(self: wListCtrl) {.locks: "unknown".} =
   self.mImageListNormal = nil
   self.mImageListSmall = nil
   self.mImageListState = nil

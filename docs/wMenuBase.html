@@ -1295,6 +1295,8 @@ function main() {
     title="isChecked(self: wMenuBase; id: wCommandID): bool"><wbr />is<wbr />Checked<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toggle%2CwMenuBase%2CwCommandID"
     title="toggle(self: wMenuBase; id: wCommandID)"><wbr />toggle<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#MenuBase%2CHMENU"
+    title="MenuBase(hMenu: HMENU): wMenuBase"><wbr />Menu<wbr />Base<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1500,6 +1502,12 @@ Determines whether a menu item is checked.
 Toggle the menu item.
 
 </dd>
+<a id="MenuBase,HMENU"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">MenuBase</span><span class="Other">(</span><span class="Identifier">hMenu</span><span class="Other">:</span> <span class="Identifier">HMENU</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuBase</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return the wMenuBase object of specific hMenu handle or nil if not exists. Notice: This is not a constructor and for low level use only.
+
+</dd>
 
 </dl></div>
 
@@ -1510,7 +1518,7 @@ Toggle the menu item.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:27:41 UTC</small>
       </div>
     </div>
   </div>

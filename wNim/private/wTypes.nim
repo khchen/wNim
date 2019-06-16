@@ -186,7 +186,7 @@ when not defined(Nimdoc):
       mPoint: wPoint
     wScrollEvent* = ref object of wCommandEvent
     wSpinEvent* = ref object of wCommandEvent
-    wHyperLinkEvent* = ref object of wCommandEvent
+    wHyperlinkEvent* = ref object of wCommandEvent
     wIpEvent* = ref object of wCommandEvent
       mIndex: int
       mValue: int
@@ -418,7 +418,7 @@ when not defined(Nimdoc):
       mHandle: HTREEITEM
       mTreeCtrl: wTreeCtrl
 
-    wHyperLinkCtrl* = ref object of wControl
+    wHyperlinkCtrl* = ref object of wControl
 
     wSplitter* = ref object of wControl
       mIsVertical: bool

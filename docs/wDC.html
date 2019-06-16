@@ -1459,7 +1459,7 @@ function main() {
   <div id="tocRoot"></div>
   <p class="module-desc"><p>A wDC is a &quot;device context&quot; onto which graphics and text can be drawn. wDC is an abstract base class and cannot be created directly. Use <strong>wPaintDC, wClientDC, wWindowDC, wScreenDC, or wMemoryDC</strong>.</p>
 <p>Notice that device contexts which are associated with windows (i.e. wClientDC, wWindowDC and wPaintDC) use the window font and colors by default. But the other device context classes use system-default values so you always must set the appropriate fonts and colours before using them.</p>
-<p>In wNim, wDC and it's subclasses are defined as <strong>object</strong> instead <strong>ref object</strong>. So they need nim's destructors to release the resource. For nim version 0.18.0, you must compile with --newruntime option to get destructor works.</p>
+<p>In wNim, wDC and it's subclasses are defined as <strong>object</strong> instead <strong>ref object</strong>. So they need nim's destructors to release the resource.</p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wPaintDC.html">wPaintDC</a> <a class="reference external" href="wClientDC.html">wClientDC</a> <a class="reference external" href="wWindowDC.html">wWindowDC</a> <a class="reference external" href="wScreenDC.html">wScreenDC</a> <a class="reference external" href="wMemoryDC.html">wMemoryDC</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wGdiObject.html">wGdiObject</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td>Used in logical function and blit.<table border="1" class="docutils"><tr><th>Consts</th><th>Description</th></tr>
@@ -2114,7 +2114,7 @@ Default finalizer for wDC.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:23 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:28:06 UTC</small>
       </div>
     </div>
   </div>

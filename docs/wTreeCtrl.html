@@ -1268,6 +1268,8 @@ function main() {
     title="wTrNoScroll = 0x00002000"><wbr />w<wbr />Tr<wbr />No<wbr />Scroll<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTrSingleExpand"
     title="wTrSingleExpand = 0x00000400"><wbr />w<wbr />Tr<wbr />Single<wbr />Expand<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wTrShowSelectAlways"
+    title="wTrShowSelectAlways = 0x00000020"><wbr />w<wbr />Tr<wbr />Show<wbr />Select<wbr />Always<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTreeItemStateBold"
     title="wTreeItemStateBold = 0x00000010"><wbr />w<wbr />Tree<wbr />Item<wbr />State<wbr />Bold<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTreeItemStateCut"
@@ -1318,6 +1320,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#TreeItem%2CwTreeCtrl%2CHTREEITEM"
     title="TreeItem(treeCtrl: wTreeCtrl; handle: HTREEITEM): wTreeItem"><wbr />Tree<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#%3D%3D%2CwTreeItem%2CwTreeItem"
+    title="`==`(a, b: wTreeItem): bool"><wbr />`==`<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isOk%2CwTreeItem"
     title="isOk(self: wTreeItem): bool"><wbr />is<wbr />Ok<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#unset%2CwTreeItem"
@@ -1634,6 +1638,12 @@ Comparing callback function prototype used in sortChildren()
 
 
 </dd>
+<a id="wTrShowSelectAlways"></a>
+<dt><pre><span class="Identifier">wTrShowSelectAlways</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="wTreeItemStateBold"></a>
 <dt><pre><span class="Identifier">wTreeItemStateBold</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
 <dd>
@@ -1770,6 +1780,12 @@ Comparing callback function prototype used in sortChildren()
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default constructor.
+
+</dd>
+<a id="==,wTreeItem,wTreeItem"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`==`</span><span class="Other">(</span><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Checks for equality between two wTreeItem.
 
 </dd>
 <a id="isOk,wTreeItem"></a>
@@ -2383,7 +2399,7 @@ Iterate each child in this item, including all descendants.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-18 22:49:43 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-16 14:28:30 UTC</small>
       </div>
     </div>
   </div>

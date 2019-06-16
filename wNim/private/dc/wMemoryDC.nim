@@ -15,8 +15,6 @@
 ##   temp_dc.selectObject(wNilBitmap) # here wNilBitmap is a predefined bitmap
 ##
 ## Like other DC object, wMemoryDC need nim's destructors to release the resource.
-## For nim version 0.18.0, you must compile with --newruntime option to get
-## destructor works.
 #
 ## :Superclass:
 ##   `wDC <wDC.html>`_
@@ -42,4 +40,5 @@ proc delete*(self: var wMemoryDC) =
     DeleteDC(self.mHdc)
     self.mHdc = 0
 
-proc `=destroy`(self: var wMemoryDC) = self.delete()
+proc `=destroy`(self: var wMemoryDC) =
+  self.delete()

@@ -82,7 +82,6 @@ proc getBitmap*(self: wImageList, index: int): wBitmap {.validate, property.} =
     width, height: int32
     info: IMAGEINFO
     bm: BITMAP
-    ret: wBitmap
 
   # need to create new bitmap, don't just warp info.hbmImage
   if index <= self.getImageCount() and

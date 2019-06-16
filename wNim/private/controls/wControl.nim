@@ -34,7 +34,7 @@
 ##   `wListBox <wListBox.html>`_
 ##   `wListCtrl <wListCtrl.html>`_
 ##   `wTreeCtrl <wTreeCtrl.html>`_
-##   `wHyperLinkCtrl <wHyperLinkCtrl.html>`_
+##   `wHyperlinkCtrl <wHyperlinkCtrl.html>`_
 ##   `wSplitter <wSplitter.html>`_
 ##   `wIpCtrl <wIpCtrl.html>`_
 ##   `wRebar <wRebar.html>`_  (experimental)
