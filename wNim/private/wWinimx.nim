@@ -193,7 +193,7 @@ const
   E_NOTIMPL* = HRESULT 0x80004001'i32
   E_NOINTERFACE* = HRESULT 0x80004002'i32
   E_FAIL* = HRESULT 0x80004005'i32
-template HRESULT_FROM_WIN32*(x: untyped): HRESULT = (if x <= 0: HRESULT x else: HRESULT(x and 0x0000ffff) or HRESULT(FACILITY_WIN32 shl 16) or HRESULT(0x80000000))
+template HRESULT_FROM_WIN32*(x: untyped): HRESULT = (if x <= 0: HRESULT x else: HRESULT(x and 0x0000ffff) or HRESULT(FACILITY_WIN32 shl 16) or HRESULT(0x80000000'i32))
 const
   S_OK* = HRESULT 0x00000000
   DRAGDROP_S_DROP* = HRESULT 0x00040100
@@ -316,6 +316,7 @@ type
     lfQuality*: BYTE
     lfPitchAndFamily*: BYTE
     lfFaceName*: array[LF_FACESIZE, CHAR]
+  LPLOGFONTA* = ptr LOGFONTA
   LOGFONTW* {.pure.} = object
     lfHeight*: LONG
     lfWidth*: LONG
@@ -331,6 +332,7 @@ type
     lfQuality*: BYTE
     lfPitchAndFamily*: BYTE
     lfFaceName*: array[LF_FACESIZE, WCHAR]
+  LPLOGFONTW* = ptr LOGFONTW
   BLENDFUNCTION* {.pure.} = object
     BlendOp*: BYTE
     BlendFlags*: BYTE
@@ -3287,6 +3289,43 @@ type
     lpfnHook*: LPCCHOOKPROC
     lpTemplateName*: LPCWSTR
   LPCHOOSECOLORW* = ptr TCHOOSECOLORW
+  LPCFHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+  TCHOOSEFONTA* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDC*: HDC
+    lpLogFont*: LPLOGFONTA
+    iPointSize*: INT
+    Flags*: DWORD
+    rgbColors*: COLORREF
+    lCustData*: LPARAM
+    lpfnHook*: LPCFHOOKPROC
+    lpTemplateName*: LPCSTR
+    hInstance*: HINSTANCE
+    lpszStyle*: LPSTR
+    nFontType*: WORD
+    MISSING_ALIGNMENT*: WORD
+    nSizeMin*: INT
+    nSizeMax*: INT
+  LPCHOOSEFONTA* = ptr TCHOOSEFONTA
+  TCHOOSEFONTW* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDC*: HDC
+    lpLogFont*: LPLOGFONTW
+    iPointSize*: INT
+    Flags*: DWORD
+    rgbColors*: COLORREF
+    lCustData*: LPARAM
+    lpfnHook*: LPCFHOOKPROC
+    lpTemplateName*: LPCWSTR
+    hInstance*: HINSTANCE
+    lpszStyle*: LPWSTR
+    nFontType*: WORD
+    MISSING_ALIGNMENT*: WORD
+    nSizeMin*: INT
+    nSizeMax*: INT
+  LPCHOOSEFONTW* = ptr TCHOOSEFONTW
 const
   OFN_OVERWRITEPROMPT* = 0x2
   OFN_ENABLEHOOK* = 0x20
@@ -3299,20 +3338,30 @@ const
   CC_FULLOPEN* = 0x2
   CC_ENABLEHOOK* = 0x10
   CC_ANYCOLOR* = 0x100
+  CF_SHOWHELP* = 0x4
+  CF_INITTOLOGFONTSTRUCT* = 0x40
+  CF_EFFECTS* = 0x100
+  CF_ANSIONLY* = 0x400
+  CF_SCRIPTSONLY* = CF_ANSIONLY
+  CF_LIMITSIZE* = 0x2000
 when winimUnicode:
   type
     OPENFILENAME* = OPENFILENAMEW
     TCHOOSECOLOR* = TCHOOSECOLORW
+    TCHOOSEFONT* = TCHOOSEFONTW
   proc GetOpenFileName*(P1: LPOPENFILENAMEW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameW".}
   proc GetSaveFileName*(P1: LPOPENFILENAMEW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetSaveFileNameW".}
   proc ChooseColor*(P1: LPCHOOSECOLORW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseColorW".}
+  proc ChooseFont*(P1: LPCHOOSEFONTW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontW".}
 when winimAnsi:
   type
     OPENFILENAME* = OPENFILENAMEA
     TCHOOSECOLOR* = TCHOOSECOLORA
+    TCHOOSEFONT* = TCHOOSEFONTA
   proc GetOpenFileName*(P1: LPOPENFILENAMEA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameA".}
   proc GetSaveFileName*(P1: LPOPENFILENAMEA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetSaveFileNameA".}
   proc ChooseColor*(P1: LPCHOOSECOLORA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseColorA".}
+  proc ChooseFont*(P1: LPCHOOSEFONTA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontA".}
 type
   CHARRANGE* {.pure.} = object
     cpMin*: LONG
@@ -3828,6 +3877,7 @@ when winimAnsi:
   proc SHGetPathFromIDList*(pidl: PCIDLIST_ABSOLUTE, pszPath: LPSTR): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "SHGetPathFromIDListA".}
   proc SHBrowseForFolder*(lpbi: LPBROWSEINFOA): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "SHBrowseForFolderA".}
 const
+  unknown* = 0
   requestSize* = 0
   TABP_BODY* = 10
 proc OpenThemeData*(hwnd: HWND, pszClassList: LPCWSTR): HTHEME {.winapi, stdcall, dynlib: "uxtheme", importc.}

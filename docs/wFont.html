@@ -1320,11 +1320,12 @@ function main() {
     title="final(self: wFont)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwFont%2Cfloat%2Cstring"
     title="init(self: wFont; pointSize: float = NaN; family = wFontFamilyDefault;
-     weight = wFontWeightNormal; italic = false; underline = false; faceName = &quot;&quot;;
-     encoding = wFontEncodingDefault)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+     weight = wFontWeightNormal; italic = false; underline = false; strikeout = false;
+     faceName = &quot;&quot;; encoding = wFontEncodingDefault)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Font%2Cfloat%2Cstring"
     title="Font(pointSize: float = NaN; family = wFontFamilyDefault; weight = wFontWeightNormal;
-     italic = false; underline = false; faceName = &quot;&quot;; encoding = wFontEncodingDefault): wFont"><wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
+     italic = false; underline = false; strikeout = false; faceName = &quot;&quot;;
+     encoding = wFontEncodingDefault): wFont"><wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwFont%2CHANDLE"
     title="init(self: wFont; hFont: HANDLE)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Font%2CHANDLE"
@@ -1343,6 +1344,8 @@ function main() {
     title="getItalic(self: wFont): bool"><wbr />get<wbr />Italic<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getUnderlined%2CwFont"
     title="getUnderlined(self: wFont): bool"><wbr />get<wbr />Underlined<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getStrikeout%2CwFont"
+    title="getStrikeout(self: wFont): bool"><wbr />get<wbr />Strikeout<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getFaceName%2CwFont"
     title="getFaceName(self: wFont): string"><wbr />get<wbr />Face<wbr />Name<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getEncoding%2CwFont"
@@ -1357,6 +1360,8 @@ function main() {
     title="setItalic(self: wFont; italic: bool)"><wbr />set<wbr />Italic<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setUnderlined%2CwFont%2Cbool"
     title="setUnderlined(self: wFont; underline: bool)"><wbr />set<wbr />Underlined<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setStrikeout%2CwFont%2Cbool"
+    title="setStrikeout(self: wFont; strikeout: bool)"><wbr />set<wbr />Strikeout<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setFaceName%2CwFont%2Cstring"
     title="setFaceName(self: wFont; faceName: string)"><wbr />set<wbr />Face<wbr />Name<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setEncoding%2CwFont%2Cint"
@@ -1646,16 +1651,18 @@ Default finalizer for wFont.
 </dd>
 <a id="init,wFont,float,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">;</span> <span class="Identifier">pointSize</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="Identifier">NaN</span><span class="Other">;</span> <span class="Identifier">family</span> <span class="Other">=</span> <span class="Identifier">wFontFamilyDefault</span><span class="Other">;</span>
-         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-         <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+         <span class="Identifier">strikeout</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
 <a id="Font,float,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">Font</span><span class="Other">(</span><span class="Identifier">pointSize</span><span class="Other">:</span> <span class="Identifier">float</span> <span class="Other">=</span> <span class="Identifier">NaN</span><span class="Other">;</span> <span class="Identifier">family</span> <span class="Other">=</span> <span class="Identifier">wFontFamilyDefault</span><span class="Other">;</span>
-         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-         <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+         <span class="Identifier">weight</span> <span class="Other">=</span> <span class="Identifier">wFontWeightNormal</span><span class="Other">;</span> <span class="Identifier">italic</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">underline</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+         <span class="Identifier">strikeout</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">faceName</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">encoding</span> <span class="Other">=</span> <span class="Identifier">wFontEncodingDefault</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates a font object with the specified attributes.<table border="1" class="docutils"><tr><th>Parameters</th><th>Description</th></tr>
 <tr><td>pointSize</td><td>Size in points.</td></tr>
@@ -1663,6 +1670,7 @@ Creates a font object with the specified attributes.<table border="1" class="doc
 <tr><td>weight</td><td>Font weight, sometimes also referred to as font boldness.</td></tr>
 <tr><td>italic</td><td>The value can be true or false.</td></tr>
 <tr><td>underline</td><td>The value can be true or false.</td></tr>
+<tr><td>strikeout</td><td>The value can be true or false.</td></tr>
 <tr><td>faceName</td><td>An optional string specifying the face name to be used.</td></tr>
 <tr><td>encoding</td><td>The font encoding.</td></tr>
 </table>
@@ -1719,7 +1727,13 @@ Gets true if font is italic.
 <a id="getUnderlined,wFont"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getUnderlined</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Gets true if font is underlined.
+Gets true if the font is underlined.
+
+</dd>
+<a id="getStrikeout,wFont"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getStrikeout</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Gets true if the font is strikeout.
 
 </dd>
 <a id="getFaceName,wFont"></a>
@@ -1766,6 +1780,13 @@ Sets the font italic style.
 Sets underlining.
 
 </dd>
+<a id="setStrikeout,wFont,bool"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setStrikeout</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">;</span> <span class="Identifier">strikeout</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets strikeout attribute of the font.
+
+</dd>
 <a id="setFaceName,wFont,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setFaceName</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">;</span> <span class="Identifier">faceName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1789,7 +1810,7 @@ Sets the encoding for this font.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-06-16 14:27:45 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-02 11:49:07 UTC</small>
       </div>
     </div>
   </div>

@@ -138,9 +138,10 @@ proc initFromNative(self: wFont, lf: var LOGFONT) =
   self.mFamily = int(lf.lfPitchAndFamily and 0b000)
   self.mItalic = (lf.lfItalic != 0)
   self.mUnderline = (lf.lfUnderline != 0)
+  self.mStrikeout = (lf.lfStrikeout != 0)
 
 proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
-    weight = wFontWeightNormal, italic = false, underline = false,
+    weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
     faceName = "", encoding = wFontEncodingDefault) {.validate.} =
   ## Initializer.
   var
@@ -160,6 +161,7 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
 
   lf.lfItalic = italic.byte
   lf.lfUnderline = underline.byte
+  lf.lfStrikeOut = strikeout.byte
   lf.lfWeight = weight
 
   if encoding != wFontEncodingDefault:
@@ -171,7 +173,7 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
   self.initFromNative(lf)
 
 proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
-    weight = wFontWeightNormal, italic = false, underline = false,
+    weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
     faceName = "", encoding = wFontEncodingDefault): wFont {.inline.} =
   ## Creates a font object with the specified attributes.
   ## ==========  =================================================================================
@@ -182,10 +184,17 @@ proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
   ## weight      Font weight, sometimes also referred to as font boldness.
   ## italic      The value can be true or false.
   ## underline   The value can be true or false.
+  ## strikeout   The value can be true or false.
   ## faceName    An optional string specifying the face name to be used.
   ## encoding    The font encoding.
   new(result, final)
-  result.init(pointSize, family, weight, italic, underline, faceName, encoding)
+  result.init(pointSize, family, weight, italic, underline, strikeout, faceName,
+    encoding)
+
+proc Font(lf: var LOGFONT): wFont {.inline.} =
+  # Use internally.
+  new(result, final)
+  result.initFromNative(lf)
 
 proc init*(self: wFont, hFont: HANDLE) {.validate.} =
   ## Initializer.
@@ -231,8 +240,12 @@ proc getItalic*(self: wFont): bool {.validate, property, inline.} =
   result = self.mItalic
 
 proc getUnderlined*(self: wFont): bool {.validate, property, inline.} =
-  ## Gets true if font is underlined.
+  ## Gets true if the font is underlined.
   result = self.mUnderline
+
+proc getStrikeout*(self: wFont): bool {.validate, property, inline.} =
+  ## Gets true if the font is strikeout.
+  result = self.mStrikeout
 
 proc getFaceName*(self: wFont): string {.validate, property, inline.} =
   ## Gets the font family if possible.
@@ -246,47 +259,54 @@ proc setPointSize*(self: wFont, pointSize: float) {.validate, property.} =
   ## Sets the point size.
   DeleteObject(self.mHandle)
   self.init(pointSize=pointSize, family=self.mFamily, weight=self.mWeight,
-    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
-    encoding=self.mEncoding)
+    italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
 
 proc setFamily*(self: wFont, family: int) {.validate, property.} =
   ## Sets the font family.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=family, weight=self.mWeight,
-    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
-    encoding=self.mEncoding)
+    italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
 
 proc setWeight*(self: wFont, weight: int) {.validate, property.} =
   ## Sets the font weight.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=weight,
-    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
-    encoding=self.mEncoding)
+    italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
 
 proc setItalic*(self: wFont, italic: bool) {.validate, property.} =
   ## Sets the font italic style.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
-    italic=italic, underline=self.mUnderline, faceName=self.mFaceName,
-    encoding=self.mEncoding)
+    italic=italic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
 
 proc setUnderlined*(self: wFont, underline: bool) {.validate, property.} =
   ## Sets underlining.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
-    italic=self.mItalic, underline=underline, faceName=self.mFaceName,
-    encoding=self.mEncoding)
+    italic=self.mItalic, underline=underline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
+
+proc setStrikeout*(self: wFont, strikeout: bool) {.validate, property.} =
+  ## Sets strikeout attribute of the font.
+  DeleteObject(self.mHandle)
+  self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
+    italic=self.mItalic, underline=self.mUnderline, strikeout=strikeout,
+    faceName=self.mFaceName, encoding=self.mEncoding)
 
 proc setFaceName*(self: wFont, faceName: string) {.validate, property.} =
   ## Sets the facename for the font.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
-    italic=self.mItalic, underline=self.mUnderline, faceName=faceName,
-    encoding=self.mEncoding)
+    italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=faceName, encoding=self.mEncoding)
 
 proc setEncoding*(self: wFont, encoding: int) {.validate, property.} =
   ## Sets the encoding for this font.
   DeleteObject(self.mHandle)
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
-    italic=self.mItalic, underline=self.mUnderline, faceName=self.mFaceName,
-    encoding=encoding)
+    italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
+    faceName=self.mFaceName, encoding=encoding)

@@ -7,7 +7,7 @@
 
 import
   resource/resource,
-  wNim
+  ../wNim
 
 let app = App()
 let frame = Frame(title="Hello World", size=(350, 200))
@@ -26,8 +26,9 @@ accel.add(wAccelAlt, wKey_F4, wIdExit)
 let panel = Panel(frame)
 let staticText = StaticText(panel, label="Hello World!")
 staticText.font = Font(14, family=wFontFamilySwiss, weight=wFontWeightBold)
+staticText.fit()
 
-let button = Button(panel, label="Close")
+let button = Button(panel, label="Font")
 
 proc layout() =
   panel.layout:
@@ -39,7 +40,14 @@ proc layout() =
       bottom + 10 = panel.bottom
 
 button.wEvent_Button do ():
-  frame.delete()
+  var fontDialog = FontDialog(frame, staticText.font,
+    color=staticText.foregroundColor, allowSymbols=false)
+
+  if fontDialog.showModal() == wIdOk:
+    staticText.font = fontDialog.chosenFont
+    staticText.foregroundColor = fontDialog.color
+    staticText.fit()
+    staticText.refresh()
 
 frame.wIdExit do ():
   frame.delete()

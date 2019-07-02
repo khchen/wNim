@@ -1,3 +1,8 @@
+Version 0.6.0
+-------------
+* Add wFontDialog class.
+* wFont: add getStrikeOut(), setStrikeOut().
+
 Version 0.5.0
 -------------
 * Update for Nim Compiler 0.20.0.

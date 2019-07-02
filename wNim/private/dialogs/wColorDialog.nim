@@ -11,6 +11,7 @@
 ##   `wMessageDialog <wMessageDialog.html>`_
 ##   `wFileDialog <wFileDialog.html>`_
 ##   `wDirDialog <wDirDialog.html>`_
+##   `wFontDialog <wFontDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================

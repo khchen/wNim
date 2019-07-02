@@ -93,6 +93,7 @@
 ##  - `wDirDialog <wDirDialog.html>`_
 ##  - `wFileDialog <wFileDialog.html>`_
 ##  - `wColorDialog <wColorDialog.html>`_
+##  - `wFontDialog <wFontDialog.html>`_
 ##
 ##  Events
 ##  ------
@@ -227,4 +228,5 @@ include
   wNim/private/dialogs/wMessageDialog,
   wNim/private/dialogs/wDirDialog,
   wNim/private/dialogs/wFileDialog,
-  wNim/private/dialogs/wColorDialog
+  wNim/private/dialogs/wColorDialog,
+  wNim/private/dialogs/wFontDialog

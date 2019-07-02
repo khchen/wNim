@@ -491,6 +491,7 @@ when not defined(Nimdoc):
       mWeight: int
       mItalic: bool
       mUnderline: bool
+      mStrikeout: bool
       mFaceName: string
       mEncoding: int
 
@@ -580,7 +581,16 @@ when not defined(Nimdoc):
       mStyle: wStyle
       mCustomColor: array[16, wColor]
 
+    wFontDialog* = ref object of RootObj
+      mParent: wWindow
+      mChosenFont: wFont
+      mInitialFont: wFont
+      mColor: wColor
+      mEnableEffects: bool
+      mAllowSymbols: bool
+      mShowHelp: bool
+      mRange: Slice[int]
+
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}
   proc `$`*(x: wCommandID): string {.borrow.}
   proc hash*(o: ref object): Hash {.inline.} = hash(cast[int](o))
-

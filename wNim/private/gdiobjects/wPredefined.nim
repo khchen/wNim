@@ -6,7 +6,7 @@
 #====================================================================
 
 ## Here are some predefined objects ready to be use.
-## These objects share there handle globally, **don't delete it**.
+## These objects share handles globally, **don't delete it**.
 #
 ## :Seealso:
 ##   `wPen <wPen.html>`_
