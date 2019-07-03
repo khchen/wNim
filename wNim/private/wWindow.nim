@@ -809,7 +809,7 @@ proc setCursorImpl(self: wWindow, cursor: wCursor, override = false) =
   if hWnd != 0:
     SendMessage(hWnd, WM_SETCURSOR, WPARAM hWnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE))
 
-proc setCursor*(self: wWindow, cursor: wCursor) =
+proc setCursor*(self: wWindow, cursor: wCursor) {.validate, property, inline.} =
   ## Sets the window's cursor. The cursor may be wNilCursor, in which case the
   ## window cursor will be reset. Notice that the window cursor also sets it for
   ## the children of the window implicitly.
@@ -825,7 +825,7 @@ proc setOverrideCursor(self: wWindow, cursor: wCursor) =
   # Is this need to be public?
   self.setCursorImpl(cursor, override=true)
 
-proc getCursor*(self: wWindow): wCursor =
+proc getCursor*(self: wWindow): wCursor {.validate, property, inline.} =
   ## Return the cursor associated with this window.
   result = self.mCursor
 

@@ -12,6 +12,7 @@
 ##   `wFileDialog <wFileDialog.html>`_
 ##   `wDirDialog <wDirDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
+##   `wTextEnterDialog <wTextEnterDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================

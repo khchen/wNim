@@ -591,6 +591,19 @@ when not defined(Nimdoc):
       mShowHelp: bool
       mRange: Slice[int]
 
+    wTextEnterDialog* = ref object of RootObj
+      mParent: wWindow
+      mMessage: string
+      mCaption: string
+      mValue: string
+      mStyle: wStyle
+      mMaxLength: int
+      mPos: wPoint
+      mOkLabel: string
+      mCancelLabe: string
+      mFrame: wFrame
+      mReturnId: wId
+
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}
   proc `$`*(x: wCommandID): string {.borrow.}
   proc hash*(o: ref object): Hash {.inline.} = hash(cast[int](o))

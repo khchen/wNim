@@ -1090,6 +1090,7 @@ const
   TPM_RECURSE* = 0x0001
   TPM_HORPOSANIMATION* = 0x0400
   TPM_HORNEGANIMATION* = 0x0800
+  DT_CALCRECT* = 0x00000400
   RDW_INVALIDATE* = 0x0001
   RDW_ERASE* = 0x0004
   RDW_ALLCHILDREN* = 0x0080
@@ -1407,6 +1408,7 @@ when winimUnicode:
   proc InsertMenuItem*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmi: LPCMENUITEMINFOW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "InsertMenuItemW".}
   proc GetMenuItemInfo*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmii: LPMENUITEMINFOW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetMenuItemInfoW".}
   proc SetMenuItemInfo*(hmenu: HMENU, item: UINT, fByPositon: WINBOOL, lpmii: LPCMENUITEMINFOW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SetMenuItemInfoW".}
+  proc DrawText*(hdc: HDC, lpchText: LPCWSTR, cchText: int32, lprc: LPRECT, format: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "DrawTextW".}
   proc SetWindowText*(hWnd: HWND, lpString: LPCWSTR): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SetWindowTextW".}
   proc GetWindowText*(hWnd: HWND, lpString: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextW".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthW".}
@@ -1433,6 +1435,7 @@ when winimAnsi:
   proc InsertMenuItem*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmi: LPCMENUITEMINFOA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "InsertMenuItemA".}
   proc GetMenuItemInfo*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmii: LPMENUITEMINFOA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetMenuItemInfoA".}
   proc SetMenuItemInfo*(hmenu: HMENU, item: UINT, fByPositon: WINBOOL, lpmii: LPCMENUITEMINFOA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SetMenuItemInfoA".}
+  proc DrawText*(hdc: HDC, lpchText: LPCSTR, cchText: int32, lprc: LPRECT, format: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "DrawTextA".}
   proc SetWindowText*(hWnd: HWND, lpString: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SetWindowTextA".}
   proc GetWindowText*(hWnd: HWND, lpString: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextA".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthA".}

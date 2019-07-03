@@ -12,6 +12,7 @@
 ##   `wFileDialog <wFileDialog.html>`_
 ##   `wDirDialog <wDirDialog.html>`_
 ##   `wColorDialog <wColorDialog.html>`_
+##   `wTextEnterDialog <wTextEnterDialog.html>`_
 
 proc getChosenFont*(self: wFontDialog): wFont {.validate, property, inline.} =
   ## Gets the font chosen by the user if the user pressed OK.

@@ -97,14 +97,14 @@ proc getTextFontSize(text: string, hFont: HANDLE, hwnd: HWND): wSize =
     text = +$text
     hdc = GetDC(hwnd)
     prev = SelectObject(hdc, hFont)
-    size: SIZE
+    rect: RECT
 
-  GetTextExtentPoint32(hdc, text, text.len, size)
+  DrawText(hdc, text, text.len, &rect, DT_CALCRECT)
   SelectObject(hdc, prev)
   ReleaseDC(hwnd, hdc)
 
-  result.height = size.cy
-  result.width = size.cx
+  result.width = rect.right
+  result.height = rect.bottom
 
 proc getAverageASCIILetterSize(hFont: HANDLE, hwnd: HWND): wSize =
   result = getTextFontSize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",

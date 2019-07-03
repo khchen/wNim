@@ -7,7 +7,7 @@
 
 import
   resource/resource,
-  ../wNim
+  wNim
 
 let app = App()
 let frame = Frame(title="Hello World", size=(350, 200))
@@ -26,22 +26,28 @@ accel.add(wAccelAlt, wKey_F4, wIdExit)
 let panel = Panel(frame)
 let staticText = StaticText(panel, label="Hello World!")
 staticText.font = Font(14, family=wFontFamilySwiss, weight=wFontWeightBold)
+staticText.cursor = wHandCursor
 staticText.fit()
 
 let button = Button(panel, label="Font")
 
 proc layout() =
-  panel.layout:
-    staticText:
-      top = panel.top + 10
-      left = panel.left + 10
-    button:
-      right + 10 = panel.right
-      bottom + 10 = panel.bottom
+  panel.autolayout """
+    HV:|-[staticText]->[button]-|
+  """
+
+staticText.wEvent_CommandLeftClick do ():
+  let textEnterDialog = TextEnterDialog(frame, value=staticText.label,
+    caption="Change The Text")
+
+  if textEnterDialog.showModal() == wIdOk:
+    staticText.label = textEnterDialog.value
+    staticText.fit()
+    staticText.refresh()
 
 button.wEvent_Button do ():
-  var fontDialog = FontDialog(frame, staticText.font,
-    color=staticText.foregroundColor, allowSymbols=false)
+  let fontDialog = FontDialog(frame, staticText.font,
+    color=staticText.foregroundColor, allowSymbols=false, range=0..24)
 
   if fontDialog.showModal() == wIdOk:
     staticText.font = fontDialog.chosenFont
@@ -50,7 +56,7 @@ button.wEvent_Button do ():
     staticText.refresh()
 
 frame.wIdExit do ():
-  frame.delete()
+  frame.close()
 
 frame.wEvent_Size do ():
   layout()
