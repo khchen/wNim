@@ -24,7 +24,7 @@ let accel = AcceleratorTable(frame)
 accel.add(wAccelAlt, wKey_F4, wIdExit)
 
 let panel = Panel(frame)
-let staticText = StaticText(panel, label="Hello World!")
+let staticText = StaticText(panel, label="Hello, World!")
 staticText.font = Font(14, family=wFontFamilySwiss, weight=wFontWeightBold)
 staticText.cursor = wHandCursor
 staticText.fit()

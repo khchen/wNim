@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Demo Page</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script>
+    function clickme(arg1, arg2, arg3) {
+        alert("I will calculate " + arg1 + " + " + arg2 + " * " + arg3);
+        return arg1 + arg2 * arg3;
+    }
+    </script>
+  </head>
+
+  <body>
+    <center>
+    <img class="logo" src="logo.png">
+    <h2 class="title">wWebView Demo Page</h2>
+    <p><span id="clickme" class="clickable" onclick="javascript:location.href='wnim:clickme'">click me</span></p>
+    <a href="https://github.com/khchen/wNim">https://github.com/khchen/wNim/</a>
+    <div class="copyright">Copyright &copy; 2017-2019 Ward</div>
+    </center>
+    <div class="clickable button" onclick="javascript:location.href='wnim:about'">about</div>
+  </body>
+</html>

@@ -75,6 +75,9 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
 
   SendMessage(self.mHwnd, RB_INSERTBAND, -1, &rbBand)
 
+proc minimize*(self: wRebar, band: int) {.validate, inline.} =
+  SendMessage(self.mHwnd, RB_MINIMIZEBAND, band, 0)
+
 proc len*(self: wRebar): int {.validate, inline.} =
   ## Returns the number of controls in the rebar.
   result = self.getCount()
@@ -97,12 +100,11 @@ method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
   #     MAKELPARAM(rect.width, rect.height))
 
   of RBN_AUTOSIZE:
-    if self.mDragging:
-      # Notice the parent the client size is changed. Here must be wEvent_Size
-      # instead of WM_SIZE, otherwise, it will enter infinite loop.
-      let rect = self.mParent.getWindowRect(sizeOnly=true)
-      self.mParent.processMessage(wEvent_Size, SIZE_RESTORED,
-        MAKELPARAM(rect.width, rect.height))
+    # Notice the parent the client size is changed. Here must be wEvent_Size
+    # instead of WM_SIZE, otherwise, it will enter infinite loop.
+    let rect = self.mParent.getWindowRect(sizeOnly=true)
+    self.mParent.processMessage(wEvent_Size, SIZE_RESTORED,
+      MAKELPARAM(rect.width, rect.height))
 
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)

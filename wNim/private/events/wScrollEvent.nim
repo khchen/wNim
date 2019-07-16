@@ -10,6 +10,10 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wScrollBar <wScrollBar.html>`_
+##   `wSlider <wSlider.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wScrollEvent                    Description

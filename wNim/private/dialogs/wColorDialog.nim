@@ -5,7 +5,8 @@
 #
 #====================================================================
 
-## This class represents the color chooser dialog.
+## This class represents the color chooser dialog. Only modal dialog is
+## supported.
 #
 ## :Seealso:
 ##   `wMessageDialog <wMessageDialog.html>`_
@@ -13,6 +14,8 @@
 ##   `wDirDialog <wDirDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
 ##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -76,8 +79,7 @@ proc wColorHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT
     elif (self.mStyle and wCdCenter) != 0:
       centerWindow(hwnd, inScreen=false)
 
-
-proc showModal*(self: wColorDialog): wId {.discardable.} =
+proc showModal*(self: wColorDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   var cc = TCHOOSECOLOR(
@@ -99,16 +101,9 @@ proc showModal*(self: wColorDialog): wId {.discardable.} =
   else:
     result = wIdCancel
 
-proc show*(self: wColorDialog): wId {.inline, discardable.} =
-  ## The same as showModal().
-  result = self.showModal()
-
-proc showModalResult*(self: wColorDialog): wColor {.inline, discardable.} =
-  ## Shows the dialog, returning the user-selected color.
+proc display*(self: wColorDialog): wColor {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the user-selected color or -1.
   if self.showModal() == wIdOk:
     result = self.getColor()
-
-proc showResult*(self: wColorDialog): wColor {.inline, discardable.} =
-  ## The same as showModalResult().
-  if self.show() == wIdOk:
-    result = self.getColor()
+  else:
+    result = -1

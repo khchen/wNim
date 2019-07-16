@@ -66,6 +66,7 @@
 ##  - `wSplitter <wSplitter.html>`_
 ##  - `wIpCtrl <wIpCtrl.html>`_
 ##  - `wRebar <wRebar.html>`_  (experimental)
+##  - `wWebView <wWebView.html>`_
 ##
 ##  Device Contexts
 ##  ---------------
@@ -95,6 +96,8 @@
 ##  - `wColorDialog <wColorDialog.html>`_
 ##  - `wFontDialog <wFontDialog.html>`_
 ##  - `wTextEnterDialog <wTextEnterDialog.html>`_
+##  - `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##  - `wFindReplaceDialog <wFindReplaceDialog.html>`_
 ##
 ##  Events
 ##  ------
@@ -117,6 +120,8 @@
 ##  - `wListEvent <wListEvent.html>`_
 ##  - `wTreeEvent <wTreeEvent.html>`_
 ##  - `wIpEvent <wIpEvent.html>`_
+##  - `wWebViewEvent <wWebViewEvent.html>`_
+##  - `wDialogEvent <wDialogEvent.html>`_
 ##
 ##  Constants
 ##  ---------
@@ -131,11 +136,11 @@
 
 import
   tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net,
-  winim/[winstr, utils], wNim/autolayout, wNim/private/wWinimx,
+  winim/[winstr, utils], wNim/autolayout, winim/inc/windef, wNim/private/wWinimx,
   wNim/private/kiwi/[variable, constraint, term, expression, symbolics,
   solver, strength]
-  # winim/inc/[windef, winbase, winerror, winuser, wingdi, commctrl, commdlg,
-  #   objbase, shellapi, gdiplus, richedit, uxtheme]
+  # winim/inc/[winbase, winerror, winuser, wingdi, commctrl, commdlg,
+  #   objbase, shellapi, gdiplus, richedit, uxtheme, mshtml]
 
 export
   winstr, utils, autolayout, variable, constraint, term, expression, symbolics,
@@ -170,6 +175,8 @@ include
   wNim/private/events/wListEvent,
   wNim/private/events/wTreeEvent,
   wNim/private/events/wDragDropEvent,
+  wNim/private/events/wDialogEvent,
+  wNim/private/events/wWebViewEvent,
   wNim/private/wIconImage,
   wNim/private/wImage,
   wNim/private/gdiobjects/wGdiObject,
@@ -225,10 +232,13 @@ include
   wNim/private/controls/wHyperlinkCtrl,
   wNim/private/controls/wSplitter,
   wNim/private/controls/wIpCtrl,
+  wNim/private/controls/wWebView,
   wNim/private/wFrame,
   wNim/private/dialogs/wMessageDialog,
   wNim/private/dialogs/wDirDialog,
   wNim/private/dialogs/wFileDialog,
   wNim/private/dialogs/wColorDialog,
   wNim/private/dialogs/wFontDialog,
-  wNim/private/dialogs/wTextEnterDialog
+  wNim/private/dialogs/wTextEnterDialog,
+  wNim/private/dialogs/wPasswordEntryDialog,
+  wNim/private/dialogs/wFindReplaceDialog

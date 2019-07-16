@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-## This class represents the file chooser dialog.
+## This class represents the file chooser dialog.Only modal dialog is supported.
 #
 ## :Seealso:
 ##   `wMessageDialog <wMessageDialog.html>`_
@@ -13,6 +13,8 @@
 ##   `wColorDialog <wColorDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
 ##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -112,7 +114,7 @@ proc setFilterIndex*(self: wFileDialog, index: int) {.validate, property, inline
   ## Sets the default filter index, starting from one.
   self.mFilterIndex = index
 
-proc showModal*(self: wFileDialog): wId {.discardable.} =
+proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
 
@@ -176,16 +178,7 @@ proc showModal*(self: wFileDialog): wId {.discardable.} =
   else:
     result = wIdCancel
 
-proc show*(self: wFileDialog): wId {.inline, discardable.} =
-  ## The same as ShowModal().
-  result = self.showModal()
-
-proc showModalResult*(self: wFileDialog): seq[string] {.inline, discardable.} =
-  ## Shows the dialog, returning the selected files or @[].
+proc display*(self: wFileDialog): seq[string] {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the selected files or @[].
   if self.showModal() == wIdOk:
-    result = self.getPaths()
-
-proc showResult*(self: wFileDialog): seq[string] {.inline, discardable.} =
-  ## The same as showModalResult().
-  if self.show() == wIdOk:
     result = self.getPaths()

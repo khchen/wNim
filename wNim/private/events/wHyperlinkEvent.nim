@@ -10,6 +10,9 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wHyperlinkCtrl <wHyperlinkCtrl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wHyperlinkEvent                 Description

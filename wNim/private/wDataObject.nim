@@ -270,7 +270,7 @@ proc delete*(self: wDataObject) {.validate.} =
 
   self.mObj = nil
 
-proc final*(self: wDataObject) {.validate.} =
+proc final*(self: wDataObject) =
   ## Default finalizer for wDataObject.
   self.delete()
 

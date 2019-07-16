@@ -13,6 +13,7 @@ requires "nim >= 0.19.0", "winim >= 3.1.1"
 # Examples
 
 task example, "Build all the examples":
+  exec "nim c -d:release --opt:size --passL:-s --app:gui examples/customdialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/dialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/dragdrop"
@@ -32,6 +33,7 @@ task example, "Build all the examples":
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/subclassing"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/tictactoe"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/toolbar"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui examples/webView"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/wHyperlink"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayout/autolayoutEditor"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayout/demo"
@@ -42,6 +44,7 @@ task example, "Build all the examples":
 # Examples for Windows XP
 
 task xpexample, "Build all the examples for Windows XP":
+  exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/customdialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/dialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/dragdrop"
@@ -61,6 +64,7 @@ task xpexample, "Build all the examples for Windows XP":
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/subclassing"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/tictactoe"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/toolbar"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/webView"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/wHyperlink"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayout/autolayoutEditor"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayout/demo"

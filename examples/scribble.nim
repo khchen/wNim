@@ -162,7 +162,7 @@ when isMainModule:
   scribble.idLoad do ():
     let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
     let dlg = FileDialog(wildcard=wildcard, style=wFdOpen or wFdFileMustExist)
-    if dlg.show() == wIdOk:
+    if dlg.showModal() == wIdOk:
       try:
         scribble.loadFile(dlg.path)
         statusBar.setStatusText(dlg.path & " loaded.")
@@ -171,7 +171,7 @@ when isMainModule:
   scribble.idSave do ():
     let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
     let dlg = FileDialog(wildcard=wildcard, style=wFdSave or wFdOverwritePrompt)
-    if dlg.show() == wIdOk:
+    if dlg.showModal() == wIdOk:
       var path = dlg.path
       if dlg.filterIndex == 1 and not path.toLowerAscii.endsWith(".png"):
         path.add ".png"
@@ -185,7 +185,7 @@ when isMainModule:
   scribble.idAbout do ():
     MessageDialog(scribble, caption="About...",
       message="Scribble, demo program for wNim",
-      style=wOk or wIconInformation).show()
+      style=wOk or wIconInformation).display()
 
   scribble.idOther do ():
     let dlg = ColorDialog(scribble, colorArray[lastColorId],
@@ -194,7 +194,7 @@ when isMainModule:
     for i in 0..15:
       dlg.setCustomColor(i, wWhite)
 
-    if dlg.show() == wIdOk:
+    if dlg.showModal() == wIdOk:
       scribble.setColor(dlg.getColor())
     else:
       menuColor.check(lastColorId)

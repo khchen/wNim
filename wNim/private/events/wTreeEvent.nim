@@ -10,6 +10,9 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wTreeCtrl <wTreeCtrl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wTreeEvent                      Description

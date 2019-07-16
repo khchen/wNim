@@ -6,198 +6,23 @@
 #====================================================================
 
 import winim/inc/winimbase
-type
-  UINT32* = int32
-  LONG32* = int32
-  PVOID* = pointer
-  CHAR* = char
-  LONG* = int32
-  INT* = int32
-  USHORT* = uint16
-  ULONG* = int32
-  WINBOOL* = int32
-  BOOL* = int32
-  LONGLONG* = int64
-  ULONGLONG* = uint64
-  LPSTR* = cstring
-  LPCSTR* = cstring
-  PCSTR* = cstring
-  WCHAR* = uint16
-  BYTE* = uint8
-  WORD* = uint16
-  DWORD* = int32
-  LPINT* = ptr int32
-  LPVOID* = pointer
-  UINT* = int32
-  PUINT* = ptr int32
-  HANDLE* = int
-  VOID* = void
-  FARPROC* = pointer
-when winimCpu64:
-  type
-    INT_PTR* = int64
-    UINT_PTR* = uint64
-    LONG_PTR* = int64
-    ULONG_PTR* = uint64
-when winimCpu32:
-  type
-    INT_PTR* = int32
-    UINT_PTR* = int32
-    LONG_PTR* = int32
-    ULONG_PTR* = int32
-type
-  SIZE_T* = ULONG_PTR
-  DWORD_PTR* = ULONG_PTR
-  SHORT* = int16
-  HRESULT* = LONG
-  LPWSTR* = ptr WCHAR
-  PWSTR* = ptr WCHAR
-  LPCWSTR* = ptr WCHAR
-  PCWSTR* = ptr WCHAR
-  LCID* = ULONG
-  PBYTE* = ptr BYTE
-  LPDWORD* = ptr DWORD
-  WPARAM* = UINT_PTR
-  LPARAM* = LONG_PTR
-  LRESULT* = LONG_PTR
-  HGLOBAL* = HANDLE
-  ATOM* = WORD
-  HINSTANCE* = HANDLE
-  HMODULE* = HINSTANCE
-  HRGN* = HANDLE
-  HRSRC* = HANDLE
-  HWND* = HANDLE
-  HHOOK* = HANDLE
-  HACCEL* = HANDLE
-  HBITMAP* = HANDLE
-  HBRUSH* = HANDLE
-  HDC* = HANDLE
-  HENHMETAFILE* = HANDLE
-  HFONT* = HANDLE
-  HICON* = HANDLE
-  HMENU* = HANDLE
-  HPALETTE* = HANDLE
-  HPEN* = HANDLE
-  HCURSOR* = HICON
-  COLORREF* = DWORD
-  HGDIOBJ* = HANDLE
-  OLECHAR* = WCHAR
-when winimUnicode:
-  type
-    LPTSTR* = LPWSTR
-when winimAnsi:
-  type
-    LPTSTR* = LPSTR
-type
-  LARGE_INTEGER_STRUCT1* {.pure.} = object
-    LowPart*: ULONG
-    HighPart*: LONG
-  LARGE_INTEGER_u* {.pure.} = object
-    LowPart*: ULONG
-    HighPart*: LONG
-  LARGE_INTEGER* {.pure, union.} = object
-    struct1*: LARGE_INTEGER_STRUCT1
-    u*: LARGE_INTEGER_u
-    QuadPart*: LONGLONG
-  ULARGE_INTEGER_STRUCT1* {.pure.} = object
-    LowPart*: ULONG
-    HighPart*: ULONG
-  ULARGE_INTEGER_u* {.pure.} = object
-    LowPart*: ULONG
-    HighPart*: ULONG
-  ULARGE_INTEGER* {.pure, union.} = object
-    struct1*: ULARGE_INTEGER_STRUCT1
-    u*: ULARGE_INTEGER_u
-    QuadPart*: ULONGLONG
-  GUID* {.pure.} = object
-    Data1*: int32
-    Data2*: uint16
-    Data3*: uint16
-    Data4*: array[8, uint8]
-  IID* = GUID
-  CLSID* = GUID
-  REFGUID* = ptr GUID
-  REFIID* = ptr IID
-  REFCLSID* = ptr IID
-  OSVERSIONINFOA* {.pure.} = object
-    dwOSVersionInfoSize*: DWORD
-    dwMajorVersion*: DWORD
-    dwMinorVersion*: DWORD
-    dwBuildNumber*: DWORD
-    dwPlatformId*: DWORD
-    szCSDVersion*: array[128, CHAR]
-  LPOSVERSIONINFOA* = ptr OSVERSIONINFOA
-  OSVERSIONINFOW* {.pure.} = object
-    dwOSVersionInfoSize*: DWORD
-    dwMajorVersion*: DWORD
-    dwMinorVersion*: DWORD
-    dwBuildNumber*: DWORD
-    dwPlatformId*: DWORD
-    szCSDVersion*: array[128, WCHAR]
-  LPOSVERSIONINFOW* = ptr OSVERSIONINFOW
-  FILETIME* {.pure.} = object
-    dwLowDateTime*: DWORD
-    dwHighDateTime*: DWORD
-  RECT* {.pure.} = object
-    left*: LONG
-    top*: LONG
-    right*: LONG
-    bottom*: LONG
-  PRECT* = ptr RECT
-  LPRECT* = ptr RECT
-  POINT* {.pure.} = object
-    x*: LONG
-    y*: LONG
-  LPPOINT* = ptr POINT
-  POINTL* {.pure.} = object
-    x*: LONG
-    y*: LONG
-  SIZE* {.pure.} = object
-    cx*: LONG
-    cy*: LONG
-  LPSIZE* = ptr SIZE
-const
-  FALSE* = 0
-  TRUE* = 1
-  MAX_PATH* = 260
-template DEFINE_GUID*(data1: int32, data2: uint16, data3: uint16, data4: array[8, uint8]): GUID = GUID(Data1: data1, Data2: data2, Data3: data3, Data4: data4)
-const
-  NULL* = nil
-proc IsEqualIID*(rguid1: REFIID, rguid2: REFIID): BOOL {.winapi, stdcall, dynlib: "ole32", importc: "IsEqualGUID".}
-template MAKELONG*(a: untyped, b: untyped): DWORD = cast[DWORD](b shl 16) or DWORD(a and 0xffff)
-template LOWORD*(l: untyped): WORD = WORD(l and 0xffff)
-template HIWORD*(l: untyped): WORD = WORD((l shr 16) and 0xffff)
-template GET_X_LPARAM*(x: untyped): int = int cast[int16](LOWORD(x))
-template GET_Y_LPARAM*(x: untyped): int = int cast[int16](HIWORD(x))
-proc `LowPart=`*(self: var LARGE_INTEGER, x: ULONG) {.inline.} = self.struct1.LowPart = x
-proc LowPart*(self: LARGE_INTEGER): ULONG {.inline.} = self.struct1.LowPart
-proc LowPart*(self: var LARGE_INTEGER): var ULONG {.inline.} = self.struct1.LowPart
-proc `HighPart=`*(self: var LARGE_INTEGER, x: LONG) {.inline.} = self.struct1.HighPart = x
-proc HighPart*(self: LARGE_INTEGER): LONG {.inline.} = self.struct1.HighPart
-proc HighPart*(self: var LARGE_INTEGER): var LONG {.inline.} = self.struct1.HighPart
-proc `LowPart=`*(self: var ULARGE_INTEGER, x: ULONG) {.inline.} = self.struct1.LowPart = x
-proc LowPart*(self: ULARGE_INTEGER): ULONG {.inline.} = self.struct1.LowPart
-proc LowPart*(self: var ULARGE_INTEGER): var ULONG {.inline.} = self.struct1.LowPart
-proc `HighPart=`*(self: var ULARGE_INTEGER, x: ULONG) {.inline.} = self.struct1.HighPart = x
-proc HighPart*(self: ULARGE_INTEGER): ULONG {.inline.} = self.struct1.HighPart
-proc HighPart*(self: var ULARGE_INTEGER): var ULONG {.inline.} = self.struct1.HighPart
-when winimUnicode:
-  type
-    OSVERSIONINFO* = OSVERSIONINFOW
-when winimAnsi:
-  type
-    OSVERSIONINFO* = OSVERSIONINFOA
+import winim/inc/windef
 const
   FACILITY_WIN32* = 7
   ERROR_CANCELLED* = 1223
+  E_UNEXPECTED* = HRESULT 0x8000FFFF'i32
   E_NOTIMPL* = HRESULT 0x80004001'i32
   E_NOINTERFACE* = HRESULT 0x80004002'i32
   E_FAIL* = HRESULT 0x80004005'i32
 template HRESULT_FROM_WIN32*(x: untyped): HRESULT = (if x <= 0: HRESULT x else: HRESULT(x and 0x0000ffff) or HRESULT(FACILITY_WIN32 shl 16) or HRESULT(0x80000000'i32))
 const
   S_OK* = HRESULT 0x00000000
+  S_FALSE* = HRESULT 0x00000001
   DRAGDROP_S_DROP* = HRESULT 0x00040100
   DRAGDROP_S_CANCEL* = HRESULT 0x00040101
+  DISP_E_MEMBERNOTFOUND* = HRESULT 0x80020003'i32
+  DISP_E_UNKNOWNNAME* = HRESULT 0x80020006'i32
+  TYPE_E_ELEMENTNOTFOUND* = HRESULT 0x8002802B'i32
 template SUCCEEDED*(hr: untyped): bool = hr.HRESULT >= 0
 template FAILED*(hr: untyped): bool = hr.HRESULT < 0
 type
@@ -298,6 +123,15 @@ type
     elpHatch*: ULONG_PTR
     elpNumEntries*: DWORD
     elpStyleEntry*: array[1, DWORD]
+  PALETTEENTRY* {.pure.} = object
+    peRed*: BYTE
+    peGreen*: BYTE
+    peBlue*: BYTE
+    peFlags*: BYTE
+  LOGPALETTE* {.pure.} = object
+    palVersion*: WORD
+    palNumEntries*: WORD
+    palPalEntry*: array[1, PALETTEENTRY]
 const
   LF_FACESIZE* = 32
 type
@@ -507,6 +341,32 @@ when winimAnsi:
   proc GetObject*(h: HANDLE, c: int32, pv: LPVOID): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "GetObjectA".}
   proc TextOut*(hdc: HDC, x: int32, y: int32, lpString: LPCSTR, c: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "TextOutA".}
 type
+  CREATESTRUCTA* {.pure.} = object
+    lpCreateParams*: LPVOID
+    hInstance*: HINSTANCE
+    hMenu*: HMENU
+    hwndParent*: HWND
+    cy*: int32
+    cx*: int32
+    y*: int32
+    x*: int32
+    style*: LONG
+    lpszName*: LPCSTR
+    lpszClass*: LPCSTR
+    dwExStyle*: DWORD
+  CREATESTRUCTW* {.pure.} = object
+    lpCreateParams*: LPVOID
+    hInstance*: HINSTANCE
+    hMenu*: HMENU
+    hwndParent*: HWND
+    cy*: int32
+    cx*: int32
+    y*: int32
+    x*: int32
+    style*: LONG
+    lpszName*: LPCWSTR
+    lpszClass*: LPCWSTR
+    dwExStyle*: DWORD
   WNDPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): LRESULT {.stdcall.}
   WNDCLASSEXA* {.pure.} = object
     cbSize*: UINT
@@ -905,6 +765,7 @@ const
   HCBT_ACTIVATE* = 5
   GWL_STYLE* = -16
   GWL_EXSTYLE* = -20
+  GWLP_USERDATA* = -21
   GWLP_ID* = -12
   GCL_HBRBACKGROUND* = -10
   WM_NULL* = 0x0000
@@ -1030,6 +891,7 @@ const
   CS_VREDRAW* = 0x0001
   CS_HREDRAW* = 0x0002
   CS_DBLCLKS* = 0x0008
+  CS_PARENTDC* = 0x0080
   DFC_MENU* = 2
   DFCS_MENUCHECK* = 0x0001
   CF_TEXT* = 1
@@ -1122,7 +984,9 @@ const
   COLOR_ACTIVEBORDER* = 10
   COLOR_APPWORKSPACE* = 12
   COLOR_BTNFACE* = 15
+  GW_HWNDNEXT* = 2
   GW_OWNER* = 4
+  GW_CHILD* = 5
   MF_BYCOMMAND* = 0x00000000
   MF_BYPOSITION* = 0x00000400
   MF_SEPARATOR* = 0x00000800
@@ -1283,6 +1147,7 @@ const
   SPI_GETNONCLIENTMETRICS* = 0x0029
   OBJID_VSCROLL* = LONG 0xFFFFFFFB'i32
   OBJID_HSCROLL* = LONG 0xFFFFFFFA'i32
+  GA_ROOT* = 2
   RT_GROUP_CURSOR* = MAKEINTRESOURCE(1+DIFFERENCE)
   RT_GROUP_ICON* = MAKEINTRESOURCE(3+DIFFERENCE)
 type
@@ -1295,10 +1160,12 @@ proc TranslateMessage*(lpMsg: ptr MSG): WINBOOL {.winapi, stdcall, dynlib: "user
 proc RegisterHotKey*(hWnd: HWND, id: int32, fsModifiers: UINT, vk: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc UnregisterHotKey*(hWnd: HWND, id: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMessagePos*(): DWORD {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetMessageTime*(): LONG {.winapi, stdcall, dynlib: "user32", importc.}
 proc AttachThreadInput*(idAttach: DWORD, idAttachTo: DWORD, fAttach: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc PostQuitMessage*(nExitCode: int32): VOID {.winapi, stdcall, dynlib: "user32", importc.}
 proc IsWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc IsMenu*(hMenu: HMENU): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc IsChild*(hWndParent: HWND, hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc DestroyWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ShowWindow*(hWnd: HWND, nCmdShow: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetLayeredWindowAttributes*(hwnd: HWND, pcrKey: ptr COLORREF, pbAlpha: ptr BYTE, pdwFlags: ptr DWORD): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1384,6 +1251,7 @@ proc SetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPCSCROLLINFO, redraw: WINBOO
 proc GetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPSCROLLINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetScrollBarInfo*(hwnd: HWND, idObject: LONG, psbi: PSCROLLBARINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetComboBoxInfo*(hwndCombo: HWND, pcbi: PCOMBOBOXINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetAncestor*(hwnd: HWND, gaFlags: UINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 template MAKEWPARAM*(l: untyped, h: untyped): WPARAM = WPARAM MAKELONG(l, h)
 template MAKELPARAM*(l: untyped, h: untyped): LPARAM = LPARAM MAKELONG(l, h)
 template GET_WHEEL_DELTA_WPARAM*(wParam: untyped): SHORT = cast[SHORT](HIWORD(wParam))
@@ -1393,6 +1261,7 @@ when winimUnicode:
   proc CreateWindowEx*(dwExStyle: DWORD, lpClassName: LPCWSTR, lpWindowName: LPCWSTR, dwStyle: DWORD, X: int32, Y: int32, nWidth: int32, nHeight: int32, hWndParent: HWND, hMenu: HMENU, hInstance: HINSTANCE, lpParam: LPVOID): HWND {.winapi, stdcall, dynlib: "user32", importc: "CreateWindowExW".}
   type
     WNDCLASSEX* = WNDCLASSEXW
+    CREATESTRUCT* = CREATESTRUCTW
     MENUITEMINFO* = MENUITEMINFOW
     NONCLIENTMETRICS* = NONCLIENTMETRICSW
   proc RegisterWindowMessage*(lpString: LPCWSTR): UINT {.winapi, stdcall, dynlib: "user32", importc: "RegisterWindowMessageW".}
@@ -1413,6 +1282,8 @@ when winimUnicode:
   proc GetWindowText*(hWnd: HWND, lpString: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextW".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthW".}
   proc MessageBox*(hWnd: HWND, lpText: LPCWSTR, lpCaption: LPCWSTR, uType: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "MessageBoxW".}
+  proc FindWindowEx*(hWndParent: HWND, hWndChildAfter: HWND, lpszClass: LPCWSTR, lpszWindow: LPCWSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowExW".}
+  proc GetClassName*(hWnd: HWND, lpClassName: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameW".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExW".}
   proc LoadCursor*(hInstance: HINSTANCE, lpCursorName: LPCWSTR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc: "LoadCursorW".}
   proc IsDialogMessage*(hDlg: HWND, lpMsg: LPMSG): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "IsDialogMessageW".}
@@ -1420,6 +1291,7 @@ when winimUnicode:
 when winimAnsi:
   type
     WNDCLASSEX* = WNDCLASSEXA
+    CREATESTRUCT* = CREATESTRUCTA
     MENUITEMINFO* = MENUITEMINFOA
     NONCLIENTMETRICS* = NONCLIENTMETRICSA
   proc RegisterWindowMessage*(lpString: LPCSTR): UINT {.winapi, stdcall, dynlib: "user32", importc: "RegisterWindowMessageA".}
@@ -1440,6 +1312,8 @@ when winimAnsi:
   proc GetWindowText*(hWnd: HWND, lpString: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextA".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthA".}
   proc MessageBox*(hWnd: HWND, lpText: LPCSTR, lpCaption: LPCSTR, uType: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "MessageBoxA".}
+  proc FindWindowEx*(hWndParent: HWND, hWndChildAfter: HWND, lpszClass: LPCSTR, lpszWindow: LPCSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowExA".}
+  proc GetClassName*(hWnd: HWND, lpClassName: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameA".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExA".}
   proc LoadCursor*(hInstance: HINSTANCE, lpCursorName: LPCSTR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc: "LoadCursorA".}
   proc IsDialogMessage*(hDlg: HWND, lpMsg: LPMSG): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "IsDialogMessageA".}
@@ -1482,9 +1356,49 @@ proc connect*(s: SOCKET, name: ptr sockaddr, namelen: int32): int32 {.winapi, st
 proc select*(nfds: int32, readfds: ptr fd_set, writefds: ptr fd_set, exceptfds: ptr fd_set, timeout: PTIMEVAL): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 proc send*(s: SOCKET, buf: cstring, len: int32, flags: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 type
+  VARTYPE* = uint16
+  TYPEKIND* = int32
+  CALLCONV* = int32
+  FUNCKIND* = int32
+  INVOKEKIND* = int32
+  VARKIND* = int32
+  DESCKIND* = int32
+  SYSKIND* = int32
+  READYSTATE* = int32
+  OLECMDF* = int32
+  OLECMDEXECOPT* = int32
+  OLECMDID* = int32
   GETPROPERTYSTOREFLAGS* = int32
   CLIPFORMAT* = WORD
+  DISPID* = LONG
+  HREFTYPE* = DWORD
+  SCODE* = LONG
   HMETAFILEPICT* = HANDLE
+  DATE* = float64
+  CY_STRUCT1* {.pure.} = object
+    Lo*: int32
+    Hi*: int32
+  CY* {.pure, union.} = object
+    struct1*: CY_STRUCT1
+    int64*: LONGLONG
+  DECIMAL_UNION1_STRUCT1* {.pure.} = object
+    scale*: BYTE
+    sign*: BYTE
+  DECIMAL_UNION1* {.pure, union.} = object
+    struct1*: DECIMAL_UNION1_STRUCT1
+    signscale*: USHORT
+  DECIMAL_UNION2_STRUCT1* {.pure.} = object
+    Lo32*: ULONG
+    Mid32*: ULONG
+  DECIMAL_UNION2* {.pure, union.} = object
+    struct1*: DECIMAL_UNION2_STRUCT1
+    Lo64*: ULONGLONG
+  DECIMAL* {.pure.} = object
+    wReserved*: USHORT
+    union1*: DECIMAL_UNION1
+    Hi32*: ULONG
+    union2*: DECIMAL_UNION2
+  VARIANT_BOOL* = int16
   IUnknown* {.pure.} = object
     lpVtbl*: ptr IUnknownVtbl
   IUnknownVtbl* {.pure, inheritable.} = object
@@ -1522,6 +1436,13 @@ type
     UnlockRegion*: proc(self: ptr IStream, libOffset: ULARGE_INTEGER, cb: ULARGE_INTEGER, dwLockType: DWORD): HRESULT {.stdcall.}
     Stat*: proc(self: ptr IStream, pstatstg: ptr STATSTG, grfStatFlag: DWORD): HRESULT {.stdcall.}
     Clone*: proc(self: ptr IStream, ppstm: ptr ptr IStream): HRESULT {.stdcall.}
+  IEnumUnknown* {.pure.} = object
+    lpVtbl*: ptr IEnumUnknownVtbl
+  IEnumUnknownVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Next*: proc(self: ptr IEnumUnknown, celt: ULONG, rgelt: ptr ptr IUnknown, pceltFetched: ptr ULONG): HRESULT {.stdcall.}
+    Skip*: proc(self: ptr IEnumUnknown, celt: ULONG): HRESULT {.stdcall.}
+    Reset*: proc(self: ptr IEnumUnknown): HRESULT {.stdcall.}
+    Clone*: proc(self: ptr IEnumUnknown, ppenum: ptr ptr IEnumUnknown): HRESULT {.stdcall.}
   IEnumString* {.pure.} = object
     lpVtbl*: ptr IEnumStringVtbl
   IEnumStringVtbl* {.pure, inheritable.} = object of IUnknownVtbl
@@ -1619,6 +1540,7 @@ type
     SetClass*: proc(self: ptr IStorage, clsid: REFCLSID): HRESULT {.stdcall.}
     SetStateBits*: proc(self: ptr IStorage, grfStateBits: DWORD, grfMask: DWORD): HRESULT {.stdcall.}
     Stat*: proc(self: ptr IStorage, pstatstg: ptr STATSTG, grfStatFlag: DWORD): HRESULT {.stdcall.}
+  LPCOLESTR* = ptr OLECHAR
   DVTARGETDEVICE* {.pure.} = object
     tdSize*: DWORD
     tdDriverNameOffset*: WORD
@@ -1686,6 +1608,354 @@ type
     DUnadvise*: proc(self: ptr IDataObject, dwConnection: DWORD): HRESULT {.stdcall.}
     EnumDAdvise*: proc(self: ptr IDataObject, ppenumAdvise: ptr ptr IEnumSTATDATA): HRESULT {.stdcall.}
   LPDATAOBJECT* = ptr IDataObject
+  SAFEARRAYBOUND* {.pure.} = object
+    cElements*: ULONG
+    lLbound*: LONG
+  MEMBERID* = DISPID
+  ARRAYDESC* {.pure.} = object
+    tdescElem*: TYPEDESC
+    cDims*: USHORT
+    rgbounds*: array[1, SAFEARRAYBOUND]
+  TYPEDESC_UNION1* {.pure, union.} = object
+    lptdesc*: ptr TYPEDESC
+    lpadesc*: ptr ARRAYDESC
+    hreftype*: HREFTYPE
+  TYPEDESC* {.pure.} = object
+    union1*: TYPEDESC_UNION1
+    vt*: VARTYPE
+  IDLDESC* {.pure.} = object
+    dwReserved*: ULONG_PTR
+    wIDLFlags*: USHORT
+  TYPEATTR* {.pure.} = object
+    guid*: GUID
+    lcid*: LCID
+    dwReserved*: DWORD
+    memidConstructor*: MEMBERID
+    memidDestructor*: MEMBERID
+    lpstrSchema*: LPOLESTR
+    cbSizeInstance*: ULONG
+    typekind*: TYPEKIND
+    cFuncs*: WORD
+    cVars*: WORD
+    cImplTypes*: WORD
+    cbSizeVft*: WORD
+    cbAlignment*: WORD
+    wTypeFlags*: WORD
+    wMajorVerNum*: WORD
+    wMinorVerNum*: WORD
+    tdescAlias*: TYPEDESC
+    idldescType*: IDLDESC
+  SAFEARRAY* {.pure.} = object
+    cDims*: USHORT
+    fFeatures*: USHORT
+    cbElements*: ULONG
+    cLocks*: ULONG
+    pvData*: PVOID
+    rgsabound*: array[1, SAFEARRAYBOUND]
+  IRecordInfo* {.pure.} = object
+    lpVtbl*: ptr IRecordInfoVtbl
+  IRecordInfoVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    RecordInit*: proc(self: ptr IRecordInfo, pvNew: PVOID): HRESULT {.stdcall.}
+    RecordClear*: proc(self: ptr IRecordInfo, pvExisting: PVOID): HRESULT {.stdcall.}
+    RecordCopy*: proc(self: ptr IRecordInfo, pvExisting: PVOID, pvNew: PVOID): HRESULT {.stdcall.}
+    GetGuid*: proc(self: ptr IRecordInfo, pguid: ptr GUID): HRESULT {.stdcall.}
+    GetName*: proc(self: ptr IRecordInfo, pbstrName: ptr BSTR): HRESULT {.stdcall.}
+    GetSize*: proc(self: ptr IRecordInfo, pcbSize: ptr ULONG): HRESULT {.stdcall.}
+    GetTypeInfo*: proc(self: ptr IRecordInfo, ppTypeInfo: ptr ptr ITypeInfo): HRESULT {.stdcall.}
+    GetField*: proc(self: ptr IRecordInfo, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.stdcall.}
+    GetFieldNoCopy*: proc(self: ptr IRecordInfo, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT, ppvDataCArray: ptr PVOID): HRESULT {.stdcall.}
+    PutField*: proc(self: ptr IRecordInfo, wFlags: ULONG, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.stdcall.}
+    PutFieldNoCopy*: proc(self: ptr IRecordInfo, wFlags: ULONG, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.stdcall.}
+    GetFieldNames*: proc(self: ptr IRecordInfo, pcNames: ptr ULONG, rgBstrNames: ptr BSTR): HRESULT {.stdcall.}
+    IsMatchingType*: proc(self: ptr IRecordInfo, pRecordInfo: ptr IRecordInfo): WINBOOL {.stdcall.}
+    RecordCreate*: proc(self: ptr IRecordInfo): PVOID {.stdcall.}
+    RecordCreateCopy*: proc(self: ptr IRecordInfo, pvSource: PVOID, ppvDest: ptr PVOID): HRESULT {.stdcall.}
+    RecordDestroy*: proc(self: ptr IRecordInfo, pvRecord: PVOID): HRESULT {.stdcall.}
+  VARIANT_UNION1_STRUCT1_UNION1_STRUCT1* {.pure.} = object
+    pvRecord*: PVOID
+    pRecInfo*: ptr IRecordInfo
+  VARIANT_UNION1_STRUCT1_UNION1* {.pure, union.} = object
+    llVal*: LONGLONG
+    lVal*: LONG
+    bVal*: BYTE
+    iVal*: SHORT
+    fltVal*: FLOAT
+    dblVal*: DOUBLE
+    boolVal*: VARIANT_BOOL
+    scode*: SCODE
+    cyVal*: CY
+    date*: DATE
+    bstrVal*: BSTR
+    punkVal*: ptr IUnknown
+    pdispVal*: ptr IDispatch
+    parray*: ptr SAFEARRAY
+    pbVal*: ptr BYTE
+    piVal*: ptr SHORT
+    plVal*: ptr LONG
+    pllVal*: ptr LONGLONG
+    pfltVal*: ptr FLOAT
+    pdblVal*: ptr DOUBLE
+    pboolVal*: ptr VARIANT_BOOL
+    pscode*: ptr SCODE
+    pcyVal*: ptr CY
+    pdate*: ptr DATE
+    pbstrVal*: ptr BSTR
+    ppunkVal*: ptr ptr IUnknown
+    ppdispVal*: ptr ptr IDispatch
+    pparray*: ptr ptr SAFEARRAY
+    pvarVal*: ptr VARIANT
+    byref*: PVOID
+    cVal*: CHAR
+    uiVal*: USHORT
+    ulVal*: ULONG
+    ullVal*: ULONGLONG
+    intVal*: INT
+    uintVal*: UINT
+    pdecVal*: ptr DECIMAL
+    pcVal*: cstring
+    puiVal*: ptr USHORT
+    pulVal*: ptr ULONG
+    pullVal*: ptr ULONGLONG
+    pintVal*: ptr INT
+    puintVal*: ptr UINT
+    struct1*: VARIANT_UNION1_STRUCT1_UNION1_STRUCT1
+  VARIANT_UNION1_STRUCT1* {.pure.} = object
+    vt*: VARTYPE
+    wReserved1*: WORD
+    wReserved2*: WORD
+    wReserved3*: WORD
+    union1*: VARIANT_UNION1_STRUCT1_UNION1
+  VARIANT_UNION1* {.pure, union.} = object
+    struct1*: VARIANT_UNION1_STRUCT1
+    decVal*: DECIMAL
+  VARIANT* {.pure.} = object
+    union1*: VARIANT_UNION1
+  VARIANTARG* = VARIANT
+  PARAMDESCEX* {.pure.} = object
+    cBytes*: ULONG
+    varDefaultValue*: VARIANTARG
+  LPPARAMDESCEX* = ptr PARAMDESCEX
+  PARAMDESC* {.pure.} = object
+    pparamdescex*: LPPARAMDESCEX
+    wParamFlags*: USHORT
+  ELEMDESC_UNION1* {.pure, union.} = object
+    idldesc*: IDLDESC
+    paramdesc*: PARAMDESC
+  ELEMDESC* {.pure.} = object
+    tdesc*: TYPEDESC
+    union1*: ELEMDESC_UNION1
+  FUNCDESC* {.pure.} = object
+    memid*: MEMBERID
+    lprgscode*: ptr SCODE
+    lprgelemdescParam*: ptr ELEMDESC
+    funckind*: FUNCKIND
+    invkind*: INVOKEKIND
+    callconv*: CALLCONV
+    cParams*: SHORT
+    cParamsOpt*: SHORT
+    oVft*: SHORT
+    cScodes*: SHORT
+    elemdescFunc*: ELEMDESC
+    wFuncFlags*: WORD
+  VARDESC_UNION1* {.pure, union.} = object
+    oInst*: ULONG
+    lpvarValue*: ptr VARIANT
+  VARDESC* {.pure.} = object
+    memid*: MEMBERID
+    lpstrSchema*: LPOLESTR
+    union1*: VARDESC_UNION1
+    elemdescVar*: ELEMDESC
+    wVarFlags*: WORD
+    varkind*: VARKIND
+  BINDPTR* {.pure, union.} = object
+    lpfuncdesc*: ptr FUNCDESC
+    lpvardesc*: ptr VARDESC
+    lptcomp*: ptr ITypeComp
+  ITypeComp* {.pure.} = object
+    lpVtbl*: ptr ITypeCompVtbl
+  ITypeCompVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Bind*: proc(self: ptr ITypeComp, szName: LPOLESTR, lHashVal: ULONG, wFlags: WORD, ppTInfo: ptr ptr ITypeInfo, pDescKind: ptr DESCKIND, pBindPtr: ptr BINDPTR): HRESULT {.stdcall.}
+    BindType*: proc(self: ptr ITypeComp, szName: LPOLESTR, lHashVal: ULONG, ppTInfo: ptr ptr ITypeInfo, ppTComp: ptr ptr ITypeComp): HRESULT {.stdcall.}
+  DISPPARAMS* {.pure.} = object
+    rgvarg*: ptr VARIANTARG
+    rgdispidNamedArgs*: ptr DISPID
+    cArgs*: UINT
+    cNamedArgs*: UINT
+  EXCEPINFO* {.pure.} = object
+    wCode*: WORD
+    wReserved*: WORD
+    bstrSource*: BSTR
+    bstrDescription*: BSTR
+    bstrHelpFile*: BSTR
+    dwHelpContext*: DWORD
+    pvReserved*: PVOID
+    pfnDeferredFillIn*: proc(P1: ptr EXCEPINFO): HRESULT {.stdcall.}
+    scode*: SCODE
+  TLIBATTR* {.pure.} = object
+    guid*: GUID
+    lcid*: LCID
+    syskind*: SYSKIND
+    wMajorVerNum*: WORD
+    wMinorVerNum*: WORD
+    wLibFlags*: WORD
+  ITypeLib* {.pure.} = object
+    lpVtbl*: ptr ITypeLibVtbl
+  ITypeLibVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetTypeInfoCount*: proc(self: ptr ITypeLib): UINT {.stdcall.}
+    GetTypeInfo*: proc(self: ptr ITypeLib, index: UINT, ppTInfo: ptr ptr ITypeInfo): HRESULT {.stdcall.}
+    GetTypeInfoType*: proc(self: ptr ITypeLib, index: UINT, pTKind: ptr TYPEKIND): HRESULT {.stdcall.}
+    GetTypeInfoOfGuid*: proc(self: ptr ITypeLib, guid: REFGUID, ppTinfo: ptr ptr ITypeInfo): HRESULT {.stdcall.}
+    GetLibAttr*: proc(self: ptr ITypeLib, ppTLibAttr: ptr ptr TLIBATTR): HRESULT {.stdcall.}
+    GetTypeComp*: proc(self: ptr ITypeLib, ppTComp: ptr ptr ITypeComp): HRESULT {.stdcall.}
+    GetDocumentation*: proc(self: ptr ITypeLib, index: INT, pBstrName: ptr BSTR, pBstrDocString: ptr BSTR, pdwHelpContext: ptr DWORD, pBstrHelpFile: ptr BSTR): HRESULT {.stdcall.}
+    IsName*: proc(self: ptr ITypeLib, szNameBuf: LPOLESTR, lHashVal: ULONG, pfName: ptr WINBOOL): HRESULT {.stdcall.}
+    FindName*: proc(self: ptr ITypeLib, szNameBuf: LPOLESTR, lHashVal: ULONG, ppTInfo: ptr ptr ITypeInfo, rgMemId: ptr MEMBERID, pcFound: ptr USHORT): HRESULT {.stdcall.}
+    ReleaseTLibAttr*: proc(self: ptr ITypeLib, pTLibAttr: ptr TLIBATTR): void {.stdcall.}
+  ITypeInfo* {.pure.} = object
+    lpVtbl*: ptr ITypeInfoVtbl
+  ITypeInfoVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetTypeAttr*: proc(self: ptr ITypeInfo, ppTypeAttr: ptr ptr TYPEATTR): HRESULT {.stdcall.}
+    GetTypeComp*: proc(self: ptr ITypeInfo, ppTComp: ptr ptr ITypeComp): HRESULT {.stdcall.}
+    GetFuncDesc*: proc(self: ptr ITypeInfo, index: UINT, ppFuncDesc: ptr ptr FUNCDESC): HRESULT {.stdcall.}
+    GetVarDesc*: proc(self: ptr ITypeInfo, index: UINT, ppVarDesc: ptr ptr VARDESC): HRESULT {.stdcall.}
+    GetNames*: proc(self: ptr ITypeInfo, memid: MEMBERID, rgBstrNames: ptr BSTR, cMaxNames: UINT, pcNames: ptr UINT): HRESULT {.stdcall.}
+    GetRefTypeOfImplType*: proc(self: ptr ITypeInfo, index: UINT, pRefType: ptr HREFTYPE): HRESULT {.stdcall.}
+    GetImplTypeFlags*: proc(self: ptr ITypeInfo, index: UINT, pImplTypeFlags: ptr INT): HRESULT {.stdcall.}
+    GetIDsOfNames*: proc(self: ptr ITypeInfo, rgszNames: ptr LPOLESTR, cNames: UINT, pMemId: ptr MEMBERID): HRESULT {.stdcall.}
+    Invoke*: proc(self: ptr ITypeInfo, pvInstance: PVOID, memid: MEMBERID, wFlags: WORD, pDispParams: ptr DISPPARAMS, pVarResult: ptr VARIANT, pExcepInfo: ptr EXCEPINFO, puArgErr: ptr UINT): HRESULT {.stdcall.}
+    GetDocumentation*: proc(self: ptr ITypeInfo, memid: MEMBERID, pBstrName: ptr BSTR, pBstrDocString: ptr BSTR, pdwHelpContext: ptr DWORD, pBstrHelpFile: ptr BSTR): HRESULT {.stdcall.}
+    GetDllEntry*: proc(self: ptr ITypeInfo, memid: MEMBERID, invKind: INVOKEKIND, pBstrDllName: ptr BSTR, pBstrName: ptr BSTR, pwOrdinal: ptr WORD): HRESULT {.stdcall.}
+    GetRefTypeInfo*: proc(self: ptr ITypeInfo, hRefType: HREFTYPE, ppTInfo: ptr ptr ITypeInfo): HRESULT {.stdcall.}
+    AddressOfMember*: proc(self: ptr ITypeInfo, memid: MEMBERID, invKind: INVOKEKIND, ppv: ptr PVOID): HRESULT {.stdcall.}
+    CreateInstance*: proc(self: ptr ITypeInfo, pUnkOuter: ptr IUnknown, riid: REFIID, ppvObj: ptr PVOID): HRESULT {.stdcall.}
+    GetMops*: proc(self: ptr ITypeInfo, memid: MEMBERID, pBstrMops: ptr BSTR): HRESULT {.stdcall.}
+    GetContainingTypeLib*: proc(self: ptr ITypeInfo, ppTLib: ptr ptr ITypeLib, pIndex: ptr UINT): HRESULT {.stdcall.}
+    ReleaseTypeAttr*: proc(self: ptr ITypeInfo, pTypeAttr: ptr TYPEATTR): void {.stdcall.}
+    ReleaseFuncDesc*: proc(self: ptr ITypeInfo, pFuncDesc: ptr FUNCDESC): void {.stdcall.}
+    ReleaseVarDesc*: proc(self: ptr ITypeInfo, pVarDesc: ptr VARDESC): void {.stdcall.}
+  IDispatch* {.pure.} = object
+    lpVtbl*: ptr IDispatchVtbl
+  IDispatchVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetTypeInfoCount*: proc(self: ptr IDispatch, pctinfo: ptr UINT): HRESULT {.stdcall.}
+    GetTypeInfo*: proc(self: ptr IDispatch, iTInfo: UINT, lcid: LCID, ppTInfo: ptr ptr ITypeInfo): HRESULT {.stdcall.}
+    GetIDsOfNames*: proc(self: ptr IDispatch, riid: REFIID, rgszNames: ptr LPOLESTR, cNames: UINT, lcid: LCID, rgDispId: ptr DISPID): HRESULT {.stdcall.}
+    Invoke*: proc(self: ptr IDispatch, dispIdMember: DISPID, riid: REFIID, lcid: LCID, wFlags: WORD, pDispParams: ptr DISPPARAMS, pVarResult: ptr VARIANT, pExcepInfo: ptr EXCEPINFO, puArgErr: ptr UINT): HRESULT {.stdcall.}
+  IParseDisplayName* {.pure.} = object
+    lpVtbl*: ptr IParseDisplayNameVtbl
+  IParseDisplayNameVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    ParseDisplayName*: proc(self: ptr IParseDisplayName, pbc: ptr IBindCtx, pszDisplayName: LPOLESTR, pchEaten: ptr ULONG, ppmkOut: ptr ptr IMoniker): HRESULT {.stdcall.}
+  IOleContainer* {.pure.} = object
+    lpVtbl*: ptr IOleContainerVtbl
+  IOleContainerVtbl* {.pure, inheritable.} = object of IParseDisplayNameVtbl
+    EnumObjects*: proc(self: ptr IOleContainer, grfFlags: DWORD, ppenum: ptr ptr IEnumUnknown): HRESULT {.stdcall.}
+    LockContainer*: proc(self: ptr IOleContainer, fLock: WINBOOL): HRESULT {.stdcall.}
+  IOleClientSite* {.pure.} = object
+    lpVtbl*: ptr IOleClientSiteVtbl
+  IOleClientSiteVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    SaveObject*: proc(self: ptr IOleClientSite): HRESULT {.stdcall.}
+    GetMoniker*: proc(self: ptr IOleClientSite, dwAssign: DWORD, dwWhichMoniker: DWORD, ppmk: ptr ptr IMoniker): HRESULT {.stdcall.}
+    GetContainer*: proc(self: ptr IOleClientSite, ppContainer: ptr ptr IOleContainer): HRESULT {.stdcall.}
+    ShowObject*: proc(self: ptr IOleClientSite): HRESULT {.stdcall.}
+    OnShowWindow*: proc(self: ptr IOleClientSite, fShow: WINBOOL): HRESULT {.stdcall.}
+    RequestNewObjectLayout*: proc(self: ptr IOleClientSite): HRESULT {.stdcall.}
+  OLEVERB* {.pure.} = object
+    lVerb*: LONG
+    lpszVerbName*: LPOLESTR
+    fuFlags*: DWORD
+    grfAttribs*: DWORD
+  LPOLEVERB* = ptr OLEVERB
+  IEnumOLEVERB* {.pure.} = object
+    lpVtbl*: ptr IEnumOLEVERBVtbl
+  IEnumOLEVERBVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Next*: proc(self: ptr IEnumOLEVERB, celt: ULONG, rgelt: LPOLEVERB, pceltFetched: ptr ULONG): HRESULT {.stdcall.}
+    Skip*: proc(self: ptr IEnumOLEVERB, celt: ULONG): HRESULT {.stdcall.}
+    Reset*: proc(self: ptr IEnumOLEVERB): HRESULT {.stdcall.}
+    Clone*: proc(self: ptr IEnumOLEVERB, ppenum: ptr ptr IEnumOLEVERB): HRESULT {.stdcall.}
+  IOleObject* {.pure.} = object
+    lpVtbl*: ptr IOleObjectVtbl
+  IOleObjectVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    SetClientSite*: proc(self: ptr IOleObject, pClientSite: ptr IOleClientSite): HRESULT {.stdcall.}
+    GetClientSite*: proc(self: ptr IOleObject, ppClientSite: ptr ptr IOleClientSite): HRESULT {.stdcall.}
+    SetHostNames*: proc(self: ptr IOleObject, szContainerApp: LPCOLESTR, szContainerObj: LPCOLESTR): HRESULT {.stdcall.}
+    Close*: proc(self: ptr IOleObject, dwSaveOption: DWORD): HRESULT {.stdcall.}
+    SetMoniker*: proc(self: ptr IOleObject, dwWhichMoniker: DWORD, pmk: ptr IMoniker): HRESULT {.stdcall.}
+    GetMoniker*: proc(self: ptr IOleObject, dwAssign: DWORD, dwWhichMoniker: DWORD, ppmk: ptr ptr IMoniker): HRESULT {.stdcall.}
+    InitFromData*: proc(self: ptr IOleObject, pDataObject: ptr IDataObject, fCreation: WINBOOL, dwReserved: DWORD): HRESULT {.stdcall.}
+    GetClipboardData*: proc(self: ptr IOleObject, dwReserved: DWORD, ppDataObject: ptr ptr IDataObject): HRESULT {.stdcall.}
+    DoVerb*: proc(self: ptr IOleObject, iVerb: LONG, lpmsg: LPMSG, pActiveSite: ptr IOleClientSite, lindex: LONG, hwndParent: HWND, lprcPosRect: LPCRECT): HRESULT {.stdcall.}
+    EnumVerbs*: proc(self: ptr IOleObject, ppEnumOleVerb: ptr ptr IEnumOLEVERB): HRESULT {.stdcall.}
+    Update*: proc(self: ptr IOleObject): HRESULT {.stdcall.}
+    IsUpToDate*: proc(self: ptr IOleObject): HRESULT {.stdcall.}
+    GetUserClassID*: proc(self: ptr IOleObject, pClsid: ptr CLSID): HRESULT {.stdcall.}
+    GetUserType*: proc(self: ptr IOleObject, dwFormOfType: DWORD, pszUserType: ptr LPOLESTR): HRESULT {.stdcall.}
+    SetExtent*: proc(self: ptr IOleObject, dwDrawAspect: DWORD, psizel: ptr SIZEL): HRESULT {.stdcall.}
+    GetExtent*: proc(self: ptr IOleObject, dwDrawAspect: DWORD, psizel: ptr SIZEL): HRESULT {.stdcall.}
+    Advise*: proc(self: ptr IOleObject, pAdvSink: ptr IAdviseSink, pdwConnection: ptr DWORD): HRESULT {.stdcall.}
+    Unadvise*: proc(self: ptr IOleObject, dwConnection: DWORD): HRESULT {.stdcall.}
+    EnumAdvise*: proc(self: ptr IOleObject, ppenumAdvise: ptr ptr IEnumSTATDATA): HRESULT {.stdcall.}
+    GetMiscStatus*: proc(self: ptr IOleObject, dwAspect: DWORD, pdwStatus: ptr DWORD): HRESULT {.stdcall.}
+    SetColorScheme*: proc(self: ptr IOleObject, pLogpal: ptr LOGPALETTE): HRESULT {.stdcall.}
+  IOleWindow* {.pure.} = object
+    lpVtbl*: ptr IOleWindowVtbl
+  IOleWindowVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetWindow*: proc(self: ptr IOleWindow, phwnd: ptr HWND): HRESULT {.stdcall.}
+    ContextSensitiveHelp*: proc(self: ptr IOleWindow, fEnterMode: WINBOOL): HRESULT {.stdcall.}
+  LPCBORDERWIDTHS* = LPCRECT
+  IOleInPlaceActiveObject* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceActiveObjectVtbl
+  IOleInPlaceActiveObjectVtbl* {.pure, inheritable.} = object of IOleWindowVtbl
+    TranslateAccelerator*: proc(self: ptr IOleInPlaceActiveObject, lpmsg: LPMSG): HRESULT {.stdcall.}
+    OnFrameWindowActivate*: proc(self: ptr IOleInPlaceActiveObject, fActivate: WINBOOL): HRESULT {.stdcall.}
+    OnDocWindowActivate*: proc(self: ptr IOleInPlaceActiveObject, fActivate: WINBOOL): HRESULT {.stdcall.}
+    ResizeBorder*: proc(self: ptr IOleInPlaceActiveObject, prcBorder: LPCRECT, pUIWindow: ptr IOleInPlaceUIWindow, fFrameWindow: WINBOOL): HRESULT {.stdcall.}
+    EnableModeless*: proc(self: ptr IOleInPlaceActiveObject, fEnable: WINBOOL): HRESULT {.stdcall.}
+  IOleInPlaceUIWindow* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceUIWindowVtbl
+  IOleInPlaceUIWindowVtbl* {.pure, inheritable.} = object of IOleWindowVtbl
+    GetBorder*: proc(self: ptr IOleInPlaceUIWindow, lprectBorder: LPRECT): HRESULT {.stdcall.}
+    RequestBorderSpace*: proc(self: ptr IOleInPlaceUIWindow, pborderwidths: LPCBORDERWIDTHS): HRESULT {.stdcall.}
+    SetBorderSpace*: proc(self: ptr IOleInPlaceUIWindow, pborderwidths: LPCBORDERWIDTHS): HRESULT {.stdcall.}
+    SetActiveObject*: proc(self: ptr IOleInPlaceUIWindow, pActiveObject: ptr IOleInPlaceActiveObject, pszObjName: LPCOLESTR): HRESULT {.stdcall.}
+  OLEMENUGROUPWIDTHS* {.pure.} = object
+    width*: array[6, LONG]
+  LPOLEMENUGROUPWIDTHS* = ptr OLEMENUGROUPWIDTHS
+  HOLEMENU* = HGLOBAL
+  IOleInPlaceFrame* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceFrameVtbl
+  IOleInPlaceFrameVtbl* {.pure, inheritable.} = object of IOleInPlaceUIWindowVtbl
+    InsertMenus*: proc(self: ptr IOleInPlaceFrame, hmenuShared: HMENU, lpMenuWidths: LPOLEMENUGROUPWIDTHS): HRESULT {.stdcall.}
+    SetMenu*: proc(self: ptr IOleInPlaceFrame, hmenuShared: HMENU, holemenu: HOLEMENU, hwndActiveObject: HWND): HRESULT {.stdcall.}
+    RemoveMenus*: proc(self: ptr IOleInPlaceFrame, hmenuShared: HMENU): HRESULT {.stdcall.}
+    SetStatusText*: proc(self: ptr IOleInPlaceFrame, pszStatusText: LPCOLESTR): HRESULT {.stdcall.}
+    EnableModeless*: proc(self: ptr IOleInPlaceFrame, fEnable: WINBOOL): HRESULT {.stdcall.}
+    TranslateAccelerator*: proc(self: ptr IOleInPlaceFrame, lpmsg: LPMSG, wID: WORD): HRESULT {.stdcall.}
+  IOleInPlaceObject* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceObjectVtbl
+  IOleInPlaceObjectVtbl* {.pure, inheritable.} = object of IOleWindowVtbl
+    InPlaceDeactivate*: proc(self: ptr IOleInPlaceObject): HRESULT {.stdcall.}
+    UIDeactivate*: proc(self: ptr IOleInPlaceObject): HRESULT {.stdcall.}
+    SetObjectRects*: proc(self: ptr IOleInPlaceObject, lprcPosRect: LPCRECT, lprcClipRect: LPCRECT): HRESULT {.stdcall.}
+    ReactivateAndUndo*: proc(self: ptr IOleInPlaceObject): HRESULT {.stdcall.}
+  OLEINPLACEFRAMEINFO* {.pure.} = object
+    cb*: UINT
+    fMDIApp*: WINBOOL
+    hwndFrame*: HWND
+    haccel*: HACCEL
+    cAccelEntries*: UINT
+  LPOLEINPLACEFRAMEINFO* = ptr OLEINPLACEFRAMEINFO
+  IOleInPlaceSite* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceSiteVtbl
+  IOleInPlaceSiteVtbl* {.pure, inheritable.} = object of IOleWindowVtbl
+    CanInPlaceActivate*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    OnInPlaceActivate*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    OnUIActivate*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    GetWindowContext*: proc(self: ptr IOleInPlaceSite, ppFrame: ptr ptr IOleInPlaceFrame, ppDoc: ptr ptr IOleInPlaceUIWindow, lprcPosRect: LPRECT, lprcClipRect: LPRECT, lpFrameInfo: LPOLEINPLACEFRAMEINFO): HRESULT {.stdcall.}
+    Scroll*: proc(self: ptr IOleInPlaceSite, scrollExtant: SIZE): HRESULT {.stdcall.}
+    OnUIDeactivate*: proc(self: ptr IOleInPlaceSite, fUndoable: WINBOOL): HRESULT {.stdcall.}
+    OnInPlaceDeactivate*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    DiscardUndoState*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    DeactivateAndUndo*: proc(self: ptr IOleInPlaceSite): HRESULT {.stdcall.}
+    OnPosRectChange*: proc(self: ptr IOleInPlaceSite, lprcPosRect: LPCRECT): HRESULT {.stdcall.}
   IDropSource* {.pure.} = object
     lpVtbl*: ptr IDropSourceVtbl
   IDropSourceVtbl* {.pure, inheritable.} = object of IUnknownVtbl
@@ -1700,6 +1970,44 @@ type
     DragLeave*: proc(self: ptr IDropTarget): HRESULT {.stdcall.}
     Drop*: proc(self: ptr IDropTarget, pDataObj: ptr IDataObject, grfKeyState: DWORD, pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.stdcall.}
   LPDROPTARGET* = ptr IDropTarget
+  CONNECTDATA* {.pure.} = object
+    pUnk*: ptr IUnknown
+    dwCookie*: DWORD
+  LPCONNECTDATA* = ptr CONNECTDATA
+  IEnumConnections* {.pure.} = object
+    lpVtbl*: ptr IEnumConnectionsVtbl
+  IEnumConnectionsVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Next*: proc(self: ptr IEnumConnections, cConnections: ULONG, rgcd: LPCONNECTDATA, pcFetched: ptr ULONG): HRESULT {.stdcall.}
+    Skip*: proc(self: ptr IEnumConnections, cConnections: ULONG): HRESULT {.stdcall.}
+    Reset*: proc(self: ptr IEnumConnections): HRESULT {.stdcall.}
+    Clone*: proc(self: ptr IEnumConnections, ppEnum: ptr ptr IEnumConnections): HRESULT {.stdcall.}
+  LPCONNECTIONPOINT* = ptr IConnectionPoint
+  IEnumConnectionPoints* {.pure.} = object
+    lpVtbl*: ptr IEnumConnectionPointsVtbl
+  IEnumConnectionPointsVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Next*: proc(self: ptr IEnumConnectionPoints, cConnections: ULONG, ppCP: ptr LPCONNECTIONPOINT, pcFetched: ptr ULONG): HRESULT {.stdcall.}
+    Skip*: proc(self: ptr IEnumConnectionPoints, cConnections: ULONG): HRESULT {.stdcall.}
+    Reset*: proc(self: ptr IEnumConnectionPoints): HRESULT {.stdcall.}
+    Clone*: proc(self: ptr IEnumConnectionPoints, ppEnum: ptr ptr IEnumConnectionPoints): HRESULT {.stdcall.}
+  IConnectionPointContainer* {.pure.} = object
+    lpVtbl*: ptr IConnectionPointContainerVtbl
+  IConnectionPointContainerVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    EnumConnectionPoints*: proc(self: ptr IConnectionPointContainer, ppEnum: ptr ptr IEnumConnectionPoints): HRESULT {.stdcall.}
+    FindConnectionPoint*: proc(self: ptr IConnectionPointContainer, riid: REFIID, ppCP: ptr ptr IConnectionPoint): HRESULT {.stdcall.}
+  IConnectionPoint* {.pure.} = object
+    lpVtbl*: ptr IConnectionPointVtbl
+  IConnectionPointVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetConnectionInterface*: proc(self: ptr IConnectionPoint, pIID: ptr IID): HRESULT {.stdcall.}
+    GetConnectionPointContainer*: proc(self: ptr IConnectionPoint, ppCPC: ptr ptr IConnectionPointContainer): HRESULT {.stdcall.}
+    Advise*: proc(self: ptr IConnectionPoint, pUnkSink: ptr IUnknown, pdwCookie: ptr DWORD): HRESULT {.stdcall.}
+    Unadvise*: proc(self: ptr IConnectionPoint, dwCookie: DWORD): HRESULT {.stdcall.}
+    EnumConnections*: proc(self: ptr IConnectionPoint, ppEnum: ptr ptr IEnumConnections): HRESULT {.stdcall.}
+  IOleInPlaceSiteEx* {.pure.} = object
+    lpVtbl*: ptr IOleInPlaceSiteExVtbl
+  IOleInPlaceSiteExVtbl* {.pure, inheritable.} = object of IOleInPlaceSiteVtbl
+    OnInPlaceActivateEx*: proc(self: ptr IOleInPlaceSiteEx, pfNoRedraw: ptr WINBOOL, dwFlags: DWORD): HRESULT {.stdcall.}
+    OnInPlaceDeactivateEx*: proc(self: ptr IOleInPlaceSiteEx, fNoRedraw: WINBOOL): HRESULT {.stdcall.}
+    RequestUIActivate*: proc(self: ptr IOleInPlaceSiteEx): HRESULT {.stdcall.}
   SHITEMID* {.pure.} = object
     cb*: USHORT
     abID*: array[1, BYTE]
@@ -1716,6 +2024,19 @@ type
   PROPERTYKEY* {.pure.} = object
     fmtid*: GUID
     pid*: DWORD
+  OLECMD* {.pure.} = object
+    cmdID*: ULONG
+    cmdf*: DWORD
+  OLECMDTEXT* {.pure.} = object
+    cmdtextf*: DWORD
+    cwActual*: ULONG
+    cwBuf*: ULONG
+    rgwz*: array[1, uint16]
+  IOleCommandTarget* {.pure.} = object
+    lpVtbl*: ptr IOleCommandTargetVtbl
+  IOleCommandTargetVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    QueryStatus*: proc(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, cCmds: ULONG, prgCmds: ptr OLECMD, pCmdText: ptr OLECMDTEXT): HRESULT {.stdcall.}
+    Exec*: proc(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, nCmdID: DWORD, nCmdexecopt: DWORD, pvaIn: ptr VARIANT, pvaOut: ptr VARIANT): HRESULT {.stdcall.}
   REFPROPERTYKEY* = ptr PROPERTYKEY
 const
   CLSCTX_INPROC_SERVER* = 0x1
@@ -1725,21 +2046,138 @@ const
   CLSCTX_ALL* = CLSCTX_INPROC_SERVER or CLSCTX_INPROC_HANDLER or CLSCTX_LOCAL_SERVER or CLSCTX_REMOTE_SERVER
   DVASPECT_CONTENT* = 1
   STATFLAG_NONAME* = 1
+  VARIANT_TRUE* = VARIANT_BOOL(-1)
+  VARIANT_FALSE* = VARIANT_BOOL 0
+  VT_I4* = 3
+  VT_BSTR* = 8
+  VT_VARIANT* = 12
   IID_IUnknown* = DEFINE_GUID(0x00000000'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
   STREAM_SEEK_SET* = 0
   TYMED_HGLOBAL* = 1
   TYMED_GDI* = 16
   DATADIR_GET* = 1
   IID_IDataObject* = DEFINE_GUID(0x0000010e'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  DISPID_UNKNOWN* = -1
+  IID_IDispatch* = DEFINE_GUID(0x00020400'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  OLEIVERB_HIDE* = -3
+  OLEIVERB_INPLACEACTIVATE* = -5
+  IID_IOleClientSite* = DEFINE_GUID(0x00000118'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  OLECLOSE_NOSAVE* = 1
+  IID_IOleObject* = DEFINE_GUID(0x00000112'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IOleWindow* = DEFINE_GUID(0x00000114'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IOleInPlaceActiveObject* = DEFINE_GUID(0x00000117'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IOleInPlaceFrame* = DEFINE_GUID(0x00000116'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IOleInPlaceObject* = DEFINE_GUID(0x00000113'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IOleInPlaceSite* = DEFINE_GUID(0x00000119'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
   DROPEFFECT_NONE* = 0
   DROPEFFECT_COPY* = 1
   DROPEFFECT_MOVE* = 2
   DROPEFFECT_LINK* = 4
+  IID_IConnectionPointContainer* = DEFINE_GUID(0xb196b284'i32, 0xbab4, 0x101a, [0xb6'u8, 0x9c, 0x00, 0xaa, 0x00, 0x34, 0x1d, 0x07])
+  IID_IOleInPlaceSiteEx* = DEFINE_GUID(0x9c2cad80'i32, 0x3424, 0x11cf, [0xb6'u8, 0x70, 0x00, 0xaa, 0x00, 0x4c, 0xd6, 0xd8])
+  navNoHistory* = 0x2
+  DIID_DWebBrowserEvents* = DEFINE_GUID(0xeab22ac2'i32, 0x30c1, 0x11cf, [0xa7'u8, 0xeb, 0x00, 0x00, 0xc0, 0x5b, 0xae, 0x0b])
+  CSC_NAVIGATEFORWARD* = 1
+  CSC_NAVIGATEBACK* = 2
+  IID_IWebBrowser2* = DEFINE_GUID(0xd30c1661'i32, 0xcdaf, 0x11d0, [0x8a'u8, 0x3e, 0x00, 0xc0, 0x4f, 0xc9, 0xe2, 0x6e])
+  DIID_DWebBrowserEvents2* = DEFINE_GUID(0x34a715a0'i32, 0x6587, 0x11d0, [0x92'u8, 0x4a, 0x00, 0x20, 0xaf, 0xc7, 0xac, 0x4d])
+  CLSID_WebBrowser* = DEFINE_GUID(0x8856f961'i32, 0x340a, 0x11d0, [0xa9'u8, 0x6b, 0x00, 0xc0, 0x4f, 0xd7, 0x05, 0xa2])
+  DISPID_STATUSTEXTCHANGE* = 102
+  DISPID_DOWNLOADCOMPLETE* = 104
+  DISPID_COMMANDSTATECHANGE* = 105
+  DISPID_PROGRESSCHANGE* = 108
+  DISPID_TITLECHANGE* = 113
+  DISPID_BEFORENAVIGATE2* = 250
+  DISPID_NEWWINDOW2* = 251
+  DISPID_NAVIGATECOMPLETE2* = 252
+  DISPID_NAVIGATEERROR* = 271
+  DISPID_NEWWINDOW3* = 273
 type
   COMDLG_FILTERSPEC* {.pure.} = object
     pszName*: LPCWSTR
     pszSpec*: LPCWSTR
+  IWebBrowser* {.pure.} = object
+    lpVtbl*: ptr IWebBrowserVtbl
+  IWebBrowserVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    GoBack*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    GoForward*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    GoHome*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    GoSearch*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    Navigate*: proc(self: ptr IWebBrowser, URL: BSTR, Flags: ptr VARIANT, TargetFrameName: ptr VARIANT, PostData: ptr VARIANT, Headers: ptr VARIANT): HRESULT {.stdcall.}
+    Refresh*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    Refresh2*: proc(self: ptr IWebBrowser, Level: ptr VARIANT): HRESULT {.stdcall.}
+    Stop*: proc(self: ptr IWebBrowser): HRESULT {.stdcall.}
+    get_Application*: proc(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    get_Parent*: proc(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    get_Container*: proc(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    get_Document*: proc(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    get_TopLevelContainer*: proc(self: ptr IWebBrowser, pBool: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_Type*: proc(self: ptr IWebBrowser, Type: ptr BSTR): HRESULT {.stdcall.}
+    get_Left*: proc(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.stdcall.}
+    put_Left*: proc(self: ptr IWebBrowser, Left: LONG): HRESULT {.stdcall.}
+    get_Top*: proc(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.stdcall.}
+    put_Top*: proc(self: ptr IWebBrowser, Top: LONG): HRESULT {.stdcall.}
+    get_Width*: proc(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.stdcall.}
+    put_Width*: proc(self: ptr IWebBrowser, Width: LONG): HRESULT {.stdcall.}
+    get_Height*: proc(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.stdcall.}
+    put_Height*: proc(self: ptr IWebBrowser, Height: LONG): HRESULT {.stdcall.}
+    get_LocationName*: proc(self: ptr IWebBrowser, LocationName: ptr BSTR): HRESULT {.stdcall.}
+    get_LocationURL*: proc(self: ptr IWebBrowser, LocationURL: ptr BSTR): HRESULT {.stdcall.}
+    get_Busy*: proc(self: ptr IWebBrowser, pBool: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IWebBrowserApp* {.pure.} = object
+    lpVtbl*: ptr IWebBrowserAppVtbl
+  IWebBrowserAppVtbl* {.pure, inheritable.} = object of IWebBrowserVtbl
+    Quit*: proc(self: ptr IWebBrowserApp): HRESULT {.stdcall.}
+    ClientToWindow*: proc(self: ptr IWebBrowserApp, pcx: ptr int32, pcy: ptr int32): HRESULT {.stdcall.}
+    PutProperty*: proc(self: ptr IWebBrowserApp, Property: BSTR, vtValue: VARIANT): HRESULT {.stdcall.}
+    GetProperty*: proc(self: ptr IWebBrowserApp, Property: BSTR, pvtValue: ptr VARIANT): HRESULT {.stdcall.}
+    get_Name*: proc(self: ptr IWebBrowserApp, Name: ptr BSTR): HRESULT {.stdcall.}
+    get_HWND*: proc(self: ptr IWebBrowserApp, pHWND: ptr SHANDLE_PTR): HRESULT {.stdcall.}
+    get_FullName*: proc(self: ptr IWebBrowserApp, FullName: ptr BSTR): HRESULT {.stdcall.}
+    get_Path*: proc(self: ptr IWebBrowserApp, Path: ptr BSTR): HRESULT {.stdcall.}
+    get_Visible*: proc(self: ptr IWebBrowserApp, pBool: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_Visible*: proc(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_StatusBar*: proc(self: ptr IWebBrowserApp, pBool: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_StatusBar*: proc(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_StatusText*: proc(self: ptr IWebBrowserApp, StatusText: ptr BSTR): HRESULT {.stdcall.}
+    put_StatusText*: proc(self: ptr IWebBrowserApp, StatusText: BSTR): HRESULT {.stdcall.}
+    get_ToolBar*: proc(self: ptr IWebBrowserApp, Value: ptr int32): HRESULT {.stdcall.}
+    put_ToolBar*: proc(self: ptr IWebBrowserApp, Value: int32): HRESULT {.stdcall.}
+    get_MenuBar*: proc(self: ptr IWebBrowserApp, Value: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_MenuBar*: proc(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_FullScreen*: proc(self: ptr IWebBrowserApp, pbFullScreen: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_FullScreen*: proc(self: ptr IWebBrowserApp, bFullScreen: VARIANT_BOOL): HRESULT {.stdcall.}
+  IWebBrowser2* {.pure.} = object
+    lpVtbl*: ptr IWebBrowser2Vtbl
+  IWebBrowser2Vtbl* {.pure, inheritable.} = object of IWebBrowserAppVtbl
+    Navigate2*: proc(self: ptr IWebBrowser2, URL: ptr VARIANT, Flags: ptr VARIANT, TargetFrameName: ptr VARIANT, PostData: ptr VARIANT, Headers: ptr VARIANT): HRESULT {.stdcall.}
+    QueryStatusWB*: proc(self: ptr IWebBrowser2, cmdID: OLECMDID, pcmdf: ptr OLECMDF): HRESULT {.stdcall.}
+    ExecWB*: proc(self: ptr IWebBrowser2, cmdID: OLECMDID, cmdexecopt: OLECMDEXECOPT, pvaIn: ptr VARIANT, pvaOut: ptr VARIANT): HRESULT {.stdcall.}
+    ShowBrowserBar*: proc(self: ptr IWebBrowser2, pvaClsid: ptr VARIANT, pvarShow: ptr VARIANT, pvarSize: ptr VARIANT): HRESULT {.stdcall.}
+    get_ReadyState*: proc(self: ptr IWebBrowser2, plReadyState: ptr READYSTATE): HRESULT {.stdcall.}
+    get_Offline*: proc(self: ptr IWebBrowser2, pbOffline: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_Offline*: proc(self: ptr IWebBrowser2, bOffline: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_Silent*: proc(self: ptr IWebBrowser2, pbSilent: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_Silent*: proc(self: ptr IWebBrowser2, bSilent: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_RegisterAsBrowser*: proc(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_RegisterAsBrowser*: proc(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_RegisterAsDropTarget*: proc(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_RegisterAsDropTarget*: proc(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_TheaterMode*: proc(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_TheaterMode*: proc(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_AddressBar*: proc(self: ptr IWebBrowser2, Value: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_AddressBar*: proc(self: ptr IWebBrowser2, Value: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_Resizable*: proc(self: ptr IWebBrowser2, Value: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_Resizable*: proc(self: ptr IWebBrowser2, Value: VARIANT_BOOL): HRESULT {.stdcall.}
+proc SysAllocString*(P1: ptr OLECHAR): BSTR {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc SysFreeString*(P1: BSTR): void {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc SafeArrayDestroy*(psa: ptr SAFEARRAY): HRESULT {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc SafeArrayAccessData*(psa: ptr SAFEARRAY, ppvData: ptr pointer): HRESULT {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc SafeArrayUnaccessData*(psa: ptr SAFEARRAY): HRESULT {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc SafeArrayCreateVector*(vt: VARTYPE, lLbound: LONG, cElements: ULONG): ptr SAFEARRAY {.winapi, stdcall, dynlib: "oleaut32", importc.}
+proc VariantClear*(pvarg: ptr VARIANTARG): HRESULT {.winapi, stdcall, dynlib: "oleaut32", importc.}
 proc OleInitialize*(pvReserved: LPVOID): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
+proc OleSetContainedObject*(pUnknown: LPUNKNOWN, fContained: WINBOOL): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc RegisterDragDrop*(hwnd: HWND, pDropTarget: LPDROPTARGET): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc RevokeDragDrop*(hwnd: HWND): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc DoDragDrop*(pDataObj: LPDATAOBJECT, pDropSource: LPDROPSOURCE, dwOKEffects: DWORD, pdwEffect: LPDWORD): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
@@ -1748,11 +2186,211 @@ proc OleGetClipboard*(ppDataObj: ptr LPDATAOBJECT): HRESULT {.winapi, stdcall, d
 proc OleFlushClipboard*(): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc OleIsCurrentClipboard*(pDataObj: LPDATAOBJECT): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc ReleaseStgMedium*(P1: LPSTGMEDIUM): void {.winapi, stdcall, dynlib: "ole32", importc.}
+proc CoDisconnectObject*(pUnk: LPUNKNOWN, dwReserved: DWORD): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc CoCreateInstance*(rclsid: REFCLSID, pUnkOuter: LPUNKNOWN, dwClsContext: DWORD, riid: REFIID, ppv: ptr LPVOID): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc CoTaskMemFree*(pv: LPVOID): void {.winapi, stdcall, dynlib: "ole32", importc.}
+proc `Lo=`*(self: var CY, x: int32) {.inline.} = self.struct1.Lo = x
+proc Lo*(self: CY): int32 {.inline.} = self.struct1.Lo
+proc Lo*(self: var CY): var int32 {.inline.} = self.struct1.Lo
+proc `Hi=`*(self: var CY, x: int32) {.inline.} = self.struct1.Hi = x
+proc Hi*(self: CY): int32 {.inline.} = self.struct1.Hi
+proc Hi*(self: var CY): var int32 {.inline.} = self.struct1.Hi
+proc `scale=`*(self: var DECIMAL, x: BYTE) {.inline.} = self.union1.struct1.scale = x
+proc scale*(self: DECIMAL): BYTE {.inline.} = self.union1.struct1.scale
+proc scale*(self: var DECIMAL): var BYTE {.inline.} = self.union1.struct1.scale
+proc `sign=`*(self: var DECIMAL, x: BYTE) {.inline.} = self.union1.struct1.sign = x
+proc sign*(self: DECIMAL): BYTE {.inline.} = self.union1.struct1.sign
+proc sign*(self: var DECIMAL): var BYTE {.inline.} = self.union1.struct1.sign
+proc `signscale=`*(self: var DECIMAL, x: USHORT) {.inline.} = self.union1.signscale = x
+proc signscale*(self: DECIMAL): USHORT {.inline.} = self.union1.signscale
+proc signscale*(self: var DECIMAL): var USHORT {.inline.} = self.union1.signscale
+proc `Lo32=`*(self: var DECIMAL, x: ULONG) {.inline.} = self.union2.struct1.Lo32 = x
+proc Lo32*(self: DECIMAL): ULONG {.inline.} = self.union2.struct1.Lo32
+proc Lo32*(self: var DECIMAL): var ULONG {.inline.} = self.union2.struct1.Lo32
+proc `Mid32=`*(self: var DECIMAL, x: ULONG) {.inline.} = self.union2.struct1.Mid32 = x
+proc Mid32*(self: DECIMAL): ULONG {.inline.} = self.union2.struct1.Mid32
+proc Mid32*(self: var DECIMAL): var ULONG {.inline.} = self.union2.struct1.Mid32
+proc `Lo64=`*(self: var DECIMAL, x: ULONGLONG) {.inline.} = self.union2.Lo64 = x
+proc Lo64*(self: DECIMAL): ULONGLONG {.inline.} = self.union2.Lo64
+proc Lo64*(self: var DECIMAL): var ULONGLONG {.inline.} = self.union2.Lo64
+proc `vt=`*(self: var VARIANT, x: VARTYPE) {.inline.} = self.union1.struct1.vt = x
+proc vt*(self: VARIANT): VARTYPE {.inline.} = self.union1.struct1.vt
+proc vt*(self: var VARIANT): var VARTYPE {.inline.} = self.union1.struct1.vt
+proc `wReserved1=`*(self: var VARIANT, x: WORD) {.inline.} = self.union1.struct1.wReserved1 = x
+proc wReserved1*(self: VARIANT): WORD {.inline.} = self.union1.struct1.wReserved1
+proc wReserved1*(self: var VARIANT): var WORD {.inline.} = self.union1.struct1.wReserved1
+proc `wReserved2=`*(self: var VARIANT, x: WORD) {.inline.} = self.union1.struct1.wReserved2 = x
+proc wReserved2*(self: VARIANT): WORD {.inline.} = self.union1.struct1.wReserved2
+proc wReserved2*(self: var VARIANT): var WORD {.inline.} = self.union1.struct1.wReserved2
+proc `wReserved3=`*(self: var VARIANT, x: WORD) {.inline.} = self.union1.struct1.wReserved3 = x
+proc wReserved3*(self: VARIANT): WORD {.inline.} = self.union1.struct1.wReserved3
+proc wReserved3*(self: var VARIANT): var WORD {.inline.} = self.union1.struct1.wReserved3
+proc `llVal=`*(self: var VARIANT, x: LONGLONG) {.inline.} = self.union1.struct1.union1.llVal = x
+proc llVal*(self: VARIANT): LONGLONG {.inline.} = self.union1.struct1.union1.llVal
+proc llVal*(self: var VARIANT): var LONGLONG {.inline.} = self.union1.struct1.union1.llVal
+proc `lVal=`*(self: var VARIANT, x: LONG) {.inline.} = self.union1.struct1.union1.lVal = x
+proc lVal*(self: VARIANT): LONG {.inline.} = self.union1.struct1.union1.lVal
+proc lVal*(self: var VARIANT): var LONG {.inline.} = self.union1.struct1.union1.lVal
+proc `bVal=`*(self: var VARIANT, x: BYTE) {.inline.} = self.union1.struct1.union1.bVal = x
+proc bVal*(self: VARIANT): BYTE {.inline.} = self.union1.struct1.union1.bVal
+proc bVal*(self: var VARIANT): var BYTE {.inline.} = self.union1.struct1.union1.bVal
+proc `iVal=`*(self: var VARIANT, x: SHORT) {.inline.} = self.union1.struct1.union1.iVal = x
+proc iVal*(self: VARIANT): SHORT {.inline.} = self.union1.struct1.union1.iVal
+proc iVal*(self: var VARIANT): var SHORT {.inline.} = self.union1.struct1.union1.iVal
+proc `fltVal=`*(self: var VARIANT, x: FLOAT) {.inline.} = self.union1.struct1.union1.fltVal = x
+proc fltVal*(self: VARIANT): FLOAT {.inline.} = self.union1.struct1.union1.fltVal
+proc fltVal*(self: var VARIANT): var FLOAT {.inline.} = self.union1.struct1.union1.fltVal
+proc `dblVal=`*(self: var VARIANT, x: DOUBLE) {.inline.} = self.union1.struct1.union1.dblVal = x
+proc dblVal*(self: VARIANT): DOUBLE {.inline.} = self.union1.struct1.union1.dblVal
+proc dblVal*(self: var VARIANT): var DOUBLE {.inline.} = self.union1.struct1.union1.dblVal
+proc `boolVal=`*(self: var VARIANT, x: VARIANT_BOOL) {.inline.} = self.union1.struct1.union1.boolVal = x
+proc boolVal*(self: VARIANT): VARIANT_BOOL {.inline.} = self.union1.struct1.union1.boolVal
+proc boolVal*(self: var VARIANT): var VARIANT_BOOL {.inline.} = self.union1.struct1.union1.boolVal
+proc `scode=`*(self: var VARIANT, x: SCODE) {.inline.} = self.union1.struct1.union1.scode = x
+proc scode*(self: VARIANT): SCODE {.inline.} = self.union1.struct1.union1.scode
+proc scode*(self: var VARIANT): var SCODE {.inline.} = self.union1.struct1.union1.scode
+proc `cyVal=`*(self: var VARIANT, x: CY) {.inline.} = self.union1.struct1.union1.cyVal = x
+proc cyVal*(self: VARIANT): CY {.inline.} = self.union1.struct1.union1.cyVal
+proc cyVal*(self: var VARIANT): var CY {.inline.} = self.union1.struct1.union1.cyVal
+proc `date=`*(self: var VARIANT, x: DATE) {.inline.} = self.union1.struct1.union1.date = x
+proc date*(self: VARIANT): DATE {.inline.} = self.union1.struct1.union1.date
+proc date*(self: var VARIANT): var DATE {.inline.} = self.union1.struct1.union1.date
+proc `bstrVal=`*(self: var VARIANT, x: BSTR) {.inline.} = self.union1.struct1.union1.bstrVal = x
+proc bstrVal*(self: VARIANT): BSTR {.inline.} = self.union1.struct1.union1.bstrVal
+proc bstrVal*(self: var VARIANT): var BSTR {.inline.} = self.union1.struct1.union1.bstrVal
+proc `punkVal=`*(self: var VARIANT, x: ptr IUnknown) {.inline.} = self.union1.struct1.union1.punkVal = x
+proc punkVal*(self: VARIANT): ptr IUnknown {.inline.} = self.union1.struct1.union1.punkVal
+proc punkVal*(self: var VARIANT): var ptr IUnknown {.inline.} = self.union1.struct1.union1.punkVal
+proc `pdispVal=`*(self: var VARIANT, x: ptr IDispatch) {.inline.} = self.union1.struct1.union1.pdispVal = x
+proc pdispVal*(self: VARIANT): ptr IDispatch {.inline.} = self.union1.struct1.union1.pdispVal
+proc pdispVal*(self: var VARIANT): var ptr IDispatch {.inline.} = self.union1.struct1.union1.pdispVal
+proc `parray=`*(self: var VARIANT, x: ptr SAFEARRAY) {.inline.} = self.union1.struct1.union1.parray = x
+proc parray*(self: VARIANT): ptr SAFEARRAY {.inline.} = self.union1.struct1.union1.parray
+proc parray*(self: var VARIANT): var ptr SAFEARRAY {.inline.} = self.union1.struct1.union1.parray
+proc `pbVal=`*(self: var VARIANT, x: ptr BYTE) {.inline.} = self.union1.struct1.union1.pbVal = x
+proc pbVal*(self: VARIANT): ptr BYTE {.inline.} = self.union1.struct1.union1.pbVal
+proc pbVal*(self: var VARIANT): var ptr BYTE {.inline.} = self.union1.struct1.union1.pbVal
+proc `piVal=`*(self: var VARIANT, x: ptr SHORT) {.inline.} = self.union1.struct1.union1.piVal = x
+proc piVal*(self: VARIANT): ptr SHORT {.inline.} = self.union1.struct1.union1.piVal
+proc piVal*(self: var VARIANT): var ptr SHORT {.inline.} = self.union1.struct1.union1.piVal
+proc `plVal=`*(self: var VARIANT, x: ptr LONG) {.inline.} = self.union1.struct1.union1.plVal = x
+proc plVal*(self: VARIANT): ptr LONG {.inline.} = self.union1.struct1.union1.plVal
+proc plVal*(self: var VARIANT): var ptr LONG {.inline.} = self.union1.struct1.union1.plVal
+proc `pllVal=`*(self: var VARIANT, x: ptr LONGLONG) {.inline.} = self.union1.struct1.union1.pllVal = x
+proc pllVal*(self: VARIANT): ptr LONGLONG {.inline.} = self.union1.struct1.union1.pllVal
+proc pllVal*(self: var VARIANT): var ptr LONGLONG {.inline.} = self.union1.struct1.union1.pllVal
+proc `pfltVal=`*(self: var VARIANT, x: ptr FLOAT) {.inline.} = self.union1.struct1.union1.pfltVal = x
+proc pfltVal*(self: VARIANT): ptr FLOAT {.inline.} = self.union1.struct1.union1.pfltVal
+proc pfltVal*(self: var VARIANT): var ptr FLOAT {.inline.} = self.union1.struct1.union1.pfltVal
+proc `pdblVal=`*(self: var VARIANT, x: ptr DOUBLE) {.inline.} = self.union1.struct1.union1.pdblVal = x
+proc pdblVal*(self: VARIANT): ptr DOUBLE {.inline.} = self.union1.struct1.union1.pdblVal
+proc pdblVal*(self: var VARIANT): var ptr DOUBLE {.inline.} = self.union1.struct1.union1.pdblVal
+proc `pboolVal=`*(self: var VARIANT, x: ptr VARIANT_BOOL) {.inline.} = self.union1.struct1.union1.pboolVal = x
+proc pboolVal*(self: VARIANT): ptr VARIANT_BOOL {.inline.} = self.union1.struct1.union1.pboolVal
+proc pboolVal*(self: var VARIANT): var ptr VARIANT_BOOL {.inline.} = self.union1.struct1.union1.pboolVal
+proc `pscode=`*(self: var VARIANT, x: ptr SCODE) {.inline.} = self.union1.struct1.union1.pscode = x
+proc pscode*(self: VARIANT): ptr SCODE {.inline.} = self.union1.struct1.union1.pscode
+proc pscode*(self: var VARIANT): var ptr SCODE {.inline.} = self.union1.struct1.union1.pscode
+proc `pcyVal=`*(self: var VARIANT, x: ptr CY) {.inline.} = self.union1.struct1.union1.pcyVal = x
+proc pcyVal*(self: VARIANT): ptr CY {.inline.} = self.union1.struct1.union1.pcyVal
+proc pcyVal*(self: var VARIANT): var ptr CY {.inline.} = self.union1.struct1.union1.pcyVal
+proc `pdate=`*(self: var VARIANT, x: ptr DATE) {.inline.} = self.union1.struct1.union1.pdate = x
+proc pdate*(self: VARIANT): ptr DATE {.inline.} = self.union1.struct1.union1.pdate
+proc pdate*(self: var VARIANT): var ptr DATE {.inline.} = self.union1.struct1.union1.pdate
+proc `pbstrVal=`*(self: var VARIANT, x: ptr BSTR) {.inline.} = self.union1.struct1.union1.pbstrVal = x
+proc pbstrVal*(self: VARIANT): ptr BSTR {.inline.} = self.union1.struct1.union1.pbstrVal
+proc pbstrVal*(self: var VARIANT): var ptr BSTR {.inline.} = self.union1.struct1.union1.pbstrVal
+proc `ppunkVal=`*(self: var VARIANT, x: ptr ptr IUnknown) {.inline.} = self.union1.struct1.union1.ppunkVal = x
+proc ppunkVal*(self: VARIANT): ptr ptr IUnknown {.inline.} = self.union1.struct1.union1.ppunkVal
+proc ppunkVal*(self: var VARIANT): var ptr ptr IUnknown {.inline.} = self.union1.struct1.union1.ppunkVal
+proc `ppdispVal=`*(self: var VARIANT, x: ptr ptr IDispatch) {.inline.} = self.union1.struct1.union1.ppdispVal = x
+proc ppdispVal*(self: VARIANT): ptr ptr IDispatch {.inline.} = self.union1.struct1.union1.ppdispVal
+proc ppdispVal*(self: var VARIANT): var ptr ptr IDispatch {.inline.} = self.union1.struct1.union1.ppdispVal
+proc `pparray=`*(self: var VARIANT, x: ptr ptr SAFEARRAY) {.inline.} = self.union1.struct1.union1.pparray = x
+proc pparray*(self: VARIANT): ptr ptr SAFEARRAY {.inline.} = self.union1.struct1.union1.pparray
+proc pparray*(self: var VARIANT): var ptr ptr SAFEARRAY {.inline.} = self.union1.struct1.union1.pparray
+proc `pvarVal=`*(self: var VARIANT, x: ptr VARIANT) {.inline.} = self.union1.struct1.union1.pvarVal = x
+proc pvarVal*(self: VARIANT): ptr VARIANT {.inline.} = self.union1.struct1.union1.pvarVal
+proc pvarVal*(self: var VARIANT): var ptr VARIANT {.inline.} = self.union1.struct1.union1.pvarVal
+proc `byref=`*(self: var VARIANT, x: PVOID) {.inline.} = self.union1.struct1.union1.byref = x
+proc byref*(self: VARIANT): PVOID {.inline.} = self.union1.struct1.union1.byref
+proc byref*(self: var VARIANT): var PVOID {.inline.} = self.union1.struct1.union1.byref
+proc `cVal=`*(self: var VARIANT, x: CHAR) {.inline.} = self.union1.struct1.union1.cVal = x
+proc cVal*(self: VARIANT): CHAR {.inline.} = self.union1.struct1.union1.cVal
+proc cVal*(self: var VARIANT): var CHAR {.inline.} = self.union1.struct1.union1.cVal
+proc `uiVal=`*(self: var VARIANT, x: USHORT) {.inline.} = self.union1.struct1.union1.uiVal = x
+proc uiVal*(self: VARIANT): USHORT {.inline.} = self.union1.struct1.union1.uiVal
+proc uiVal*(self: var VARIANT): var USHORT {.inline.} = self.union1.struct1.union1.uiVal
+proc `ulVal=`*(self: var VARIANT, x: ULONG) {.inline.} = self.union1.struct1.union1.ulVal = x
+proc ulVal*(self: VARIANT): ULONG {.inline.} = self.union1.struct1.union1.ulVal
+proc ulVal*(self: var VARIANT): var ULONG {.inline.} = self.union1.struct1.union1.ulVal
+proc `ullVal=`*(self: var VARIANT, x: ULONGLONG) {.inline.} = self.union1.struct1.union1.ullVal = x
+proc ullVal*(self: VARIANT): ULONGLONG {.inline.} = self.union1.struct1.union1.ullVal
+proc ullVal*(self: var VARIANT): var ULONGLONG {.inline.} = self.union1.struct1.union1.ullVal
+proc `intVal=`*(self: var VARIANT, x: INT) {.inline.} = self.union1.struct1.union1.intVal = x
+proc intVal*(self: VARIANT): INT {.inline.} = self.union1.struct1.union1.intVal
+proc intVal*(self: var VARIANT): var INT {.inline.} = self.union1.struct1.union1.intVal
+proc `uintVal=`*(self: var VARIANT, x: UINT) {.inline.} = self.union1.struct1.union1.uintVal = x
+proc uintVal*(self: VARIANT): UINT {.inline.} = self.union1.struct1.union1.uintVal
+proc uintVal*(self: var VARIANT): var UINT {.inline.} = self.union1.struct1.union1.uintVal
+proc `pdecVal=`*(self: var VARIANT, x: ptr DECIMAL) {.inline.} = self.union1.struct1.union1.pdecVal = x
+proc pdecVal*(self: VARIANT): ptr DECIMAL {.inline.} = self.union1.struct1.union1.pdecVal
+proc pdecVal*(self: var VARIANT): var ptr DECIMAL {.inline.} = self.union1.struct1.union1.pdecVal
+proc `pcVal=`*(self: var VARIANT, x: cstring) {.inline.} = self.union1.struct1.union1.pcVal = x
+proc pcVal*(self: VARIANT): cstring {.inline.} = self.union1.struct1.union1.pcVal
+proc pcVal*(self: var VARIANT): var cstring {.inline.} = self.union1.struct1.union1.pcVal
+proc `puiVal=`*(self: var VARIANT, x: ptr USHORT) {.inline.} = self.union1.struct1.union1.puiVal = x
+proc puiVal*(self: VARIANT): ptr USHORT {.inline.} = self.union1.struct1.union1.puiVal
+proc puiVal*(self: var VARIANT): var ptr USHORT {.inline.} = self.union1.struct1.union1.puiVal
+proc `pulVal=`*(self: var VARIANT, x: ptr ULONG) {.inline.} = self.union1.struct1.union1.pulVal = x
+proc pulVal*(self: VARIANT): ptr ULONG {.inline.} = self.union1.struct1.union1.pulVal
+proc pulVal*(self: var VARIANT): var ptr ULONG {.inline.} = self.union1.struct1.union1.pulVal
+proc `pullVal=`*(self: var VARIANT, x: ptr ULONGLONG) {.inline.} = self.union1.struct1.union1.pullVal = x
+proc pullVal*(self: VARIANT): ptr ULONGLONG {.inline.} = self.union1.struct1.union1.pullVal
+proc pullVal*(self: var VARIANT): var ptr ULONGLONG {.inline.} = self.union1.struct1.union1.pullVal
+proc `pintVal=`*(self: var VARIANT, x: ptr INT) {.inline.} = self.union1.struct1.union1.pintVal = x
+proc pintVal*(self: VARIANT): ptr INT {.inline.} = self.union1.struct1.union1.pintVal
+proc pintVal*(self: var VARIANT): var ptr INT {.inline.} = self.union1.struct1.union1.pintVal
+proc `puintVal=`*(self: var VARIANT, x: ptr UINT) {.inline.} = self.union1.struct1.union1.puintVal = x
+proc puintVal*(self: VARIANT): ptr UINT {.inline.} = self.union1.struct1.union1.puintVal
+proc puintVal*(self: var VARIANT): var ptr UINT {.inline.} = self.union1.struct1.union1.puintVal
+proc `pvRecord=`*(self: var VARIANT, x: PVOID) {.inline.} = self.union1.struct1.union1.struct1.pvRecord = x
+proc pvRecord*(self: VARIANT): PVOID {.inline.} = self.union1.struct1.union1.struct1.pvRecord
+proc pvRecord*(self: var VARIANT): var PVOID {.inline.} = self.union1.struct1.union1.struct1.pvRecord
+proc `pRecInfo=`*(self: var VARIANT, x: ptr IRecordInfo) {.inline.} = self.union1.struct1.union1.struct1.pRecInfo = x
+proc pRecInfo*(self: VARIANT): ptr IRecordInfo {.inline.} = self.union1.struct1.union1.struct1.pRecInfo
+proc pRecInfo*(self: var VARIANT): var ptr IRecordInfo {.inline.} = self.union1.struct1.union1.struct1.pRecInfo
+proc `decVal=`*(self: var VARIANT, x: DECIMAL) {.inline.} = self.union1.decVal = x
+proc decVal*(self: VARIANT): DECIMAL {.inline.} = self.union1.decVal
+proc decVal*(self: var VARIANT): var DECIMAL {.inline.} = self.union1.decVal
+proc `lptdesc=`*(self: var TYPEDESC, x: ptr TYPEDESC) {.inline.} = self.union1.lptdesc = x
+proc lptdesc*(self: TYPEDESC): ptr TYPEDESC {.inline.} = self.union1.lptdesc
+proc lptdesc*(self: var TYPEDESC): var ptr TYPEDESC {.inline.} = self.union1.lptdesc
+proc `lpadesc=`*(self: var TYPEDESC, x: ptr ARRAYDESC) {.inline.} = self.union1.lpadesc = x
+proc lpadesc*(self: TYPEDESC): ptr ARRAYDESC {.inline.} = self.union1.lpadesc
+proc lpadesc*(self: var TYPEDESC): var ptr ARRAYDESC {.inline.} = self.union1.lpadesc
+proc `hreftype=`*(self: var TYPEDESC, x: HREFTYPE) {.inline.} = self.union1.hreftype = x
+proc hreftype*(self: TYPEDESC): HREFTYPE {.inline.} = self.union1.hreftype
+proc hreftype*(self: var TYPEDESC): var HREFTYPE {.inline.} = self.union1.hreftype
+proc `idldesc=`*(self: var ELEMDESC, x: IDLDESC) {.inline.} = self.union1.idldesc = x
+proc idldesc*(self: ELEMDESC): IDLDESC {.inline.} = self.union1.idldesc
+proc idldesc*(self: var ELEMDESC): var IDLDESC {.inline.} = self.union1.idldesc
+proc `paramdesc=`*(self: var ELEMDESC, x: PARAMDESC) {.inline.} = self.union1.paramdesc = x
+proc paramdesc*(self: ELEMDESC): PARAMDESC {.inline.} = self.union1.paramdesc
+proc paramdesc*(self: var ELEMDESC): var PARAMDESC {.inline.} = self.union1.paramdesc
+proc `oInst=`*(self: var VARDESC, x: ULONG) {.inline.} = self.union1.oInst = x
+proc oInst*(self: VARDESC): ULONG {.inline.} = self.union1.oInst
+proc oInst*(self: var VARDESC): var ULONG {.inline.} = self.union1.oInst
+proc `lpvarValue=`*(self: var VARDESC, x: ptr VARIANT) {.inline.} = self.union1.lpvarValue = x
+proc lpvarValue*(self: VARDESC): ptr VARIANT {.inline.} = self.union1.lpvarValue
+proc lpvarValue*(self: var VARDESC): var ptr VARIANT {.inline.} = self.union1.lpvarValue
 proc QueryInterface*(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.winapi, inline.} = self.lpVtbl.QueryInterface(self, riid, ppvObject)
 proc AddRef*(self: ptr IUnknown): ULONG {.winapi, inline.} = self.lpVtbl.AddRef(self)
 proc Release*(self: ptr IUnknown): ULONG {.winapi, inline.} = self.lpVtbl.Release(self)
+proc Next*(self: ptr IEnumUnknown, celt: ULONG, rgelt: ptr ptr IUnknown, pceltFetched: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Next(self, celt, rgelt, pceltFetched)
+proc Skip*(self: ptr IEnumUnknown, celt: ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Skip(self, celt)
+proc Reset*(self: ptr IEnumUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.Reset(self)
+proc Clone*(self: ptr IEnumUnknown, ppenum: ptr ptr IEnumUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.Clone(self, ppenum)
 proc Next*(self: ptr IEnumString, celt: ULONG, rgelt: ptr LPOLESTR, pceltFetched: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Next(self, celt, rgelt, pceltFetched)
 proc Skip*(self: ptr IEnumString, celt: ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Skip(self, celt)
 proc Reset*(self: ptr IEnumString): HRESULT {.winapi, inline.} = self.lpVtbl.Reset(self)
@@ -1850,12 +2488,213 @@ proc EnumFormatEtc*(self: ptr IDataObject, dwDirection: DWORD, ppenumFormatEtc: 
 proc DAdvise*(self: ptr IDataObject, pformatetc: ptr FORMATETC, advf: DWORD, pAdvSink: ptr IAdviseSink, pdwConnection: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.DAdvise(self, pformatetc, advf, pAdvSink, pdwConnection)
 proc DUnadvise*(self: ptr IDataObject, dwConnection: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.DUnadvise(self, dwConnection)
 proc EnumDAdvise*(self: ptr IDataObject, ppenumAdvise: ptr ptr IEnumSTATDATA): HRESULT {.winapi, inline.} = self.lpVtbl.EnumDAdvise(self, ppenumAdvise)
+proc GetTypeInfoCount*(self: ptr IDispatch, pctinfo: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfoCount(self, pctinfo)
+proc GetTypeInfo*(self: ptr IDispatch, iTInfo: UINT, lcid: LCID, ppTInfo: ptr ptr ITypeInfo): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfo(self, iTInfo, lcid, ppTInfo)
+proc GetIDsOfNames*(self: ptr IDispatch, riid: REFIID, rgszNames: ptr LPOLESTR, cNames: UINT, lcid: LCID, rgDispId: ptr DISPID): HRESULT {.winapi, inline.} = self.lpVtbl.GetIDsOfNames(self, riid, rgszNames, cNames, lcid, rgDispId)
+proc Invoke*(self: ptr IDispatch, dispIdMember: DISPID, riid: REFIID, lcid: LCID, wFlags: WORD, pDispParams: ptr DISPPARAMS, pVarResult: ptr VARIANT, pExcepInfo: ptr EXCEPINFO, puArgErr: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.Invoke(self, dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr)
+proc Bind*(self: ptr ITypeComp, szName: LPOLESTR, lHashVal: ULONG, wFlags: WORD, ppTInfo: ptr ptr ITypeInfo, pDescKind: ptr DESCKIND, pBindPtr: ptr BINDPTR): HRESULT {.winapi, inline.} = self.lpVtbl.Bind(self, szName, lHashVal, wFlags, ppTInfo, pDescKind, pBindPtr)
+proc BindType*(self: ptr ITypeComp, szName: LPOLESTR, lHashVal: ULONG, ppTInfo: ptr ptr ITypeInfo, ppTComp: ptr ptr ITypeComp): HRESULT {.winapi, inline.} = self.lpVtbl.BindType(self, szName, lHashVal, ppTInfo, ppTComp)
+proc GetTypeAttr*(self: ptr ITypeInfo, ppTypeAttr: ptr ptr TYPEATTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeAttr(self, ppTypeAttr)
+proc GetTypeComp*(self: ptr ITypeInfo, ppTComp: ptr ptr ITypeComp): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeComp(self, ppTComp)
+proc GetFuncDesc*(self: ptr ITypeInfo, index: UINT, ppFuncDesc: ptr ptr FUNCDESC): HRESULT {.winapi, inline.} = self.lpVtbl.GetFuncDesc(self, index, ppFuncDesc)
+proc GetVarDesc*(self: ptr ITypeInfo, index: UINT, ppVarDesc: ptr ptr VARDESC): HRESULT {.winapi, inline.} = self.lpVtbl.GetVarDesc(self, index, ppVarDesc)
+proc GetNames*(self: ptr ITypeInfo, memid: MEMBERID, rgBstrNames: ptr BSTR, cMaxNames: UINT, pcNames: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetNames(self, memid, rgBstrNames, cMaxNames, pcNames)
+proc GetRefTypeOfImplType*(self: ptr ITypeInfo, index: UINT, pRefType: ptr HREFTYPE): HRESULT {.winapi, inline.} = self.lpVtbl.GetRefTypeOfImplType(self, index, pRefType)
+proc GetImplTypeFlags*(self: ptr ITypeInfo, index: UINT, pImplTypeFlags: ptr INT): HRESULT {.winapi, inline.} = self.lpVtbl.GetImplTypeFlags(self, index, pImplTypeFlags)
+proc GetIDsOfNames*(self: ptr ITypeInfo, rgszNames: ptr LPOLESTR, cNames: UINT, pMemId: ptr MEMBERID): HRESULT {.winapi, inline.} = self.lpVtbl.GetIDsOfNames(self, rgszNames, cNames, pMemId)
+proc Invoke*(self: ptr ITypeInfo, pvInstance: PVOID, memid: MEMBERID, wFlags: WORD, pDispParams: ptr DISPPARAMS, pVarResult: ptr VARIANT, pExcepInfo: ptr EXCEPINFO, puArgErr: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.Invoke(self, pvInstance, memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr)
+proc GetDocumentation*(self: ptr ITypeInfo, memid: MEMBERID, pBstrName: ptr BSTR, pBstrDocString: ptr BSTR, pdwHelpContext: ptr DWORD, pBstrHelpFile: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetDocumentation(self, memid, pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile)
+proc GetDllEntry*(self: ptr ITypeInfo, memid: MEMBERID, invKind: INVOKEKIND, pBstrDllName: ptr BSTR, pBstrName: ptr BSTR, pwOrdinal: ptr WORD): HRESULT {.winapi, inline.} = self.lpVtbl.GetDllEntry(self, memid, invKind, pBstrDllName, pBstrName, pwOrdinal)
+proc GetRefTypeInfo*(self: ptr ITypeInfo, hRefType: HREFTYPE, ppTInfo: ptr ptr ITypeInfo): HRESULT {.winapi, inline.} = self.lpVtbl.GetRefTypeInfo(self, hRefType, ppTInfo)
+proc AddressOfMember*(self: ptr ITypeInfo, memid: MEMBERID, invKind: INVOKEKIND, ppv: ptr PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.AddressOfMember(self, memid, invKind, ppv)
+proc CreateInstance*(self: ptr ITypeInfo, pUnkOuter: ptr IUnknown, riid: REFIID, ppvObj: ptr PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.CreateInstance(self, pUnkOuter, riid, ppvObj)
+proc GetMops*(self: ptr ITypeInfo, memid: MEMBERID, pBstrMops: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetMops(self, memid, pBstrMops)
+proc GetContainingTypeLib*(self: ptr ITypeInfo, ppTLib: ptr ptr ITypeLib, pIndex: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetContainingTypeLib(self, ppTLib, pIndex)
+proc ReleaseTypeAttr*(self: ptr ITypeInfo, pTypeAttr: ptr TYPEATTR): void {.winapi, inline.} = self.lpVtbl.ReleaseTypeAttr(self, pTypeAttr)
+proc ReleaseFuncDesc*(self: ptr ITypeInfo, pFuncDesc: ptr FUNCDESC): void {.winapi, inline.} = self.lpVtbl.ReleaseFuncDesc(self, pFuncDesc)
+proc ReleaseVarDesc*(self: ptr ITypeInfo, pVarDesc: ptr VARDESC): void {.winapi, inline.} = self.lpVtbl.ReleaseVarDesc(self, pVarDesc)
+proc GetTypeInfoCount*(self: ptr ITypeLib): UINT {.winapi, inline.} = self.lpVtbl.GetTypeInfoCount(self)
+proc GetTypeInfo*(self: ptr ITypeLib, index: UINT, ppTInfo: ptr ptr ITypeInfo): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfo(self, index, ppTInfo)
+proc GetTypeInfoType*(self: ptr ITypeLib, index: UINT, pTKind: ptr TYPEKIND): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfoType(self, index, pTKind)
+proc GetTypeInfoOfGuid*(self: ptr ITypeLib, guid: REFGUID, ppTinfo: ptr ptr ITypeInfo): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfoOfGuid(self, guid, ppTinfo)
+proc GetLibAttr*(self: ptr ITypeLib, ppTLibAttr: ptr ptr TLIBATTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetLibAttr(self, ppTLibAttr)
+proc GetTypeComp*(self: ptr ITypeLib, ppTComp: ptr ptr ITypeComp): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeComp(self, ppTComp)
+proc GetDocumentation*(self: ptr ITypeLib, index: INT, pBstrName: ptr BSTR, pBstrDocString: ptr BSTR, pdwHelpContext: ptr DWORD, pBstrHelpFile: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetDocumentation(self, index, pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile)
+proc IsName*(self: ptr ITypeLib, szNameBuf: LPOLESTR, lHashVal: ULONG, pfName: ptr WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.IsName(self, szNameBuf, lHashVal, pfName)
+proc FindName*(self: ptr ITypeLib, szNameBuf: LPOLESTR, lHashVal: ULONG, ppTInfo: ptr ptr ITypeInfo, rgMemId: ptr MEMBERID, pcFound: ptr USHORT): HRESULT {.winapi, inline.} = self.lpVtbl.FindName(self, szNameBuf, lHashVal, ppTInfo, rgMemId, pcFound)
+proc ReleaseTLibAttr*(self: ptr ITypeLib, pTLibAttr: ptr TLIBATTR): void {.winapi, inline.} = self.lpVtbl.ReleaseTLibAttr(self, pTLibAttr)
+proc RecordInit*(self: ptr IRecordInfo, pvNew: PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.RecordInit(self, pvNew)
+proc RecordClear*(self: ptr IRecordInfo, pvExisting: PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.RecordClear(self, pvExisting)
+proc RecordCopy*(self: ptr IRecordInfo, pvExisting: PVOID, pvNew: PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.RecordCopy(self, pvExisting, pvNew)
+proc GetGuid*(self: ptr IRecordInfo, pguid: ptr GUID): HRESULT {.winapi, inline.} = self.lpVtbl.GetGuid(self, pguid)
+proc GetName*(self: ptr IRecordInfo, pbstrName: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetName(self, pbstrName)
+proc GetSize*(self: ptr IRecordInfo, pcbSize: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.GetSize(self, pcbSize)
+proc GetTypeInfo*(self: ptr IRecordInfo, ppTypeInfo: ptr ptr ITypeInfo): HRESULT {.winapi, inline.} = self.lpVtbl.GetTypeInfo(self, ppTypeInfo)
+proc GetField*(self: ptr IRecordInfo, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.GetField(self, pvData, szFieldName, pvarField)
+proc GetFieldNoCopy*(self: ptr IRecordInfo, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT, ppvDataCArray: ptr PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.GetFieldNoCopy(self, pvData, szFieldName, pvarField, ppvDataCArray)
+proc PutField*(self: ptr IRecordInfo, wFlags: ULONG, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.PutField(self, wFlags, pvData, szFieldName, pvarField)
+proc PutFieldNoCopy*(self: ptr IRecordInfo, wFlags: ULONG, pvData: PVOID, szFieldName: LPCOLESTR, pvarField: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.PutFieldNoCopy(self, wFlags, pvData, szFieldName, pvarField)
+proc GetFieldNames*(self: ptr IRecordInfo, pcNames: ptr ULONG, rgBstrNames: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetFieldNames(self, pcNames, rgBstrNames)
+proc IsMatchingType*(self: ptr IRecordInfo, pRecordInfo: ptr IRecordInfo): WINBOOL {.winapi, inline.} = self.lpVtbl.IsMatchingType(self, pRecordInfo)
+proc RecordCreate*(self: ptr IRecordInfo): PVOID {.winapi, inline.} = self.lpVtbl.RecordCreate(self)
+proc RecordCreateCopy*(self: ptr IRecordInfo, pvSource: PVOID, ppvDest: ptr PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.RecordCreateCopy(self, pvSource, ppvDest)
+proc RecordDestroy*(self: ptr IRecordInfo, pvRecord: PVOID): HRESULT {.winapi, inline.} = self.lpVtbl.RecordDestroy(self, pvRecord)
+proc ParseDisplayName*(self: ptr IParseDisplayName, pbc: ptr IBindCtx, pszDisplayName: LPOLESTR, pchEaten: ptr ULONG, ppmkOut: ptr ptr IMoniker): HRESULT {.winapi, inline.} = self.lpVtbl.ParseDisplayName(self, pbc, pszDisplayName, pchEaten, ppmkOut)
+proc EnumObjects*(self: ptr IOleContainer, grfFlags: DWORD, ppenum: ptr ptr IEnumUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.EnumObjects(self, grfFlags, ppenum)
+proc LockContainer*(self: ptr IOleContainer, fLock: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.LockContainer(self, fLock)
+proc SaveObject*(self: ptr IOleClientSite): HRESULT {.winapi, inline.} = self.lpVtbl.SaveObject(self)
+proc GetMoniker*(self: ptr IOleClientSite, dwAssign: DWORD, dwWhichMoniker: DWORD, ppmk: ptr ptr IMoniker): HRESULT {.winapi, inline.} = self.lpVtbl.GetMoniker(self, dwAssign, dwWhichMoniker, ppmk)
+proc GetContainer*(self: ptr IOleClientSite, ppContainer: ptr ptr IOleContainer): HRESULT {.winapi, inline.} = self.lpVtbl.GetContainer(self, ppContainer)
+proc ShowObject*(self: ptr IOleClientSite): HRESULT {.winapi, inline.} = self.lpVtbl.ShowObject(self)
+proc OnShowWindow*(self: ptr IOleClientSite, fShow: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnShowWindow(self, fShow)
+proc RequestNewObjectLayout*(self: ptr IOleClientSite): HRESULT {.winapi, inline.} = self.lpVtbl.RequestNewObjectLayout(self)
+proc SetClientSite*(self: ptr IOleObject, pClientSite: ptr IOleClientSite): HRESULT {.winapi, inline.} = self.lpVtbl.SetClientSite(self, pClientSite)
+proc GetClientSite*(self: ptr IOleObject, ppClientSite: ptr ptr IOleClientSite): HRESULT {.winapi, inline.} = self.lpVtbl.GetClientSite(self, ppClientSite)
+proc SetHostNames*(self: ptr IOleObject, szContainerApp: LPCOLESTR, szContainerObj: LPCOLESTR): HRESULT {.winapi, inline.} = self.lpVtbl.SetHostNames(self, szContainerApp, szContainerObj)
+proc Close*(self: ptr IOleObject, dwSaveOption: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Close(self, dwSaveOption)
+proc SetMoniker*(self: ptr IOleObject, dwWhichMoniker: DWORD, pmk: ptr IMoniker): HRESULT {.winapi, inline.} = self.lpVtbl.SetMoniker(self, dwWhichMoniker, pmk)
+proc GetMoniker*(self: ptr IOleObject, dwAssign: DWORD, dwWhichMoniker: DWORD, ppmk: ptr ptr IMoniker): HRESULT {.winapi, inline.} = self.lpVtbl.GetMoniker(self, dwAssign, dwWhichMoniker, ppmk)
+proc InitFromData*(self: ptr IOleObject, pDataObject: ptr IDataObject, fCreation: WINBOOL, dwReserved: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.InitFromData(self, pDataObject, fCreation, dwReserved)
+proc GetClipboardData*(self: ptr IOleObject, dwReserved: DWORD, ppDataObject: ptr ptr IDataObject): HRESULT {.winapi, inline.} = self.lpVtbl.GetClipboardData(self, dwReserved, ppDataObject)
+proc DoVerb*(self: ptr IOleObject, iVerb: LONG, lpmsg: LPMSG, pActiveSite: ptr IOleClientSite, lindex: LONG, hwndParent: HWND, lprcPosRect: LPCRECT): HRESULT {.winapi, inline.} = self.lpVtbl.DoVerb(self, iVerb, lpmsg, pActiveSite, lindex, hwndParent, lprcPosRect)
+proc EnumVerbs*(self: ptr IOleObject, ppEnumOleVerb: ptr ptr IEnumOLEVERB): HRESULT {.winapi, inline.} = self.lpVtbl.EnumVerbs(self, ppEnumOleVerb)
+proc Update*(self: ptr IOleObject): HRESULT {.winapi, inline.} = self.lpVtbl.Update(self)
+proc IsUpToDate*(self: ptr IOleObject): HRESULT {.winapi, inline.} = self.lpVtbl.IsUpToDate(self)
+proc GetUserClassID*(self: ptr IOleObject, pClsid: ptr CLSID): HRESULT {.winapi, inline.} = self.lpVtbl.GetUserClassID(self, pClsid)
+proc GetUserType*(self: ptr IOleObject, dwFormOfType: DWORD, pszUserType: ptr LPOLESTR): HRESULT {.winapi, inline.} = self.lpVtbl.GetUserType(self, dwFormOfType, pszUserType)
+proc SetExtent*(self: ptr IOleObject, dwDrawAspect: DWORD, psizel: ptr SIZEL): HRESULT {.winapi, inline.} = self.lpVtbl.SetExtent(self, dwDrawAspect, psizel)
+proc GetExtent*(self: ptr IOleObject, dwDrawAspect: DWORD, psizel: ptr SIZEL): HRESULT {.winapi, inline.} = self.lpVtbl.GetExtent(self, dwDrawAspect, psizel)
+proc Advise*(self: ptr IOleObject, pAdvSink: ptr IAdviseSink, pdwConnection: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Advise(self, pAdvSink, pdwConnection)
+proc Unadvise*(self: ptr IOleObject, dwConnection: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Unadvise(self, dwConnection)
+proc EnumAdvise*(self: ptr IOleObject, ppenumAdvise: ptr ptr IEnumSTATDATA): HRESULT {.winapi, inline.} = self.lpVtbl.EnumAdvise(self, ppenumAdvise)
+proc GetMiscStatus*(self: ptr IOleObject, dwAspect: DWORD, pdwStatus: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.GetMiscStatus(self, dwAspect, pdwStatus)
+proc SetColorScheme*(self: ptr IOleObject, pLogpal: ptr LOGPALETTE): HRESULT {.winapi, inline.} = self.lpVtbl.SetColorScheme(self, pLogpal)
+proc GetWindow*(self: ptr IOleWindow, phwnd: ptr HWND): HRESULT {.winapi, inline.} = self.lpVtbl.GetWindow(self, phwnd)
+proc ContextSensitiveHelp*(self: ptr IOleWindow, fEnterMode: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.ContextSensitiveHelp(self, fEnterMode)
+proc GetBorder*(self: ptr IOleInPlaceUIWindow, lprectBorder: LPRECT): HRESULT {.winapi, inline.} = self.lpVtbl.GetBorder(self, lprectBorder)
+proc RequestBorderSpace*(self: ptr IOleInPlaceUIWindow, pborderwidths: LPCBORDERWIDTHS): HRESULT {.winapi, inline.} = self.lpVtbl.RequestBorderSpace(self, pborderwidths)
+proc SetBorderSpace*(self: ptr IOleInPlaceUIWindow, pborderwidths: LPCBORDERWIDTHS): HRESULT {.winapi, inline.} = self.lpVtbl.SetBorderSpace(self, pborderwidths)
+proc SetActiveObject*(self: ptr IOleInPlaceUIWindow, pActiveObject: ptr IOleInPlaceActiveObject, pszObjName: LPCOLESTR): HRESULT {.winapi, inline.} = self.lpVtbl.SetActiveObject(self, pActiveObject, pszObjName)
+proc TranslateAccelerator*(self: ptr IOleInPlaceActiveObject, lpmsg: LPMSG): HRESULT {.winapi, inline.} = self.lpVtbl.TranslateAccelerator(self, lpmsg)
+proc OnFrameWindowActivate*(self: ptr IOleInPlaceActiveObject, fActivate: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnFrameWindowActivate(self, fActivate)
+proc OnDocWindowActivate*(self: ptr IOleInPlaceActiveObject, fActivate: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnDocWindowActivate(self, fActivate)
+proc ResizeBorder*(self: ptr IOleInPlaceActiveObject, prcBorder: LPCRECT, pUIWindow: ptr IOleInPlaceUIWindow, fFrameWindow: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.ResizeBorder(self, prcBorder, pUIWindow, fFrameWindow)
+proc EnableModeless*(self: ptr IOleInPlaceActiveObject, fEnable: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.EnableModeless(self, fEnable)
+proc InsertMenus*(self: ptr IOleInPlaceFrame, hmenuShared: HMENU, lpMenuWidths: LPOLEMENUGROUPWIDTHS): HRESULT {.winapi, inline.} = self.lpVtbl.InsertMenus(self, hmenuShared, lpMenuWidths)
+proc SetMenu*(self: ptr IOleInPlaceFrame, hmenuShared: HMENU, holemenu: HOLEMENU, hwndActiveObject: HWND): HRESULT {.winapi, inline.} = self.lpVtbl.SetMenu(self, hmenuShared, holemenu, hwndActiveObject)
+proc RemoveMenus*(self: ptr IOleInPlaceFrame, hmenuShared: HMENU): HRESULT {.winapi, inline.} = self.lpVtbl.RemoveMenus(self, hmenuShared)
+proc SetStatusText*(self: ptr IOleInPlaceFrame, pszStatusText: LPCOLESTR): HRESULT {.winapi, inline.} = self.lpVtbl.SetStatusText(self, pszStatusText)
+proc EnableModeless*(self: ptr IOleInPlaceFrame, fEnable: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.EnableModeless(self, fEnable)
+proc TranslateAccelerator*(self: ptr IOleInPlaceFrame, lpmsg: LPMSG, wID: WORD): HRESULT {.winapi, inline.} = self.lpVtbl.TranslateAccelerator(self, lpmsg, wID)
+proc InPlaceDeactivate*(self: ptr IOleInPlaceObject): HRESULT {.winapi, inline.} = self.lpVtbl.InPlaceDeactivate(self)
+proc UIDeactivate*(self: ptr IOleInPlaceObject): HRESULT {.winapi, inline.} = self.lpVtbl.UIDeactivate(self)
+proc SetObjectRects*(self: ptr IOleInPlaceObject, lprcPosRect: LPCRECT, lprcClipRect: LPCRECT): HRESULT {.winapi, inline.} = self.lpVtbl.SetObjectRects(self, lprcPosRect, lprcClipRect)
+proc ReactivateAndUndo*(self: ptr IOleInPlaceObject): HRESULT {.winapi, inline.} = self.lpVtbl.ReactivateAndUndo(self)
+proc CanInPlaceActivate*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.CanInPlaceActivate(self)
+proc OnInPlaceActivate*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceActivate(self)
+proc OnUIActivate*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.OnUIActivate(self)
+proc GetWindowContext*(self: ptr IOleInPlaceSite, ppFrame: ptr ptr IOleInPlaceFrame, ppDoc: ptr ptr IOleInPlaceUIWindow, lprcPosRect: LPRECT, lprcClipRect: LPRECT, lpFrameInfo: LPOLEINPLACEFRAMEINFO): HRESULT {.winapi, inline.} = self.lpVtbl.GetWindowContext(self, ppFrame, ppDoc, lprcPosRect, lprcClipRect, lpFrameInfo)
+proc Scroll*(self: ptr IOleInPlaceSite, scrollExtant: SIZE): HRESULT {.winapi, inline.} = self.lpVtbl.Scroll(self, scrollExtant)
+proc OnUIDeactivate*(self: ptr IOleInPlaceSite, fUndoable: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnUIDeactivate(self, fUndoable)
+proc OnInPlaceDeactivate*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceDeactivate(self)
+proc DiscardUndoState*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.DiscardUndoState(self)
+proc DeactivateAndUndo*(self: ptr IOleInPlaceSite): HRESULT {.winapi, inline.} = self.lpVtbl.DeactivateAndUndo(self)
+proc OnPosRectChange*(self: ptr IOleInPlaceSite, lprcPosRect: LPCRECT): HRESULT {.winapi, inline.} = self.lpVtbl.OnPosRectChange(self, lprcPosRect)
 proc QueryContinueDrag*(self: ptr IDropSource, fEscapePressed: WINBOOL, grfKeyState: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.QueryContinueDrag(self, fEscapePressed, grfKeyState)
 proc GiveFeedback*(self: ptr IDropSource, dwEffect: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.GiveFeedback(self, dwEffect)
 proc DragEnter*(self: ptr IDropTarget, pDataObj: ptr IDataObject, grfKeyState: DWORD, pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.DragEnter(self, pDataObj, grfKeyState, pt, pdwEffect)
 proc DragOver*(self: ptr IDropTarget, grfKeyState: DWORD, pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.DragOver(self, grfKeyState, pt, pdwEffect)
 proc DragLeave*(self: ptr IDropTarget): HRESULT {.winapi, inline.} = self.lpVtbl.DragLeave(self)
 proc Drop*(self: ptr IDropTarget, pDataObj: ptr IDataObject, grfKeyState: DWORD, pt: POINTL, pdwEffect: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Drop(self, pDataObj, grfKeyState, pt, pdwEffect)
+proc Next*(self: ptr IEnumOLEVERB, celt: ULONG, rgelt: LPOLEVERB, pceltFetched: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Next(self, celt, rgelt, pceltFetched)
+proc Skip*(self: ptr IEnumOLEVERB, celt: ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Skip(self, celt)
+proc Reset*(self: ptr IEnumOLEVERB): HRESULT {.winapi, inline.} = self.lpVtbl.Reset(self)
+proc Clone*(self: ptr IEnumOLEVERB, ppenum: ptr ptr IEnumOLEVERB): HRESULT {.winapi, inline.} = self.lpVtbl.Clone(self, ppenum)
+proc Next*(self: ptr IEnumConnections, cConnections: ULONG, rgcd: LPCONNECTDATA, pcFetched: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Next(self, cConnections, rgcd, pcFetched)
+proc Skip*(self: ptr IEnumConnections, cConnections: ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Skip(self, cConnections)
+proc Reset*(self: ptr IEnumConnections): HRESULT {.winapi, inline.} = self.lpVtbl.Reset(self)
+proc Clone*(self: ptr IEnumConnections, ppEnum: ptr ptr IEnumConnections): HRESULT {.winapi, inline.} = self.lpVtbl.Clone(self, ppEnum)
+proc GetConnectionInterface*(self: ptr IConnectionPoint, pIID: ptr IID): HRESULT {.winapi, inline.} = self.lpVtbl.GetConnectionInterface(self, pIID)
+proc GetConnectionPointContainer*(self: ptr IConnectionPoint, ppCPC: ptr ptr IConnectionPointContainer): HRESULT {.winapi, inline.} = self.lpVtbl.GetConnectionPointContainer(self, ppCPC)
+proc Advise*(self: ptr IConnectionPoint, pUnkSink: ptr IUnknown, pdwCookie: ptr DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Advise(self, pUnkSink, pdwCookie)
+proc Unadvise*(self: ptr IConnectionPoint, dwCookie: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.Unadvise(self, dwCookie)
+proc EnumConnections*(self: ptr IConnectionPoint, ppEnum: ptr ptr IEnumConnections): HRESULT {.winapi, inline.} = self.lpVtbl.EnumConnections(self, ppEnum)
+proc Next*(self: ptr IEnumConnectionPoints, cConnections: ULONG, ppCP: ptr LPCONNECTIONPOINT, pcFetched: ptr ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Next(self, cConnections, ppCP, pcFetched)
+proc Skip*(self: ptr IEnumConnectionPoints, cConnections: ULONG): HRESULT {.winapi, inline.} = self.lpVtbl.Skip(self, cConnections)
+proc Reset*(self: ptr IEnumConnectionPoints): HRESULT {.winapi, inline.} = self.lpVtbl.Reset(self)
+proc Clone*(self: ptr IEnumConnectionPoints, ppEnum: ptr ptr IEnumConnectionPoints): HRESULT {.winapi, inline.} = self.lpVtbl.Clone(self, ppEnum)
+proc EnumConnectionPoints*(self: ptr IConnectionPointContainer, ppEnum: ptr ptr IEnumConnectionPoints): HRESULT {.winapi, inline.} = self.lpVtbl.EnumConnectionPoints(self, ppEnum)
+proc FindConnectionPoint*(self: ptr IConnectionPointContainer, riid: REFIID, ppCP: ptr ptr IConnectionPoint): HRESULT {.winapi, inline.} = self.lpVtbl.FindConnectionPoint(self, riid, ppCP)
+proc OnInPlaceActivateEx*(self: ptr IOleInPlaceSiteEx, pfNoRedraw: ptr WINBOOL, dwFlags: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceActivateEx(self, pfNoRedraw, dwFlags)
+proc OnInPlaceDeactivateEx*(self: ptr IOleInPlaceSiteEx, fNoRedraw: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceDeactivateEx(self, fNoRedraw)
+proc RequestUIActivate*(self: ptr IOleInPlaceSiteEx): HRESULT {.winapi, inline.} = self.lpVtbl.RequestUIActivate(self)
+proc QueryStatus*(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, cCmds: ULONG, prgCmds: ptr OLECMD, pCmdText: ptr OLECMDTEXT): HRESULT {.winapi, inline.} = self.lpVtbl.QueryStatus(self, pguidCmdGroup, cCmds, prgCmds, pCmdText)
+proc Exec*(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, nCmdID: DWORD, nCmdexecopt: DWORD, pvaIn: ptr VARIANT, pvaOut: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.Exec(self, pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut)
+proc GoBack*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.GoBack(self)
+proc GoForward*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.GoForward(self)
+proc GoHome*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.GoHome(self)
+proc GoSearch*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.GoSearch(self)
+proc Navigate*(self: ptr IWebBrowser, URL: BSTR, Flags: ptr VARIANT, TargetFrameName: ptr VARIANT, PostData: ptr VARIANT, Headers: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.Navigate(self, URL, Flags, TargetFrameName, PostData, Headers)
+proc Refresh*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.Refresh(self)
+proc Refresh2*(self: ptr IWebBrowser, Level: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.Refresh2(self, Level)
+proc Stop*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.Stop(self)
+proc get_Application*(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_Application(self, ppDisp)
+proc get_Parent*(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_Parent(self, ppDisp)
+proc get_Container*(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_Container(self, ppDisp)
+proc get_Document*(self: ptr IWebBrowser, ppDisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_Document(self, ppDisp)
+proc get_TopLevelContainer*(self: ptr IWebBrowser, pBool: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_TopLevelContainer(self, pBool)
+proc get_Type*(self: ptr IWebBrowser, Type: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_Type(self, Type)
+proc get_Left*(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_Left(self, pl)
+proc put_Left*(self: ptr IWebBrowser, Left: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_Left(self, Left)
+proc get_Top*(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_Top(self, pl)
+proc put_Top*(self: ptr IWebBrowser, Top: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_Top(self, Top)
+proc get_Width*(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_Width(self, pl)
+proc put_Width*(self: ptr IWebBrowser, Width: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_Width(self, Width)
+proc get_Height*(self: ptr IWebBrowser, pl: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_Height(self, pl)
+proc put_Height*(self: ptr IWebBrowser, Height: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_Height(self, Height)
+proc get_LocationName*(self: ptr IWebBrowser, LocationName: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_LocationName(self, LocationName)
+proc get_LocationURL*(self: ptr IWebBrowser, LocationURL: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_LocationURL(self, LocationURL)
+proc get_Busy*(self: ptr IWebBrowser, pBool: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_Busy(self, pBool)
+proc Quit*(self: ptr IWebBrowserApp): HRESULT {.winapi, inline.} = self.lpVtbl.Quit(self)
+proc ClientToWindow*(self: ptr IWebBrowserApp, pcx: ptr int32, pcy: ptr int32): HRESULT {.winapi, inline.} = self.lpVtbl.ClientToWindow(self, pcx, pcy)
+proc PutProperty*(self: ptr IWebBrowserApp, Property: BSTR, vtValue: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.PutProperty(self, Property, vtValue)
+proc GetProperty*(self: ptr IWebBrowserApp, Property: BSTR, pvtValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.GetProperty(self, Property, pvtValue)
+proc get_Name*(self: ptr IWebBrowserApp, Name: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_Name(self, Name)
+proc get_HWND*(self: ptr IWebBrowserApp, pHWND: ptr SHANDLE_PTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_HWND(self, pHWND)
+proc get_FullName*(self: ptr IWebBrowserApp, FullName: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_FullName(self, FullName)
+proc get_Path*(self: ptr IWebBrowserApp, Path: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_Path(self, Path)
+proc get_Visible*(self: ptr IWebBrowserApp, pBool: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_Visible(self, pBool)
+proc put_Visible*(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_Visible(self, Value)
+proc get_StatusBar*(self: ptr IWebBrowserApp, pBool: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_StatusBar(self, pBool)
+proc put_StatusBar*(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_StatusBar(self, Value)
+proc get_StatusText*(self: ptr IWebBrowserApp, StatusText: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_StatusText(self, StatusText)
+proc put_StatusText*(self: ptr IWebBrowserApp, StatusText: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_StatusText(self, StatusText)
+proc get_ToolBar*(self: ptr IWebBrowserApp, Value: ptr int32): HRESULT {.winapi, inline.} = self.lpVtbl.get_ToolBar(self, Value)
+proc put_ToolBar*(self: ptr IWebBrowserApp, Value: int32): HRESULT {.winapi, inline.} = self.lpVtbl.put_ToolBar(self, Value)
+proc get_MenuBar*(self: ptr IWebBrowserApp, Value: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_MenuBar(self, Value)
+proc put_MenuBar*(self: ptr IWebBrowserApp, Value: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_MenuBar(self, Value)
+proc get_FullScreen*(self: ptr IWebBrowserApp, pbFullScreen: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_FullScreen(self, pbFullScreen)
+proc put_FullScreen*(self: ptr IWebBrowserApp, bFullScreen: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_FullScreen(self, bFullScreen)
+proc Navigate2*(self: ptr IWebBrowser2, URL: ptr VARIANT, Flags: ptr VARIANT, TargetFrameName: ptr VARIANT, PostData: ptr VARIANT, Headers: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.Navigate2(self, URL, Flags, TargetFrameName, PostData, Headers)
+proc QueryStatusWB*(self: ptr IWebBrowser2, cmdID: OLECMDID, pcmdf: ptr OLECMDF): HRESULT {.winapi, inline.} = self.lpVtbl.QueryStatusWB(self, cmdID, pcmdf)
+proc ExecWB*(self: ptr IWebBrowser2, cmdID: OLECMDID, cmdexecopt: OLECMDEXECOPT, pvaIn: ptr VARIANT, pvaOut: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.ExecWB(self, cmdID, cmdexecopt, pvaIn, pvaOut)
+proc ShowBrowserBar*(self: ptr IWebBrowser2, pvaClsid: ptr VARIANT, pvarShow: ptr VARIANT, pvarSize: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.ShowBrowserBar(self, pvaClsid, pvarShow, pvarSize)
+proc get_ReadyState*(self: ptr IWebBrowser2, plReadyState: ptr READYSTATE): HRESULT {.winapi, inline.} = self.lpVtbl.get_ReadyState(self, plReadyState)
+proc get_Offline*(self: ptr IWebBrowser2, pbOffline: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_Offline(self, pbOffline)
+proc put_Offline*(self: ptr IWebBrowser2, bOffline: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_Offline(self, bOffline)
+proc get_Silent*(self: ptr IWebBrowser2, pbSilent: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_Silent(self, pbSilent)
+proc put_Silent*(self: ptr IWebBrowser2, bSilent: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_Silent(self, bSilent)
+proc get_RegisterAsBrowser*(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_RegisterAsBrowser(self, pbRegister)
+proc put_RegisterAsBrowser*(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_RegisterAsBrowser(self, bRegister)
+proc get_RegisterAsDropTarget*(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_RegisterAsDropTarget(self, pbRegister)
+proc put_RegisterAsDropTarget*(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_RegisterAsDropTarget(self, bRegister)
+proc get_TheaterMode*(self: ptr IWebBrowser2, pbRegister: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_TheaterMode(self, pbRegister)
+proc put_TheaterMode*(self: ptr IWebBrowser2, bRegister: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_TheaterMode(self, bRegister)
+proc get_AddressBar*(self: ptr IWebBrowser2, Value: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_AddressBar(self, Value)
+proc put_AddressBar*(self: ptr IWebBrowser2, Value: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_AddressBar(self, Value)
+proc get_Resizable*(self: ptr IWebBrowser2, Value: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_Resizable(self, Value)
+proc put_Resizable*(self: ptr IWebBrowser2, Value: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_Resizable(self, Value)
+converter winimConverterIEnumUnknownToIUnknown*(x: ptr IEnumUnknown): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIEnumStringToIUnknown*(x: ptr IEnumString): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterISequentialStreamToIUnknown*(x: ptr ISequentialStream): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIStreamToISequentialStream*(x: ptr IStream): ptr ISequentialStream = cast[ptr ISequentialStream](x)
@@ -1875,8 +2714,48 @@ converter winimConverterIEnumFORMATETCToIUnknown*(x: ptr IEnumFORMATETC): ptr IU
 converter winimConverterIEnumSTATDATAToIUnknown*(x: ptr IEnumSTATDATA): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIAdviseSinkToIUnknown*(x: ptr IAdviseSink): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIDataObjectToIUnknown*(x: ptr IDataObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIDispatchToIUnknown*(x: ptr IDispatch): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterITypeCompToIUnknown*(x: ptr ITypeComp): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterITypeInfoToIUnknown*(x: ptr ITypeInfo): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterITypeLibToIUnknown*(x: ptr ITypeLib): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIRecordInfoToIUnknown*(x: ptr IRecordInfo): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIParseDisplayNameToIUnknown*(x: ptr IParseDisplayName): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleContainerToIParseDisplayName*(x: ptr IOleContainer): ptr IParseDisplayName = cast[ptr IParseDisplayName](x)
+converter winimConverterIOleContainerToIUnknown*(x: ptr IOleContainer): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleClientSiteToIUnknown*(x: ptr IOleClientSite): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleObjectToIUnknown*(x: ptr IOleObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleWindowToIUnknown*(x: ptr IOleWindow): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceUIWindowToIOleWindow*(x: ptr IOleInPlaceUIWindow): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceUIWindowToIUnknown*(x: ptr IOleInPlaceUIWindow): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceActiveObjectToIOleWindow*(x: ptr IOleInPlaceActiveObject): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceActiveObjectToIUnknown*(x: ptr IOleInPlaceActiveObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceFrameToIOleInPlaceUIWindow*(x: ptr IOleInPlaceFrame): ptr IOleInPlaceUIWindow = cast[ptr IOleInPlaceUIWindow](x)
+converter winimConverterIOleInPlaceFrameToIOleWindow*(x: ptr IOleInPlaceFrame): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceFrameToIUnknown*(x: ptr IOleInPlaceFrame): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceObjectToIOleWindow*(x: ptr IOleInPlaceObject): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceObjectToIUnknown*(x: ptr IOleInPlaceObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceSiteToIOleWindow*(x: ptr IOleInPlaceSite): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceSiteToIUnknown*(x: ptr IOleInPlaceSite): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIDropSourceToIUnknown*(x: ptr IDropSource): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIDropTargetToIUnknown*(x: ptr IDropTarget): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIEnumOLEVERBToIUnknown*(x: ptr IEnumOLEVERB): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIEnumConnectionsToIUnknown*(x: ptr IEnumConnections): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIConnectionPointToIUnknown*(x: ptr IConnectionPoint): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIEnumConnectionPointsToIUnknown*(x: ptr IEnumConnectionPoints): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIConnectionPointContainerToIUnknown*(x: ptr IConnectionPointContainer): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleInPlaceSiteExToIOleInPlaceSite*(x: ptr IOleInPlaceSiteEx): ptr IOleInPlaceSite = cast[ptr IOleInPlaceSite](x)
+converter winimConverterIOleInPlaceSiteExToIOleWindow*(x: ptr IOleInPlaceSiteEx): ptr IOleWindow = cast[ptr IOleWindow](x)
+converter winimConverterIOleInPlaceSiteExToIUnknown*(x: ptr IOleInPlaceSiteEx): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOleCommandTargetToIUnknown*(x: ptr IOleCommandTarget): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIWebBrowserToIDispatch*(x: ptr IWebBrowser): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIWebBrowserToIUnknown*(x: ptr IWebBrowser): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIWebBrowserAppToIWebBrowser*(x: ptr IWebBrowserApp): ptr IWebBrowser = cast[ptr IWebBrowser](x)
+converter winimConverterIWebBrowserAppToIDispatch*(x: ptr IWebBrowserApp): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIWebBrowserAppToIUnknown*(x: ptr IWebBrowserApp): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIWebBrowser2ToIWebBrowserApp*(x: ptr IWebBrowser2): ptr IWebBrowserApp = cast[ptr IWebBrowserApp](x)
+converter winimConverterIWebBrowser2ToIWebBrowser*(x: ptr IWebBrowser2): ptr IWebBrowser = cast[ptr IWebBrowser](x)
+converter winimConverterIWebBrowser2ToIDispatch*(x: ptr IWebBrowser2): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIWebBrowser2ToIUnknown*(x: ptr IWebBrowser2): ptr IUnknown = cast[ptr IUnknown](x)
 type
   HIMAGELIST* = HANDLE
   HTREEITEM* = HANDLE
@@ -2477,6 +3356,7 @@ const
   RB_SETBARINFO* = WM_USER+4
   RB_INSERTBANDW* = WM_USER+10
   RB_GETBANDCOUNT* = WM_USER+12
+  RB_MINIMIZEBAND* = WM_USER+30
   RBN_LAYOUTCHANGED* = RBN_FIRST-2
   RBN_AUTOSIZE* = RBN_FIRST-3
   RBN_BEGINDRAG* = RBN_FIRST-4
@@ -3292,6 +4172,33 @@ type
     lpfnHook*: LPCCHOOKPROC
     lpTemplateName*: LPCWSTR
   LPCHOOSECOLORW* = ptr TCHOOSECOLORW
+  LPFRHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+  FINDREPLACEA* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hInstance*: HINSTANCE
+    Flags*: DWORD
+    lpstrFindWhat*: LPSTR
+    lpstrReplaceWith*: LPSTR
+    wFindWhatLen*: WORD
+    wReplaceWithLen*: WORD
+    lCustData*: LPARAM
+    lpfnHook*: LPFRHOOKPROC
+    lpTemplateName*: LPCSTR
+  LPFINDREPLACEA* = ptr FINDREPLACEA
+  FINDREPLACEW* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hInstance*: HINSTANCE
+    Flags*: DWORD
+    lpstrFindWhat*: LPWSTR
+    lpstrReplaceWith*: LPWSTR
+    wFindWhatLen*: WORD
+    wReplaceWithLen*: WORD
+    lCustData*: LPARAM
+    lpfnHook*: LPFRHOOKPROC
+    lpTemplateName*: LPCWSTR
+  LPFINDREPLACEW* = ptr FINDREPLACEW
   LPCFHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
   TCHOOSEFONTA* {.pure.} = object
     lStructSize*: DWORD
@@ -3341,29 +4248,55 @@ const
   CC_FULLOPEN* = 0x2
   CC_ENABLEHOOK* = 0x10
   CC_ANYCOLOR* = 0x100
+  FR_DOWN* = 0x1
+  FR_WHOLEWORD* = 0x2
+  FR_MATCHCASE* = 0x4
+  FR_FINDNEXT* = 0x8
+  FR_REPLACE* = 0x10
+  FR_REPLACEALL* = 0x20
+  FR_DIALOGTERM* = 0x40
+  FR_ENABLEHOOK* = 0x100
+  FR_NOUPDOWN* = 0x400
+  FR_NOMATCHCASE* = 0x800
+  FR_NOWHOLEWORD* = 0x1000
+  FR_HIDEUPDOWN* = 0x4000
+  FR_HIDEMATCHCASE* = 0x8000
+  FR_HIDEWHOLEWORD* = 0x10000
   CF_SHOWHELP* = 0x4
   CF_INITTOLOGFONTSTRUCT* = 0x40
   CF_EFFECTS* = 0x100
   CF_ANSIONLY* = 0x400
   CF_SCRIPTSONLY* = CF_ANSIONLY
   CF_LIMITSIZE* = 0x2000
+  FINDMSGSTRINGA* = "commdlg_FindReplace"
+  FINDMSGSTRINGW* = "commdlg_FindReplace"
 when winimUnicode:
   type
     OPENFILENAME* = OPENFILENAMEW
     TCHOOSECOLOR* = TCHOOSECOLORW
+    FINDREPLACE* = FINDREPLACEW
     TCHOOSEFONT* = TCHOOSEFONTW
+  const
+    FINDMSGSTRING* = FINDMSGSTRINGW
   proc GetOpenFileName*(P1: LPOPENFILENAMEW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameW".}
   proc GetSaveFileName*(P1: LPOPENFILENAMEW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetSaveFileNameW".}
   proc ChooseColor*(P1: LPCHOOSECOLORW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseColorW".}
+  proc FindText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextW".}
+  proc ReplaceText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextW".}
   proc ChooseFont*(P1: LPCHOOSEFONTW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontW".}
 when winimAnsi:
   type
     OPENFILENAME* = OPENFILENAMEA
     TCHOOSECOLOR* = TCHOOSECOLORA
+    FINDREPLACE* = FINDREPLACEA
     TCHOOSEFONT* = TCHOOSEFONTA
+  const
+    FINDMSGSTRING* = FINDMSGSTRINGA
   proc GetOpenFileName*(P1: LPOPENFILENAMEA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameA".}
   proc GetSaveFileName*(P1: LPOPENFILENAMEA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetSaveFileNameA".}
   proc ChooseColor*(P1: LPCHOOSECOLORA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseColorA".}
+  proc FindText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextA".}
+  proc ReplaceText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextA".}
   proc ChooseFont*(P1: LPCHOOSEFONTA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontA".}
 type
   CHARRANGE* {.pure.} = object
@@ -3879,6 +4812,1909 @@ when winimAnsi:
   proc ILCreateFromPath*(pszPath: PCSTR): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "ILCreateFromPathA".}
   proc SHGetPathFromIDList*(pidl: PCIDLIST_ABSOLUTE, pszPath: LPSTR): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "SHGetPathFromIDListA".}
   proc SHBrowseForFolder*(lpbi: LPBROWSEINFOA): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "SHBrowseForFolderA".}
+const
+  IID_IHTMLTxtRange* = DEFINE_GUID(0x3050f220'i32, 0x98b5, 0x11cf, [0xbb'u8, 0x82, 0x00, 0xaa, 0x00, 0xbd, 0xce, 0x0b])
+  IID_IHTMLDocument2* = DEFINE_GUID(0x332c4425'i32, 0x26cb, 0x11d0, [0xb4'u8, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0x01, 0x19])
+  DOCHOSTUIFLAG_DIALOG* = 0x1
+  DOCHOSTUIFLAG_SCROLL_NO* = 0x8
+  DOCHOSTUIFLAG_THEME* = 0x40000
+  DOCHOSTUIFLAG_NO3DOUTERBORDER* = 0x200000
+  IID_IDocHostUIHandler* = DEFINE_GUID(0xbd3f23c0'i32, 0xd43e, 0x11cf, [0x89'u8, 0x3b, 0x00, 0xaa, 0x00, 0xbd, 0xce, 0x1a])
+type
+  DOCHOSTUIINFO* {.pure.} = object
+    cbSize*: ULONG
+    dwFlags*: DWORD
+    dwDoubleClick*: DWORD
+    pchHostCss*: ptr OLECHAR
+    pchHostNS*: ptr OLECHAR
+  IHTMLFiltersCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLFiltersCollectionVtbl
+  IHTMLFiltersCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IHTMLFiltersCollection, p: ptr LONG): HRESULT {.stdcall.}
+    get_newEnum*: proc(self: ptr IHTMLFiltersCollection, p: ptr ptr IUnknown): HRESULT {.stdcall.}
+    item*: proc(self: ptr IHTMLFiltersCollection, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.stdcall.}
+  IHTMLStyle* {.pure.} = object
+    lpVtbl*: ptr IHTMLStyleVtbl
+  IHTMLStyleVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_fontFamily*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontFamily*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontVariant*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontVariant*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontWeight*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontWeight*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontSize*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_fontSize*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_font*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_font*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_color*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_color*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_background*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_background*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundColor*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundColor*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_backgroundImage*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundImage*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundRepeat*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundRepeat*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundAttachment*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundAttachment*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundPosition*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundPosition*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundPositionX*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundPositionX*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_backgroundPositionY*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundPositionY*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_wordSpacing*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_wordSpacing*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_letterSpacing*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_letterSpacing*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_textDecoration*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textDecoration*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textDecorationNone*: proc(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationNone*: proc(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationUnderline*: proc(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationUnderline*: proc(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationOverline*: proc(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationOverline*: proc(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationLineThrough*: proc(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationLineThrough*: proc(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationBlink*: proc(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationBlink*: proc(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_verticalAlign*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_verticalAlign*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_textTransform*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textTransform*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textAlign*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textAlign*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textIndent*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_textIndent*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_lineHeight*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_lineHeight*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginTop*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginTop*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginRight*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginRight*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginBottom*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginBottom*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginLeft*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginLeft*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_margin*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_margin*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_paddingTop*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingTop*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingRight*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingRight*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingBottom*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingBottom*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingLeft*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingLeft*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_padding*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_padding*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_border*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_border*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTop*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderTop*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderRight*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderRight*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderBottom*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderBottom*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderLeft*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderLeft*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderColor*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderColor*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopColor*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderTopColor*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderRightColor*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderRightColor*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderBottomColor*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderBottomColor*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderLeftColor*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderLeftColor*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderWidth*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderWidth*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopWidth*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderTopWidth*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderRightWidth*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderRightWidth*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderBottomWidth*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderBottomWidth*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderLeftWidth*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderLeftWidth*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderTopStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderRightStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderRightStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderBottomStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderBottomStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderLeftStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderLeftStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_width*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_width*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_height*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_height*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_styleFloat*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_styleFloat*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_clear*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_clear*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_display*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_display*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_visibility*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_visibility*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyleType*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyleType*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStylePosition*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStylePosition*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyleImage*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyleImage*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyle*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyle*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_whiteSpace*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_whiteSpace*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_top*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_top*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_left*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_left*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_position*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_zIndex*: proc(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_zIndex*: proc(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_overflow*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_overflow*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pageBreakBefore*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_pageBreakBefore*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pageBreakAfter*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_pageBreakAfter*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_cssText*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_cssText*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pixelTop*: proc(self: ptr IHTMLStyle, v: LONG): HRESULT {.stdcall.}
+    get_pixelTop*: proc(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.stdcall.}
+    put_pixelLeft*: proc(self: ptr IHTMLStyle, v: LONG): HRESULT {.stdcall.}
+    get_pixelLeft*: proc(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.stdcall.}
+    put_pixelWidth*: proc(self: ptr IHTMLStyle, v: LONG): HRESULT {.stdcall.}
+    get_pixelWidth*: proc(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.stdcall.}
+    put_pixelHeight*: proc(self: ptr IHTMLStyle, v: LONG): HRESULT {.stdcall.}
+    get_pixelHeight*: proc(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.stdcall.}
+    put_posTop*: proc(self: ptr IHTMLStyle, v: float32): HRESULT {.stdcall.}
+    get_posTop*: proc(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.stdcall.}
+    put_posLeft*: proc(self: ptr IHTMLStyle, v: float32): HRESULT {.stdcall.}
+    get_posLeft*: proc(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.stdcall.}
+    put_posWidth*: proc(self: ptr IHTMLStyle, v: float32): HRESULT {.stdcall.}
+    get_posWidth*: proc(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.stdcall.}
+    put_posHeight*: proc(self: ptr IHTMLStyle, v: float32): HRESULT {.stdcall.}
+    get_posHeight*: proc(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.stdcall.}
+    put_cursor*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_cursor*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_clip*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_clip*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_filter*: proc(self: ptr IHTMLStyle, v: BSTR): HRESULT {.stdcall.}
+    get_filter*: proc(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    setAttribute*: proc(self: ptr IHTMLStyle, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.stdcall.}
+    getAttribute*: proc(self: ptr IHTMLStyle, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.stdcall.}
+    removeAttribute*: proc(self: ptr IHTMLStyle, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IHTMLStyle, String: ptr BSTR): HRESULT {.stdcall.}
+  IHTMLRuleStyle* {.pure.} = object
+    lpVtbl*: ptr IHTMLRuleStyleVtbl
+  IHTMLRuleStyleVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_fontFamily*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontFamily*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontVariant*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontVariant*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontWeight*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_fontWeight*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_fontSize*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_fontSize*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_font*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_font*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_color*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_color*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_background*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_background*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundColor*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundColor*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_backgroundImage*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundImage*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundRepeat*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundRepeat*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundAttachment*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundAttachment*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundPosition*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_backgroundPosition*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_backgroundPositionX*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundPositionX*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_backgroundPositionY*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_backgroundPositionY*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_wordSpacing*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_wordSpacing*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_letterSpacing*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_letterSpacing*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_textDecoration*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textDecoration*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textDecorationNone*: proc(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationNone*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationUnderline*: proc(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationUnderline*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationOverline*: proc(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationOverline*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationLineThrough*: proc(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationLineThrough*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_textDecorationBlink*: proc(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_textDecorationBlink*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_verticalAlign*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_verticalAlign*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_textTransform*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textTransform*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textAlign*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_textAlign*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_textIndent*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_textIndent*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_lineHeight*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_lineHeight*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginTop*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginTop*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginRight*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginRight*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginBottom*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginBottom*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_marginLeft*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_marginLeft*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_margin*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_margin*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_paddingTop*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingTop*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingRight*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingRight*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingBottom*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingBottom*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_paddingLeft*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_paddingLeft*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_padding*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_padding*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_border*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_border*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTop*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderTop*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderRight*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderRight*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderBottom*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderBottom*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderLeft*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderLeft*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderColor*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderColor*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopColor*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderTopColor*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderRightColor*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderRightColor*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderBottomColor*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderBottomColor*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderLeftColor*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderLeftColor*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderWidth*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderWidth*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopWidth*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderTopWidth*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderRightWidth*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderRightWidth*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderBottomWidth*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderBottomWidth*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderLeftWidth*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_borderLeftWidth*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_borderStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderTopStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderTopStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderRightStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderRightStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderBottomStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderBottomStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_borderLeftStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_borderLeftStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_width*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_width*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_height*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_height*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_styleFloat*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_styleFloat*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_clear*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_clear*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_display*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_display*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_visibility*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_visibility*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyleType*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyleType*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStylePosition*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStylePosition*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyleImage*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyleImage*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_listStyle*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_listStyle*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_whiteSpace*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_whiteSpace*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_top*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_top*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_left*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_left*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_position*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_zIndex*: proc(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.stdcall.}
+    get_zIndex*: proc(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_overflow*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_overflow*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pageBreakBefore*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_pageBreakBefore*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pageBreakAfter*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_pageBreakAfter*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_cssText*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_cssText*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_cursor*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_cursor*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_clip*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_clip*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    put_filter*: proc(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.stdcall.}
+    get_filter*: proc(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.stdcall.}
+    setAttribute*: proc(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.stdcall.}
+    getAttribute*: proc(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.stdcall.}
+    removeAttribute*: proc(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IHTMLElement* {.pure.} = object
+    lpVtbl*: ptr IHTMLElementVtbl
+  IHTMLElementVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    setAttribute*: proc(self: ptr IHTMLElement, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.stdcall.}
+    getAttribute*: proc(self: ptr IHTMLElement, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.stdcall.}
+    removeAttribute*: proc(self: ptr IHTMLElement, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_className*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_className*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_id*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_id*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_tagName*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_parentElement*: proc(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_style*: proc(self: ptr IHTMLElement, p: ptr ptr IHTMLStyle): HRESULT {.stdcall.}
+    put_onhelp*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onhelp*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onclick*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onclick*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondblclick*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_ondblclick*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeydown*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeydown*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeyup*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeyup*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeypress*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeypress*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseout*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseout*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseover*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseover*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmousemove*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onmousemove*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmousedown*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onmousedown*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseup*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseup*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_document*: proc(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+    put_title*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_title*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_language*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_language*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_onselectstart*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onselectstart*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    scrollIntoView*: proc(self: ptr IHTMLElement, varargStart: VARIANT): HRESULT {.stdcall.}
+    contains*: proc(self: ptr IHTMLElement, pChild: ptr IHTMLElement, pfResult: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_sourceIndex*: proc(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_recordNumber*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_lang*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_lang*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_offsetLeft*: proc(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetTop*: proc(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetWidth*: proc(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetHeight*: proc(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetParent*: proc(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    put_innerHTML*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_innerHTML*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_innerText*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_innerText*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_outerHTML*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_outerHTML*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_outerText*: proc(self: ptr IHTMLElement, v: BSTR): HRESULT {.stdcall.}
+    get_outerText*: proc(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.stdcall.}
+    insertAdjacentHTML*: proc(self: ptr IHTMLElement, where: BSTR, html: BSTR): HRESULT {.stdcall.}
+    insertAdjacentText*: proc(self: ptr IHTMLElement, where: BSTR, text: BSTR): HRESULT {.stdcall.}
+    get_parentTextEdit*: proc(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_isTextEdit*: proc(self: ptr IHTMLElement, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    click*: proc(self: ptr IHTMLElement): HRESULT {.stdcall.}
+    get_filters*: proc(self: ptr IHTMLElement, p: ptr ptr IHTMLFiltersCollection): HRESULT {.stdcall.}
+    put_ondragstart*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_ondragstart*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IHTMLElement, String: ptr BSTR): HRESULT {.stdcall.}
+    put_onbeforeupdate*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onbeforeupdate*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onafterupdate*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onafterupdate*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onerrorupdate*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onerrorupdate*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onrowexit*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onrowexit*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onrowenter*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onrowenter*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondatasetchanged*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_ondatasetchanged*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondataavailable*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_ondataavailable*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondatasetcomplete*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_ondatasetcomplete*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onfilterchange*: proc(self: ptr IHTMLElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onfilterchange*: proc(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_children*: proc(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+    get_all*: proc(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLStyleSheetsCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLStyleSheetsCollectionVtbl
+  IHTMLStyleSheetsCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IHTMLStyleSheetsCollection, p: ptr LONG): HRESULT {.stdcall.}
+    get_newEnum*: proc(self: ptr IHTMLStyleSheetsCollection, p: ptr ptr IUnknown): HRESULT {.stdcall.}
+    item*: proc(self: ptr IHTMLStyleSheetsCollection, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.stdcall.}
+  IHTMLStyleSheetRule* {.pure.} = object
+    lpVtbl*: ptr IHTMLStyleSheetRuleVtbl
+  IHTMLStyleSheetRuleVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_selectorText*: proc(self: ptr IHTMLStyleSheetRule, v: BSTR): HRESULT {.stdcall.}
+    get_selectorText*: proc(self: ptr IHTMLStyleSheetRule, p: ptr BSTR): HRESULT {.stdcall.}
+    get_style*: proc(self: ptr IHTMLStyleSheetRule, p: ptr ptr IHTMLRuleStyle): HRESULT {.stdcall.}
+    get_readOnly*: proc(self: ptr IHTMLStyleSheetRule, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IHTMLStyleSheetRulesCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLStyleSheetRulesCollectionVtbl
+  IHTMLStyleSheetRulesCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IHTMLStyleSheetRulesCollection, p: ptr LONG): HRESULT {.stdcall.}
+    item*: proc(self: ptr IHTMLStyleSheetRulesCollection, index: LONG, ppHTMLStyleSheetRule: ptr ptr IHTMLStyleSheetRule): HRESULT {.stdcall.}
+  IHTMLStyleSheet* {.pure.} = object
+    lpVtbl*: ptr IHTMLStyleSheetVtbl
+  IHTMLStyleSheetVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_title*: proc(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.stdcall.}
+    get_title*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    get_parentStyleSheet*: proc(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheet): HRESULT {.stdcall.}
+    get_owningElement*: proc(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    put_disabled*: proc(self: ptr IHTMLStyleSheet, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_disabled*: proc(self: ptr IHTMLStyleSheet, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_readOnly*: proc(self: ptr IHTMLStyleSheet, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_imports*: proc(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheetsCollection): HRESULT {.stdcall.}
+    put_href*: proc(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.stdcall.}
+    get_href*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    get_type*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    get_id*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    addImport*: proc(self: ptr IHTMLStyleSheet, bstrURL: BSTR, lIndex: LONG, plIndex: ptr LONG): HRESULT {.stdcall.}
+    addRule*: proc(self: ptr IHTMLStyleSheet, bstrSelector: BSTR, bstrStyle: BSTR, lIndex: LONG, plNewIndex: ptr LONG): HRESULT {.stdcall.}
+    removeImport*: proc(self: ptr IHTMLStyleSheet, lIndex: LONG): HRESULT {.stdcall.}
+    removeRule*: proc(self: ptr IHTMLStyleSheet, lIndex: LONG): HRESULT {.stdcall.}
+    put_media*: proc(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.stdcall.}
+    get_media*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    put_cssText*: proc(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.stdcall.}
+    get_cssText*: proc(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.stdcall.}
+    get_rules*: proc(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheetRulesCollection): HRESULT {.stdcall.}
+  IHTMLElementCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLElementCollectionVtbl
+  IHTMLElementCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    toString*: proc(self: ptr IHTMLElementCollection, String: ptr BSTR): HRESULT {.stdcall.}
+    put_length*: proc(self: ptr IHTMLElementCollection, v: LONG): HRESULT {.stdcall.}
+    get_length*: proc(self: ptr IHTMLElementCollection, p: ptr LONG): HRESULT {.stdcall.}
+    get_newEnum*: proc(self: ptr IHTMLElementCollection, p: ptr ptr IUnknown): HRESULT {.stdcall.}
+    item*: proc(self: ptr IHTMLElementCollection, name: VARIANT, index: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    tags*: proc(self: ptr IHTMLElementCollection, tagName: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLFramesCollection2* {.pure.} = object
+    lpVtbl*: ptr IHTMLFramesCollection2Vtbl
+  IHTMLFramesCollection2Vtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    item*: proc(self: ptr IHTMLFramesCollection2, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.stdcall.}
+    get_length*: proc(self: ptr IHTMLFramesCollection2, p: ptr LONG): HRESULT {.stdcall.}
+  IHTMLImgElement* {.pure.} = object
+    lpVtbl*: ptr IHTMLImgElementVtbl
+  IHTMLImgElementVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_isMap*: proc(self: ptr IHTMLImgElement, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_isMap*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_useMap*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_useMap*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_mimeType*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileSize*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileCreatedDate*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileModifiedDate*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileUpdatedDate*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_protocol*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_href*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_nameProp*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_border*: proc(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.stdcall.}
+    get_border*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_vspace*: proc(self: ptr IHTMLImgElement, v: LONG): HRESULT {.stdcall.}
+    get_vspace*: proc(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.stdcall.}
+    put_hspace*: proc(self: ptr IHTMLImgElement, v: LONG): HRESULT {.stdcall.}
+    get_hspace*: proc(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.stdcall.}
+    put_alt*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_alt*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_src*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_src*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_lowsrc*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_lowsrc*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_vrml*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_vrml*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_dynsrc*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_dynsrc*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_readyState*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_complete*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_loop*: proc(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.stdcall.}
+    get_loop*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_align*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_align*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_onload*: proc(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onload*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onerror*: proc(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onerror*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onabort*: proc(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onabort*: proc(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_name*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_name*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_width*: proc(self: ptr IHTMLImgElement, v: LONG): HRESULT {.stdcall.}
+    get_width*: proc(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.stdcall.}
+    put_height*: proc(self: ptr IHTMLImgElement, v: LONG): HRESULT {.stdcall.}
+    get_height*: proc(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.stdcall.}
+    put_start*: proc(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.stdcall.}
+    get_start*: proc(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.stdcall.}
+  IHTMLImageElementFactory* {.pure.} = object
+    lpVtbl*: ptr IHTMLImageElementFactoryVtbl
+  IHTMLImageElementFactoryVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    create*: proc(self: ptr IHTMLImageElementFactory, width: VARIANT, height: VARIANT, a: ptr ptr IHTMLImgElement): HRESULT {.stdcall.}
+  IHTMLLocation* {.pure.} = object
+    lpVtbl*: ptr IHTMLLocationVtbl
+  IHTMLLocationVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_href*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_href*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_protocol*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_protocol*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_host*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_host*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_hostname*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_hostname*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_port*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_port*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_pathname*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_pathname*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_search*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_search*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    put_hash*: proc(self: ptr IHTMLLocation, v: BSTR): HRESULT {.stdcall.}
+    get_hash*: proc(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.stdcall.}
+    reload*: proc(self: ptr IHTMLLocation, flag: VARIANT_BOOL): HRESULT {.stdcall.}
+    replace*: proc(self: ptr IHTMLLocation, bstr: BSTR): HRESULT {.stdcall.}
+    assign*: proc(self: ptr IHTMLLocation, bstr: BSTR): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IHTMLLocation, string: ptr BSTR): HRESULT {.stdcall.}
+  IOmHistory* {.pure.} = object
+    lpVtbl*: ptr IOmHistoryVtbl
+  IOmHistoryVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IOmHistory, p: ptr int16): HRESULT {.stdcall.}
+    back*: proc(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.stdcall.}
+    forward*: proc(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.stdcall.}
+    go*: proc(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.stdcall.}
+  IHTMLMimeTypesCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLMimeTypesCollectionVtbl
+  IHTMLMimeTypesCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IHTMLMimeTypesCollection, p: ptr LONG): HRESULT {.stdcall.}
+  IHTMLPluginsCollection* {.pure.} = object
+    lpVtbl*: ptr IHTMLPluginsCollectionVtbl
+  IHTMLPluginsCollectionVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_length*: proc(self: ptr IHTMLPluginsCollection, p: ptr LONG): HRESULT {.stdcall.}
+    refresh*: proc(self: ptr IHTMLPluginsCollection, reload: VARIANT_BOOL): HRESULT {.stdcall.}
+  IHTMLOpsProfile* {.pure.} = object
+    lpVtbl*: ptr IHTMLOpsProfileVtbl
+  IHTMLOpsProfileVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    addRequest*: proc(self: ptr IHTMLOpsProfile, name: BSTR, reserved: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    clearRequest*: proc(self: ptr IHTMLOpsProfile): HRESULT {.stdcall.}
+    doRequest*: proc(self: ptr IHTMLOpsProfile, usage: VARIANT, fname: VARIANT, domain: VARIANT, path: VARIANT, expire: VARIANT, reserved: VARIANT): HRESULT {.stdcall.}
+    getAttribute*: proc(self: ptr IHTMLOpsProfile, name: BSTR, value: ptr BSTR): HRESULT {.stdcall.}
+    setAttribute*: proc(self: ptr IHTMLOpsProfile, name: BSTR, value: BSTR, prefs: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    commitChanges*: proc(self: ptr IHTMLOpsProfile, success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    addReadRequest*: proc(self: ptr IHTMLOpsProfile, name: BSTR, reserved: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    doReadRequest*: proc(self: ptr IHTMLOpsProfile, usage: VARIANT, fname: VARIANT, domain: VARIANT, path: VARIANT, expire: VARIANT, reserved: VARIANT): HRESULT {.stdcall.}
+    doWriteRequest*: proc(self: ptr IHTMLOpsProfile, success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IOmNavigator* {.pure.} = object
+    lpVtbl*: ptr IOmNavigatorVtbl
+  IOmNavigatorVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_appCodeName*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_appName*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_appVersion*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_userAgent*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    javaEnabled*: proc(self: ptr IOmNavigator, enabled: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    taintEnabled*: proc(self: ptr IOmNavigator, enabled: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_mimeTypes*: proc(self: ptr IOmNavigator, p: ptr ptr IHTMLMimeTypesCollection): HRESULT {.stdcall.}
+    get_plugins*: proc(self: ptr IOmNavigator, p: ptr ptr IHTMLPluginsCollection): HRESULT {.stdcall.}
+    get_cookieEnabled*: proc(self: ptr IOmNavigator, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_opsProfile*: proc(self: ptr IOmNavigator, p: ptr ptr IHTMLOpsProfile): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IOmNavigator, string: ptr BSTR): HRESULT {.stdcall.}
+    get_cpuClass*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_systemLanguage*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_browserLanguage*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_userLanguage*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_platform*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_appMinorVersion*: proc(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.stdcall.}
+    get_connectionSpeed*: proc(self: ptr IOmNavigator, p: ptr LONG): HRESULT {.stdcall.}
+    get_onLine*: proc(self: ptr IOmNavigator, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_userProfile*: proc(self: ptr IOmNavigator, p: ptr ptr IHTMLOpsProfile): HRESULT {.stdcall.}
+  IHTMLDocument* {.pure.} = object
+    lpVtbl*: ptr IHTMLDocumentVtbl
+  IHTMLDocumentVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_Script*: proc(self: ptr IHTMLDocument, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLSelectionObject* {.pure.} = object
+    lpVtbl*: ptr IHTMLSelectionObjectVtbl
+  IHTMLSelectionObjectVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    createRange*: proc(self: ptr IHTMLSelectionObject, range: ptr ptr IDispatch): HRESULT {.stdcall.}
+    empty*: proc(self: ptr IHTMLSelectionObject): HRESULT {.stdcall.}
+    clear*: proc(self: ptr IHTMLSelectionObject): HRESULT {.stdcall.}
+    get_type*: proc(self: ptr IHTMLSelectionObject, p: ptr BSTR): HRESULT {.stdcall.}
+  IHTMLDocument2* {.pure.} = object
+    lpVtbl*: ptr IHTMLDocument2Vtbl
+  IHTMLDocument2Vtbl* {.pure, inheritable.} = object of IHTMLDocumentVtbl
+    get_all*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_body*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_activeElement*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_images*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_applets*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_links*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_forms*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_anchors*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    put_title*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_title*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_scripts*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    put_designMode*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_designMode*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_selection*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLSelectionObject): HRESULT {.stdcall.}
+    get_readyState*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_frames*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLFramesCollection2): HRESULT {.stdcall.}
+    get_embeds*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    get_plugins*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.stdcall.}
+    put_alinkColor*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_alinkColor*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_bgColor*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_bgColor*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_fgColor*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_fgColor*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_linkColor*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_linkColor*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_vlinkColor*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_vlinkColor*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_referrer*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_location*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLLocation): HRESULT {.stdcall.}
+    get_lastModified*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_URL*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_URL*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_domain*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_domain*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_cookie*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_cookie*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_expando*: proc(self: ptr IHTMLDocument2, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_expando*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_charset*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_charset*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_defaultCharset*: proc(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.stdcall.}
+    get_defaultCharset*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_mimeType*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileSize*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileCreatedDate*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileModifiedDate*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_fileUpdatedDate*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_security*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_protocol*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_nameProp*: proc(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.stdcall.}
+    write*: proc(self: ptr IHTMLDocument2, psarray: ptr SAFEARRAY): HRESULT {.stdcall.}
+    writeln*: proc(self: ptr IHTMLDocument2, psarray: ptr SAFEARRAY): HRESULT {.stdcall.}
+    open*: proc(self: ptr IHTMLDocument2, url: BSTR, name: VARIANT, features: VARIANT, replace: VARIANT, pomWindowResult: ptr ptr IDispatch): HRESULT {.stdcall.}
+    close*: proc(self: ptr IHTMLDocument2): HRESULT {.stdcall.}
+    clear*: proc(self: ptr IHTMLDocument2): HRESULT {.stdcall.}
+    queryCommandSupported*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandEnabled*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandState*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandIndeterm*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandText*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pcmdText: ptr BSTR): HRESULT {.stdcall.}
+    queryCommandValue*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pcmdValue: ptr VARIANT): HRESULT {.stdcall.}
+    execCommand*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, showUI: VARIANT_BOOL, value: VARIANT, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    execCommandShowHelp*: proc(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    createElement*: proc(self: ptr IHTMLDocument2, eTag: BSTR, newElem: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    put_onhelp*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onhelp*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onclick*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onclick*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondblclick*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_ondblclick*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeyup*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeyup*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeydown*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeydown*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onkeypress*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onkeypress*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseup*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseup*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmousedown*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onmousedown*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmousemove*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onmousemove*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseout*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseout*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onmouseover*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onmouseover*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onreadystatechange*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onreadystatechange*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onafterupdate*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onafterupdate*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onrowexit*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onrowexit*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onrowenter*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onrowenter*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_ondragstart*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_ondragstart*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onselectstart*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onselectstart*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    elementFromPoint*: proc(self: ptr IHTMLDocument2, x: LONG, y: LONG, elementHit: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_parentWindow*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    get_styleSheets*: proc(self: ptr IHTMLDocument2, p: ptr ptr IHTMLStyleSheetsCollection): HRESULT {.stdcall.}
+    put_onbeforeupdate*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onbeforeupdate*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onerrorupdate*: proc(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.stdcall.}
+    get_onerrorupdate*: proc(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IHTMLDocument2, String: ptr BSTR): HRESULT {.stdcall.}
+    createStyleSheet*: proc(self: ptr IHTMLDocument2, bstrHref: BSTR, lIndex: LONG, ppnewStyleSheet: ptr ptr IHTMLStyleSheet): HRESULT {.stdcall.}
+  IHTMLEventObj* {.pure.} = object
+    lpVtbl*: ptr IHTMLEventObjVtbl
+  IHTMLEventObjVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_srcElement*: proc(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_altKey*: proc(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_ctrlKey*: proc(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_shiftKey*: proc(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_returnValue*: proc(self: ptr IHTMLEventObj, v: VARIANT): HRESULT {.stdcall.}
+    get_returnValue*: proc(self: ptr IHTMLEventObj, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_cancelBubble*: proc(self: ptr IHTMLEventObj, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_cancelBubble*: proc(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    get_fromElement*: proc(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    get_toElement*: proc(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    put_keyCode*: proc(self: ptr IHTMLEventObj, v: LONG): HRESULT {.stdcall.}
+    get_keyCode*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_button*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_type*: proc(self: ptr IHTMLEventObj, p: ptr BSTR): HRESULT {.stdcall.}
+    get_qualifier*: proc(self: ptr IHTMLEventObj, p: ptr BSTR): HRESULT {.stdcall.}
+    get_reason*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_x*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_y*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_clientX*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_clientY*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetX*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_offsetY*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_screenX*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_screenY*: proc(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.stdcall.}
+    get_srcFilter*: proc(self: ptr IHTMLEventObj, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLScreen* {.pure.} = object
+    lpVtbl*: ptr IHTMLScreenVtbl
+  IHTMLScreenVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_colorDepth*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    put_bufferDepth*: proc(self: ptr IHTMLScreen, v: LONG): HRESULT {.stdcall.}
+    get_bufferDepth*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    get_width*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    get_height*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    put_updateInterval*: proc(self: ptr IHTMLScreen, v: LONG): HRESULT {.stdcall.}
+    get_updateInterval*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    get_availHeight*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    get_availWidth*: proc(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.stdcall.}
+    get_fontSmoothingEnabled*: proc(self: ptr IHTMLScreen, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IHTMLFormElement* {.pure.} = object
+    lpVtbl*: ptr IHTMLFormElementVtbl
+  IHTMLFormElementVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_action*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_action*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_dir*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_dir*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_encoding*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_encoding*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_method*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_method*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_elements*: proc(self: ptr IHTMLFormElement, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+    put_target*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_target*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_name*: proc(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.stdcall.}
+    get_name*: proc(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_onsubmit*: proc(self: ptr IHTMLFormElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onsubmit*: proc(self: ptr IHTMLFormElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onreset*: proc(self: ptr IHTMLFormElement, v: VARIANT): HRESULT {.stdcall.}
+    get_onreset*: proc(self: ptr IHTMLFormElement, p: ptr VARIANT): HRESULT {.stdcall.}
+    submit*: proc(self: ptr IHTMLFormElement): HRESULT {.stdcall.}
+    reset*: proc(self: ptr IHTMLFormElement): HRESULT {.stdcall.}
+    put_length*: proc(self: ptr IHTMLFormElement, v: LONG): HRESULT {.stdcall.}
+    get_length*: proc(self: ptr IHTMLFormElement, p: ptr LONG): HRESULT {.stdcall.}
+    get_newEnum*: proc(self: ptr IHTMLFormElement, p: ptr ptr IUnknown): HRESULT {.stdcall.}
+    item*: proc(self: ptr IHTMLFormElement, name: VARIANT, index: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+    tags*: proc(self: ptr IHTMLFormElement, tagName: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLOptionElement* {.pure.} = object
+    lpVtbl*: ptr IHTMLOptionElementVtbl
+  IHTMLOptionElementVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    put_selected*: proc(self: ptr IHTMLOptionElement, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_selected*: proc(self: ptr IHTMLOptionElement, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_value*: proc(self: ptr IHTMLOptionElement, v: BSTR): HRESULT {.stdcall.}
+    get_value*: proc(self: ptr IHTMLOptionElement, p: ptr BSTR): HRESULT {.stdcall.}
+    put_defaultSelected*: proc(self: ptr IHTMLOptionElement, v: VARIANT_BOOL): HRESULT {.stdcall.}
+    get_defaultSelected*: proc(self: ptr IHTMLOptionElement, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    put_index*: proc(self: ptr IHTMLOptionElement, v: LONG): HRESULT {.stdcall.}
+    get_index*: proc(self: ptr IHTMLOptionElement, p: ptr LONG): HRESULT {.stdcall.}
+    put_text*: proc(self: ptr IHTMLOptionElement, v: BSTR): HRESULT {.stdcall.}
+    get_text*: proc(self: ptr IHTMLOptionElement, p: ptr BSTR): HRESULT {.stdcall.}
+    get_form*: proc(self: ptr IHTMLOptionElement, p: ptr ptr IHTMLFormElement): HRESULT {.stdcall.}
+  IHTMLOptionElementFactory* {.pure.} = object
+    lpVtbl*: ptr IHTMLOptionElementFactoryVtbl
+  IHTMLOptionElementFactoryVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    create*: proc(self: ptr IHTMLOptionElementFactory, text: VARIANT, value: VARIANT, defaultselected: VARIANT, selected: VARIANT, a: ptr ptr IHTMLOptionElement): HRESULT {.stdcall.}
+  IHTMLWindow2* {.pure.} = object
+    lpVtbl*: ptr IHTMLWindow2Vtbl
+  IHTMLWindow2Vtbl* {.pure, inheritable.} = object of IHTMLFramesCollection2Vtbl
+    get_frames*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLFramesCollection2): HRESULT {.stdcall.}
+    put_defaultStatus*: proc(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.stdcall.}
+    get_defaultStatus*: proc(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.stdcall.}
+    put_status*: proc(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.stdcall.}
+    get_status*: proc(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.stdcall.}
+    setTimeout*: proc(self: ptr IHTMLWindow2, expression: BSTR, msec: LONG, language: ptr VARIANT, timerID: ptr LONG): HRESULT {.stdcall.}
+    clearTimeout*: proc(self: ptr IHTMLWindow2, timerID: LONG): HRESULT {.stdcall.}
+    alert*: proc(self: ptr IHTMLWindow2, message: BSTR): HRESULT {.stdcall.}
+    confirm*: proc(self: ptr IHTMLWindow2, message: BSTR, confirmed: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    prompt*: proc(self: ptr IHTMLWindow2, message: BSTR, defstr: BSTR, textdata: ptr VARIANT): HRESULT {.stdcall.}
+    get_Image*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLImageElementFactory): HRESULT {.stdcall.}
+    get_location*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLLocation): HRESULT {.stdcall.}
+    get_history*: proc(self: ptr IHTMLWindow2, p: ptr ptr IOmHistory): HRESULT {.stdcall.}
+    close*: proc(self: ptr IHTMLWindow2): HRESULT {.stdcall.}
+    put_opener*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_opener*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_navigator*: proc(self: ptr IHTMLWindow2, p: ptr ptr IOmNavigator): HRESULT {.stdcall.}
+    put_name*: proc(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.stdcall.}
+    get_name*: proc(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.stdcall.}
+    get_parent*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    open*: proc(self: ptr IHTMLWindow2, url: BSTR, name: BSTR, features: BSTR, replace: VARIANT_BOOL, pomWindowResult: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    get_self*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    get_top*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    get_window*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.stdcall.}
+    navigate*: proc(self: ptr IHTMLWindow2, url: BSTR): HRESULT {.stdcall.}
+    put_onfocus*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onfocus*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onblur*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onblur*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onload*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onload*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onbeforeunload*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onbeforeunload*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onunload*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onunload*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onhelp*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onhelp*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onerror*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onerror*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onresize*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onresize*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    put_onscroll*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_onscroll*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    get_document*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLDocument2): HRESULT {.stdcall.}
+    get_event*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLEventObj): HRESULT {.stdcall.}
+    get_newEnum*: proc(self: ptr IHTMLWindow2, p: ptr ptr IUnknown): HRESULT {.stdcall.}
+    showModalDialog*: proc(self: ptr IHTMLWindow2, dialog: BSTR, varArgIn: ptr VARIANT, varOptions: ptr VARIANT, varArgOut: ptr VARIANT): HRESULT {.stdcall.}
+    showHelp*: proc(self: ptr IHTMLWindow2, helpURL: BSTR, helpArg: VARIANT, features: BSTR): HRESULT {.stdcall.}
+    get_screen*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLScreen): HRESULT {.stdcall.}
+    get_Option*: proc(self: ptr IHTMLWindow2, p: ptr ptr IHTMLOptionElementFactory): HRESULT {.stdcall.}
+    focus*: proc(self: ptr IHTMLWindow2): HRESULT {.stdcall.}
+    get_closed*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    blur*: proc(self: ptr IHTMLWindow2): HRESULT {.stdcall.}
+    scroll*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    get_clientInformation*: proc(self: ptr IHTMLWindow2, p: ptr ptr IOmNavigator): HRESULT {.stdcall.}
+    setInterval*: proc(self: ptr IHTMLWindow2, expression: BSTR, msec: LONG, language: ptr VARIANT, timerID: ptr LONG): HRESULT {.stdcall.}
+    clearInterval*: proc(self: ptr IHTMLWindow2, timerID: LONG): HRESULT {.stdcall.}
+    put_offscreenBuffering*: proc(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.stdcall.}
+    get_offscreenBuffering*: proc(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.stdcall.}
+    execScript*: proc(self: ptr IHTMLWindow2, code: BSTR, language: BSTR, pvarRet: ptr VARIANT): HRESULT {.stdcall.}
+    toString*: proc(self: ptr IHTMLWindow2, String: ptr BSTR): HRESULT {.stdcall.}
+    scrollBy*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    scrollTo*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    moveTo*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    moveBy*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    resizeTo*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    resizeBy*: proc(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.stdcall.}
+    get_external*: proc(self: ptr IHTMLWindow2, p: ptr ptr IDispatch): HRESULT {.stdcall.}
+  IHTMLTxtRange* {.pure.} = object
+    lpVtbl*: ptr IHTMLTxtRangeVtbl
+  IHTMLTxtRangeVtbl* {.pure, inheritable.} = object of IDispatchVtbl
+    get_htmlText*: proc(self: ptr IHTMLTxtRange, p: ptr BSTR): HRESULT {.stdcall.}
+    put_text*: proc(self: ptr IHTMLTxtRange, v: BSTR): HRESULT {.stdcall.}
+    get_text*: proc(self: ptr IHTMLTxtRange, p: ptr BSTR): HRESULT {.stdcall.}
+    parentElement*: proc(self: ptr IHTMLTxtRange, parent: ptr ptr IHTMLElement): HRESULT {.stdcall.}
+    duplicate*: proc(self: ptr IHTMLTxtRange, Duplicate: ptr ptr IHTMLTxtRange): HRESULT {.stdcall.}
+    inRange*: proc(self: ptr IHTMLTxtRange, Range: ptr IHTMLTxtRange, InRange: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    isEqual*: proc(self: ptr IHTMLTxtRange, Range: ptr IHTMLTxtRange, IsEqual: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    scrollIntoView*: proc(self: ptr IHTMLTxtRange, fStart: VARIANT_BOOL): HRESULT {.stdcall.}
+    collapse*: proc(self: ptr IHTMLTxtRange, Start: VARIANT_BOOL): HRESULT {.stdcall.}
+    expand*: proc(self: ptr IHTMLTxtRange, Unit: BSTR, Success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    move*: proc(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.stdcall.}
+    moveStart*: proc(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.stdcall.}
+    moveEnd*: proc(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.stdcall.}
+    select*: proc(self: ptr IHTMLTxtRange): HRESULT {.stdcall.}
+    pasteHTML*: proc(self: ptr IHTMLTxtRange, html: BSTR): HRESULT {.stdcall.}
+    moveToElementText*: proc(self: ptr IHTMLTxtRange, element: ptr IHTMLElement): HRESULT {.stdcall.}
+    setEndPoint*: proc(self: ptr IHTMLTxtRange, how: BSTR, SourceRange: ptr IHTMLTxtRange): HRESULT {.stdcall.}
+    compareEndPoints*: proc(self: ptr IHTMLTxtRange, how: BSTR, SourceRange: ptr IHTMLTxtRange, ret: ptr LONG): HRESULT {.stdcall.}
+    findText*: proc(self: ptr IHTMLTxtRange, String: BSTR, count: LONG, Flags: LONG, Success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    moveToPoint*: proc(self: ptr IHTMLTxtRange, x: LONG, y: LONG): HRESULT {.stdcall.}
+    getBookmark*: proc(self: ptr IHTMLTxtRange, Boolmark: ptr BSTR): HRESULT {.stdcall.}
+    moveToBookmark*: proc(self: ptr IHTMLTxtRange, Bookmark: BSTR, Success: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandSupported*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandEnabled*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandState*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandIndeterm*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    queryCommandText*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pcmdText: ptr BSTR): HRESULT {.stdcall.}
+    queryCommandValue*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pcmdValue: ptr VARIANT): HRESULT {.stdcall.}
+    execCommand*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, showUI: VARIANT_BOOL, value: VARIANT, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+    execCommandShowHelp*: proc(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.stdcall.}
+  IDocHostUIHandler* {.pure.} = object
+    lpVtbl*: ptr IDocHostUIHandlerVtbl
+  IDocHostUIHandlerVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    ShowContextMenu*: proc(self: ptr IDocHostUIHandler, dwID: DWORD, ppt: ptr POINT, pcmdtReserved: ptr IUnknown, pdispReserved: ptr IDispatch): HRESULT {.stdcall.}
+    GetHostInfo*: proc(self: ptr IDocHostUIHandler, pInfo: ptr DOCHOSTUIINFO): HRESULT {.stdcall.}
+    ShowUI*: proc(self: ptr IDocHostUIHandler, dwID: DWORD, pActiveObject: ptr IOleInPlaceActiveObject, pCommandTarget: ptr IOleCommandTarget, pFrame: ptr IOleInPlaceFrame, pDoc: ptr IOleInPlaceUIWindow): HRESULT {.stdcall.}
+    HideUI*: proc(self: ptr IDocHostUIHandler): HRESULT {.stdcall.}
+    UpdateUI*: proc(self: ptr IDocHostUIHandler): HRESULT {.stdcall.}
+    EnableModeless*: proc(self: ptr IDocHostUIHandler, fEnable: WINBOOL): HRESULT {.stdcall.}
+    OnDocWindowActivate*: proc(self: ptr IDocHostUIHandler, fActivate: WINBOOL): HRESULT {.stdcall.}
+    OnFrameWindowActivate*: proc(self: ptr IDocHostUIHandler, fActivate: WINBOOL): HRESULT {.stdcall.}
+    ResizeBorder*: proc(self: ptr IDocHostUIHandler, prcBorder: LPCRECT, pUIWindow: ptr IOleInPlaceUIWindow, fRameWindow: WINBOOL): HRESULT {.stdcall.}
+    TranslateAccelerator*: proc(self: ptr IDocHostUIHandler, lpMsg: LPMSG, pguidCmdGroup: ptr GUID, nCmdID: DWORD): HRESULT {.stdcall.}
+    GetOptionKeyPath*: proc(self: ptr IDocHostUIHandler, pchKey: ptr LPOLESTR, dw: DWORD): HRESULT {.stdcall.}
+    GetDropTarget*: proc(self: ptr IDocHostUIHandler, pDropTarget: ptr IDropTarget, ppDropTarget: ptr ptr IDropTarget): HRESULT {.stdcall.}
+    GetExternal*: proc(self: ptr IDocHostUIHandler, ppDispatch: ptr ptr IDispatch): HRESULT {.stdcall.}
+    TranslateUrl*: proc(self: ptr IDocHostUIHandler, dwTranslate: DWORD, pchURLIn: LPWSTR, ppchURLOut: ptr LPWSTR): HRESULT {.stdcall.}
+    FilterDataObject*: proc(self: ptr IDocHostUIHandler, pDO: ptr IDataObject, ppDORet: ptr ptr IDataObject): HRESULT {.stdcall.}
+proc get_length*(self: ptr IHTMLFiltersCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_newEnum*(self: ptr IHTMLFiltersCollection, p: ptr ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.get_newEnum(self, p)
+proc item*(self: ptr IHTMLFiltersCollection, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, pvarIndex, pvarResult)
+proc put_fontFamily*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontFamily(self, v)
+proc get_fontFamily*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontFamily(self, p)
+proc put_fontStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontStyle(self, v)
+proc get_fontStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontStyle(self, p)
+proc put_fontVariant*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontVariant(self, v)
+proc get_fontVariant*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontVariant(self, p)
+proc put_fontWeight*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontWeight(self, v)
+proc get_fontWeight*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontWeight(self, p)
+proc put_fontSize*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontSize(self, v)
+proc get_fontSize*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontSize(self, p)
+proc put_font*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_font(self, v)
+proc get_font*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_font(self, p)
+proc put_color*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_color(self, v)
+proc get_color*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_color(self, p)
+proc put_background*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_background(self, v)
+proc get_background*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_background(self, p)
+proc put_backgroundColor*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundColor(self, v)
+proc get_backgroundColor*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundColor(self, p)
+proc put_backgroundImage*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundImage(self, v)
+proc get_backgroundImage*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundImage(self, p)
+proc put_backgroundRepeat*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundRepeat(self, v)
+proc get_backgroundRepeat*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundRepeat(self, p)
+proc put_backgroundAttachment*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundAttachment(self, v)
+proc get_backgroundAttachment*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundAttachment(self, p)
+proc put_backgroundPosition*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPosition(self, v)
+proc get_backgroundPosition*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPosition(self, p)
+proc put_backgroundPositionX*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPositionX(self, v)
+proc get_backgroundPositionX*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPositionX(self, p)
+proc put_backgroundPositionY*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPositionY(self, v)
+proc get_backgroundPositionY*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPositionY(self, p)
+proc put_wordSpacing*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_wordSpacing(self, v)
+proc get_wordSpacing*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_wordSpacing(self, p)
+proc put_letterSpacing*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_letterSpacing(self, v)
+proc get_letterSpacing*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_letterSpacing(self, p)
+proc put_textDecoration*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecoration(self, v)
+proc get_textDecoration*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecoration(self, p)
+proc put_textDecorationNone*(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationNone(self, v)
+proc get_textDecorationNone*(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationNone(self, p)
+proc put_textDecorationUnderline*(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationUnderline(self, v)
+proc get_textDecorationUnderline*(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationUnderline(self, p)
+proc put_textDecorationOverline*(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationOverline(self, v)
+proc get_textDecorationOverline*(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationOverline(self, p)
+proc put_textDecorationLineThrough*(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationLineThrough(self, v)
+proc get_textDecorationLineThrough*(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationLineThrough(self, p)
+proc put_textDecorationBlink*(self: ptr IHTMLStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationBlink(self, v)
+proc get_textDecorationBlink*(self: ptr IHTMLStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationBlink(self, p)
+proc put_verticalAlign*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_verticalAlign(self, v)
+proc get_verticalAlign*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_verticalAlign(self, p)
+proc put_textTransform*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textTransform(self, v)
+proc get_textTransform*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textTransform(self, p)
+proc put_textAlign*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textAlign(self, v)
+proc get_textAlign*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textAlign(self, p)
+proc put_textIndent*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_textIndent(self, v)
+proc get_textIndent*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_textIndent(self, p)
+proc put_lineHeight*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_lineHeight(self, v)
+proc get_lineHeight*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_lineHeight(self, p)
+proc put_marginTop*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginTop(self, v)
+proc get_marginTop*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginTop(self, p)
+proc put_marginRight*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginRight(self, v)
+proc get_marginRight*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginRight(self, p)
+proc put_marginBottom*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginBottom(self, v)
+proc get_marginBottom*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginBottom(self, p)
+proc put_marginLeft*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginLeft(self, v)
+proc get_marginLeft*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginLeft(self, p)
+proc put_margin*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_margin(self, v)
+proc get_margin*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_margin(self, p)
+proc put_paddingTop*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingTop(self, v)
+proc get_paddingTop*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingTop(self, p)
+proc put_paddingRight*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingRight(self, v)
+proc get_paddingRight*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingRight(self, p)
+proc put_paddingBottom*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingBottom(self, v)
+proc get_paddingBottom*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingBottom(self, p)
+proc put_paddingLeft*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingLeft(self, v)
+proc get_paddingLeft*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingLeft(self, p)
+proc put_padding*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_padding(self, v)
+proc get_padding*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_padding(self, p)
+proc put_border*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_border(self, v)
+proc get_border*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_border(self, p)
+proc put_borderTop*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTop(self, v)
+proc get_borderTop*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTop(self, p)
+proc put_borderRight*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRight(self, v)
+proc get_borderRight*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRight(self, p)
+proc put_borderBottom*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottom(self, v)
+proc get_borderBottom*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottom(self, p)
+proc put_borderLeft*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeft(self, v)
+proc get_borderLeft*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeft(self, p)
+proc put_borderColor*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderColor(self, v)
+proc get_borderColor*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderColor(self, p)
+proc put_borderTopColor*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopColor(self, v)
+proc get_borderTopColor*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopColor(self, p)
+proc put_borderRightColor*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightColor(self, v)
+proc get_borderRightColor*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightColor(self, p)
+proc put_borderBottomColor*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomColor(self, v)
+proc get_borderBottomColor*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomColor(self, p)
+proc put_borderLeftColor*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftColor(self, v)
+proc get_borderLeftColor*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftColor(self, p)
+proc put_borderWidth*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderWidth(self, v)
+proc get_borderWidth*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderWidth(self, p)
+proc put_borderTopWidth*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopWidth(self, v)
+proc get_borderTopWidth*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopWidth(self, p)
+proc put_borderRightWidth*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightWidth(self, v)
+proc get_borderRightWidth*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightWidth(self, p)
+proc put_borderBottomWidth*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomWidth(self, v)
+proc get_borderBottomWidth*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomWidth(self, p)
+proc put_borderLeftWidth*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftWidth(self, v)
+proc get_borderLeftWidth*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftWidth(self, p)
+proc put_borderStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderStyle(self, v)
+proc get_borderStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderStyle(self, p)
+proc put_borderTopStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopStyle(self, v)
+proc get_borderTopStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopStyle(self, p)
+proc put_borderRightStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightStyle(self, v)
+proc get_borderRightStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightStyle(self, p)
+proc put_borderBottomStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomStyle(self, v)
+proc get_borderBottomStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomStyle(self, p)
+proc put_borderLeftStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftStyle(self, v)
+proc get_borderLeftStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftStyle(self, p)
+proc put_width*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_width(self, v)
+proc get_width*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_width(self, p)
+proc put_height*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_height(self, v)
+proc get_height*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_height(self, p)
+proc put_styleFloat*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_styleFloat(self, v)
+proc get_styleFloat*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_styleFloat(self, p)
+proc put_clear*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_clear(self, v)
+proc get_clear*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_clear(self, p)
+proc put_display*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_display(self, v)
+proc get_display*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_display(self, p)
+proc put_visibility*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_visibility(self, v)
+proc get_visibility*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_visibility(self, p)
+proc put_listStyleType*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyleType(self, v)
+proc get_listStyleType*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyleType(self, p)
+proc put_listStylePosition*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStylePosition(self, v)
+proc get_listStylePosition*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStylePosition(self, p)
+proc put_listStyleImage*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyleImage(self, v)
+proc get_listStyleImage*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyleImage(self, p)
+proc put_listStyle*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyle(self, v)
+proc get_listStyle*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyle(self, p)
+proc put_whiteSpace*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_whiteSpace(self, v)
+proc get_whiteSpace*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_whiteSpace(self, p)
+proc put_top*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_top(self, v)
+proc get_top*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_top(self, p)
+proc put_left*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_left(self, v)
+proc get_left*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_left(self, p)
+proc get_position*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_position(self, p)
+proc put_zIndex*(self: ptr IHTMLStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_zIndex(self, v)
+proc get_zIndex*(self: ptr IHTMLStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_zIndex(self, p)
+proc put_overflow*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_overflow(self, v)
+proc get_overflow*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_overflow(self, p)
+proc put_pageBreakBefore*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_pageBreakBefore(self, v)
+proc get_pageBreakBefore*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_pageBreakBefore(self, p)
+proc put_pageBreakAfter*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_pageBreakAfter(self, v)
+proc get_pageBreakAfter*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_pageBreakAfter(self, p)
+proc put_cssText*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cssText(self, v)
+proc get_cssText*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cssText(self, p)
+proc put_pixelTop*(self: ptr IHTMLStyle, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_pixelTop(self, v)
+proc get_pixelTop*(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_pixelTop(self, p)
+proc put_pixelLeft*(self: ptr IHTMLStyle, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_pixelLeft(self, v)
+proc get_pixelLeft*(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_pixelLeft(self, p)
+proc put_pixelWidth*(self: ptr IHTMLStyle, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_pixelWidth(self, v)
+proc get_pixelWidth*(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_pixelWidth(self, p)
+proc put_pixelHeight*(self: ptr IHTMLStyle, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_pixelHeight(self, v)
+proc get_pixelHeight*(self: ptr IHTMLStyle, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_pixelHeight(self, p)
+proc put_posTop*(self: ptr IHTMLStyle, v: float32): HRESULT {.winapi, inline.} = self.lpVtbl.put_posTop(self, v)
+proc get_posTop*(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.winapi, inline.} = self.lpVtbl.get_posTop(self, p)
+proc put_posLeft*(self: ptr IHTMLStyle, v: float32): HRESULT {.winapi, inline.} = self.lpVtbl.put_posLeft(self, v)
+proc get_posLeft*(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.winapi, inline.} = self.lpVtbl.get_posLeft(self, p)
+proc put_posWidth*(self: ptr IHTMLStyle, v: float32): HRESULT {.winapi, inline.} = self.lpVtbl.put_posWidth(self, v)
+proc get_posWidth*(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.winapi, inline.} = self.lpVtbl.get_posWidth(self, p)
+proc put_posHeight*(self: ptr IHTMLStyle, v: float32): HRESULT {.winapi, inline.} = self.lpVtbl.put_posHeight(self, v)
+proc get_posHeight*(self: ptr IHTMLStyle, p: ptr float32): HRESULT {.winapi, inline.} = self.lpVtbl.get_posHeight(self, p)
+proc put_cursor*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cursor(self, v)
+proc get_cursor*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cursor(self, p)
+proc put_clip*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_clip(self, v)
+proc get_clip*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_clip(self, p)
+proc put_filter*(self: ptr IHTMLStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_filter(self, v)
+proc get_filter*(self: ptr IHTMLStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_filter(self, p)
+proc setAttribute*(self: ptr IHTMLStyle, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.setAttribute(self, strAttributeName, AttributeValue, lFlags)
+proc getAttribute*(self: ptr IHTMLStyle, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.getAttribute(self, strAttributeName, lFlags, AttributeValue)
+proc removeAttribute*(self: ptr IHTMLStyle, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.removeAttribute(self, strAttributeName, lFlags, pfSuccess)
+proc toString*(self: ptr IHTMLStyle, String: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, String)
+proc put_fontFamily*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontFamily(self, v)
+proc get_fontFamily*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontFamily(self, p)
+proc put_fontStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontStyle(self, v)
+proc get_fontStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontStyle(self, p)
+proc put_fontVariant*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontVariant(self, v)
+proc get_fontVariant*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontVariant(self, p)
+proc put_fontWeight*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontWeight(self, v)
+proc get_fontWeight*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontWeight(self, p)
+proc put_fontSize*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_fontSize(self, v)
+proc get_fontSize*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontSize(self, p)
+proc put_font*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_font(self, v)
+proc get_font*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_font(self, p)
+proc put_color*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_color(self, v)
+proc get_color*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_color(self, p)
+proc put_background*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_background(self, v)
+proc get_background*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_background(self, p)
+proc put_backgroundColor*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundColor(self, v)
+proc get_backgroundColor*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundColor(self, p)
+proc put_backgroundImage*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundImage(self, v)
+proc get_backgroundImage*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundImage(self, p)
+proc put_backgroundRepeat*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundRepeat(self, v)
+proc get_backgroundRepeat*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundRepeat(self, p)
+proc put_backgroundAttachment*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundAttachment(self, v)
+proc get_backgroundAttachment*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundAttachment(self, p)
+proc put_backgroundPosition*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPosition(self, v)
+proc get_backgroundPosition*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPosition(self, p)
+proc put_backgroundPositionX*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPositionX(self, v)
+proc get_backgroundPositionX*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPositionX(self, p)
+proc put_backgroundPositionY*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_backgroundPositionY(self, v)
+proc get_backgroundPositionY*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_backgroundPositionY(self, p)
+proc put_wordSpacing*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_wordSpacing(self, v)
+proc get_wordSpacing*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_wordSpacing(self, p)
+proc put_letterSpacing*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_letterSpacing(self, v)
+proc get_letterSpacing*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_letterSpacing(self, p)
+proc put_textDecoration*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecoration(self, v)
+proc get_textDecoration*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecoration(self, p)
+proc put_textDecorationNone*(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationNone(self, v)
+proc get_textDecorationNone*(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationNone(self, p)
+proc put_textDecorationUnderline*(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationUnderline(self, v)
+proc get_textDecorationUnderline*(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationUnderline(self, p)
+proc put_textDecorationOverline*(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationOverline(self, v)
+proc get_textDecorationOverline*(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationOverline(self, p)
+proc put_textDecorationLineThrough*(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationLineThrough(self, v)
+proc get_textDecorationLineThrough*(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationLineThrough(self, p)
+proc put_textDecorationBlink*(self: ptr IHTMLRuleStyle, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_textDecorationBlink(self, v)
+proc get_textDecorationBlink*(self: ptr IHTMLRuleStyle, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_textDecorationBlink(self, p)
+proc put_verticalAlign*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_verticalAlign(self, v)
+proc get_verticalAlign*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_verticalAlign(self, p)
+proc put_textTransform*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textTransform(self, v)
+proc get_textTransform*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textTransform(self, p)
+proc put_textAlign*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_textAlign(self, v)
+proc get_textAlign*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_textAlign(self, p)
+proc put_textIndent*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_textIndent(self, v)
+proc get_textIndent*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_textIndent(self, p)
+proc put_lineHeight*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_lineHeight(self, v)
+proc get_lineHeight*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_lineHeight(self, p)
+proc put_marginTop*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginTop(self, v)
+proc get_marginTop*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginTop(self, p)
+proc put_marginRight*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginRight(self, v)
+proc get_marginRight*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginRight(self, p)
+proc put_marginBottom*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginBottom(self, v)
+proc get_marginBottom*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginBottom(self, p)
+proc put_marginLeft*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_marginLeft(self, v)
+proc get_marginLeft*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_marginLeft(self, p)
+proc put_margin*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_margin(self, v)
+proc get_margin*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_margin(self, p)
+proc put_paddingTop*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingTop(self, v)
+proc get_paddingTop*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingTop(self, p)
+proc put_paddingRight*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingRight(self, v)
+proc get_paddingRight*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingRight(self, p)
+proc put_paddingBottom*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingBottom(self, v)
+proc get_paddingBottom*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingBottom(self, p)
+proc put_paddingLeft*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_paddingLeft(self, v)
+proc get_paddingLeft*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_paddingLeft(self, p)
+proc put_padding*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_padding(self, v)
+proc get_padding*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_padding(self, p)
+proc put_border*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_border(self, v)
+proc get_border*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_border(self, p)
+proc put_borderTop*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTop(self, v)
+proc get_borderTop*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTop(self, p)
+proc put_borderRight*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRight(self, v)
+proc get_borderRight*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRight(self, p)
+proc put_borderBottom*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottom(self, v)
+proc get_borderBottom*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottom(self, p)
+proc put_borderLeft*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeft(self, v)
+proc get_borderLeft*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeft(self, p)
+proc put_borderColor*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderColor(self, v)
+proc get_borderColor*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderColor(self, p)
+proc put_borderTopColor*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopColor(self, v)
+proc get_borderTopColor*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopColor(self, p)
+proc put_borderRightColor*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightColor(self, v)
+proc get_borderRightColor*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightColor(self, p)
+proc put_borderBottomColor*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomColor(self, v)
+proc get_borderBottomColor*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomColor(self, p)
+proc put_borderLeftColor*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftColor(self, v)
+proc get_borderLeftColor*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftColor(self, p)
+proc put_borderWidth*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderWidth(self, v)
+proc get_borderWidth*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderWidth(self, p)
+proc put_borderTopWidth*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopWidth(self, v)
+proc get_borderTopWidth*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopWidth(self, p)
+proc put_borderRightWidth*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightWidth(self, v)
+proc get_borderRightWidth*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightWidth(self, p)
+proc put_borderBottomWidth*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomWidth(self, v)
+proc get_borderBottomWidth*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomWidth(self, p)
+proc put_borderLeftWidth*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftWidth(self, v)
+proc get_borderLeftWidth*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftWidth(self, p)
+proc put_borderStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderStyle(self, v)
+proc get_borderStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderStyle(self, p)
+proc put_borderTopStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderTopStyle(self, v)
+proc get_borderTopStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderTopStyle(self, p)
+proc put_borderRightStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderRightStyle(self, v)
+proc get_borderRightStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderRightStyle(self, p)
+proc put_borderBottomStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderBottomStyle(self, v)
+proc get_borderBottomStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderBottomStyle(self, p)
+proc put_borderLeftStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_borderLeftStyle(self, v)
+proc get_borderLeftStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_borderLeftStyle(self, p)
+proc put_width*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_width(self, v)
+proc get_width*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_width(self, p)
+proc put_height*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_height(self, v)
+proc get_height*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_height(self, p)
+proc put_styleFloat*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_styleFloat(self, v)
+proc get_styleFloat*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_styleFloat(self, p)
+proc put_clear*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_clear(self, v)
+proc get_clear*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_clear(self, p)
+proc put_display*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_display(self, v)
+proc get_display*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_display(self, p)
+proc put_visibility*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_visibility(self, v)
+proc get_visibility*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_visibility(self, p)
+proc put_listStyleType*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyleType(self, v)
+proc get_listStyleType*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyleType(self, p)
+proc put_listStylePosition*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStylePosition(self, v)
+proc get_listStylePosition*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStylePosition(self, p)
+proc put_listStyleImage*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyleImage(self, v)
+proc get_listStyleImage*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyleImage(self, p)
+proc put_listStyle*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_listStyle(self, v)
+proc get_listStyle*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_listStyle(self, p)
+proc put_whiteSpace*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_whiteSpace(self, v)
+proc get_whiteSpace*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_whiteSpace(self, p)
+proc put_top*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_top(self, v)
+proc get_top*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_top(self, p)
+proc put_left*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_left(self, v)
+proc get_left*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_left(self, p)
+proc get_position*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_position(self, p)
+proc put_zIndex*(self: ptr IHTMLRuleStyle, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_zIndex(self, v)
+proc get_zIndex*(self: ptr IHTMLRuleStyle, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_zIndex(self, p)
+proc put_overflow*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_overflow(self, v)
+proc get_overflow*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_overflow(self, p)
+proc put_pageBreakBefore*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_pageBreakBefore(self, v)
+proc get_pageBreakBefore*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_pageBreakBefore(self, p)
+proc put_pageBreakAfter*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_pageBreakAfter(self, v)
+proc get_pageBreakAfter*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_pageBreakAfter(self, p)
+proc put_cssText*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cssText(self, v)
+proc get_cssText*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cssText(self, p)
+proc put_cursor*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cursor(self, v)
+proc get_cursor*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cursor(self, p)
+proc put_clip*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_clip(self, v)
+proc get_clip*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_clip(self, p)
+proc put_filter*(self: ptr IHTMLRuleStyle, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_filter(self, v)
+proc get_filter*(self: ptr IHTMLRuleStyle, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_filter(self, p)
+proc setAttribute*(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.setAttribute(self, strAttributeName, AttributeValue, lFlags)
+proc getAttribute*(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.getAttribute(self, strAttributeName, lFlags, AttributeValue)
+proc removeAttribute*(self: ptr IHTMLRuleStyle, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.removeAttribute(self, strAttributeName, lFlags, pfSuccess)
+proc setAttribute*(self: ptr IHTMLElement, strAttributeName: BSTR, AttributeValue: VARIANT, lFlags: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.setAttribute(self, strAttributeName, AttributeValue, lFlags)
+proc getAttribute*(self: ptr IHTMLElement, strAttributeName: BSTR, lFlags: LONG, AttributeValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.getAttribute(self, strAttributeName, lFlags, AttributeValue)
+proc removeAttribute*(self: ptr IHTMLElement, strAttributeName: BSTR, lFlags: LONG, pfSuccess: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.removeAttribute(self, strAttributeName, lFlags, pfSuccess)
+proc put_className*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_className(self, v)
+proc get_className*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_className(self, p)
+proc put_id*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_id(self, v)
+proc get_id*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_id(self, p)
+proc get_tagName*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_tagName(self, p)
+proc get_parentElement*(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_parentElement(self, p)
+proc get_style*(self: ptr IHTMLElement, p: ptr ptr IHTMLStyle): HRESULT {.winapi, inline.} = self.lpVtbl.get_style(self, p)
+proc put_onhelp*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onhelp(self, v)
+proc get_onhelp*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onhelp(self, p)
+proc put_onclick*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onclick(self, v)
+proc get_onclick*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onclick(self, p)
+proc put_ondblclick*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondblclick(self, v)
+proc get_ondblclick*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondblclick(self, p)
+proc put_onkeydown*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeydown(self, v)
+proc get_onkeydown*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeydown(self, p)
+proc put_onkeyup*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeyup(self, v)
+proc get_onkeyup*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeyup(self, p)
+proc put_onkeypress*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeypress(self, v)
+proc get_onkeypress*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeypress(self, p)
+proc put_onmouseout*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseout(self, v)
+proc get_onmouseout*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseout(self, p)
+proc put_onmouseover*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseover(self, v)
+proc get_onmouseover*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseover(self, p)
+proc put_onmousemove*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmousemove(self, v)
+proc get_onmousemove*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmousemove(self, p)
+proc put_onmousedown*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmousedown(self, v)
+proc get_onmousedown*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmousedown(self, p)
+proc put_onmouseup*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseup(self, v)
+proc get_onmouseup*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseup(self, p)
+proc get_document*(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_document(self, p)
+proc put_title*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_title(self, v)
+proc get_title*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_title(self, p)
+proc put_language*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_language(self, v)
+proc get_language*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_language(self, p)
+proc put_onselectstart*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onselectstart(self, v)
+proc get_onselectstart*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onselectstart(self, p)
+proc scrollIntoView*(self: ptr IHTMLElement, varargStart: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.scrollIntoView(self, varargStart)
+proc contains*(self: ptr IHTMLElement, pChild: ptr IHTMLElement, pfResult: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.contains(self, pChild, pfResult)
+proc get_sourceIndex*(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_sourceIndex(self, p)
+proc get_recordNumber*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_recordNumber(self, p)
+proc put_lang*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_lang(self, v)
+proc get_lang*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_lang(self, p)
+proc get_offsetLeft*(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetLeft(self, p)
+proc get_offsetTop*(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetTop(self, p)
+proc get_offsetWidth*(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetWidth(self, p)
+proc get_offsetHeight*(self: ptr IHTMLElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetHeight(self, p)
+proc get_offsetParent*(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetParent(self, p)
+proc put_innerHTML*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_innerHTML(self, v)
+proc get_innerHTML*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_innerHTML(self, p)
+proc put_innerText*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_innerText(self, v)
+proc get_innerText*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_innerText(self, p)
+proc put_outerHTML*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_outerHTML(self, v)
+proc get_outerHTML*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_outerHTML(self, p)
+proc put_outerText*(self: ptr IHTMLElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_outerText(self, v)
+proc get_outerText*(self: ptr IHTMLElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_outerText(self, p)
+proc insertAdjacentHTML*(self: ptr IHTMLElement, where: BSTR, html: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.insertAdjacentHTML(self, where, html)
+proc insertAdjacentText*(self: ptr IHTMLElement, where: BSTR, text: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.insertAdjacentText(self, where, text)
+proc get_parentTextEdit*(self: ptr IHTMLElement, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_parentTextEdit(self, p)
+proc get_isTextEdit*(self: ptr IHTMLElement, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_isTextEdit(self, p)
+proc click*(self: ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.click(self)
+proc get_filters*(self: ptr IHTMLElement, p: ptr ptr IHTMLFiltersCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_filters(self, p)
+proc put_ondragstart*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondragstart(self, v)
+proc get_ondragstart*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondragstart(self, p)
+proc toString*(self: ptr IHTMLElement, String: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, String)
+proc put_onbeforeupdate*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onbeforeupdate(self, v)
+proc get_onbeforeupdate*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onbeforeupdate(self, p)
+proc put_onafterupdate*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onafterupdate(self, v)
+proc get_onafterupdate*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onafterupdate(self, p)
+proc put_onerrorupdate*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onerrorupdate(self, v)
+proc get_onerrorupdate*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onerrorupdate(self, p)
+proc put_onrowexit*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onrowexit(self, v)
+proc get_onrowexit*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onrowexit(self, p)
+proc put_onrowenter*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onrowenter(self, v)
+proc get_onrowenter*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onrowenter(self, p)
+proc put_ondatasetchanged*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondatasetchanged(self, v)
+proc get_ondatasetchanged*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondatasetchanged(self, p)
+proc put_ondataavailable*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondataavailable(self, v)
+proc get_ondataavailable*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondataavailable(self, p)
+proc put_ondatasetcomplete*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondatasetcomplete(self, v)
+proc get_ondatasetcomplete*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondatasetcomplete(self, p)
+proc put_onfilterchange*(self: ptr IHTMLElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onfilterchange(self, v)
+proc get_onfilterchange*(self: ptr IHTMLElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onfilterchange(self, p)
+proc get_children*(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_children(self, p)
+proc get_all*(self: ptr IHTMLElement, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_all(self, p)
+proc put_selectorText*(self: ptr IHTMLStyleSheetRule, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_selectorText(self, v)
+proc get_selectorText*(self: ptr IHTMLStyleSheetRule, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_selectorText(self, p)
+proc get_style*(self: ptr IHTMLStyleSheetRule, p: ptr ptr IHTMLRuleStyle): HRESULT {.winapi, inline.} = self.lpVtbl.get_style(self, p)
+proc get_readOnly*(self: ptr IHTMLStyleSheetRule, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_readOnly(self, p)
+proc get_length*(self: ptr IHTMLStyleSheetRulesCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc item*(self: ptr IHTMLStyleSheetRulesCollection, index: LONG, ppHTMLStyleSheetRule: ptr ptr IHTMLStyleSheetRule): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, index, ppHTMLStyleSheetRule)
+proc put_title*(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_title(self, v)
+proc get_title*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_title(self, p)
+proc get_parentStyleSheet*(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheet): HRESULT {.winapi, inline.} = self.lpVtbl.get_parentStyleSheet(self, p)
+proc get_owningElement*(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_owningElement(self, p)
+proc put_disabled*(self: ptr IHTMLStyleSheet, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_disabled(self, v)
+proc get_disabled*(self: ptr IHTMLStyleSheet, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_disabled(self, p)
+proc get_readOnly*(self: ptr IHTMLStyleSheet, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_readOnly(self, p)
+proc get_imports*(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheetsCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_imports(self, p)
+proc put_href*(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_href(self, v)
+proc get_href*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_href(self, p)
+proc get_type*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_type(self, p)
+proc get_id*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_id(self, p)
+proc addImport*(self: ptr IHTMLStyleSheet, bstrURL: BSTR, lIndex: LONG, plIndex: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.addImport(self, bstrURL, lIndex, plIndex)
+proc addRule*(self: ptr IHTMLStyleSheet, bstrSelector: BSTR, bstrStyle: BSTR, lIndex: LONG, plNewIndex: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.addRule(self, bstrSelector, bstrStyle, lIndex, plNewIndex)
+proc removeImport*(self: ptr IHTMLStyleSheet, lIndex: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.removeImport(self, lIndex)
+proc removeRule*(self: ptr IHTMLStyleSheet, lIndex: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.removeRule(self, lIndex)
+proc put_media*(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_media(self, v)
+proc get_media*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_media(self, p)
+proc put_cssText*(self: ptr IHTMLStyleSheet, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cssText(self, v)
+proc get_cssText*(self: ptr IHTMLStyleSheet, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cssText(self, p)
+proc get_rules*(self: ptr IHTMLStyleSheet, p: ptr ptr IHTMLStyleSheetRulesCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_rules(self, p)
+proc get_length*(self: ptr IHTMLStyleSheetsCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_newEnum*(self: ptr IHTMLStyleSheetsCollection, p: ptr ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.get_newEnum(self, p)
+proc item*(self: ptr IHTMLStyleSheetsCollection, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, pvarIndex, pvarResult)
+proc get_htmlText*(self: ptr IHTMLTxtRange, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_htmlText(self, p)
+proc put_text*(self: ptr IHTMLTxtRange, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_text(self, v)
+proc get_text*(self: ptr IHTMLTxtRange, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_text(self, p)
+proc parentElement*(self: ptr IHTMLTxtRange, parent: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.parentElement(self, parent)
+proc duplicate*(self: ptr IHTMLTxtRange, Duplicate: ptr ptr IHTMLTxtRange): HRESULT {.winapi, inline.} = self.lpVtbl.duplicate(self, Duplicate)
+proc inRange*(self: ptr IHTMLTxtRange, Range: ptr IHTMLTxtRange, InRange: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.inRange(self, Range, InRange)
+proc isEqual*(self: ptr IHTMLTxtRange, Range: ptr IHTMLTxtRange, IsEqual: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.isEqual(self, Range, IsEqual)
+proc scrollIntoView*(self: ptr IHTMLTxtRange, fStart: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.scrollIntoView(self, fStart)
+proc collapse*(self: ptr IHTMLTxtRange, Start: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.collapse(self, Start)
+proc expand*(self: ptr IHTMLTxtRange, Unit: BSTR, Success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.expand(self, Unit, Success)
+proc move*(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.move(self, Unit, Count, ActualCount)
+proc moveStart*(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.moveStart(self, Unit, Count, ActualCount)
+proc moveEnd*(self: ptr IHTMLTxtRange, Unit: BSTR, Count: LONG, ActualCount: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.moveEnd(self, Unit, Count, ActualCount)
+proc select*(self: ptr IHTMLTxtRange): HRESULT {.winapi, inline.} = self.lpVtbl.select(self)
+proc pasteHTML*(self: ptr IHTMLTxtRange, html: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.pasteHTML(self, html)
+proc moveToElementText*(self: ptr IHTMLTxtRange, element: ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.moveToElementText(self, element)
+proc setEndPoint*(self: ptr IHTMLTxtRange, how: BSTR, SourceRange: ptr IHTMLTxtRange): HRESULT {.winapi, inline.} = self.lpVtbl.setEndPoint(self, how, SourceRange)
+proc compareEndPoints*(self: ptr IHTMLTxtRange, how: BSTR, SourceRange: ptr IHTMLTxtRange, ret: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.compareEndPoints(self, how, SourceRange, ret)
+proc findText*(self: ptr IHTMLTxtRange, String: BSTR, count: LONG, Flags: LONG, Success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.findText(self, String, count, Flags, Success)
+proc moveToPoint*(self: ptr IHTMLTxtRange, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.moveToPoint(self, x, y)
+proc getBookmark*(self: ptr IHTMLTxtRange, Boolmark: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.getBookmark(self, Boolmark)
+proc moveToBookmark*(self: ptr IHTMLTxtRange, Bookmark: BSTR, Success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.moveToBookmark(self, Bookmark, Success)
+proc queryCommandSupported*(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandSupported(self, cmdID, pfRet)
+proc queryCommandEnabled*(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandEnabled(self, cmdID, pfRet)
+proc queryCommandState*(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandState(self, cmdID, pfRet)
+proc queryCommandIndeterm*(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandIndeterm(self, cmdID, pfRet)
+proc queryCommandText*(self: ptr IHTMLTxtRange, cmdID: BSTR, pcmdText: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandText(self, cmdID, pcmdText)
+proc queryCommandValue*(self: ptr IHTMLTxtRange, cmdID: BSTR, pcmdValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandValue(self, cmdID, pcmdValue)
+proc execCommand*(self: ptr IHTMLTxtRange, cmdID: BSTR, showUI: VARIANT_BOOL, value: VARIANT, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.execCommand(self, cmdID, showUI, value, pfRet)
+proc execCommandShowHelp*(self: ptr IHTMLTxtRange, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.execCommandShowHelp(self, cmdID, pfRet)
+proc put_action*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_action(self, v)
+proc get_action*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_action(self, p)
+proc put_dir*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_dir(self, v)
+proc get_dir*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_dir(self, p)
+proc put_encoding*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_encoding(self, v)
+proc get_encoding*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_encoding(self, p)
+proc put_method*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_method(self, v)
+proc get_method*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_method(self, p)
+proc get_elements*(self: ptr IHTMLFormElement, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_elements(self, p)
+proc put_target*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_target(self, v)
+proc get_target*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_target(self, p)
+proc put_name*(self: ptr IHTMLFormElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_name(self, v)
+proc get_name*(self: ptr IHTMLFormElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_name(self, p)
+proc put_onsubmit*(self: ptr IHTMLFormElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onsubmit(self, v)
+proc get_onsubmit*(self: ptr IHTMLFormElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onsubmit(self, p)
+proc put_onreset*(self: ptr IHTMLFormElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onreset(self, v)
+proc get_onreset*(self: ptr IHTMLFormElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onreset(self, p)
+proc submit*(self: ptr IHTMLFormElement): HRESULT {.winapi, inline.} = self.lpVtbl.submit(self)
+proc reset*(self: ptr IHTMLFormElement): HRESULT {.winapi, inline.} = self.lpVtbl.reset(self)
+proc put_length*(self: ptr IHTMLFormElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_length(self, v)
+proc get_length*(self: ptr IHTMLFormElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_newEnum*(self: ptr IHTMLFormElement, p: ptr ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.get_newEnum(self, p)
+proc item*(self: ptr IHTMLFormElement, name: VARIANT, index: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, name, index, pdisp)
+proc tags*(self: ptr IHTMLFormElement, tagName: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.tags(self, tagName, pdisp)
+proc put_isMap*(self: ptr IHTMLImgElement, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_isMap(self, v)
+proc get_isMap*(self: ptr IHTMLImgElement, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_isMap(self, p)
+proc put_useMap*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_useMap(self, v)
+proc get_useMap*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_useMap(self, p)
+proc get_mimeType*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_mimeType(self, p)
+proc get_fileSize*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileSize(self, p)
+proc get_fileCreatedDate*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileCreatedDate(self, p)
+proc get_fileModifiedDate*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileModifiedDate(self, p)
+proc get_fileUpdatedDate*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileUpdatedDate(self, p)
+proc get_protocol*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_protocol(self, p)
+proc get_href*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_href(self, p)
+proc get_nameProp*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_nameProp(self, p)
+proc put_border*(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_border(self, v)
+proc get_border*(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_border(self, p)
+proc put_vspace*(self: ptr IHTMLImgElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_vspace(self, v)
+proc get_vspace*(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_vspace(self, p)
+proc put_hspace*(self: ptr IHTMLImgElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_hspace(self, v)
+proc get_hspace*(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_hspace(self, p)
+proc put_alt*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_alt(self, v)
+proc get_alt*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_alt(self, p)
+proc put_src*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_src(self, v)
+proc get_src*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_src(self, p)
+proc put_lowsrc*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_lowsrc(self, v)
+proc get_lowsrc*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_lowsrc(self, p)
+proc put_vrml*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_vrml(self, v)
+proc get_vrml*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_vrml(self, p)
+proc put_dynsrc*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_dynsrc(self, v)
+proc get_dynsrc*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_dynsrc(self, p)
+proc get_readyState*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_readyState(self, p)
+proc get_complete*(self: ptr IHTMLImgElement, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_complete(self, p)
+proc put_loop*(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_loop(self, v)
+proc get_loop*(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_loop(self, p)
+proc put_align*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_align(self, v)
+proc get_align*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_align(self, p)
+proc put_onload*(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onload(self, v)
+proc get_onload*(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onload(self, p)
+proc put_onerror*(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onerror(self, v)
+proc get_onerror*(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onerror(self, p)
+proc put_onabort*(self: ptr IHTMLImgElement, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onabort(self, v)
+proc get_onabort*(self: ptr IHTMLImgElement, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onabort(self, p)
+proc put_name*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_name(self, v)
+proc get_name*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_name(self, p)
+proc put_width*(self: ptr IHTMLImgElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_width(self, v)
+proc get_width*(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_width(self, p)
+proc put_height*(self: ptr IHTMLImgElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_height(self, v)
+proc get_height*(self: ptr IHTMLImgElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_height(self, p)
+proc put_start*(self: ptr IHTMLImgElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_start(self, v)
+proc get_start*(self: ptr IHTMLImgElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_start(self, p)
+proc create*(self: ptr IHTMLImageElementFactory, width: VARIANT, height: VARIANT, a: ptr ptr IHTMLImgElement): HRESULT {.winapi, inline.} = self.lpVtbl.create(self, width, height, a)
+proc toString*(self: ptr IHTMLElementCollection, String: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, String)
+proc put_length*(self: ptr IHTMLElementCollection, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_length(self, v)
+proc get_length*(self: ptr IHTMLElementCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_newEnum*(self: ptr IHTMLElementCollection, p: ptr ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.get_newEnum(self, p)
+proc item*(self: ptr IHTMLElementCollection, name: VARIANT, index: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, name, index, pdisp)
+proc tags*(self: ptr IHTMLElementCollection, tagName: VARIANT, pdisp: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.tags(self, tagName, pdisp)
+proc createRange*(self: ptr IHTMLSelectionObject, range: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.createRange(self, range)
+proc empty*(self: ptr IHTMLSelectionObject): HRESULT {.winapi, inline.} = self.lpVtbl.empty(self)
+proc clear*(self: ptr IHTMLSelectionObject): HRESULT {.winapi, inline.} = self.lpVtbl.clear(self)
+proc get_type*(self: ptr IHTMLSelectionObject, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_type(self, p)
+proc put_selected*(self: ptr IHTMLOptionElement, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_selected(self, v)
+proc get_selected*(self: ptr IHTMLOptionElement, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_selected(self, p)
+proc put_value*(self: ptr IHTMLOptionElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_value(self, v)
+proc get_value*(self: ptr IHTMLOptionElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_value(self, p)
+proc put_defaultSelected*(self: ptr IHTMLOptionElement, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_defaultSelected(self, v)
+proc get_defaultSelected*(self: ptr IHTMLOptionElement, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_defaultSelected(self, p)
+proc put_index*(self: ptr IHTMLOptionElement, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_index(self, v)
+proc get_index*(self: ptr IHTMLOptionElement, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_index(self, p)
+proc put_text*(self: ptr IHTMLOptionElement, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_text(self, v)
+proc get_text*(self: ptr IHTMLOptionElement, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_text(self, p)
+proc get_form*(self: ptr IHTMLOptionElement, p: ptr ptr IHTMLFormElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_form(self, p)
+proc create*(self: ptr IHTMLOptionElementFactory, text: VARIANT, value: VARIANT, defaultselected: VARIANT, selected: VARIANT, a: ptr ptr IHTMLOptionElement): HRESULT {.winapi, inline.} = self.lpVtbl.create(self, text, value, defaultselected, selected, a)
+proc get_length*(self: ptr IOmHistory, p: ptr int16): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc back*(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.back(self, pvargdistance)
+proc forward*(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.forward(self, pvargdistance)
+proc go*(self: ptr IOmHistory, pvargdistance: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.go(self, pvargdistance)
+proc get_length*(self: ptr IHTMLMimeTypesCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_length*(self: ptr IHTMLPluginsCollection, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc refresh*(self: ptr IHTMLPluginsCollection, reload: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.refresh(self, reload)
+proc addRequest*(self: ptr IHTMLOpsProfile, name: BSTR, reserved: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.addRequest(self, name, reserved, success)
+proc clearRequest*(self: ptr IHTMLOpsProfile): HRESULT {.winapi, inline.} = self.lpVtbl.clearRequest(self)
+proc doRequest*(self: ptr IHTMLOpsProfile, usage: VARIANT, fname: VARIANT, domain: VARIANT, path: VARIANT, expire: VARIANT, reserved: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.doRequest(self, usage, fname, domain, path, expire, reserved)
+proc getAttribute*(self: ptr IHTMLOpsProfile, name: BSTR, value: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.getAttribute(self, name, value)
+proc setAttribute*(self: ptr IHTMLOpsProfile, name: BSTR, value: BSTR, prefs: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.setAttribute(self, name, value, prefs, success)
+proc commitChanges*(self: ptr IHTMLOpsProfile, success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.commitChanges(self, success)
+proc addReadRequest*(self: ptr IHTMLOpsProfile, name: BSTR, reserved: VARIANT, success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.addReadRequest(self, name, reserved, success)
+proc doReadRequest*(self: ptr IHTMLOpsProfile, usage: VARIANT, fname: VARIANT, domain: VARIANT, path: VARIANT, expire: VARIANT, reserved: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.doReadRequest(self, usage, fname, domain, path, expire, reserved)
+proc doWriteRequest*(self: ptr IHTMLOpsProfile, success: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.doWriteRequest(self, success)
+proc get_appCodeName*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_appCodeName(self, p)
+proc get_appName*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_appName(self, p)
+proc get_appVersion*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_appVersion(self, p)
+proc get_userAgent*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_userAgent(self, p)
+proc javaEnabled*(self: ptr IOmNavigator, enabled: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.javaEnabled(self, enabled)
+proc taintEnabled*(self: ptr IOmNavigator, enabled: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.taintEnabled(self, enabled)
+proc get_mimeTypes*(self: ptr IOmNavigator, p: ptr ptr IHTMLMimeTypesCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_mimeTypes(self, p)
+proc get_plugins*(self: ptr IOmNavigator, p: ptr ptr IHTMLPluginsCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_plugins(self, p)
+proc get_cookieEnabled*(self: ptr IOmNavigator, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_cookieEnabled(self, p)
+proc get_opsProfile*(self: ptr IOmNavigator, p: ptr ptr IHTMLOpsProfile): HRESULT {.winapi, inline.} = self.lpVtbl.get_opsProfile(self, p)
+proc toString*(self: ptr IOmNavigator, string: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, string)
+proc get_cpuClass*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cpuClass(self, p)
+proc get_systemLanguage*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_systemLanguage(self, p)
+proc get_browserLanguage*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_browserLanguage(self, p)
+proc get_userLanguage*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_userLanguage(self, p)
+proc get_platform*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_platform(self, p)
+proc get_appMinorVersion*(self: ptr IOmNavigator, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_appMinorVersion(self, p)
+proc get_connectionSpeed*(self: ptr IOmNavigator, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_connectionSpeed(self, p)
+proc get_onLine*(self: ptr IOmNavigator, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_onLine(self, p)
+proc get_userProfile*(self: ptr IOmNavigator, p: ptr ptr IHTMLOpsProfile): HRESULT {.winapi, inline.} = self.lpVtbl.get_userProfile(self, p)
+proc put_href*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_href(self, v)
+proc get_href*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_href(self, p)
+proc put_protocol*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_protocol(self, v)
+proc get_protocol*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_protocol(self, p)
+proc put_host*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_host(self, v)
+proc get_host*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_host(self, p)
+proc put_hostname*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_hostname(self, v)
+proc get_hostname*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_hostname(self, p)
+proc put_port*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_port(self, v)
+proc get_port*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_port(self, p)
+proc put_pathname*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_pathname(self, v)
+proc get_pathname*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_pathname(self, p)
+proc put_search*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_search(self, v)
+proc get_search*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_search(self, p)
+proc put_hash*(self: ptr IHTMLLocation, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_hash(self, v)
+proc get_hash*(self: ptr IHTMLLocation, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_hash(self, p)
+proc reload*(self: ptr IHTMLLocation, flag: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.reload(self, flag)
+proc replace*(self: ptr IHTMLLocation, bstr: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.replace(self, bstr)
+proc assign*(self: ptr IHTMLLocation, bstr: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.assign(self, bstr)
+proc toString*(self: ptr IHTMLLocation, string: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, string)
+proc get_srcElement*(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_srcElement(self, p)
+proc get_altKey*(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_altKey(self, p)
+proc get_ctrlKey*(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_ctrlKey(self, p)
+proc get_shiftKey*(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_shiftKey(self, p)
+proc put_returnValue*(self: ptr IHTMLEventObj, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_returnValue(self, v)
+proc get_returnValue*(self: ptr IHTMLEventObj, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_returnValue(self, p)
+proc put_cancelBubble*(self: ptr IHTMLEventObj, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_cancelBubble(self, v)
+proc get_cancelBubble*(self: ptr IHTMLEventObj, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_cancelBubble(self, p)
+proc get_fromElement*(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_fromElement(self, p)
+proc get_toElement*(self: ptr IHTMLEventObj, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_toElement(self, p)
+proc put_keyCode*(self: ptr IHTMLEventObj, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_keyCode(self, v)
+proc get_keyCode*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_keyCode(self, p)
+proc get_button*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_button(self, p)
+proc get_type*(self: ptr IHTMLEventObj, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_type(self, p)
+proc get_qualifier*(self: ptr IHTMLEventObj, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_qualifier(self, p)
+proc get_reason*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_reason(self, p)
+proc get_x*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_x(self, p)
+proc get_y*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_y(self, p)
+proc get_clientX*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_clientX(self, p)
+proc get_clientY*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_clientY(self, p)
+proc get_offsetX*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetX(self, p)
+proc get_offsetY*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_offsetY(self, p)
+proc get_screenX*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_screenX(self, p)
+proc get_screenY*(self: ptr IHTMLEventObj, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_screenY(self, p)
+proc get_srcFilter*(self: ptr IHTMLEventObj, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_srcFilter(self, p)
+proc item*(self: ptr IHTMLFramesCollection2, pvarIndex: ptr VARIANT, pvarResult: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.item(self, pvarIndex, pvarResult)
+proc get_length*(self: ptr IHTMLFramesCollection2, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_length(self, p)
+proc get_colorDepth*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_colorDepth(self, p)
+proc put_bufferDepth*(self: ptr IHTMLScreen, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_bufferDepth(self, v)
+proc get_bufferDepth*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_bufferDepth(self, p)
+proc get_width*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_width(self, p)
+proc get_height*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_height(self, p)
+proc put_updateInterval*(self: ptr IHTMLScreen, v: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.put_updateInterval(self, v)
+proc get_updateInterval*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_updateInterval(self, p)
+proc get_availHeight*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_availHeight(self, p)
+proc get_availWidth*(self: ptr IHTMLScreen, p: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.get_availWidth(self, p)
+proc get_fontSmoothingEnabled*(self: ptr IHTMLScreen, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_fontSmoothingEnabled(self, p)
+proc get_frames*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLFramesCollection2): HRESULT {.winapi, inline.} = self.lpVtbl.get_frames(self, p)
+proc put_defaultStatus*(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_defaultStatus(self, v)
+proc get_defaultStatus*(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_defaultStatus(self, p)
+proc put_status*(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_status(self, v)
+proc get_status*(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_status(self, p)
+proc setTimeout*(self: ptr IHTMLWindow2, expression: BSTR, msec: LONG, language: ptr VARIANT, timerID: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.setTimeout(self, expression, msec, language, timerID)
+proc clearTimeout*(self: ptr IHTMLWindow2, timerID: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.clearTimeout(self, timerID)
+proc alert*(self: ptr IHTMLWindow2, message: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.alert(self, message)
+proc confirm*(self: ptr IHTMLWindow2, message: BSTR, confirmed: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.confirm(self, message, confirmed)
+proc prompt*(self: ptr IHTMLWindow2, message: BSTR, defstr: BSTR, textdata: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.prompt(self, message, defstr, textdata)
+proc get_Image*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLImageElementFactory): HRESULT {.winapi, inline.} = self.lpVtbl.get_Image(self, p)
+proc get_location*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLLocation): HRESULT {.winapi, inline.} = self.lpVtbl.get_location(self, p)
+proc get_history*(self: ptr IHTMLWindow2, p: ptr ptr IOmHistory): HRESULT {.winapi, inline.} = self.lpVtbl.get_history(self, p)
+proc close*(self: ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.close(self)
+proc put_opener*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_opener(self, v)
+proc get_opener*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_opener(self, p)
+proc get_navigator*(self: ptr IHTMLWindow2, p: ptr ptr IOmNavigator): HRESULT {.winapi, inline.} = self.lpVtbl.get_navigator(self, p)
+proc put_name*(self: ptr IHTMLWindow2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_name(self, v)
+proc get_name*(self: ptr IHTMLWindow2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_name(self, p)
+proc get_parent*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.get_parent(self, p)
+proc open*(self: ptr IHTMLWindow2, url: BSTR, name: BSTR, features: BSTR, replace: VARIANT_BOOL, pomWindowResult: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.open(self, url, name, features, replace, pomWindowResult)
+proc get_self*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.get_self(self, p)
+proc get_top*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.get_top(self, p)
+proc get_window*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.get_window(self, p)
+proc navigate*(self: ptr IHTMLWindow2, url: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.navigate(self, url)
+proc put_onfocus*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onfocus(self, v)
+proc get_onfocus*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onfocus(self, p)
+proc put_onblur*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onblur(self, v)
+proc get_onblur*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onblur(self, p)
+proc put_onload*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onload(self, v)
+proc get_onload*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onload(self, p)
+proc put_onbeforeunload*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onbeforeunload(self, v)
+proc get_onbeforeunload*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onbeforeunload(self, p)
+proc put_onunload*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onunload(self, v)
+proc get_onunload*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onunload(self, p)
+proc put_onhelp*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onhelp(self, v)
+proc get_onhelp*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onhelp(self, p)
+proc put_onerror*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onerror(self, v)
+proc get_onerror*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onerror(self, p)
+proc put_onresize*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onresize(self, v)
+proc get_onresize*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onresize(self, p)
+proc put_onscroll*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onscroll(self, v)
+proc get_onscroll*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onscroll(self, p)
+proc get_document*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLDocument2): HRESULT {.winapi, inline.} = self.lpVtbl.get_document(self, p)
+proc get_event*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLEventObj): HRESULT {.winapi, inline.} = self.lpVtbl.get_event(self, p)
+proc get_newEnum*(self: ptr IHTMLWindow2, p: ptr ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.get_newEnum(self, p)
+proc showModalDialog*(self: ptr IHTMLWindow2, dialog: BSTR, varArgIn: ptr VARIANT, varOptions: ptr VARIANT, varArgOut: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.showModalDialog(self, dialog, varArgIn, varOptions, varArgOut)
+proc showHelp*(self: ptr IHTMLWindow2, helpURL: BSTR, helpArg: VARIANT, features: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.showHelp(self, helpURL, helpArg, features)
+proc get_screen*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLScreen): HRESULT {.winapi, inline.} = self.lpVtbl.get_screen(self, p)
+proc get_Option*(self: ptr IHTMLWindow2, p: ptr ptr IHTMLOptionElementFactory): HRESULT {.winapi, inline.} = self.lpVtbl.get_Option(self, p)
+proc focus*(self: ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.focus(self)
+proc get_closed*(self: ptr IHTMLWindow2, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_closed(self, p)
+proc blur*(self: ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.blur(self)
+proc scroll*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.scroll(self, x, y)
+proc get_clientInformation*(self: ptr IHTMLWindow2, p: ptr ptr IOmNavigator): HRESULT {.winapi, inline.} = self.lpVtbl.get_clientInformation(self, p)
+proc setInterval*(self: ptr IHTMLWindow2, expression: BSTR, msec: LONG, language: ptr VARIANT, timerID: ptr LONG): HRESULT {.winapi, inline.} = self.lpVtbl.setInterval(self, expression, msec, language, timerID)
+proc clearInterval*(self: ptr IHTMLWindow2, timerID: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.clearInterval(self, timerID)
+proc put_offscreenBuffering*(self: ptr IHTMLWindow2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_offscreenBuffering(self, v)
+proc get_offscreenBuffering*(self: ptr IHTMLWindow2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_offscreenBuffering(self, p)
+proc execScript*(self: ptr IHTMLWindow2, code: BSTR, language: BSTR, pvarRet: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.execScript(self, code, language, pvarRet)
+proc toString*(self: ptr IHTMLWindow2, String: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, String)
+proc scrollBy*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.scrollBy(self, x, y)
+proc scrollTo*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.scrollTo(self, x, y)
+proc moveTo*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.moveTo(self, x, y)
+proc moveBy*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.moveBy(self, x, y)
+proc resizeTo*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.resizeTo(self, x, y)
+proc resizeBy*(self: ptr IHTMLWindow2, x: LONG, y: LONG): HRESULT {.winapi, inline.} = self.lpVtbl.resizeBy(self, x, y)
+proc get_external*(self: ptr IHTMLWindow2, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_external(self, p)
+proc get_Script*(self: ptr IHTMLDocument, p: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.get_Script(self, p)
+proc get_all*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_all(self, p)
+proc get_body*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_body(self, p)
+proc get_activeElement*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.get_activeElement(self, p)
+proc get_images*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_images(self, p)
+proc get_applets*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_applets(self, p)
+proc get_links*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_links(self, p)
+proc get_forms*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_forms(self, p)
+proc get_anchors*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_anchors(self, p)
+proc put_title*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_title(self, v)
+proc get_title*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_title(self, p)
+proc get_scripts*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_scripts(self, p)
+proc put_designMode*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_designMode(self, v)
+proc get_designMode*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_designMode(self, p)
+proc get_selection*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLSelectionObject): HRESULT {.winapi, inline.} = self.lpVtbl.get_selection(self, p)
+proc get_readyState*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_readyState(self, p)
+proc get_frames*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLFramesCollection2): HRESULT {.winapi, inline.} = self.lpVtbl.get_frames(self, p)
+proc get_embeds*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_embeds(self, p)
+proc get_plugins*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLElementCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_plugins(self, p)
+proc put_alinkColor*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_alinkColor(self, v)
+proc get_alinkColor*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_alinkColor(self, p)
+proc put_bgColor*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_bgColor(self, v)
+proc get_bgColor*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_bgColor(self, p)
+proc put_fgColor*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_fgColor(self, v)
+proc get_fgColor*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_fgColor(self, p)
+proc put_linkColor*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_linkColor(self, v)
+proc get_linkColor*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_linkColor(self, p)
+proc put_vlinkColor*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_vlinkColor(self, v)
+proc get_vlinkColor*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_vlinkColor(self, p)
+proc get_referrer*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_referrer(self, p)
+proc get_location*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLLocation): HRESULT {.winapi, inline.} = self.lpVtbl.get_location(self, p)
+proc get_lastModified*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_lastModified(self, p)
+proc put_URL*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_URL(self, v)
+proc get_URL*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_URL(self, p)
+proc put_domain*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_domain(self, v)
+proc get_domain*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_domain(self, p)
+proc put_cookie*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_cookie(self, v)
+proc get_cookie*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_cookie(self, p)
+proc put_expando*(self: ptr IHTMLDocument2, v: VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.put_expando(self, v)
+proc get_expando*(self: ptr IHTMLDocument2, p: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.get_expando(self, p)
+proc put_charset*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_charset(self, v)
+proc get_charset*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_charset(self, p)
+proc put_defaultCharset*(self: ptr IHTMLDocument2, v: BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.put_defaultCharset(self, v)
+proc get_defaultCharset*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_defaultCharset(self, p)
+proc get_mimeType*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_mimeType(self, p)
+proc get_fileSize*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileSize(self, p)
+proc get_fileCreatedDate*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileCreatedDate(self, p)
+proc get_fileModifiedDate*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileModifiedDate(self, p)
+proc get_fileUpdatedDate*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_fileUpdatedDate(self, p)
+proc get_security*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_security(self, p)
+proc get_protocol*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_protocol(self, p)
+proc get_nameProp*(self: ptr IHTMLDocument2, p: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.get_nameProp(self, p)
+proc write*(self: ptr IHTMLDocument2, psarray: ptr SAFEARRAY): HRESULT {.winapi, inline.} = self.lpVtbl.write(self, psarray)
+proc writeln*(self: ptr IHTMLDocument2, psarray: ptr SAFEARRAY): HRESULT {.winapi, inline.} = self.lpVtbl.writeln(self, psarray)
+proc open*(self: ptr IHTMLDocument2, url: BSTR, name: VARIANT, features: VARIANT, replace: VARIANT, pomWindowResult: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.open(self, url, name, features, replace, pomWindowResult)
+proc close*(self: ptr IHTMLDocument2): HRESULT {.winapi, inline.} = self.lpVtbl.close(self)
+proc clear*(self: ptr IHTMLDocument2): HRESULT {.winapi, inline.} = self.lpVtbl.clear(self)
+proc queryCommandSupported*(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandSupported(self, cmdID, pfRet)
+proc queryCommandEnabled*(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandEnabled(self, cmdID, pfRet)
+proc queryCommandState*(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandState(self, cmdID, pfRet)
+proc queryCommandIndeterm*(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandIndeterm(self, cmdID, pfRet)
+proc queryCommandText*(self: ptr IHTMLDocument2, cmdID: BSTR, pcmdText: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandText(self, cmdID, pcmdText)
+proc queryCommandValue*(self: ptr IHTMLDocument2, cmdID: BSTR, pcmdValue: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.queryCommandValue(self, cmdID, pcmdValue)
+proc execCommand*(self: ptr IHTMLDocument2, cmdID: BSTR, showUI: VARIANT_BOOL, value: VARIANT, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.execCommand(self, cmdID, showUI, value, pfRet)
+proc execCommandShowHelp*(self: ptr IHTMLDocument2, cmdID: BSTR, pfRet: ptr VARIANT_BOOL): HRESULT {.winapi, inline.} = self.lpVtbl.execCommandShowHelp(self, cmdID, pfRet)
+proc createElement*(self: ptr IHTMLDocument2, eTag: BSTR, newElem: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.createElement(self, eTag, newElem)
+proc put_onhelp*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onhelp(self, v)
+proc get_onhelp*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onhelp(self, p)
+proc put_onclick*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onclick(self, v)
+proc get_onclick*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onclick(self, p)
+proc put_ondblclick*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondblclick(self, v)
+proc get_ondblclick*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondblclick(self, p)
+proc put_onkeyup*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeyup(self, v)
+proc get_onkeyup*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeyup(self, p)
+proc put_onkeydown*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeydown(self, v)
+proc get_onkeydown*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeydown(self, p)
+proc put_onkeypress*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onkeypress(self, v)
+proc get_onkeypress*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onkeypress(self, p)
+proc put_onmouseup*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseup(self, v)
+proc get_onmouseup*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseup(self, p)
+proc put_onmousedown*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmousedown(self, v)
+proc get_onmousedown*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmousedown(self, p)
+proc put_onmousemove*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmousemove(self, v)
+proc get_onmousemove*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmousemove(self, p)
+proc put_onmouseout*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseout(self, v)
+proc get_onmouseout*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseout(self, p)
+proc put_onmouseover*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onmouseover(self, v)
+proc get_onmouseover*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onmouseover(self, p)
+proc put_onreadystatechange*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onreadystatechange(self, v)
+proc get_onreadystatechange*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onreadystatechange(self, p)
+proc put_onafterupdate*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onafterupdate(self, v)
+proc get_onafterupdate*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onafterupdate(self, p)
+proc put_onrowexit*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onrowexit(self, v)
+proc get_onrowexit*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onrowexit(self, p)
+proc put_onrowenter*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onrowenter(self, v)
+proc get_onrowenter*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onrowenter(self, p)
+proc put_ondragstart*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_ondragstart(self, v)
+proc get_ondragstart*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_ondragstart(self, p)
+proc put_onselectstart*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onselectstart(self, v)
+proc get_onselectstart*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onselectstart(self, p)
+proc elementFromPoint*(self: ptr IHTMLDocument2, x: LONG, y: LONG, elementHit: ptr ptr IHTMLElement): HRESULT {.winapi, inline.} = self.lpVtbl.elementFromPoint(self, x, y, elementHit)
+proc get_parentWindow*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLWindow2): HRESULT {.winapi, inline.} = self.lpVtbl.get_parentWindow(self, p)
+proc get_styleSheets*(self: ptr IHTMLDocument2, p: ptr ptr IHTMLStyleSheetsCollection): HRESULT {.winapi, inline.} = self.lpVtbl.get_styleSheets(self, p)
+proc put_onbeforeupdate*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onbeforeupdate(self, v)
+proc get_onbeforeupdate*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onbeforeupdate(self, p)
+proc put_onerrorupdate*(self: ptr IHTMLDocument2, v: VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.put_onerrorupdate(self, v)
+proc get_onerrorupdate*(self: ptr IHTMLDocument2, p: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.get_onerrorupdate(self, p)
+proc toString*(self: ptr IHTMLDocument2, String: ptr BSTR): HRESULT {.winapi, inline.} = self.lpVtbl.toString(self, String)
+proc createStyleSheet*(self: ptr IHTMLDocument2, bstrHref: BSTR, lIndex: LONG, ppnewStyleSheet: ptr ptr IHTMLStyleSheet): HRESULT {.winapi, inline.} = self.lpVtbl.createStyleSheet(self, bstrHref, lIndex, ppnewStyleSheet)
+proc ShowContextMenu*(self: ptr IDocHostUIHandler, dwID: DWORD, ppt: ptr POINT, pcmdtReserved: ptr IUnknown, pdispReserved: ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.ShowContextMenu(self, dwID, ppt, pcmdtReserved, pdispReserved)
+proc GetHostInfo*(self: ptr IDocHostUIHandler, pInfo: ptr DOCHOSTUIINFO): HRESULT {.winapi, inline.} = self.lpVtbl.GetHostInfo(self, pInfo)
+proc ShowUI*(self: ptr IDocHostUIHandler, dwID: DWORD, pActiveObject: ptr IOleInPlaceActiveObject, pCommandTarget: ptr IOleCommandTarget, pFrame: ptr IOleInPlaceFrame, pDoc: ptr IOleInPlaceUIWindow): HRESULT {.winapi, inline.} = self.lpVtbl.ShowUI(self, dwID, pActiveObject, pCommandTarget, pFrame, pDoc)
+proc HideUI*(self: ptr IDocHostUIHandler): HRESULT {.winapi, inline.} = self.lpVtbl.HideUI(self)
+proc UpdateUI*(self: ptr IDocHostUIHandler): HRESULT {.winapi, inline.} = self.lpVtbl.UpdateUI(self)
+proc EnableModeless*(self: ptr IDocHostUIHandler, fEnable: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.EnableModeless(self, fEnable)
+proc OnDocWindowActivate*(self: ptr IDocHostUIHandler, fActivate: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnDocWindowActivate(self, fActivate)
+proc OnFrameWindowActivate*(self: ptr IDocHostUIHandler, fActivate: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnFrameWindowActivate(self, fActivate)
+proc ResizeBorder*(self: ptr IDocHostUIHandler, prcBorder: LPCRECT, pUIWindow: ptr IOleInPlaceUIWindow, fRameWindow: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.ResizeBorder(self, prcBorder, pUIWindow, fRameWindow)
+proc TranslateAccelerator*(self: ptr IDocHostUIHandler, lpMsg: LPMSG, pguidCmdGroup: ptr GUID, nCmdID: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.TranslateAccelerator(self, lpMsg, pguidCmdGroup, nCmdID)
+proc GetOptionKeyPath*(self: ptr IDocHostUIHandler, pchKey: ptr LPOLESTR, dw: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.GetOptionKeyPath(self, pchKey, dw)
+proc GetDropTarget*(self: ptr IDocHostUIHandler, pDropTarget: ptr IDropTarget, ppDropTarget: ptr ptr IDropTarget): HRESULT {.winapi, inline.} = self.lpVtbl.GetDropTarget(self, pDropTarget, ppDropTarget)
+proc GetExternal*(self: ptr IDocHostUIHandler, ppDispatch: ptr ptr IDispatch): HRESULT {.winapi, inline.} = self.lpVtbl.GetExternal(self, ppDispatch)
+proc TranslateUrl*(self: ptr IDocHostUIHandler, dwTranslate: DWORD, pchURLIn: LPWSTR, ppchURLOut: ptr LPWSTR): HRESULT {.winapi, inline.} = self.lpVtbl.TranslateUrl(self, dwTranslate, pchURLIn, ppchURLOut)
+proc FilterDataObject*(self: ptr IDocHostUIHandler, pDO: ptr IDataObject, ppDORet: ptr ptr IDataObject): HRESULT {.winapi, inline.} = self.lpVtbl.FilterDataObject(self, pDO, ppDORet)
+converter winimConverterIHTMLFiltersCollectionToIDispatch*(x: ptr IHTMLFiltersCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLFiltersCollectionToIUnknown*(x: ptr IHTMLFiltersCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLStyleToIDispatch*(x: ptr IHTMLStyle): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLStyleToIUnknown*(x: ptr IHTMLStyle): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLRuleStyleToIDispatch*(x: ptr IHTMLRuleStyle): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLRuleStyleToIUnknown*(x: ptr IHTMLRuleStyle): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLElementToIDispatch*(x: ptr IHTMLElement): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLElementToIUnknown*(x: ptr IHTMLElement): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLStyleSheetRuleToIDispatch*(x: ptr IHTMLStyleSheetRule): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLStyleSheetRuleToIUnknown*(x: ptr IHTMLStyleSheetRule): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLStyleSheetRulesCollectionToIDispatch*(x: ptr IHTMLStyleSheetRulesCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLStyleSheetRulesCollectionToIUnknown*(x: ptr IHTMLStyleSheetRulesCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLStyleSheetToIDispatch*(x: ptr IHTMLStyleSheet): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLStyleSheetToIUnknown*(x: ptr IHTMLStyleSheet): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLStyleSheetsCollectionToIDispatch*(x: ptr IHTMLStyleSheetsCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLStyleSheetsCollectionToIUnknown*(x: ptr IHTMLStyleSheetsCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLTxtRangeToIDispatch*(x: ptr IHTMLTxtRange): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLTxtRangeToIUnknown*(x: ptr IHTMLTxtRange): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLFormElementToIDispatch*(x: ptr IHTMLFormElement): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLFormElementToIUnknown*(x: ptr IHTMLFormElement): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLImgElementToIDispatch*(x: ptr IHTMLImgElement): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLImgElementToIUnknown*(x: ptr IHTMLImgElement): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLImageElementFactoryToIDispatch*(x: ptr IHTMLImageElementFactory): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLImageElementFactoryToIUnknown*(x: ptr IHTMLImageElementFactory): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLElementCollectionToIDispatch*(x: ptr IHTMLElementCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLElementCollectionToIUnknown*(x: ptr IHTMLElementCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLSelectionObjectToIDispatch*(x: ptr IHTMLSelectionObject): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLSelectionObjectToIUnknown*(x: ptr IHTMLSelectionObject): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLOptionElementToIDispatch*(x: ptr IHTMLOptionElement): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLOptionElementToIUnknown*(x: ptr IHTMLOptionElement): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLOptionElementFactoryToIDispatch*(x: ptr IHTMLOptionElementFactory): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLOptionElementFactoryToIUnknown*(x: ptr IHTMLOptionElementFactory): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOmHistoryToIDispatch*(x: ptr IOmHistory): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIOmHistoryToIUnknown*(x: ptr IOmHistory): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLMimeTypesCollectionToIDispatch*(x: ptr IHTMLMimeTypesCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLMimeTypesCollectionToIUnknown*(x: ptr IHTMLMimeTypesCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLPluginsCollectionToIDispatch*(x: ptr IHTMLPluginsCollection): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLPluginsCollectionToIUnknown*(x: ptr IHTMLPluginsCollection): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLOpsProfileToIDispatch*(x: ptr IHTMLOpsProfile): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLOpsProfileToIUnknown*(x: ptr IHTMLOpsProfile): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIOmNavigatorToIDispatch*(x: ptr IOmNavigator): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIOmNavigatorToIUnknown*(x: ptr IOmNavigator): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLLocationToIDispatch*(x: ptr IHTMLLocation): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLLocationToIUnknown*(x: ptr IHTMLLocation): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLEventObjToIDispatch*(x: ptr IHTMLEventObj): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLEventObjToIUnknown*(x: ptr IHTMLEventObj): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLFramesCollection2ToIDispatch*(x: ptr IHTMLFramesCollection2): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLFramesCollection2ToIUnknown*(x: ptr IHTMLFramesCollection2): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLScreenToIDispatch*(x: ptr IHTMLScreen): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLScreenToIUnknown*(x: ptr IHTMLScreen): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLWindow2ToIHTMLFramesCollection2*(x: ptr IHTMLWindow2): ptr IHTMLFramesCollection2 = cast[ptr IHTMLFramesCollection2](x)
+converter winimConverterIHTMLWindow2ToIDispatch*(x: ptr IHTMLWindow2): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLWindow2ToIUnknown*(x: ptr IHTMLWindow2): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLDocumentToIDispatch*(x: ptr IHTMLDocument): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLDocumentToIUnknown*(x: ptr IHTMLDocument): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIHTMLDocument2ToIHTMLDocument*(x: ptr IHTMLDocument2): ptr IHTMLDocument = cast[ptr IHTMLDocument](x)
+converter winimConverterIHTMLDocument2ToIDispatch*(x: ptr IHTMLDocument2): ptr IDispatch = cast[ptr IDispatch](x)
+converter winimConverterIHTMLDocument2ToIUnknown*(x: ptr IHTMLDocument2): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIDocHostUIHandlerToIUnknown*(x: ptr IDocHostUIHandler): ptr IUnknown = cast[ptr IUnknown](x)
 const
   unknown* = 0
   requestSize* = 0

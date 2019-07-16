@@ -5,7 +5,8 @@
 #
 #====================================================================
 
-## This class represents the font chooser dialog.
+## This class represents the font chooser dialog. Only modal dialog is
+## supported.
 #
 ## :Seealso:
 ##   `wMessageDialog <wMessageDialog.html>`_
@@ -13,6 +14,8 @@
 ##   `wDirDialog <wDirDialog.html>`_
 ##   `wColorDialog <wColorDialog.html>`_
 ##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 
 proc getChosenFont*(self: wFontDialog): wFont {.validate, property, inline.} =
   ## Gets the font chosen by the user if the user pressed OK.
@@ -78,7 +81,7 @@ proc setRange*(self: wFontDialog, range: Slice[int]) {.validate, property, inlin
   ## Sets the valid range for the font point size.
   self.mRange = range
 
-proc final*(self: wFontDialog) {.validate.} =
+proc final*(self: wFontDialog) =
   ## Default finalizer for wFontDialog.
   discard
 
@@ -101,7 +104,7 @@ proc FontDialog*(parent: wWindow = nil, font: wFont = nil, color = wBlack,
   new(result, final)
   result.init(parent, font, color, enableEffects, allowSymbols, showHelp, range)
 
-proc showModal*(self: wFontDialog): wId {.discardable.} =
+proc showModal*(self: wFontDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   var
@@ -137,16 +140,7 @@ proc showModal*(self: wFontDialog): wId {.discardable.} =
   else:
     result = wIdCancel
 
-proc show*(self: wFontDialog): wId {.inline, discardable.} =
-  ## The same as showModal().
-  result = self.showModal()
-
-proc showModalResult*(self: wFontDialog): wFont {.inline, discardable.} =
-  ## Shows the dialog, returning the user-selected font or nil.
+proc display*(self: wFontDialog): wFont {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the user-selected font or nil.
   if self.showModal() == wIdOk:
-    result = self.mChosenFont
-
-proc showResult*(self: wFontDialog): wFont {.inline, discardable.} =
-  ## The same as showModalResult().
-  if self.show() == wIdOk:
-    result = self.mChosenFont
+    result = self.getChosenFont()

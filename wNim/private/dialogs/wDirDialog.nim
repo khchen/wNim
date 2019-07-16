@@ -5,7 +5,8 @@
 #
 #====================================================================
 
-## This class represents the directory chooser dialog.
+## This class represents the directory chooser dialog. Only modal dialog is
+## supported.
 #
 ## :Seealso:
 ##   `wMessageDialog <wMessageDialog.html>`_
@@ -13,6 +14,8 @@
 ##   `wColorDialog <wColorDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
 ##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -58,8 +61,7 @@ proc setPath*(self: wDirDialog, path: string) {.validate, property, inline.} =
   ## Sets the default path.
   self.mPath = path
 
-proc setMessage*(self: var wDirDialog, message: string)
-    {.validate, property, inline.} =
+proc setMessage*(self: wDirDialog, message: string) {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
   self.mMessage = message
 
@@ -133,7 +135,7 @@ proc showModal_XPCompatible(self: wDirDialog): wId =
   self.mPath = $buffer
   result = wIdOk
 
-proc showModal*(self: wDirDialog): wId {.discardable.} =
+proc showModal*(self: wDirDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   when defined(useWinXP):
@@ -145,18 +147,9 @@ proc showModal*(self: wDirDialog): wId {.discardable.} =
       result = self.showModal_VistaLaster()
 
   if result == wIdOk and (self.mStyle and wDdChangeDir) != 0:
-    SetCurrentDirectory(self.mPath)
+    discard SetCurrentDirectory(self.mPath)
 
-proc show*(self: wDirDialog): wId {.inline, discardable.} =
-  ## The same as showModal().
-  result = self.showModal()
-
-proc showModalResult*(self: wDirDialog): string {.inline, discardable.} =
-  ## Shows the dialog, returning the selected path or nil.
+proc display*(self: wDirDialog): string {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the selected path or nil.
   if self.showModal() == wIdOk:
-    result = self.getPath()
-
-proc showResult*(self: wDirDialog): string {.inline, discardable.} =
-  ## The same as showModalResult().
-  if self.show() == wIdOk:
     result = self.getPath()

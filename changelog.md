@@ -1,7 +1,14 @@
 Version 0.6.0
 -------------
-* Add wFontDialog class.
+* Add wWebView, wFontDialog, wTextEnterDialog, wPasswordEntryDialog, and wFindReplaceDialog
 * wFont: add getStrikeOut(), setStrikeOut().
+* wFrame: add showWindowModal(), wDefaultDialogStyle.
+* wCheckBox, wRadioButton: add click().
+* Remove show() for dialogs. Use showModal() instead.
+* Rename showModalResult() to display().
+* Rewrite examples/frame.nim and examples/dialog.nim to demonstrate the dialogs.
+* Add examples/webView.nim to demonstrate the wWebView class.
+* Fix some small bugs.
 
 Version 0.5.0
 -------------

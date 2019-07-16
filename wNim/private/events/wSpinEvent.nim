@@ -10,6 +10,10 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wSpinButton <wSpinButton.html>`_
+##   `wSpinCtrl <wSpinCtrl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wSpinEvent                      Description

@@ -55,6 +55,10 @@ proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
 method release(self: wRadioButton) =
   self.mParent.systemDisconnect(self.mCommandConn)
 
+proc click*(self: wRadioButton) {.validate, inline.} =
+  ## Simulates the user clicking a radiobutton.
+  SendMessage(self.mHwnd, BM_CLICK, 0, 0)
+
 proc final*(self: wRadioButton) =
   ## Default finalizer for wRadioButton.
   discard

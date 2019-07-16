@@ -80,6 +80,10 @@ proc setValue*(self: wCheckBox, state: bool) {.validate, property, inline.} =
   ## Sets the checkbox to the given state.
   SendMessage(self.mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
+proc click*(self: wCheckBox) {.validate, inline.} =
+  ## Simulates the user clicking a checkbox.
+  SendMessage(self.mHwnd, BM_CLICK, 0, 0)
+
 method release(self: wCheckBox) =
   self.mParent.systemDisconnect(self.mCommandConn)
 

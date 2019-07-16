@@ -10,6 +10,9 @@
 ## :Superclass:
 ##   `wEvent <wEvent.html>`_
 #
+## :Seealso:
+##   `wWindow <wWindow.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wMouseEvent (client)            Description
@@ -44,7 +47,7 @@
 ##   ==============================  =============================================================
 ##   wEvent_MouseWheel               The mouse wheel is rotated.
 ##   wEvent_MouseHorizontalWheel     The mouse's horizontal scroll wheel is tilted or rotated.
-##   wEvent_MouseEnter
+##   wEvent_MouseEnter               When the cursor enters the client area of the window
 ##   wEvent_MouseLeave               When the cursor leaves the client area of the window
 ##   wEvent_MouseHover               When the cursor hovers over the client area of the window for the period of time.
 ##   ==============================  =============================================================

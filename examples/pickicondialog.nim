@@ -138,7 +138,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     if i == 1:
       var files = FileDialog(dialog, "Select Icon Files",
         defaultDir=getCurrentDir(), wildcard="Icon Files|*.ico;*.cur;*.dll;*.exe",
-        style=wFdOpen or wFdFileMustExist).showResult()
+        style=wFdOpen or wFdFileMustExist).display()
 
       if files.len == 1:
         currentFile = files[0]

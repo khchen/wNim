@@ -29,7 +29,7 @@ proc App*(): wApp =
   result.mInstance = GetModuleHandle(nil)
   result.mExitCode = 0
   result.mAccelExists = false
-  result.mTopLevelWindowList = @[]
+  result.mTopLevelWindowTable = initTable[HWND, wWindow]()
   result.mWindowTable = initTable[HWND, wWindow]()
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
@@ -51,7 +51,7 @@ proc wAppGetInstance(): HANDLE {.inline.} =
   result = wTheApp.mInstance
 
 proc wAppHasTopLevelWindow(): bool {.inline.} =
-  result = (wTheApp.mTopLevelWindowList.len != 0)
+  result = (wTheApp.mTopLevelWindowTable.len != 0)
 
 proc wAppWindowAdd(win: wWindow) {.inline.} =
   wTheApp.mWindowTable[win.mHwnd] = win
@@ -60,21 +60,22 @@ proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline.} =
   result = wTheApp.mWindowTable.getOrDefault(hwnd)
 
 proc wAppTopLevelWindowAdd(win: wWindow) {.inline.} =
-  wTheApp.mTopLevelWindowList.add(win)
+  wTheApp.mTopLevelWindowTable[win.mHwnd] = win
 
-iterator wAppTopLevelWindows(): wWindow {.inline.} =
-  for win in wTheApp.mTopLevelWindowList:
-    yield win
+proc wAppTopLevelWindowAdd(hwnd: HWND) {.inline.} =
+  wTheApp.mTopLevelWindowTable[hwnd] = nil
 
-proc wAppWindowDelete(win: wWindow) =
+iterator wAppTopLevelHwnd(): HWND {.inline.} =
+  for hwnd in wTheApp.mTopLevelWindowTable.keys:
+    yield hwnd
+
+proc wAppWindowDelete(win: wWindow) {.inline.} =
   wTheApp.mWindowTable.del(win.mHwnd)
+  wTheApp.mTopLevelWindowTable.del(win.mHwnd)
 
-  var index = 0
-  while index < wTheApp.mTopLevelWindowList.len:
-    if wTheApp.mTopLevelWindowList[index] == win:
-      wTheApp.mTopLevelWindowList.del index
-    else:
-      index.inc
+proc wAppWindowDelete(hwnd: HWND) {.inline.} =
+  wTheApp.mWindowTable.del(hwnd)
+  wTheApp.mTopLevelWindowTable.del(hwnd)
 
 proc wAppIsMessagePropagation(msg: UINT): bool {.inline.} =
   result = msg in wTheApp.mPropagationSet
@@ -120,32 +121,50 @@ proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline.} =
   if hMenu in wTheApp.mMenuBaseTable:
     return cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
 
-proc MessageLoop(isMainLoop: bool = true): int =
+proc wAppProcessDialogMessage(msg: var MSG): bool =
+  # find the top-level non-child window.
+  var hwnd = GetAncestor(msg.hwnd, GA_ROOT)
+
+  # if the window don't belong to wNim, call IsDialogMessage() for it.
+  if hwnd != 0 and wAppWindowFindByHwnd(hwnd) == nil:
+    # here we can use GetClassName() to check if the class name == "#32770",
+    # but is it necessary?
+    return IsDialogMessage(hwnd, msg)
+
+proc wAppProcessAcceleratorMessage(msg: var MSG): bool =
+  if wTheApp.mAccelExists:
+    var win = wAppWindowFindByHwnd(msg.hwnd)
+    while win != nil:
+      if win.mAcceleratorTable != nil:
+        let hAccel = win.mAcceleratorTable.getHandle()
+        if hAccel != 0 and TranslateAccelerator(win.mHwnd, hAccel, msg) != 0:
+          return true
+
+      win = win.mParent
+  return false
+
+proc MessageLoop(modalWin: HWND = 0): int =
   var msg: MSG
   while true:
     if GetMessage(msg, 0, 0, 0) == 0 or msg.message == wEvent_AppQuit:
-      if isMainLoop == false or wAppHasTopLevelWindow() == false:
+      if not wAppHasTopLevelWindow() or
+          (msg.message == wEvent_AppQuit and
+            modalWin != 0 and modalWin == msg.lParam):
         break
 
-    var accelProcessed = false
-    if wTheApp.mAccelExists:
-      var win = wAppWindowFindByHwnd(msg.hwnd)
-      while win != nil:
-        if win.mAcceleratorTable != nil:
-          let hAccel = win.mAcceleratorTable.getHandle()
-          if hAccel != 0 and TranslateAccelerator(win.mHwnd, hAccel, msg) != 0:
-            accelProcessed = true
-            break
+    # let system modeless dialog (find/replace) works.
+    if wAppProcessDialogMessage(msg):
+      continue
 
-        win = win.mParent
+    if wAppProcessAcceleratorMessage(msg):
+      continue
 
     # we can use IsDialogMessage here to handle key navigation
     # however, it is not flexible enouth
-    # so we handle all the navigation by outself in wControl
+    # so we handle all the navigation by ourself in wControl
 
-    if not accelProcessed:
-      TranslateMessage(msg)
-      DispatchMessage(msg)
+    TranslateMessage(msg)
+    DispatchMessage(msg)
 
   result = int msg.wParam
 
@@ -155,7 +174,7 @@ proc mainLoop*(self: wApp): int {.discardable.}=
   ## Execute the main GUI event loop.
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
-    result = MessageLoop(isMainLoop=true)
+    result = MessageLoop()
 
   for win in wAppWindows():
     discard DestroyWindow(win.mHwnd)

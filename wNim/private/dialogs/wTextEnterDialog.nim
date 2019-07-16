@@ -5,8 +5,11 @@
 #
 #====================================================================
 
-## This class represents a dialog that requests a one-line text or password
-## string from the user.
+## This class represents a dialog that requests a one-line text string from
+## the user. Both modal or modaless dialog are supported.
+#
+## :Subclass:
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
 #
 ## :Seealso:
 ##   `wMessageDialog <wMessageDialog.html>`_
@@ -14,16 +17,7 @@
 ##   `wDirDialog <wDirDialog.html>`_
 ##   `wColorDialog <wColorDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
-#
-## :Styles:
-##   ==============================  =============================================================
-##   Styles                          Description
-##   ==============================  =============================================================
-##   wTedPassword                    The text will be echoed as asterisks.
-##   ==============================  =============================================================
-
-const
-  wTedPassword* = wTePassword
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 
 proc getValue*(self: wTextEnterDialog): string {.validate, property, inline.} =
   ## Returns the text that the user has entered if the user has pressed OK,
@@ -75,15 +69,6 @@ proc setPosition*(self: wTextEnterDialog, pos: wPoint) {.validate, property, inl
   ## Sets the position of the dialog. Using wDefaultPoint to centre the dialog.
   self.mPos = pos
 
-proc getFrame*(self: wTextEnterDialog): wFrame {.validate, property, inline.} =
-  ## Gets the wFrame object for the dialog. This function let the parent window
-  ## be able to connect wEvent_Close event to a modaless dialog.
-  result = self.mFrame
-
-proc getReturnId*(self: wTextEnterDialog): wId {.validate, property, inline.} =
-  ## Returning wIdOk if the user pressed OK, and wIdCancel otherwise.
-  result = self.mReturnId
-
 proc setOKCancelLabels*(self: wTextEnterDialog, ok: string, cancel: string)
     {.validate, property, inline.} =
   ## Overrides the default labels of the OK and Cancel buttons.
@@ -95,7 +80,8 @@ proc final*(self: wTextEnterDialog) =
   discard
 
 proc init*(self: wTextEnterDialog, parent: wWindow = nil, message = "Input text",
-    caption = "", value = "", style: wStyle = 0, pos = wDefaultPoint) {.validate.} =
+    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
+    pos = wDefaultPoint) {.validate.} =
   ## Initializer.
   self.mParent = parent
   self.mMessage = message
@@ -109,19 +95,19 @@ proc init*(self: wTextEnterDialog, parent: wWindow = nil, message = "Input text"
   self.mReturnId = wIdCancel
 
 proc TextEnterDialog*(parent: wWindow = nil, message = "Input text",
-    caption = "", value = "", style: wStyle = 0, pos = wDefaultPoint): wTextEnterDialog
-    {.inline.} =
+    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
+    pos = wDefaultPoint): wTextEnterDialog {.inline.} =
   ## Constructor.
   new(result, final)
   result.init(parent, message, caption, value, style, pos)
 
 proc create(self: wTextEnterDialog): wFrame =
   let
-    style = self.mStyle and (not wTePassword)
-    dialog = Frame(owner=self.mParent, title=self.mCaption, style=style)
-    panel = Panel(dialog)
+    passwordStyle = if self of wPasswordEntryDialog: wTePassword else: 0
+    frame = Frame(owner=self.mParent, title=self.mCaption, style=self.mStyle)
+    panel = Panel(frame)
     statictext = StaticText(panel, label=self.mMessage)
-    textctrl = TextCtrl(panel, style=wBorderSunken or (self.mStyle and wTedPassword))
+    textctrl = TextCtrl(panel, style=wBorderSunken or passwordStyle)
     buttonOk = Button(panel, label=self.mOkLabel)
     buttonCancel = Button(panel, label=self.mCancelLabe)
     staticline = StaticLine(panel)
@@ -135,8 +121,8 @@ proc create(self: wTextEnterDialog): wFrame =
       buttonOk.size.height + 2 + 15 * 5
 
   if width < 350: width = 350
-  dialog.clientSize = (width, height)
-  dialog.minClientSize = (width, height)
+  frame.clientSize = (width, height)
+  frame.minClientSize = (width, height)
 
   proc layout() =
     panel.autolayout """
@@ -147,73 +133,114 @@ proc create(self: wTextEnterDialog): wFrame =
       V:|-[statictext]-[textctrl]->[staticline(2)]-[buttonOk,buttonCancel]-|
     """
 
-  dialog.shortcut(wAccelNormal, wKey_Esc) do ():
+  frame.shortcut(wAccelNormal, wKey_Esc) do ():
     buttonCancel.click()
 
-  dialog.wEvent_Size do ():
+  frame.wEvent_Size do ():
     layout()
+
+  frame.systemConnect(wEvent_Destroy) do (event: wEvent):
+    let event = wDialogEvent Event(window=frame, msg=wEvent_DialogClosed,
+      wParam=WPARAM self.mReturnId)
+    event.mDialog = self
+    frame.processEvent(event)
 
   buttonOk.wEvent_Button do ():
     self.mValue = textctrl.value
     self.mReturnId = wIdOk
-    dialog.close()
+    frame.close()
 
   buttonCancel.wEvent_Button do ():
-    dialog.close()
+    frame.close()
 
   layout()
-  dialog.center()
+  frame.center()
   if self.mPos != wDefaultPoint:
-    dialog.move(self.mPos)
+    frame.move(self.mPos)
 
   if self.mValue.len != 0:
     textctrl.value = self.mValue
     textctrl.selectAll()
 
-  result = dialog
+  result = frame
 
-proc showModal*(self: wTextEnterDialog): wId {.discardable.} =
+proc showModal*(self: wTextEnterDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   self.mFrame = self.create()
 
-  self.mFrame.wEvent_Destroy do ():
+  self.mFrame.systemConnect(wEvent_Destroy) do (event: wEvent):
     self.mFrame = nil
 
-  self.mFrame.wEvent_Close do ():
+  self.mFrame.systemConnect(wEvent_Close) do (event: wEvent):
     self.mFrame.endModal()
 
-  self.mFrame.showModal()
+  # use showWindowModal insted of showModal, like other system common dialogs do.
+  self.mFrame.showWindowModal()
   result = self.mReturnId
 
-proc show*(self: wTextEnterDialog): wId {.inline, discardable.} =
-  ## The same as showModal().
-  result = self.showModal()
-
-proc showModalResult*(self: wTextEnterDialog): string {.inline, discardable.} =
-  ## Shows the dialog, returning the user-entered text or empty string.
+proc display*(self: wTextEnterDialog): string {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the user-entered text or empty
+  ## string.
   if self.showModal() == wIdOk:
-    result = self.mValue
+    result = self.getValue()
 
-proc showResult*(self: wTextEnterDialog): string {.inline, discardable.} =
-  ## The same as showModalResult().
-  if self.show() == wIdOk:
-    result = self.mValue
-
-proc showModaless*(self: wTextEnterDialog): wId {.discardable.} =
-  ## Shows the dialog in modaless mode. We can use *getFrame() to know when the
-  ## dialog is closed, and use *getReturnId() to get the result. For example:
-  ##
-  ## .. code-block:: Nim
-  ##   let ted = TextEnterDialog(frame)
-  ##   ted.showModaless()
-  ##   ted.frame.wEvent_Close do ():
-  ##     if ted.returnId == wIdOk:
-  ##       echo ted.value
+proc showModaless*(self: wTextEnterDialog) {.validate.} =
+  ## Shows the dialog in modaless mode. The frame of this dialog will recieve
+  ## wEvent_DialogClosed event when the dialog is closed.
   if self.mFrame == nil:
     self.mFrame = self.create()
 
-    self.mFrame.wEvent_Destroy do ():
+    self.mFrame.systemConnect(wEvent_Destroy) do (event: wEvent):
       self.mFrame = nil
 
   self.mFrame.show()
+
+proc close*(self: wTextEnterDialog) {.validate, inline.} =
+  ## Close a modaless dialog.
+  if self.mFrame != nil:
+    self.mFrame.close()
+
+proc getReturnCode*(self: wTextEnterDialog): wId {.validate, property, inline.} =
+  ## Gets the return code for a modaless dialog. Returning wIdOk if the user
+  ## pressed OK, and wIdCancel otherwise.
+  result = self.mReturnId
+
+proc getReturnId*(self: wTextEnterDialog): wId {.validate, property, inline.} =
+  ## The same as getReturnCode().
+  result = self.getReturnCode()
+
+proc getFrame*(self: wTextEnterDialog): wFrame {.validate, property, inline.} =
+  ## Gets the wFrame object for a modaless dialog. This function let a modaless
+  ## dialog can be controlled as a wWindow/wFrame object.
+  result = self.mFrame
+
+# cannot use wEventHandler|wEventNeatHandler -> seems compiler's bug
+
+template connect*(self: wTextEnterDialog, msg: UINT,
+    handler: wEventHandler): untyped =
+  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
+  self.mFrame.connect(msg, handler)
+
+template connect*(self: wTextEnterDialog, msg: UINT,
+    handler: wEventNeatHandler): untyped =
+  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
+  self.mFrame.connect(msg, handler)
+
+template `.`*(self: wTextEnterDialog, msg: UINT,
+    handler: wEventHandler): untyped =
+  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
+  self.connect(msg, handler)
+
+template `.`*(self: wTextEnterDialog, msg: UINT,
+    handler: wEventNeatHandler): untyped =
+  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
+  self.connect(msg, handler)
+
+template disconnect*(self: wTextEnterDialog, msg: UINT, limit = -1): untyped =
+  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
+  self.mFrame.disconnect(msg, limit)
+
+template disconnect*(self: wTextEnterDialog, connection: wEventConnection): untyped =
+  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
+  self.mFrame.disconnect(connection)

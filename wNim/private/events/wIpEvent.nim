@@ -11,6 +11,9 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wIpCtrl <wIpCtrl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wIpEvent                        Description

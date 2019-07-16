@@ -250,7 +250,7 @@ method getBestSize*(self: wComboBox): wSize =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method trigger(self: wComboBox) =
+method trigger(self: wComboBox) {.locks: "unknown".} =
   for i in 0..<self.mInitCount:
     let text = self.mInitData[i]
     SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))

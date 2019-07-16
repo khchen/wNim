@@ -115,7 +115,7 @@ proc delete*(self: wImageList) {.validate.} =
     ImageList_Destroy(self.mHandle)
     self.mHandle = 0
 
-proc final*(self: wImageList) {.validate.} =
+proc final*(self: wImageList) =
   ## Default finalizer for wImageList.
   self.delete()
 

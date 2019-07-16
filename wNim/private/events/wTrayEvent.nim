@@ -11,6 +11,9 @@
 ## :Superclass:
 ##   `wEvent <wEvent.html>`_
 #
+## :Seealso:
+##   `wFrame <wFrame.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wTrayEvent                      Description

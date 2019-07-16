@@ -10,6 +10,9 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wListCtrl <wListCtrl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wListEvent                      Description

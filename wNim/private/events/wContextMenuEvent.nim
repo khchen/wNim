@@ -11,6 +11,9 @@
 ## :Superclass:
 ##   `wEvent <wEvent.html>`_
 #
+## :Seealso:
+##   `wWindow <wWindow.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wContextMenuEvent               Description

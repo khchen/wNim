@@ -134,7 +134,7 @@ when not defined(Nimdoc):
     # important is, it don't crash the GC.
     wApp* = ref object of RootObj
       mInstance: HANDLE
-      mTopLevelWindowList: seq[wWindow]
+      mTopLevelWindowTable: Table[HWND, wWindow]
       mWindowTable: Table[HWND, wWindow]
       mMenuBaseTable: Table[HMENU, pointer]
       mGDIStockSeq: seq[wGdiObject]
@@ -172,6 +172,8 @@ when not defined(Nimdoc):
     wDragDropEvent* = ref object of wEvent
       mDataObject: wDataObject
       mEffect: int
+    wDialogEvent* = ref object of wEvent
+      mDialog: wDialog
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
       mIndex: int
@@ -190,6 +192,10 @@ when not defined(Nimdoc):
     wIpEvent* = ref object of wCommandEvent
       mIndex: int
       mValue: int
+    wWebViewEvent* = ref object of wCommandEvent
+      mDispatch: ptr IDispatch
+      mUrl: string
+      mText: string
 
     wScrollData = object
       kind: int
@@ -275,7 +281,7 @@ when not defined(Nimdoc):
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar
       mIcon: wIcon
-      mDisableList: seq[wWindow]
+      mDisableList: seq[HWND]
       mTrayIcon: wIcon
       mTrayToolTip: string
       mTrayIconAdded: bool
@@ -438,8 +444,7 @@ when not defined(Nimdoc):
       mAttach1: bool
       mAttach2: bool
 
-    # wToolTip* = ref wToolTipObj
-    # wToolTipObj = object of wControlObj
+    wWebView* = ref object of wControl
 
     wMenuBase* = ref object of RootObj
       mHmenu: HMENU
@@ -550,22 +555,22 @@ when not defined(Nimdoc):
     wPaintDC* = object of wDC
       mPs: PAINTSTRUCT
 
-    wMessageDialog* = ref object of RootObj
-      mHook: HHOOK
+    wDialog* = ref object of RootObj
       mParent: wWindow
+
+    wMessageDialog* = ref object of wDialog
+      mHook: HHOOK
       mMessage: string
       mCaption: string
       mStyle: wStyle
       mLabelText: Table[INT, string]
 
-    wDirDialog* = ref object of RootObj
-      mParent: wWindow
+    wDirDialog* = ref object of wDialog
       mMessage: string
       mPath: string
       mStyle: wStyle
 
-    wFileDialog* = ref object of RootObj
-      mParent: wWindow
+    wFileDialog* = ref object of wDialog
       mMessage: string
       mDefaultDir: string
       mDefaultFile: string
@@ -575,14 +580,12 @@ when not defined(Nimdoc):
       mPath: string
       mPaths: seq[string]
 
-    wColorDialog* = ref object of RootObj
-      mParent: wWindow
+    wColorDialog* = ref object of wDialog
       mColor: wColor
       mStyle: wStyle
       mCustomColor: array[16, wColor]
 
-    wFontDialog* = ref object of RootObj
-      mParent: wWindow
+    wFontDialog* = ref object of wDialog
       mChosenFont: wFont
       mInitialFont: wFont
       mColor: wColor
@@ -591,8 +594,7 @@ when not defined(Nimdoc):
       mShowHelp: bool
       mRange: Slice[int]
 
-    wTextEnterDialog* = ref object of RootObj
-      mParent: wWindow
+    wTextEnterDialog* = ref object of wDialog
       mMessage: string
       mCaption: string
       mValue: string
@@ -603,6 +605,16 @@ when not defined(Nimdoc):
       mCancelLabe: string
       mFrame: wFrame
       mReturnId: wId
+
+    wPasswordEntryDialog* = ref object of wTextEnterDialog
+
+    wFindReplaceDialog* = ref object of wDialog
+      mFlags: int
+      mFindString: TString
+      mReplaceString: TString
+      mFindReplace: FINDREPLACE
+      mFrame: wFrame
+      mHdlg: HWND
 
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}
   proc `$`*(x: wCommandID): string {.borrow.}

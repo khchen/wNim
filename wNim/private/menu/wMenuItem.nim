@@ -143,7 +143,7 @@ proc detach*(self: wMenuItem) {.validate.} =
   withPosAtParentMenu:
     parent.remove(pos)
 
-proc final*(self: wMenuItem) {.validate.} =
+proc final*(self: wMenuItem) =
   ## Default finalizer for wMenuItem.
   discard
 

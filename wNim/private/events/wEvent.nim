@@ -46,12 +46,22 @@
 ##   `wKeyEvent <wKeyEvent.html>`_
 ##   `wSizeEvent <wSizeEvent.html>`_
 ##   `wMoveEvent <wMoveEvent.html>`_
-##   `wTrayEvent <wTrayEvent.html>`_
-##   `wSetCursorEvent <wSetCursorEvent.html>`_
 ##   `wContextMenuEvent <wContextMenuEvent.html>`_
 ##   `wScrollWinEvent <wScrollWinEvent.html>`_
+##   `wTrayEvent <wTrayEvent.html>`_
+##   `wDragDropEvent <wDragDropEvent.html>`_
 ##   `wNavigationEvent <wNavigationEvent.html>`_
+##   `wSetCursorEvent <wSetCursorEvent.html>`_
+##   `wStatusBarEvent <wStatusBarEvent.html>`_
 ##   `wCommandEvent <wCommandEvent.html>`_
+##   `wScrollEvent <wScrollEvent.html>`_
+##   `wSpinEvent <wSpinEvent.html>`_
+##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
+##   `wListEvent <wListEvent.html>`_
+##   `wTreeEvent <wTreeEvent.html>`_
+##   `wIpEvent <wIpEvent.html>`_
+##   `wWebViewEvent <wWebViewEvent.html>`_
+##   `wDialogEvent <wDialogEvent.html>`_
 #
 ## :Events:
 ##   ================================  =============================================================
@@ -80,6 +90,7 @@ proc isContextMenuEvent(msg: UINT): bool {.inline.}
 proc isScrollWinEvent(msg: UINT): bool {.inline.}
 proc isTrayEvent(msg: UINT): bool {.inline.}
 proc isDragDropEvent(msg: UINT): bool {.inline.}
+proc isDialogEvent(msg: UINT): bool {.inline.}
 proc isNavigationEvent(msg: UINT): bool {.inline.}
 proc isSetCursorEvent(msg: UINT): bool {.inline.}
 proc isCommandEvent(msg: UINT): bool {.inline.}
@@ -90,6 +101,7 @@ proc isStatusBarEvent(msg: UINT): bool {.inline.}
 proc isSpinEvent(msg: UINT): bool {.inline.}
 proc isHyperlinkEvent(msg: UINT): bool {.inline.}
 proc isIpEvent(msg: UINT): bool {.inline.}
+proc isWebViewEvent(msg: UINT): bool {.inline.}
 proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
 const
@@ -123,6 +135,7 @@ const
   wEvent_ScrollWinFirst = WM_APP + 100
   wEvent_TrayFirst = WM_APP + 150
   wEvent_DragDropFirst = WM_APP + 200
+  wEvent_DialogFirst = WM_APP + 300
 
   wEvent_CommandFirst = WM_APP + 500
   wEvent_StatusBarFirst = WM_APP + 600
@@ -132,7 +145,8 @@ const
   wEvent_SpinFirst = WM_APP + 800
   wEvent_HyperlinkFirst = WM_APP + 850
   wEvent_IpFirst = WM_APP + 900
-  wEvent_CommandLast = WM_APP + 1000
+  wEvent_WebViewFirst = WM_APP + 1000
+  wEvent_CommandLast = WM_APP + 1100
   wEvent_App* = wEvent_CommandLast + 1
 
 proc defaultPropagationLevel(msg: UINT): int =
@@ -173,6 +187,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
   elif msg.isDragDropEvent():
     result = CreateEvent(wDragDropEvent)
 
+  elif msg.isDialogEvent():
+    result = CreateEvent(wDialogEvent)
+
   elif msg.isNavigationEvent():
     result = CreateEvent(wNavigationEvent)
 
@@ -190,6 +207,9 @@ proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
 
   elif msg.isIpEvent():
     result = CreateEvent(wIpEvent)
+
+  elif msg.isWebViewEvent():
+    result = CreateEvent(wWebViewEvent)
 
   elif msg.isListEvent():
     result = CreateEvent(wListEvent)
@@ -476,6 +496,8 @@ method getPoint*(self: wEvent): wPoint {.base, property.} = discard
   ## Method needs to be overridden.
 method getDataObject*(self: wEvent): wDataObject {.base, property.} = discard
   ## Method needs to be overridden.
+method getDialog*(self: wEvent): wDialog {.base, property.} = discard
+  ## Method needs to be overridden.
 method getEffect*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method setEffect*(self: wEvent, effect: int) {.base, property.} = discard
@@ -485,4 +507,6 @@ method getValue*(self: wEvent): int {.base, property.} = discard
 method setValue*(self: wEvent, value: int) {.base, property.} = discard
   ## Method needs to be overridden.
 method getMenuItem*(self: wEvent): wMenuItem {.base, property.} = discard
+  ## Method needs to be overridden.
+method getErrorCode*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.

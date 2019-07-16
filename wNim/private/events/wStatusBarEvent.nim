@@ -10,6 +10,9 @@
 ## :Superclass:
 ##   `wCommandEvent <wCommandEvent.html>`_
 #
+## :Seealso:
+##   `wStatusBar <wStatusBar.html>`_
+#
 ## :Events:
 ##   ================================  =============================================================
 ##   wStatusBarEvent                   Description

@@ -1,0 +1,7 @@
+1 24 "wNim.manifest"
+1000 ICON "..\\images\\wNim.ico"
+wNim.ico HTML "..\\images\\wNim.ico"
+logo.png HTML "..\\images\\logo.png"
+demo.html HTML "..\\html\\demo.html"
+about.html HTML "..\\html\\about.html"
+style.css HTML "..\\html\\style.css"

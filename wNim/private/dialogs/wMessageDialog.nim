@@ -5,8 +5,8 @@
 #
 #====================================================================
 
-## A dialog that shows a single or multi-line message, with a choice of OK, Yes,
-## No and Cancel buttons.
+## A dialog that shows a single or multi-line message, with a choice of
+## OK, Yes, No and Cancel buttons. Only modal dialog is supported.
 #
 ## :Seealso:
 ##   `wFileDialog <wFileDialog.html>`_
@@ -14,6 +14,8 @@
 ##   `wColorDialog <wColorDialog.html>`_
 ##   `wFontDialog <wFontDialog.html>`_
 ##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -182,7 +184,7 @@ proc wMessageDialog_CBTProc(nCode: INT, wParam: WPARAM, lParam: LPARAM): LRESULT
     # we can subclass this messagebox, but what to do?
     # let win = Window(HWND wParam)
 
-proc showModal*(self: wMessageDialog): wId {.discardable.} =
+proc showModal*(self: wMessageDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning one of wIdOk, wIdYes, wIdNo, wIdCancel,
   ## wIdTryAgain, wIdContinue, wIdAbort, wIdRetry or wIdIgnore.
   var
@@ -213,6 +215,7 @@ proc showModal*(self: wMessageDialog): wId {.discardable.} =
   of IDYES: wIdYes
   else: wIdOk
 
-proc show*(self: wMessageDialog): wId {.inline, discardable.} =
-  ## The same as ShowModal().
+proc display*(self: wMessageDialog): wId {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning the selected button id.
+  ## For wMessageDialog class, this function is the same as showModal().
   result = self.showModal()

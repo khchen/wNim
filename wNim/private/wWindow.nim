@@ -221,7 +221,7 @@ method release(self: wWindow) {.base, inline, locks: "unknown".} =
   # really resoruce clear is in WM_NCDESTROY
   discard
 
-method trigger(self: wWindow) {.base, inline.} =
+method trigger(self: wWindow) {.base, inline, locks: "unknown".} =
   # override this if a window need extra init after window create.
   # similar to WM_CREATE.
   discard
@@ -1741,8 +1741,10 @@ proc wWindow_DoDestroy(event: wEvent) =
   # use our own wEvent_AppQuit here, because PostQuitMessage indicates system
   # the thread wishes to terminate. It disables the further creation of windows
   # (MessageBox etc).
+
+  # set lParam to hwnd so that modal loop works.
   if event.mWindow.isTopLevel:
-    PostMessage(0, wEvent_AppQuit, 0, 0)
+    PostMessage(0, wEvent_AppQuit, 0, event.mWindow.mHwnd)
 
 proc wWindow_DoNcDestroy(event: wEvent) =
   let self = event.mWindow
@@ -1901,7 +1903,7 @@ proc wWindow_OnMenuCommand(event: wEvent) =
         cast[LPARAM](item), event.mResult)
 
 when defined(useWinXP):
-  # under Windows XP, menu icon must draw by outself
+  # under Windows XP, menu icon must draw by ourself
   proc wWindow_OnMeasureItem(event: wEvent) =
     var processed = false
     defer: event.skip(if processed: false else: true)

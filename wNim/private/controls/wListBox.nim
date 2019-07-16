@@ -318,7 +318,7 @@ method getBestSize*(self: wListBox): wSize =
 method release(self: wListBox) =
   self.mParent.systemDisconnect(self.mCommandConn)
 
-method trigger(self: wListBox) =
+method trigger(self: wListBox) {.locks: "unknown".} =
   for i in 0..<self.mInitCount:
     let text = self.mInitData[i]
     SendMessage(self.mHwnd, LB_ADDSTRING, 0, &T(text))

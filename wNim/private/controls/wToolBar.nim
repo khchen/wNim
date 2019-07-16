@@ -181,8 +181,7 @@ proc enableTool*(self: wToolBar, toolId: wCommandID, enable = true)
   ## Enables or disables the tool.
   SendMessage(self.mHwnd, TB_ENABLEBUTTON, toolId, enable)
 
-proc disableTool*(self: wToolBar, toolId: wCommandID, enable = true)
-    {.validate, inline.} =
+proc disableTool*(self: wToolBar, toolId: wCommandID) {.validate, inline.} =
   ## Disables the tool.
   self.enableTool(toolId, false)
 

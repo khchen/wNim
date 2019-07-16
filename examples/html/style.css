@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  color: #333;
+  font-size: 12px;
+  font-family: 'Helvetica', 'Arial', 'MS PGothic', sans-serif;
+}
+
+.about {
+  background-color: #eee;
+}
+
+.logo {
+  margin: 2em;
+}
+
+.title,
+.copyright,
+.description {
+  margin: 0.4em;
+}
+
+.description {
+  margin-bottom: 1em;
+}
+
+.versions {
+  margin-top: 1em;
+}
+
+.copyright,
+.versions {
+  color: #999;
+}
+
+.clickable {
+  cursor: pointer;
+  font-size: 20px;
+  color: #80a0c0;
+}
+
+.button {
+
+  position: absolute;
+  right: 0.5em;
+  bottom: 0.5em;
+}

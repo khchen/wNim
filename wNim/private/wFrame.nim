@@ -39,6 +39,7 @@
 ##   wFrameToolWindow                Causes a frame with a small title bar to be created; the frame
 ##                                   does not appear in the taskbar.
 ##   wDefaultFrameStyle              The default style for a frame.
+##   wDefaultDialogStyle             The default style for a dialog.
 ##   ==============================  =============================================================
 #
 ## :Events:
@@ -59,6 +60,8 @@ const
   wModalFrame* = DS_MODALFRAME
   wFrameToolWindow* = int64 WS_EX_TOOLWINDOW shl 32
   wDefaultFrameStyle* = wMinimizeBox or wMaximizeBox or wResizeBorder or
+    wSystemMenu or wCaption
+  wDefaultDialogStyle* = wBorderSimple or wBorderDouble or wBorderRaised or
     wSystemMenu or wCaption
   # balloon icon
   wBallonNone* = NIIF_NONE
@@ -194,15 +197,29 @@ proc getReturnCode*(self: wFrame): int {.validate, property, inline.} =
 proc showModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows the frame as an application-modal dialog.
   ## Program flow does not return until the dialog has been dismissed with endModal.
-  self.mDisableList = newSeq[wWindow]()
-
-  for topwin in wAppTopLevelWindows():
-    if topwin != self and topwin.isEnabled():
-      topwin.disable()
-      self.mDisableList.add(topwin)
+  self.mDisableList = @[]
+  for hwnd in wAppTopLevelHwnd():
+    if hwnd != self.mHwnd and IsWindowEnabled(hwnd) != 0:
+      EnableWindow(hwnd, false)
+      self.mDisableList.add(hwnd)
 
   self.show()
-  result = MessageLoop(isMainLoop=false)
+  result = MessageLoop(self.mHwnd)
+
+proc showWindowModal*(self: wFrame): int {.validate, discardable.} =
+  ## Shows a dialog modal to the parent top level window only.
+  ## Program flow does not return until the dialog has been dismissed with endModal.
+  self.mDisableList = @[]
+  let owner = GetWindow(self.mHwnd, GW_OWNER)
+  if owner != 0:
+    for hwnd in wAppTopLevelHwnd():
+      if hwnd != self.mHwnd and IsWindowEnabled(hwnd) != 0:
+        if hwnd == owner or IsChild(hwnd, owner) != 0:
+          EnableWindow(hwnd, false)
+          self.mDisableList.add(hwnd)
+
+  self.show()
+  result = MessageLoop(self.mHwnd)
 
 proc endModal*(self: wFrame, retCode: int = 0) =
   ## Ends a modal dialog, passing a value to be returned from the showModal()
@@ -210,8 +227,8 @@ proc endModal*(self: wFrame, retCode: int = 0) =
 
   # MSDN: the application must enable the main window before destroying the
   # dialog box
-  for topwin in self.mDisableList:
-    topwin.enable()
+  for hwnd in self.mDisableList:
+    EnableWindow(hwnd, true)
   self.mDisableList = @[]
 
   self.hide()

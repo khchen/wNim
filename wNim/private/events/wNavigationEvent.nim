@@ -11,6 +11,9 @@
 ## :Superclass:
 ##   `wEvent <wEvent.html>`_
 #
+## :Seealso:
+##   `wControl <wControl.html>`_
+#
 ## :Events:
 ##   ==============================  =============================================================
 ##   wNavigationEvent                Description
