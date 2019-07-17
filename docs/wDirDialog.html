@@ -1262,15 +1262,11 @@ function main() {
   <li><a class="reference" href="#setPath%2CwDirDialog%2Cstring"
     title="setPath(self: wDirDialog; path: string)"><wbr />set<wbr />Path<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMessage%2CwDirDialog%2Cstring"
-    title="setMessage(self: var wDirDialog; message: string)"><wbr />set<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="setMessage(self: wDirDialog; message: string)"><wbr />set<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwDirDialog"
     title="showModal(self: wDirDialog): wId"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#show%2CwDirDialog"
-    title="show(self: wDirDialog): wId"><wbr />show<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#showModalResult%2CwDirDialog"
-    title="showModalResult(self: wDirDialog): string"><wbr />show<wbr />Modal<wbr />Result<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#showResult%2CwDirDialog"
-    title="showResult(self: wDirDialog): string"><wbr />show<wbr />Result<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#display%2CwDirDialog"
+    title="display(self: wDirDialog): string"><wbr />display<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1280,7 +1276,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class represents the directory chooser dialog.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a></td></tr>
+  <p class="module-desc">This class represents the directory chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a> <a class="reference external" href="wFindReplaceDialog.html">wFindReplaceDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wDdDirMustExist</td><td>The dialog will allow the user to choose only an existing folder.</td></tr>
 <tr><td>wDdChangeDir</td><td>Change the current working directory to the directory chosen by the user.</td></tr>
@@ -1354,35 +1350,23 @@ Sets the default path.
 
 </dd>
 <a id="setMessage,wDirDialog,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDirDialog</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">;</span> <span class="Identifier">message</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the message that will be displayed on the dialog.
 
 </dd>
 <a id="showModal,wDirDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel otherwise.
 
 </dd>
-<a id="show,wDirDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">show</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="display,wDirDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">display</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-The same as showModal().
-
-</dd>
-<a id="showModalResult,wDirDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModalResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Shows the dialog, returning the selected path or nil.
-
-</dd>
-<a id="showResult,wDirDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showResult</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-The same as showModalResult().
+Shows the dialog in modal mode, returning the selected path or nil.
 
 </dd>
 
@@ -1395,7 +1379,7 @@ The same as showModalResult().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-02 11:49:22 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-17 08:56:22 UTC</small>
       </div>
     </div>
   </div>

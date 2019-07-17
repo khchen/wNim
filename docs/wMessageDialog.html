@@ -1318,8 +1318,8 @@ function main() {
                            cont: string)"><wbr />set<wbr />Cancel<wbr />Try<wbr />Continue<wbr />Labels<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwMessageDialog"
     title="showModal(self: wMessageDialog): wId"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#show%2CwMessageDialog"
-    title="show(self: wMessageDialog): wId"><wbr />show<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#display%2CwMessageDialog"
+    title="display(self: wMessageDialog): wId"><wbr />display<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1329,7 +1329,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">A dialog that shows a single or multi-line message, with a choice of OK, Yes, No and Cancel buttons.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wDirDialog.html">wDirDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a></td></tr>
+  <p class="module-desc">A dialog that shows a single or multi-line message, with a choice of OK, Yes, No and Cancel buttons. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wDirDialog.html">wDirDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a> <a class="reference external" href="wFindReplaceDialog.html">wFindReplaceDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wOk</td><td>The message box contains one push button: OK. This is the default.</td></tr>
 <tr><td>wYesNo</td><td>The message box contains two push buttons: Yes and No.</td></tr>
@@ -1589,15 +1589,16 @@ Overrides the default labels of the Cancel, Try Again and Continue buttons.
 
 </dd>
 <a id="showModal,wMessageDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMessageDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMessageDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog, returning one of wIdOk, wIdYes, wIdNo, wIdCancel, wIdTryAgain, wIdContinue, wIdAbort, wIdRetry or wIdIgnore.
 
 </dd>
-<a id="show,wMessageDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">show</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMessageDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="display,wMessageDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">display</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMessageDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-The same as ShowModal().
+Shows the dialog in modal mode, returning the selected button id. For wMessageDialog class, this function is the same as showModal().
 
 </dd>
 
@@ -1610,7 +1611,7 @@ The same as ShowModal().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-02 11:49:24 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-17 08:56:26 UTC</small>
       </div>
     </div>
   </div>

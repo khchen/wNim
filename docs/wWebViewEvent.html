@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>wBrush</title>
+<title>wWebViewEvent</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -1219,7 +1219,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">wBrush</h1>
+    <h1 class="title">wWebViewEvent</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -1234,64 +1234,14 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
-  <a class="reference reference-toplevel" href="#7" id="57">Types</a>
+  <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wBrushError"
-    title="wBrushError = object of wGdiObjectError"><wbr />w<wbr />Brush<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
-
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wBrushStyleSolid"
-    title="wBrushStyleSolid = 0"><wbr />w<wbr />Brush<wbr />Style<wbr />Solid<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleTransparent"
-    title="wBrushStyleTransparent = 5"><wbr />w<wbr />Brush<wbr />Style<wbr />Transparent<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleMask"
-    title="wBrushStyleMask = 0x0000000F"><wbr />w<wbr />Brush<wbr />Style<wbr />Mask<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleBdiagonalHatch"
-    title="wBrushStyleBdiagonalHatch = 196608"><wbr />w<wbr />Brush<wbr />Style<wbr />Bdiagonal<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleCrossdiagHatch"
-    title="wBrushStyleCrossdiagHatch = 327680"><wbr />w<wbr />Brush<wbr />Style<wbr />Crossdiag<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleFdiagonalHatch"
-    title="wBrushStyleFdiagonalHatch = 131072"><wbr />w<wbr />Brush<wbr />Style<wbr />Fdiagonal<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleCrossHatch"
-    title="wBrushStyleCrossHatch = 262144"><wbr />w<wbr />Brush<wbr />Style<wbr />Cross<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleHorizontalHatch"
-    title="wBrushStyleHorizontalHatch = 0"><wbr />w<wbr />Brush<wbr />Style<wbr />Horizontal<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleVerticalHatch"
-    title="wBrushStyleVerticalHatch = 65536"><wbr />w<wbr />Brush<wbr />Style<wbr />Vertical<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrushStyleMaskHatch"
-    title="wBrushStyleMaskHatch = 0x00FF0000"><wbr />w<wbr />Brush<wbr />Style<wbr />Mask<wbr />Hatch<span class="attachedType" style="visibility:hidden"></span></a></li>
-
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#final%2CwBrush"
-    title="final(self: wBrush)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwBrush%2CwColor"
-    title="init(self: wBrush; color: wColor = wWHITE; style = wBrushStyleSolid)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Brush%2CwColor"
-    title="Brush(color: wColor = wWHITE; style = wBrushStyleSolid): wBrush"><wbr />Brush<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwBrush%2CHANDLE"
-    title="init(self: wBrush; hBrush: HANDLE)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Brush%2CHANDLE"
-    title="Brush(hBrush: HANDLE): wBrush"><wbr />Brush<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwBrush%2CwBrush"
-    title="init(self: wBrush; brush: wBrush)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Brush%2CwBrush"
-    title="Brush(brush: wBrush): wBrush"><wbr />Brush<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getColor%2CwBrush"
-    title="getColor(self: wBrush): wColor"><wbr />get<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getStyle%2CwBrush"
-    title="getStyle(self: wBrush): DWORD"><wbr />get<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setColor%2CwBrush%2CwColor"
-    title="setColor(self: wBrush; color: wColor)"><wbr />set<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setStyle%2CwBrush%2CDWORD"
-    title="setStyle(self: wBrush; style: DWORD)"><wbr />set<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#getUrl.e%2CwWebViewEvent"
+    title="getUrl(self: wWebViewEvent): string"><wbr />get<wbr />Url<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getText.e%2CwWebViewEvent"
+    title="getText(self: wWebViewEvent): string"><wbr />get<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getErrorCode.e%2CwWebViewEvent"
+    title="getErrorCode(self: wWebViewEvent): int"><wbr />get<wbr />Error<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1301,167 +1251,38 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">A brush is a drawing tool for filling in areas.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wGdiObject.html">wGdiObject</a></td></tr>
-</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wDC.html">wDC</a> <a class="reference external" href="wPredefined.html">wPredefined</a></td></tr>
-</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td><table border="1" class="docutils"><tr><th>Font Family</th><th>Description</th></tr>
-<tr><td>wBrushStyleSolid</td><td>Solid.</td></tr>
-<tr><td>wBrushStyleTransparent</td><td>Transparent (no fill).</td></tr>
-<tr><td>wBrushStyleMask</td><td>Brush style mask.</td></tr>
-<tr><td>wBrushStyleBdiagonalHatch</td><td>Backward diagonal hatch.</td></tr>
-<tr><td>wBrushStyleCrossdiagHatch</td><td>Cross-diagonal hatch.</td></tr>
-<tr><td>wBrushStyleFdiagonalHatch</td><td>Forward diagonal hatch.</td></tr>
-<tr><td>wBrushStyleCrossHatch</td><td>Cross hatch.</td></tr>
-<tr><td>wBrushStyleHorizontalHatch</td><td>Horizontal hatch.</td></tr>
-<tr><td>wBrushStyleVerticalHatch</td><td>Vertical hatch.</td></tr>
-<tr><td>wBrushStyleMaskHatch</td><td>Brush hatch style mask.</td></tr>
+  <p class="module-desc">A navigation event holds information about events associated with wWebView objects.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wWebView.html">wWebView</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wWebViewEvent</th><th>Description</th></tr>
+<tr><td>wEvent_WebViewNavigating</td><td>Generated before trying to get a resource. This event can be vetoed.</td></tr>
+<tr><td>wEvent_WebViewContextMenu</td><td>Generated before trying to show context menu. This event can be vetoed.</td></tr>
+<tr><td>wEvent_WebViewNewWindow</td><td>Generated when a new window is created. This event can be vetoed.</td></tr>
+<tr><td>wEvent_WebViewLoaded</td><td>Generated when the document is fully loaded and displayed.</td></tr>
+<tr><td>wEvent_WebViewError</td><td>Generated when a navigation error occurs. This event can be vetoed (cancel navigation to an error page).</td></tr>
+<tr><td>wEvent_WebViewTitleChanged</td><td>Generated when the page title changes.</td></tr>
+<tr><td>wEvent_WebViewStatusChanged</td><td>Generated when the status text changes.</td></tr>
+<tr><td>wEvent_WebViewHistoryChanged</td><td>Generated when the history of visited pages changes.</td></tr>
 </table></td></tr>
 </tbody></table></p>
-  <div class="section" id="7">
-<h1><a class="toc-backref" href="#7">Types</a></h1>
+  <div class="section" id="14">
+<h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<a id="wBrushError"></a>
-<dt><pre><span class="Identifier">wBrushError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObjectError</span>
-  </pre></dt>
+<a id="getUrl.e,wWebViewEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getUrl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebViewEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-An error raised when wBrush creation failure.
+Returns the url (valid for wEvent_WebViewNavigating, wEvent_WebViewNewWindow, and wEvent_WebViewError).
 
 </dd>
-
-</dl></div>
-<div class="section" id="10">
-<h1><a class="toc-backref" href="#10">Consts</a></h1>
-<dl class="item">
-<a id="wBrushStyleSolid"></a>
-<dt><pre><span class="Identifier">wBrushStyleSolid</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<a id="getText.e,wWebViewEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebViewEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
+Returns the text (valid for wEvent_WebViewStatusChanged and wEvent_WebViewTitleChanged).
 
 </dd>
-<a id="wBrushStyleTransparent"></a>
-<dt><pre><span class="Identifier">wBrushStyleTransparent</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+<a id="getErrorCode.e,wWebViewEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getErrorCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebViewEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-
-
-</dd>
-<a id="wBrushStyleMask"></a>
-<dt><pre><span class="Identifier">wBrushStyleMask</span> <span class="Other">=</span> <span class="DecNumber">0x0000000F</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleBdiagonalHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleBdiagonalHatch</span> <span class="Other">=</span> <span class="DecNumber">196608</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleCrossdiagHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleCrossdiagHatch</span> <span class="Other">=</span> <span class="DecNumber">327680</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleFdiagonalHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleFdiagonalHatch</span> <span class="Other">=</span> <span class="DecNumber">131072</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleCrossHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleCrossHatch</span> <span class="Other">=</span> <span class="DecNumber">262144</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleHorizontalHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleHorizontalHatch</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleVerticalHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleVerticalHatch</span> <span class="Other">=</span> <span class="DecNumber">65536</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wBrushStyleMaskHatch"></a>
-<dt><pre><span class="Identifier">wBrushStyleMaskHatch</span> <span class="Other">=</span> <span class="DecNumber">0x00FF0000</span></pre></dt>
-<dd>
-
-
-</dd>
-
-</dl></div>
-<div class="section" id="12">
-<h1><a class="toc-backref" href="#12">Procs</a></h1>
-<dl class="item">
-<a id="final,wBrush"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wBrush.
-
-</dd>
-<a id="init,wBrush,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="Identifier">wBrushStyleSolid</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
-<a id="Brush,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Brush</span><span class="Other">(</span><span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="Identifier">wBrushStyleSolid</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBrush</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Constructs a brush from a color and style.
-
-</dd>
-<a id="init,wBrush,HANDLE"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">;</span> <span class="Identifier">hBrush</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
-<a id="Brush,HANDLE"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Brush</span><span class="Other">(</span><span class="Identifier">hBrush</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBrush</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Construct wBrush object from a system brush handle.
-
-</dd>
-<a id="init,wBrush,wBrush"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">;</span> <span class="Identifier">brush</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
-<a id="Brush,wBrush"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Brush</span><span class="Other">(</span><span class="Identifier">brush</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBrush</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Copy constructor
-
-</dd>
-<a id="getColor,wBrush"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns a reference to the brush color.
-
-</dd>
-<a id="getStyle,wBrush"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DWORD</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the brush style.
-
-</dd>
-<a id="setColor,wBrush,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the brush color.
-
-</dd>
-<a id="setStyle,wBrush,DWORD"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">DWORD</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the brush style.
+Returns the error code (valid for wEvent_WebViewError).
 
 </dd>
 
@@ -1474,7 +1295,7 @@ Sets the brush style.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:55:57 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-17 08:56:21 UTC</small>
       </div>
     </div>
   </div>

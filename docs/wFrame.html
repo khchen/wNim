@@ -1260,6 +1260,9 @@ function main() {
     title="wFrameToolWindow = 549755813888"><wbr />w<wbr />Frame<wbr />Tool<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultFrameStyle"
     title="wDefaultFrameStyle = 13565952"><wbr />w<wbr />Default<wbr />Frame<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDefaultDialogStyle"
+    title="wDefaultDialogStyle = wBorderSimple or wBorderDouble or wBorderRaised or 0x00080000 or
+    0x00C00000"><wbr />w<wbr />Default<wbr />Dialog<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wBallonNone"
     title="wBallonNone = 0x00000000"><wbr />w<wbr />Ballon<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wBallonInfo"
@@ -1318,6 +1321,8 @@ function main() {
     title="getReturnCode(self: wFrame): int"><wbr />get<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwFrame"
     title="showModal(self: wFrame): int"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#showWindowModal%2CwFrame"
+    title="showWindowModal(self: wFrame): int"><wbr />show<wbr />Window<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#endModal%2CwFrame%2Cint"
     title="endModal(self: wFrame; retCode: int = 0)"><wbr />end<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTrayIcon%2CwFrame%2CwIcon%2Cstring"
@@ -1369,6 +1374,7 @@ function main() {
 <tr><td>wModalFrame</td><td>Creates a frame with a modal dialog-box style.</td></tr>
 <tr><td>wFrameToolWindow</td><td>Causes a frame with a small title bar to be created; the frame does not appear in the taskbar.</td></tr>
 <tr><td>wDefaultFrameStyle</td><td>The default style for a frame.</td></tr>
+<tr><td>wDefaultDialogStyle</td><td>The default style for a dialog.</td></tr>
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><ul class="simple"><li><a class="reference external" href="wTrayEvent.html">wTrayEvent</a></li>
 <li><a class="reference external" href="wCommandEvent.html">wCommandEvent</a>  - wEvent_Menu</li>
@@ -1446,6 +1452,13 @@ function main() {
 </dd>
 <a id="wDefaultFrameStyle"></a>
 <dt><pre><span class="Identifier">wDefaultFrameStyle</span> <span class="Other">=</span> <span class="DecNumber">13565952</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wDefaultDialogStyle"></a>
+<dt><pre><span class="Identifier">wDefaultDialogStyle</span> <span class="Other">=</span> <span class="Identifier">wBorderSimple</span> <span class="Identifier">or</span> <span class="Identifier">wBorderDouble</span> <span class="Identifier">or</span> <span class="Identifier">wBorderRaised</span> <span class="Identifier">or</span> <span class="DecNumber">0x00080000</span> <span class="Identifier">or</span>
+    <span class="DecNumber">0x00C00000</span></pre></dt>
 <dd>
 
 
@@ -1616,6 +1629,12 @@ Gets the return code for this window.
 Shows the frame as an application-modal dialog. Program flow does not return until the dialog has been dismissed with endModal.
 
 </dd>
+<a id="showWindowModal,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">showWindowModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Shows a dialog modal to the parent top level window only. Program flow does not return until the dialog has been dismissed with endModal.
+
+</dd>
 <a id="endModal,wFrame,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">endModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">retCode</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1685,7 +1704,7 @@ Returns the system suggested size of a window (usually used for GUI controls).
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-02 11:48:55 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-17 08:55:40 UTC</small>
       </div>
     </div>
   </div>

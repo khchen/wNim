@@ -1237,7 +1237,7 @@ function main() {
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#wEvent_PropagateMax"
-    title="wEvent_PropagateMax = 9223372036854775807"><wbr />w<wbr />Event_<wbr />Propagate<wbr />Max<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent_PropagateMax = high(INT_PTR)"><wbr />w<wbr />Event_<wbr />Propagate<wbr />Max<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_PropagateNone"
     title="wEvent_PropagateNone = 0"><wbr />w<wbr />Event_<wbr />Propagate<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_SetFocus"
@@ -1263,7 +1263,7 @@ function main() {
   <li><a class="reference" href="#wEvent_Destroy"
     title="wEvent_Destroy = 32773"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_App"
-    title="wEvent_App = 33769"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent_App = 33869"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1419,6 +1419,8 @@ function main() {
     title="getPoint(self: wEvent): wPoint"><wbr />get<wbr />Point<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDataObject.e%2CwEvent"
     title="getDataObject(self: wEvent): wDataObject"><wbr />get<wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getDialog.e%2CwEvent"
+    title="getDialog(self: wEvent): wDialog"><wbr />get<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getEffect.e%2CwEvent"
     title="getEffect(self: wEvent): int"><wbr />get<wbr />Effect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setEffect.e%2CwEvent%2Cint"
@@ -1429,6 +1431,8 @@ function main() {
     title="setValue(self: wEvent; value: int)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMenuItem.e%2CwEvent"
     title="getMenuItem(self: wEvent): wMenuItem"><wbr />get<wbr />Menu<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getErrorCode.e%2CwEvent"
+    title="getErrorCode(self: wEvent): int"><wbr />get<wbr />Error<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1450,7 +1454,7 @@ function main() {
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">frame</span> <span class="Operator">=</span> <span class="Identifier">Frame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">wIdExit</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Keyword">discard</span></pre><p>An event is usually generated from system. However, the user may define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
-<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a></td></tr>
+<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wDragDropEvent.html">wDragDropEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wStatusBarEvent.html">wStatusBarEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a> <a class="reference external" href="wScrollEvent.html">wScrollEvent</a> <a class="reference external" href="wSpinEvent.html">wSpinEvent</a> <a class="reference external" href="wHyperlinkEvent.html">wHyperlinkEvent</a> <a class="reference external" href="wListEvent.html">wListEvent</a> <a class="reference external" href="wTreeEvent.html">wTreeEvent</a> <a class="reference external" href="wIpEvent.html">wIpEvent</a> <a class="reference external" href="wWebViewEvent.html">wWebViewEvent</a> <a class="reference external" href="wDialogEvent.html">wDialogEvent</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wEvent</th><th>Description</th></tr>
 <tr><td>wEvent_SetFocus</td><td>A window has gained the keyboard focus.</td></tr>
 <tr><td>wEvent_KillFocus</td><td>A window is about to loses the keyboard focus.</td></tr>
@@ -1470,7 +1474,7 @@ function main() {
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
 <a id="wEvent_PropagateMax"></a>
-<dt><pre><span class="Identifier">wEvent_PropagateMax</span> <span class="Other">=</span> <span class="DecNumber">9223372036854775807</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_PropagateMax</span> <span class="Other">=</span> <span class="Identifier">high</span><span class="Other">(</span><span class="Identifier">INT_PTR</span><span class="Other">)</span></pre></dt>
 <dd>
 
 
@@ -1548,7 +1552,7 @@ function main() {
 
 </dd>
 <a id="wEvent_App"></a>
-<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">33769</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">33869</span></pre></dt>
 <dd>
 
 
@@ -2006,6 +2010,12 @@ Method needs to be overridden.
 Method needs to be overridden.
 
 </dd>
+<a id="getDialog.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDialog</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Method needs to be overridden.
+
+</dd>
 <a id="getEffect.e,wEvent"></a>
 <dt><pre><span class="Keyword">method</span> <span class="Identifier">getEffect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2036,6 +2046,12 @@ Method needs to be overridden.
 Method needs to be overridden.
 
 </dd>
+<a id="getErrorCode.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getErrorCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Method needs to be overridden.
+
+</dd>
 
 </dl></div>
 
@@ -2046,7 +2062,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-02 11:49:12 UTC</small>
+        <small>Made with Nim. Generated: 2019-07-17 08:56:08 UTC</small>
       </div>
     </div>
   </div>
