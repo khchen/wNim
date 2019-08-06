@@ -79,7 +79,7 @@
 
 type
   wFontError* = object of wGdiObjectError
-    ## An error raised when wFont creation failure.
+    ## An error raised when wFont creation failed.
 
 const
   # font family
@@ -128,9 +128,9 @@ proc initFromNative(self: wFont, lf: var LOGFONT) =
 
   self.mHandle = CreateFontIndirect(lf)
   if self.mHandle == 0:
-    raise newException(wFontError, "wFont creation failure")
+    raise newException(wFontError, "wFont creation failed")
 
-  self.mPointSize = -(lf.lfHeight * 72 / wGetDPI())
+  self.mPointSize = -(lf.lfHeight * 72 / wAppGetDpi())
   self.mWeight = lf.lfWeight
   self.mFaceName = ^$lf.lfFaceName
   self.mFaceName.nullTerminate()
@@ -154,7 +154,7 @@ proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
     GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), addr lf)
 
   if pointSize.classify != fcNaN:
-    lf.lfHeight = -round(pointSize * wGetDPI().float / 72'f).LONG
+    lf.lfHeight = -round(pointSize * wAppGetDpi().float / 72'f).LONG
 
   if family != wFontFamilyDefault:
     lf.lfPitchAndFamily = family.ord.byte or DEFAULT_PITCH

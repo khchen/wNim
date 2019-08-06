@@ -9,23 +9,30 @@
 ## from the user. Both modal or modaless dialog are supported.
 #
 ## :Superclass:
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
+##   `wTextEntryDialog <wTextEntryDialog.html>`_
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wFileDialog <wFileDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Events:
+##   `wDialogEvent <wDialogEvent.html>`_
+##   ==============================   =============================================================
+##   wDialogEvent                     Description
+##   ==============================   =============================================================
+##   wEvent_DialogCreated             When the dialog is created but not yet shown.
+##   wEvent_DialogClosed              When the dialog is being closed.
+##   ===============================  =============================================================
 
 proc final*(self: wPasswordEntryDialog) =
   ## Default finalizer for wPasswordEntryDialog.
-  discard
+  wTextEntryDialog(self).final()
 
-proc PasswordEntryDialog*(parent: wWindow = nil, message = "Input password",
+proc init*(self: wPasswordEntryDialog, owner: wWindow = nil, message = "Input password",
+    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
+    pos = wDefaultPoint) {.validate, inline.} =
+  ## Initializer.
+  self.wTextEntryDialog.init(owner, message, caption, value, style, pos)
+
+proc PasswordEntryDialog*(owner: wWindow = nil, message = "Input password",
     caption = "", value = "", style: wStyle = wDefaultDialogStyle,
     pos = wDefaultPoint): wPasswordEntryDialog {.inline.} =
   ## Constructor.
   new(result, final)
-  result.init(parent, message, caption, value, style, pos)
+  result.init(owner, message, caption, value, style, pos)

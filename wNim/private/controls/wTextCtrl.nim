@@ -385,7 +385,7 @@ method setFont*(self: wTextCtrl, font: wFont) {.validate, property.} =
     charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS
     charformat.yHeight = LONG(font.mPointSize * 20)
     charformat.wWeight = WORD font.mWeight
-    charformat.szFaceName << +$font.mFaceName
+    charformat.szFaceName << T(font.mFaceName)
     charformat.bCharSet = BYTE font.mEncoding
     charformat.bPitchAndFamily = BYTE font.mFamily
     if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC

@@ -19,7 +19,7 @@ const resource3 = staticRead(r"images\3.png")
 const resource4 = staticRead(r"images\4.png")
 const resource5 = staticRead(r"images\cancel.ico")
 
-var imageList = ImageList(24, 24)
+let imageList = ImageList(24, 24)
 imageList.add(Image(resource1).scale(24, 24))
 imageList.add(Image(resource2).scale(24, 24))
 imageList.add(Image(resource3).scale(24, 24))

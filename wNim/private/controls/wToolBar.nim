@@ -21,6 +21,8 @@
 ##   wTbVertical                     Specifies vertical layout.
 ##   wTbBottom                       Align the toolbar at the bottom of parent window.
 ##   wTbRight                        Align the toolbar at the right side of parent window.
+##   wTbNoAlign                      Specifies no alignment with the parent window.
+##   wTbNoResize                     Specifies no resize.
 ##   wTbDefaultStyle                 Combination of wTbHorizontal and wTbFlat
 ##   ==============================  =============================================================
 #
@@ -43,6 +45,8 @@ const
   wTbVertical* = CCS_VERT
   wTbBottom* = CCS_BOTTOM
   wTbRight* = CCS_RIGHT
+  wTbNoAlign* = CCS_NOPARENTALIGN
+  wTbNoResize* = CCS_NORESIZE
   wTbDefaultStyle* = wTbFlat or wTbhorizontal
   # ToolBar kind
   wTbNormal* = TBSTYLE_BUTTON
@@ -75,7 +79,7 @@ proc getToolsCount*(self: wToolBar): int {.validate, property, inline.} =
   result = int SendMessage(self.mHwnd, TB_BUTTONCOUNT, 0, 0)
 
 proc getToolPos*(self: wToolBar, toolId: wCommandID): int {.validate, property.} =
-  ## Returns the tool position in the toolbar, or wNOT_FOUND if the tool is not found.
+  ## Returns the tool position in the toolbar, or wNotFound if the tool is not found.
   var buttonInfo = TBBUTTONINFO(cbSize: sizeof(TBBUTTONINFO))
   result = int SendMessage(self.mHwnd, TB_GETBUTTONINFO, toolId, &buttonInfo)
 
@@ -96,7 +100,7 @@ proc deleteTool*(self: wToolBar, toolId: wCommandID) {.validate.} =
   ##Removes the specified tool from the toolbar and deletes it.
   while true:
     let pos = self.getToolPos(toolId)
-    if pos == wNOT_FOUND: break
+    if pos == wNotFound: break
     self.deleteToolByPos(pos)
 
 proc clearTools*(self: wToolBar) {.validate.} =

@@ -8,14 +8,8 @@
 ## This class represents the directory chooser dialog. Only modal dialog is
 ## supported.
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wFileDialog <wFileDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
-##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Superclass:
+##   `wDialog <wDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -33,21 +27,21 @@ const
 
 proc final*(self: wDirDialog) =
   ## Default finalizer for wDirDialog.
-  discard
+  self.wDialog.final()
 
-proc init*(self: wDirDialog, parent: wWindow = nil, message = "",
+proc init*(self: wDirDialog, owner: wWindow = nil, message = "",
     defaultPath = "", style: wStyle = 0) {.validate.} =
   ## Initializer.
-  self.mParent = parent
+  self.wDialog.init(owner)
   self.mMessage = message
   self.mPath = defaultPath
   self.mStyle = style
 
-proc DirDialog*(parent: wWindow = nil, message = "", defaultPath = "",
+proc DirDialog*(owner: wWindow = nil, message = "", defaultPath = "",
     style: wStyle = 0): wDirDialog {.inline.} =
   ## Constructor.
   new(result, final)
-  result.init(parent, message, defaultPath, style)
+  result.init(owner, message, defaultPath, style)
 
 proc getPath*(self: wDirDialog): string {.validate, property, inline.} =
   ## Returns the default or user-selected path.
@@ -90,7 +84,7 @@ when not defined(useWinXP):
         if dialog.SetFolder(folder).FAILED: raise
 
       # include HRESULT_FROM_WIN32(ERROR_CANCELLED)
-      if dialog.Show(if self.mParent == nil: 0 else: self.mParent.mHwnd).FAILED: raise
+      if dialog.Show(if self.mOwner == nil: 0 else: self.mOwner.mHwnd).FAILED: raise
 
       if dialog.GetResult(&item).FAILED: raise
       defer: item.Release()
@@ -111,8 +105,8 @@ proc wDirDialog_CallbackProc(hwnd: HWND, uMsg: UINT, lp: LPARAM, pData: LPARAM):
 proc showModal_XPCompatible(self: wDirDialog): wId =
   var bi = BROWSEINFO(ulFlags: BIF_RETURNONLYFSDIRS or BIF_USENEWUI)
 
-  if self.mParent != nil:
-    bi.hwndOwner = self.mParent.mHwnd
+  if self.mOwner != nil:
+    bi.hwndOwner = self.mOwner.mHwnd
 
   if self.mMessage.len != 0:
     bi.lpszTitle = &T(self.mMessage)
@@ -145,6 +139,8 @@ proc showModal*(self: wDirDialog): wId {.validate, discardable.} =
       result = self.showModal_XPCompatible()
     else:
       result = self.showModal_VistaLaster()
+
+  self.dialogQuit()
 
   if result == wIdOk and (self.mStyle and wDdChangeDir) != 0:
     discard SetCurrentDirectory(self.mPath)

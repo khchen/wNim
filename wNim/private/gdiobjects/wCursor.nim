@@ -58,10 +58,10 @@ type
 
 type
   wCursorError* = object of wGdiObjectError
-    ## An error raised when wCursor creation failure.
+    ## An error raised when wCursor creation failed.
 
 proc error(self: wCursor) {.inline.} =
-  raise newException(wCursorError, "wCursor creation failure")
+  raise newException(wCursorError, "wCursor creation failed")
 
 proc isNilCursor(self: wCursor): bool {.inline.} =
   result = self.mHandle == 0
@@ -204,7 +204,7 @@ proc Cursor*(iconImage: wIconImage, size = wDefaultSize,
     hotspot = wDefaultPoint): wCursor {.inline.} =
   ## Creates a cursor from an icon image. If *hotspot* is wDefaultPoint, it use
   ## the hotspot stored in wIconImage object. If it is wDefaultPoint too, the
-  ## creation failure.
+  ## creation failed.
   wValidate(iconImage)
   new(result, final)
   result.init(iconImage, size, hotspot)

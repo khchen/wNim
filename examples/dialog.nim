@@ -10,10 +10,13 @@ import
   resource/resource,
   wNim
 
+const
+  wEvent_RadioButtonOn = wEvent_App + 1
+
 let app = App()
-let frame = Frame(title="Dialog Demo", size=(500, 450))
+let frame = Frame(title="Dialog Demo", size=(500, 520))
 frame.icon = Icon("", 0) # load icon from exe file.
-frame.minSize = (500, 450)
+frame.minSize = (500, 520)
 
 let panel = Panel(frame)
 let staticbox = StaticBox(panel, label="Dialog Type")
@@ -25,9 +28,11 @@ let radioDir = RadioButton(panel, label="wDirDialog")
 let radioFile = RadioButton(panel, label="wFileDialog")
 let radioColor = RadioButton(panel, label="wColorDialog")
 let radioFont = RadioButton(panel, label="wFontDialog")
-let radioTextEnter = RadioButton(panel, label="wTextEnterDialog")
-let radioPasswordEnter = RadioButton(panel, label="wPasswordEnterDialog")
+let radioTextEntry = RadioButton(panel, label="wTextEntryDialog")
+let radioPasswordEntry = RadioButton(panel, label="wPasswordEntryDialog")
 let radioFindReplace = RadioButton(panel, label="wFindReplaceDialog")
+let radioPageSetup = RadioButton(panel, label="wPageSetupDialog")
+let radioPrint = RadioButton(panel, label="wPrintDialog")
 
 proc modalessDialogCount(i: range[-1..1]): int {.discardable.} =
   var counter {.global.} = 0
@@ -55,136 +60,199 @@ proc layout() =
     V:|-[staticbox]-[buttonShow,buttonClose,buttonShowModal]-|
 
     outer: staticbox
-    H:|-[radioMessage,radioDir,radioFile,radioColor,radioFont,radioTextEnter,
-      radioPasswordEnter,radioFindReplace]-|
+    H:|-[radioMessage,radioDir,radioFile,radioColor,radioFont,radioTextEntry,
+      radioPasswordEntry,radioFindReplace,radioPageSetup,radioPrint]-|
     V:|-[radioMessage]-[radioDir]-[radioFile]-[radioColor]-[radioFont]-
-      [radioTextEnter]-[radioPasswordEnter]-[radioFindReplace]
+      [radioTextEntry]-[radioPasswordEntry]-[radioFindReplace]-
+      [radioPageSetup]-[radioPrint]
   """
 
 panel.wEvent_Size do ():
   layout()
 
-radioMessage.wEvent_RadioButton do ():
-  if radioMessage.value == true:
-    buttonReset(off, on)
+panel.wEvent_RadioButton do (event: wEvent):
+  let radioButton = wRadioButton event.window
+  if radioButton.value == true:
+    let event = Event(radioButton, msg=wEvent_RadioButtonOn)
+    radioButton.processEvent(event)
 
-    buttonShowModal.wEvent_Button do ():
-      let id = MessageDialog(frame, message="Yes or No?",
-        caption="wMessageDialog", style=wYesNoCancel).display()
-      if id != wIdCancel:
-        MessageDialog(frame, $id, caption="Answer").display()
+radioMessage.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
 
-radioDir.wEvent_RadioButton do ():
-  if radioDir.value == true:
-    buttonReset(off, on)
+  buttonShowModal.wEvent_Button do ():
+    let id = MessageDialog(frame, message="Yes or No?",
+      caption="wMessageDialog", style=wYesNoCancel).display()
+    if id != wIdCancel:
+      MessageDialog(frame, $id, caption="Answer").display()
 
-    buttonShowModal.wEvent_Button do ():
-      let dir = DirDialog(frame, message="Select a dir").display()
-      if dir.len != 0:
-        MessageDialog(frame, dir, caption="Path").display()
+radioDir.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
 
-radioFile.wEvent_RadioButton do ():
-  if radioFile.value == true:
-    buttonReset(off, on)
+  buttonShowModal.wEvent_Button do ():
+    let dir = DirDialog(frame, message="Select a dir").display()
+    if dir.len != 0:
+      MessageDialog(frame, dir, caption="Path").display()
 
-    buttonShowModal.wEvent_Button do ():
-      let files = FileDialog(frame, message="Select a file").display()
-      if files.len != 0:
-        MessageDialog(frame, files[0], caption="Path").display()
+radioFile.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
 
-radioColor.wEvent_RadioButton do ():
-  if radioColor.value == true:
-    buttonReset(off, on)
+  buttonShowModal.wEvent_Button do ():
+    let files = FileDialog(frame, message="Select a file").display()
+    if files.len != 0:
+      MessageDialog(frame, files[0], caption="Path").display()
 
-    buttonShowModal.wEvent_Button do ():
-      let color = ColorDialog(frame).display()
-      if color > 0:
-        MessageDialog(frame, toHex(color, 6), caption="Color Hex").display()
+radioColor.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
 
-radioFont.wEvent_RadioButton do ():
-  if radioFont.value == true:
-    buttonReset(off, on)
+  buttonShowModal.wEvent_Button do ():
+    let dialog = ColorDialog(frame)
+    dialog.enableHelp()
+    dialog.color = 0x80ffff
 
-    buttonShowModal.wEvent_Button do ():
-      let font = FontDialog(frame, font=wDefaultFont).display()
-      if font != nil:
-        let text = fmt"{font.faceName} {font.pointSize.round.int}"
-        MessageDialog(frame, text, caption="Color Hex").display()
+    dialog.wEvent_DialogHelp do ():
+      MessageDialog(dialog, "Help!", caption="wColorDialog").display()
 
-radioTextEnter.wEvent_RadioButton do ():
-  if radioTextEnter.value == true:
-    buttonReset(on, on)
+    if dialog.showModal() == wIdOk:
+      MessageDialog(frame, toHex(dialog.color, 6), caption="Color Hex").display()
 
-    buttonShowModal.wEvent_Button do ():
-      let dialog = TextEnterDialog(frame, message="Input text",
-        caption="Modal TextEnterDialog", style=wDefaultDialogStyle)
+radioFont.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
 
-      if dialog.showModal() == wIdOk and dialog.value.len != 0:
+  buttonShowModal.wEvent_Button do ():
+    let dialog = FontDialog(frame, font=wNormalFont)
+    dialog.enableHelp()
+    dialog.enableApply()
+
+    dialog.wEvent_DialogHelp do ():
+      MessageDialog(dialog, "Help!", caption="wFontDialog").display()
+
+    dialog.wEvent_DialogApply do ():
+      let font = dialog.chosenFont
+      let text = fmt"{font.faceName} {font.pointSize.round.int}"
+      MessageDialog(dialog, text, caption="Font").display()
+
+    if dialog.showModal() == wIdOk:
+      let font = dialog.chosenFont
+      let text = fmt"{font.faceName} {font.pointSize.round.int}"
+      MessageDialog(frame, text, caption="Font").display()
+
+radioTextEntry.wEvent_RadioButtonOn do ():
+  buttonReset(on, on)
+
+  buttonShowModal.wEvent_Button do ():
+    let dialog = TextEntryDialog(frame, message="Input text",
+      caption="Modal TextEntryDialog", style=wDefaultDialogStyle)
+
+    if dialog.showModal() == wIdOk and dialog.value.len != 0:
+      MessageDialog(frame, dialog.value, caption="Text").display()
+
+  buttonShow.wEvent_Button do ():
+    let n = modalessDialogCount(1)
+    let dialog = TextEntryDialog(frame, message="Input text",
+      caption=fmt"Modaless TextEntryDialog {n}", style=wDefaultDialogStyle)
+
+    dialog.wEvent_DialogClosed do ():
+      modalessDialogCount(-1)
+      if dialog.returnCode == wIdOk and dialog.value.len != 0:
         MessageDialog(frame, dialog.value, caption="Text").display()
 
-    buttonShow.wEvent_Button do ():
-      let n = modalessDialogCount(1)
-      let dialog = TextEnterDialog(frame, message="Input text",
-        caption=fmt"Modaless TextEnterDialog {n}", style=wDefaultDialogStyle)
+    buttonClose.wEvent_Button do (event: wEvent):
+      dialog.close()
+      event.skip()
 
-      dialog.showModaless()
+    dialog.showModaless()
 
-      dialog.wEvent_DialogClosed do ():
-        modalessDialogCount(-1)
-        if dialog.returnCode == wIdOk and dialog.value.len != 0:
-          MessageDialog(frame, dialog.value, caption="Text").display()
+radioPasswordEntry.wEvent_RadioButtonOn do ():
+  buttonReset(on, on)
 
-      buttonClose.wEvent_Button do (event: wEvent):
-        dialog.close()
-        event.skip()
+  buttonShowModal.wEvent_Button do ():
+    let dialog = PasswordEntryDialog(frame, message="Input password",
+      caption="Modal PasswordEntryDialog", style=wDefaultDialogStyle)
 
-radioPasswordEnter.wEvent_RadioButton do ():
-  if radioPasswordEnter.value == true:
-    buttonReset(on, on)
+    if dialog.showModal() == wIdOk and dialog.value.len != 0:
+      MessageDialog(frame, dialog.value, caption="Password").display()
 
-    buttonShowModal.wEvent_Button do ():
-      let dialog = PasswordEntryDialog(frame, message="Input password",
-        caption="Modal PasswordEntryDialog", style=wDefaultDialogStyle)
+  buttonShow.wEvent_Button do ():
+    let n = modalessDialogCount(1)
+    let dialog = PasswordEntryDialog(frame, message="Input password",
+      caption=fmt"Modaless PasswordEntryDialog {n}", style=wDefaultDialogStyle)
 
-      if dialog.showModal() == wIdOk and dialog.value.len != 0:
+    dialog.wEvent_DialogClosed do ():
+      modalessDialogCount(-1)
+      if dialog.returnCode == wIdOk and dialog.value.len != 0:
         MessageDialog(frame, dialog.value, caption="Password").display()
 
-    buttonShow.wEvent_Button do ():
-      let n = modalessDialogCount(1)
-      let dialog = PasswordEntryDialog(frame, message="Input password",
-        caption=fmt"Modaless PasswordEntryDialog {n}", style=wDefaultDialogStyle)
+    buttonClose.wEvent_Button do (event: wEvent):
+      dialog.close()
+      event.skip()
 
-      dialog.showModaless()
+    dialog.showModaless()
 
-      dialog.wEvent_DialogClosed do ():
-        modalessDialogCount(-1)
-        if dialog.returnCode == wIdOk and dialog.value.len != 0:
-          MessageDialog(frame, dialog.value, caption="Password").display()
+radioFindReplace.wEvent_RadioButtonOn do ():
+  buttonReset(on, off)
 
-      buttonClose.wEvent_Button do (event: wEvent):
-        dialog.close()
-        event.skip()
+  buttonShow.wEvent_Button do ():
+    let n = modalessDialogCount(1)
+    let dialog = FindReplaceDialog(frame, wFrReplace)
+    dialog.findString = fmt"Text {n}"
+    dialog.enableHelp()
 
-radioFindReplace.wEvent_RadioButton do ():
-  if radioFindReplace.value == true:
-    buttonReset(on, off)
+    dialog.wEvent_FindNext do ():
+      MessageDialog(frame, dialog.findString, caption="Find").display()
 
-    buttonShow.wEvent_Button do ():
-      let n = modalessDialogCount(1)
-      let dialog = FindReplaceDialog(frame)
-      dialog.findString = fmt"Text {n}"
+    dialog.wEvent_DialogHelp do ():
+      MessageDialog(dialog, "Help!", caption=fmt"wFontDialog {n}").display()
 
-      dialog.showModaless()
+    dialog.wEvent_DialogClosed do ():
+      modalessDialogCount(-1)
 
-      dialog.wEvent_FindNext do ():
-        MessageDialog(frame, dialog.findString, caption="Find").display()
+    buttonClose.wEvent_Button do (event: wEvent):
+      dialog.close()
+      event.skip()
 
-      dialog.wEvent_DialogClosed do ():
-        modalessDialogCount(-1)
+    dialog.showModaless()
 
-      buttonClose.wEvent_Button do (event: wEvent):
-        dialog.close()
-        event.skip()
+radioPageSetup.wEvent_RadioButtonOn do ():
+  buttonReset(off, on)
+
+  buttonShowModal.wEvent_Button do ():
+    let dialog = PageSetupDialog(frame)
+    dialog.enableHelp()
+
+    dialog.wEvent_DialogHelp do ():
+      MessageDialog(dialog, "Help!", caption="wPageSetupDialog").display()
+
+    if dialog.showModal() == wIdOk:
+      var printData = dialog.printData
+      var name = printData.paperName
+      if name.len == 0: name = $printData.paper
+      var size = fmt"{dialog.paperSize.width}x{dialog.paperSize.height}"
+      var ori = if printData.orientation == wPortrait: "Portrait" else: "Landscape"
+      MessageDialog(frame, fmt"{name} {ori} ({size}mm)", caption="Page Setup").display()
+
+radioPrint.wEvent_RadioButton do ():
+
+  buttonReset(off, on)
+
+  buttonShowModal.wEvent_Button do ():
+    var printData {.global.}: wPrintData
+
+    once:
+      try: printData = PrintData() # If there is no printer, error will occurred.
+      except wPrintDataError: discard
+
+    let dialog = PrintDialog(frame, printData)
+
+    case dialog.showModal():
+    of wIdOk:
+      printData = dialog.printData
+      MessageDialog(frame, printData.device, caption="Print").display()
+
+    of wIdApply:
+      printData = dialog.printData
+      MessageDialog(frame, printData.device, caption="Apply").display()
+
+    else: discard
 
 radioMessage.click()
 layout()

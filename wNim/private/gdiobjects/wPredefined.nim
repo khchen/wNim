@@ -50,6 +50,7 @@ DefineIncrement(0):
   SizeWeCursor
   SizeNsCursor
   HandCursor
+  NilRegion
 
 template wNormalFont*(): untyped =
   wAppGDIStock(wFont, NormalFont):
@@ -193,3 +194,7 @@ template wSizeNsCursor*(): untyped =
 template wHandCursor*(): untyped =
   wAppGDIStock(wCursor, HandCursor):
     Cursor(wCursorHand)
+
+template wNilRegion*(): untyped =
+  wAppGDIStock(wRegion, NilRegion):
+    Region()

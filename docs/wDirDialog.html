@@ -1251,10 +1251,10 @@ function main() {
       <li><a class="reference" href="#final%2CwDirDialog"
     title="final(self: wDirDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwDirDialog%2CwWindow%2Cstring%2Cstring%2CwStyle"
-    title="init(self: wDirDialog; parent: wWindow = nil; message = &quot;&quot;; defaultPath = &quot;&quot;;
+    title="init(self: wDirDialog; owner: wWindow = nil; message = &quot;&quot;; defaultPath = &quot;&quot;;
      style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#DirDialog%2CwWindow%2Cstring%2Cstring%2CwStyle"
-    title="DirDialog(parent: wWindow = nil; message = &quot;&quot;; defaultPath = &quot;&quot;; style: wStyle = 0): wDirDialog"><wbr />Dir<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="DirDialog(owner: wWindow = nil; message = &quot;&quot;; defaultPath = &quot;&quot;; style: wStyle = 0): wDirDialog"><wbr />Dir<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getPath%2CwDirDialog"
     title="getPath(self: wDirDialog): string"><wbr />get<wbr />Path<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMessage%2CwDirDialog"
@@ -1276,7 +1276,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class represents the directory chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a> <a class="reference external" href="wFindReplaceDialog.html">wFindReplaceDialog</a></td></tr>
+  <p class="module-desc">This class represents the directory chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wDialog.html">wDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wDdDirMustExist</td><td>The dialog will allow the user to choose only an existing folder.</td></tr>
 <tr><td>wDdChangeDir</td><td>Change the current working directory to the directory chosen by the user.</td></tr>
@@ -1316,14 +1316,14 @@ Default finalizer for wDirDialog.
 
 </dd>
 <a id="init,wDirDialog,wWindow,string,string,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultPath</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultPath</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
          <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
 <a id="DirDialog,wWindow,string,string,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DirDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultPath</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">DirDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultPath</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
@@ -1379,7 +1379,7 @@ Shows the dialog in modal mode, returning the selected path or nil.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:22 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:48 UTC</small>
       </div>
     </div>
   </div>

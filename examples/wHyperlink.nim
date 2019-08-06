@@ -145,7 +145,7 @@ proc init*(self: wHyperlink, parent: wWindow, id = wDefaultID, label: string,
     self.refresh()
 
   self.wEvent_LeftUp do ():
-    var isPressed = self.mIsPressed
+    let isPressed = self.mIsPressed
     self.mIsPressed = false
     self.releaseMouse()
     self.setForegroundColor(self.visitedOrNormalColor)
@@ -169,13 +169,13 @@ proc Hyperlink*(parent: wWindow, id = wDefaultID, label: string, url: string,
 when isMainModule:
   import resource/resource
 
-  var app = App()
-  var frame = Frame()
+  let app = App()
+  let frame = Frame()
   frame.icon = Icon("", 0) # load icon from exe file.
 
-  var statusBar = StatusBar(frame)
-  var panel = Panel(frame)
-  var hyperlink = Hyperlink(panel, label="Google", url="https://www.google.com",
+  let statusBar = StatusBar(frame)
+  let panel = Panel(frame)
+  let hyperlink = Hyperlink(panel, label="Google", url="https://www.google.com",
     pos=(20, 20))
 
   hyperlink.font = Font(18)

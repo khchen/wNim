@@ -8,134 +8,137 @@
 ## This class represents the font chooser dialog. Only modal dialog is
 ## supported.
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wFileDialog <wFileDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
-##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Superclass:
+##   `wDialog <wDialog.html>`_
+#
+## :Events:
+##   `wDialogEvent <wDialogEvent.html>`_
+##   ==============================   =============================================================
+##   wDialogEvent                     Description
+##   ==============================   =============================================================
+##   wEvent_DialogCreated             When the dialog is created but not yet shown.
+##   wEvent_DialogClosed              When the dialog is being closed.
+##   wEvent_DialogApply               When the Apply button is pressed.
+##   wEvent_DialogHelp                When the Help button is pressed.
+##   ===============================  =============================================================
 
 proc getChosenFont*(self: wFontDialog): wFont {.validate, property, inline.} =
   ## Gets the font chosen by the user if the user pressed OK.
   result = self.mChosenFont
 
-proc setChosenFont*(self: wFontDialog, font: wFont) {.validate, property, inline.} =
-  ## Sets the font that will be returned to the user (for internal use only).
-  self.mChosenFont = font
-
-proc getInitialFont*(self: wFontDialog): wFont {.validate, property, inline.} =
-  ## Gets the font that will be initially used by the font dialog.
-  result = self.mInitialFont
-
 proc setInitialFont*(self: wFontDialog, font: wFont) {.validate, property, inline.} =
   ## Sets the font that will be initially used by the font dialog.
-  self.mInitialFont = font
+  self.mChosenFont = font
+  if font != nil:
+    self.mCf.Flags = self.mCf.Flags or CF_INITTOLOGFONTSTRUCT
+    GetObject(font.mHandle, sizeof(LOGFONT), cast[pointer](&self.mLf))
+  else:
+    self.mCf.Flags = self.mCf.Flags and (not CF_INITTOLOGFONTSTRUCT)
 
 proc getColor*(self: wFontDialog): wColor {.validate, property, inline.} =
   ## Gets the color associated with the font dialog.
-  result = self.mColor
+  result = self.mCf.rgbColors
 
 proc setColor*(self: wFontDialog, color: wColor) {.validate, property, inline.} =
   ## Sets the color that will be used for the font foreground color.
-  self.mColor = color
-
-proc getEnableEffects*(self: wFontDialog): bool {.validate, property, inline.} =
-  ## Determines whether "effects" are enabled.
-  result = self.mEnableEffects
-
-proc setEnableEffects*(self: wFontDialog, enable: bool) {.validate, property, inline.} =
-  ## Sets the color that will be used for the font foreground color.
-  self.mEnableEffects = enable
-
-proc enableEffects*(self: wFontDialog, enable: bool) {.validate, inline.} =
-  ## Sets the color that will be used for the font foreground color.
-  self.mEnableEffects = enable
-
-proc getAllowSymbols*(self: wFontDialog): bool {.validate, property, inline.} =
-  ## Returns a flag determining whether symbol fonts can be selected.
-  result = self.mAllowSymbols
-
-proc setAllowSymbols*(self: wFontDialog, allowSymbols: bool) {.validate, property, inline.} =
-  ## Determines whether symbol fonts can be selected.
-  self.mAllowSymbols = allowSymbols
-
-proc getShowHelp*(self: wFontDialog): bool {.validate, property, inline.} =
-  ## Returns true if the Help button will be shown.
-  result = self.mShowHelp
-
-proc setShowHelp*(self: wFontDialog, showHelp: bool) {.validate, property, inline.} =
-  ## Determines whether the Help button will be displayed in the font dialog.
-  self.mShowHelp = showHelp
+  self.mCf.rgbColors = color
 
 proc getRange*(self: wFontDialog): Slice[int] {.validate, property, inline.} =
   ## Returns the valid range for the font point size.
-  result = self.mRange
+  result = self.mCf.nSizeMin.int..self.mCf.nSizeMax.int
 
 proc setRange*(self: wFontDialog, min: int, max: int) {.validate, property, inline.} =
-  ## Sets the valid range for the font point size.
-  self.mRange = min..max
+  ## Sets the valid range for the font point size, 0..0 means no limit.
+  (self.mCf.nSizeMin, self.mCf.nSizeMax) = (min, max)
+  if min == 0 and max == 0:
+    self.mCf.Flags = self.mCf.Flags and (not CF_LIMITSIZE)
+  else:
+    self.mCf.Flags = self.mCf.Flags or CF_LIMITSIZE
 
 proc setRange*(self: wFontDialog, range: Slice[int]) {.validate, property, inline.} =
-  ## Sets the valid range for the font point size.
-  self.mRange = range
+  ## Sets the valid range for the font point size, 0..0 means no limit.
+  self.setRange(range.a, range.b)
+
+proc enableSymbols*(self: wFontDialog, flag = true) {.validate, inline.} =
+  ## Enables or disables whether symbol fonts can be selected (by default yes).
+  if flag:
+    self.mCf.Flags = self.mCf.Flags and (not CF_SCRIPTSONLY)
+  else:
+    self.mCf.Flags = self.mCf.Flags or CF_SCRIPTSONLY
+
+proc enableEffects*(self: wFontDialog, flag = true) {.validate, inline.} =
+  ## Enables or disables effects (by default yes).
+  if flag:
+    self.mCf.Flags = self.mCf.Flags or CF_EFFECTS
+  else:
+    self.mCf.Flags = self.mCf.Flags and (not CF_EFFECTS)
+
+proc enableApply*(self: wFontDialog, flag = true) =
+  ## Display a Apply button, the dialog got wEvent_DialogApply event when the
+  ## button pressed.
+  if flag:
+    self.mCf.Flags = self.mCf.Flags or CF_APPLY
+  else:
+    self.mCf.Flags = self.mCf.Flags and (not CF_APPLY)
+
+proc enableHelp*(self: wFontDialog, flag = true) =
+  ## Display a Help button, the dialog got wEvent_DialogHelp event when the
+  ## button pressed.
+  if flag:
+    self.mCf.Flags = self.mCf.Flags or CF_SHOWHELP
+  else:
+    self.mCf.Flags = self.mCf.Flags and (not CF_SHOWHELP)
+
+proc wFontHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
+    {.stdcall.} =
+
+  var self = cast[wFontDialog](GetWindowLongPtr(hwnd, GWLP_USERDATA))
+
+  if msg == WM_INITDIALOG:
+    self = cast[wFontDialog](cast[ptr TCHOOSEFONT](lParam).lCustData)
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, cast[LPARAM](self))
+
+  elif msg == WM_COMMAND:
+    if HIWORD(int32 wParam) == BN_CLICKED and LOWORD(int32 wParam) == 1026:
+      SendMessage(hwnd, WM_CHOOSEFONT_GETLOGFONT, 0, &self.mLf)
+      self.mChosenFont = Font(&self.mLf)
+
+      let event = Event(window=self, msg=wEvent_DialogApply)
+      self.processEvent(event)
+
+  if self != nil:
+    result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
 proc final*(self: wFontDialog) =
   ## Default finalizer for wFontDialog.
-  discard
+  self.wDialog.final()
 
-proc init*(self: wFontDialog, parent: wWindow = nil, font: wFont = nil,
-    color = wBlack, enableEffects = true, allowSymbols = true, showHelp = false,
-    range = 0..0) {.validate.} =
+proc init*(self: wFontDialog, owner: wWindow = nil, font: wFont = nil) {.validate.} =
   ## Initializer.
-  self.mParent = parent
-  self.mInitialFont = font
-  self.mColor = color
-  self.mEnableEffects = enableEffects
-  self.mAllowSymbols = allowSymbols
-  self.mShowHelp = showHelp
-  self.mRange = range
+  self.wDialog.init(owner)
+  self.mCf = TCHOOSEFONT(
+    lStructSize: sizeof(TCHOOSEFONT),
+    lpfnHook: wFontHookProc,
+    lCustData: cast[LPARAM](self),
+    lpLogFont: &self.mLf,
+    Flags: CF_ENABLEHOOK)
 
-proc FontDialog*(parent: wWindow = nil, font: wFont = nil, color = wBlack,
-    enableEffects = true, allowSymbols = true, showHelp = false,
-    range = 0..0): wFontDialog {.inline.} =
+  if owner != nil:
+    self.mCf.hwndOwner = owner.mHwnd
+
+  self.setInitialFont(font)
+  self.enableEffects(true)
+
+proc FontDialog*(owner: wWindow = nil, font: wFont = nil): wFontDialog {.inline.} =
   ## Constructor.
   new(result, final)
-  result.init(parent, font, color, enableEffects, allowSymbols, showHelp, range)
+  result.init(owner, font)
 
 proc showModal*(self: wFontDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
-  var
-    lf: LOGFONT
-    cf = TCHOOSEFONT(lStructSize: sizeof(TCHOOSEFONT), lpLogFont: &lf)
-
-  if self.mInitialFont != nil:
-    cf.Flags = cf.Flags or CF_INITTOLOGFONTSTRUCT
-    GetObject(self.mInitialFont.mHandle, sizeof(LOGFONT), cast[pointer](&lf))
-
-  if self.mEnableEffects:
-    cf.Flags = cf.Flags or CF_EFFECTS
-    cf.rgbColors = self.mColor
-
-  if not self.mAllowSymbols:
-    cf.Flags = cf.Flags or CF_SCRIPTSONLY
-
-  if self.mShowHelp:
-    cf.Flags = cf.Flags or CF_SHOWHELP
-
-  if self.mRange != 0..0:
-    cf.Flags = cf.Flags or CF_LIMITSIZE
-    cf.nSizeMin = self.mRange.a
-    cf.nSizeMax = self.mRange.b
-
-  if self.mParent != nil:
-    cf.hwndOwner = self.mParent.mHwnd
-
-  if ChooseFont(cf):
-    self.mChosenFont = Font(lf)
-    self.mColor = cf.rgbColors
+  if ChooseFont(&self.mCf):
+    self.mChosenFont = Font(&self.mLf)
     result = wIdOk
   else:
     result = wIdCancel

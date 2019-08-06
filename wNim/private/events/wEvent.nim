@@ -78,6 +78,7 @@
 ##   wEvent_Close                      The user has tried to close a window. This event can be vetoed.
 ##   wEvent_MenuHighlight              The user selects a menu item (not clicks).
 ##   wEvent_Destroy                    A window is being destroyed.
+##   wEvent_DpiChanged                 The effective dots per inch (dpi) for a window has changed.
 ##   wEvent_App                        Used to define private event type, usually of the form wEvent_App+x.
 ##   ================================  =============================================================
 
@@ -104,7 +105,13 @@ proc isIpEvent(msg: UINT): bool {.inline.}
 proc isWebViewEvent(msg: UINT): bool {.inline.}
 proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
+type
+  wWparam* = WPARAM
+  wLparam* = LPARAM
+
 const
+  WM_DPICHANGED = 0x02E0
+
   wEvent_PropagateMax* = int INT_PTR.high
   wEvent_PropagateNone* = 0
 
@@ -117,10 +124,12 @@ const
   wEvent_Paint* = WM_PAINT
   wEvent_NcPaint* = WM_NCPAINT
   wEvent_HotKey* = WM_HOTKEY
+  wEvent_DpiChanged* = WM_DPICHANGED
 
   # wEvent_AppQuit = WM_APP + 1
   # wEvent_Navigation* = WM_APP + 2
   # wEvent_SetCursor* = WM_APP + 3
+
   wEvent_Close* = WM_APP + 4
   wEvent_Destroy* = WM_APP + 5
 
@@ -155,8 +164,8 @@ proc defaultPropagationLevel(msg: UINT): int =
   else:
     result = 0
 
-proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: WPARAM = 0,
-    lParam: LPARAM = 0, origin: HWND = 0, userData: int = 0): wEvent =
+proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
+    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent =
   ## Constructor.
 
   template CreateEvent(Constructor: untyped): untyped =
@@ -241,8 +250,7 @@ proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   result = self.mWindow
 
 proc getWindow*(self: wEvent): wWindow {.validate, property, inline.} =
-  ## Returns the window associated with the event. This proc is equal to
-  ## getEventObject.
+  ## Returns the window associated with the event. The same as getEventObject().
   result = self.mWindow
 
 proc getEventType*(self: wEvent): UINT {.validate, property, inline.} =
@@ -495,8 +503,6 @@ method getInsertMark*(self: wEvent): int {.base, property.} = discard
 method getPoint*(self: wEvent): wPoint {.base, property.} = discard
   ## Method needs to be overridden.
 method getDataObject*(self: wEvent): wDataObject {.base, property.} = discard
-  ## Method needs to be overridden.
-method getDialog*(self: wEvent): wDialog {.base, property.} = discard
   ## Method needs to be overridden.
 method getEffect*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.

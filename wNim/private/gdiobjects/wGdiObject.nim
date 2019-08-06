@@ -15,6 +15,7 @@
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
 ##   `wCursor <wCursor.html>`_
+##   `wRegion <wRegion.html>`_
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_

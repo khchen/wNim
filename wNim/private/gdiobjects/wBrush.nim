@@ -32,7 +32,7 @@
 
 type
   wBrushError* = object of wGdiObjectError
-    ## An error raised when wBrush creation failure.
+    ## An error raised when wBrush creation failed.
 
 const
   wBrushStyleSolid* = PS_SOLID
@@ -55,7 +55,7 @@ proc initFromNative(self: wBrush, lb: var LOGBRUSH) =
 
   self.mHandle = CreateBrushIndirect(lb)
   if self.mHandle == 0:
-    raise newException(wBrushError, "wBrush creation failure")
+    raise newException(wBrushError, "wBrush creation failed")
 
   self.mColor = lb.lbColor
   self.mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)

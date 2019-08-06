@@ -44,12 +44,12 @@
 ## * "variable:" to specify the variable name used in equal size spacers.
 ## * "outer:" to specify the outer object.
 ##
-## To see more examples and try VFL, run examples/autolayout/autolayoutEditor.nim
+## To see more examples and try VFL, run examples/autolayoutEditor.nim
 #
 ## :Seealso:
 ##   `wResizable <wResizable.html>`_
 
-import strutils, parseutils, tables, strformat, macros
+import strutils, parseutils, tables, strformat
 
 type
   VflRule = object

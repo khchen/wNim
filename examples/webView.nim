@@ -26,7 +26,7 @@ type
     idGoBack = wIdUser, idGoForward
 
 proc aboutDialog(owner: wWindow) =
-  let dialog = Frame(owner=owner, title="About wNim", size=(350, 450), style=wDefaultDialogStyle)
+  let dialog = Frame(owner=owner, title="wNim wWebView", size=(350, 450), style=wDefaultDialogStyle)
   let webView = WebView(dialog, style=wWvNoSel or wWvNoScroll or wWvNoContextMenu or wWvSilent)
   webView.navigate("res://webView.exe/about.html")
 
@@ -54,7 +54,7 @@ let imgGoForward = Image(Icon("shell32.dll,137")).scale(24, 24)
 imgGoBack.rotateFlip(wImageRotateNoneFlipX)
 
 toolbar.addTool(idGoBack, "", Bmp(imgGoBack), longHelp="Navigate back")
-toolbar.addTool(idGoForward, "", Bmp(imgGoForward))
+toolbar.addTool(idGoForward, "", Bmp(imgGoForward), longHelp="Navigate foreward")
 toolBar.disableTool(idGoBack)
 toolBar.disableTool(idGoForward)
 rebar.addControl(toolBar)

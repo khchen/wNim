@@ -18,18 +18,18 @@ const defaultText = "You can drop text, image, or files on drop target."
 const defaultFile = ["dragdrop.exe"]
 const defaultImage = staticRead(r"images\logo.png")
 
-var app = App()
+let app = App()
 var data = DataObject(defaultText)
 
-var frame = Frame(title="wNim Drag-Drop Demo", size=(600, 350),
+let frame = Frame(title="wNim Drag-Drop Demo", size=(600, 350),
   style=wDefaultFrameStyle or wDoubleBuffered)
 frame.icon = Icon("", 0) # load icon from exe file.
 
-var statusBar = StatusBar(frame)
-var menuBar = MenuBar(frame)
-var panel = Panel(frame)
+let statusBar = StatusBar(frame)
+let menuBar = MenuBar(frame)
+let panel = Panel(frame)
 
-var menu = Menu(menuBar, "&File")
+let menu = Menu(menuBar, "&File")
 menu.append(idText, "Load &Text", "Loads default text as current data.")
 menu.append(idFile, "Load &File", "Loads exefile as current data.")
 menu.append(idImage, "Load &Image", "Loads default image as current data.")
@@ -39,26 +39,26 @@ menu.append(idPaste, "&Paste\tCtrl+V", "Paste data from clipboard.")
 menu.appendSeparator()
 menu.append(idExit, "E&xit", "Exit the program.")
 
-var accel = AcceleratorTable()
+let accel = AcceleratorTable()
 accel.add(wAccelCtrl, wKey_C, idCopy)
 accel.add(wAccelCtrl, wKey_V, idPaste)
 frame.acceleratorTable = accel
 
-var target = StaticText(panel, label="Drop Target",
+let target = StaticText(panel, label="Drop Target",
   style=wBorderStatic or wAlignCentre or wAlignMiddle)
 target.setDropTarget()
 
-var source = StaticText(panel, label="Drag Source",
+let source = StaticText(panel, label="Drag Source",
   style=wBorderStatic or wAlignCentre or wAlignMiddle)
 
-var dataText = TextCtrl(panel,
+let dataText = TextCtrl(panel,
   style=wInvisible or wBorderStatic or wTeMultiLine or wTeReadOnly or
   wTeRich or wTeDontWrap)
 
-var dataList = ListBox(panel,
+let dataList = ListBox(panel,
   style=wInvisible or wLbNoSel or wLbNeededScroll)
 
-var dataBitmap = StaticBitmap(panel,
+let dataBitmap = StaticBitmap(panel,
   style=wInvisible or wSbFit)
 
 proc layout() =
@@ -156,7 +156,7 @@ frame.idPaste do ():
   data = wGetClipboard()
   displayData()
 
-frame.wEvent_Size do ():
+panel.wEvent_Size do ():
   layout()
 
 layout()

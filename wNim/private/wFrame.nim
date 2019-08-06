@@ -16,7 +16,8 @@
 ## Notice that if a frame has exactly one child window, not counting the status
 ## and toolbar, this child is resized to take the entire frame client area.
 ## If two or more windows are present, they should be laid out explicitly by
-## manually.
+## manually. **This behavior just a default wEvent_Size event
+## handler for frame, and it can be overwrited (Since 0.7.0).**
 #
 ## :Superclass:
 ##   `wWindow <wWindow.html>`_
@@ -79,8 +80,12 @@ proc setMenuBar*(self: wFrame, menuBar: wMenuBar) {.validate, property, inline.}
   menuBar.attach(self)
 
 proc getMenuBar*(self: wFrame): wMenuBar {.validate, property, inline.} =
-  ## Returns the menubar currently associated with the frame.
+  ## Returns the menubar currently associated with the frame (if any).
   result = self.mMenuBar
+
+proc getStatusBar*(self: wFrame): wStatusBar {.validate, property, inline.} =
+  ## Returns the status bar currently associated with the frame (if any).
+  result = self.mStatusBar
 
 proc setTopMost*(self: wFrame, top = true) {.validate, property.} =
   ## Sets whether the frame top most to all windows.
@@ -173,14 +178,14 @@ proc shortcutId(self: wFrame, flag: int, keyCode: int): wCommandID =
   result = wCommandID id
 
 proc shortcut*(self: wFrame, flag: int, keyCode: int,
-    handler: wEventHandler): wEventConnection {.validate, discardable.} =
+    handler: wEventProc): wEventConnection {.validate, discardable.} =
   ## Quickly bind a keyboard shortcut to an event handler.
   ## If this frame not yet have a accelerator table, it will create a new one.
   ## This function use wCommandID between 64257..65535.
   return self.connect(self.shortcutId(flag, keyCode), handler)
 
 proc shortcut*(self: wFrame, flag: int, keyCode: int,
-    handler: wEventNeatHandler): wEventConnection {.validate, discardable.} =
+    handler: wEventNeatProc): wEventConnection {.validate, discardable.} =
   ## Quickly bind a keyboard shortcut to an event handler.
   ## If this frame not yet have a accelerator table, it will create a new one.
   ## This function use wCommandID between 64257..65535.
@@ -194,9 +199,14 @@ proc getReturnCode*(self: wFrame): int {.validate, property, inline.} =
   ## Gets the return code for this window.
   result = self.mRetCode
 
+proc isModal*(self: wFrame): bool {.validate, inline.} =
+  ## Returns true if the frame is modal, false otherwise.
+  result = self.mIsModal
+
 proc showModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows the frame as an application-modal dialog.
   ## Program flow does not return until the dialog has been dismissed with endModal.
+  self.mIsModal = true
   self.mDisableList = @[]
   for hwnd in wAppTopLevelHwnd():
     if hwnd != self.mHwnd and IsWindowEnabled(hwnd) != 0:
@@ -209,6 +219,7 @@ proc showModal*(self: wFrame): int {.validate, discardable.} =
 proc showWindowModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows a dialog modal to the parent top level window only.
   ## Program flow does not return until the dialog has been dismissed with endModal.
+  self.mIsModal = true
   self.mDisableList = @[]
   let owner = GetWindow(self.mHwnd, GW_OWNER)
   if owner != 0:
@@ -239,6 +250,8 @@ proc endModal*(self: wFrame, retCode: int = 0) =
   let owner = GetWindow(self.mHwnd, GW_OWNER)
   if owner != 0:
     SetForegroundWindow(owner)
+
+  self.mIsModal = false
 
 proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.} =
   ## Creates the system tray icon.
@@ -316,7 +329,7 @@ proc showBalloon*(self: wFrame, title: string, text: string, timeout: int = 3000
     nid.dwInfoFlags = flag
     Shell_NotifyIcon(NIM_MODIFY, &nid)
 
-proc wFrame_DoSize(event: wEvent) =
+proc wFrame_OnSize(event: wEvent) =
   # If the frame has exactly one child window, not counting the status and toolbar,
   # this child is resized to take the entire frame client area.
   # If two or more windows are present, they should be laid out explicitly by manually.
@@ -418,7 +431,7 @@ proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
     style=style or WS_CLIPCHILDREN, owner=owner, className=className,
     bgColor=GetSysColor(COLOR_APPWORKSPACE))
 
-  self.systemConnect(wEvent_Size, wFrame_DoSize)
+  self.hardConnect(wEvent_Size, wFrame_OnSize)
   self.hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
   self.hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)
 

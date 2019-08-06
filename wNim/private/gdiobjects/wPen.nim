@@ -43,7 +43,7 @@
 
 type
   wPenError* = object of wGdiObjectError
-    ## An error raised when wPen creation failure.
+    ## An error raised when wPen creation failed.
 
 const
   # wPen styles
@@ -86,7 +86,7 @@ proc initFromNative(self: wPen, elp: EXTLOGPEN) =
     elp.elpWidth, lb, 0, nil)
 
   if self.mHandle == 0:
-    raise newException(wPenError, "wPen creation failure")
+    raise newException(wPenError, "wPen creation failed")
 
   self.mColor = elp.elpColor
   self.mStyle = elp.elpPenStyle or (DWORD elp.elpHatch shl 16)

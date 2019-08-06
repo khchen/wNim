@@ -56,7 +56,7 @@ frame.wEvent_Tool do (event: wEvent):
   if event.id == idExit:
     frame.delete()
 
-frame.wEvent_Size do ():
+panel.wEvent_Size do ():
   panel.layout:
     listbox:
       width = panel.width

@@ -120,8 +120,9 @@ when not defined(Nimdoc):
   # Mutually recursive types are only possible within a single type section.
   # So we collect all type definition in this module.
   type
-    wEventHandler = proc (event: wEvent)
-    wEventNeatHandler = proc ()
+    wEventProc = proc (event: wEvent)
+    wEventNeatProc = proc ()
+    wHookProc = proc (self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM): bool
 
     # 0.4.1
     # wNim use wMenu.mParentMenuCountTable and wMenuItem.mParentMenu to find the
@@ -142,6 +143,7 @@ when not defined(Nimdoc):
       mMessageCountTable: CountTable[UINT]
       mExitCode: uint
       mAccelExists: bool
+      mDpi: int
 
     wEvent* = ref object of RootObj
       mWindow: wWindow
@@ -173,7 +175,6 @@ when not defined(Nimdoc):
       mDataObject: wDataObject
       mEffect: int
     wDialogEvent* = ref object of wEvent
-      mDialog: wDialog
     wStatusBarEvent* = ref object of wCommandEvent
     wListEvent* = ref object of wCommandEvent
       mIndex: int
@@ -216,11 +217,15 @@ when not defined(Nimdoc):
       mObj: ptr IDataObject
       mReleasable: bool
 
-    wEventConnection* = tuple
+    wPrintData* = ref object
+      mDevice: string
+      mDevModeBuffer: string
+
+    wEventConnection* = object
       msg: UINT
       id: wCommandID
-      handler: wEventHandler
-      neatHandler: wEventNeatHandler
+      handler: wEventProc
+      neatHandler: wEventNeatProc
       userData: int
       undeletable: bool
 
@@ -254,6 +259,8 @@ when not defined(Nimdoc):
       mHwnd: HWND
       mParent: wWindow
       mChildren: seq[wWindow]
+      mSystemConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
+      mConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
       mMargin: wDirection
       mStatusBar: wStatusBar
       mToolBar: wToolBar
@@ -264,19 +271,18 @@ when not defined(Nimdoc):
       mBackgroundBrush: wBrush
       mCursor: wCursor
       mOverrideCursor: wCursor
-      mSystemConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
-      mConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
       mAcceleratorTable: wAcceleratorTable
       mSaveFocus: wWindow
       mFocusable: bool
+      mMouseInWindow: bool
       mMaxSize: wSize
       mMinSize: wSize
       mDummyParent: HWND
-      mMouseInWindow: bool
+      mTipHwnd: HWND
       mSizingInfo: wSizingInfo
       mDraggableInfo: wDraggableInfo
-      mDropTarget: wDropTarget
-      mTipHwnd: HWND
+      mDropTarget: ref wDropTarget
+      mHookProc: wHookProc
 
     wFrame* = ref object of wWindow
       mMenuBar: wMenuBar
@@ -288,6 +294,7 @@ when not defined(Nimdoc):
       mTrayConn: wEventConnection
       mCreateConn: wEventConnection
       mRetCode: int
+      mIsModal: bool
 
     wPanel* = ref object of wWindow
 
@@ -367,6 +374,7 @@ when not defined(Nimdoc):
       mNotifyConn: wEventConnection
 
     wSpinButton* = ref object of wControl
+      mNotifyConn: wEventConnection
 
     wSlider* = ref object of wControl
       mReversed: bool
@@ -526,6 +534,8 @@ when not defined(Nimdoc):
       mDeletable: bool
       mIconResource: bool
 
+    wRegion* = ref object of wGdiObject
+
     # device context type is "object" not "ref object"
 
     wDC* = object of RootObj
@@ -537,6 +547,7 @@ when not defined(Nimdoc):
       mBrush: wBrush
       mBackground: wBrush
       mBitmap: wBitmap
+      mRegion: wRegion
       mScale: tuple[x, y: float]
       mCanvas: wWindow
       mhOldFont: HANDLE
@@ -555,8 +566,10 @@ when not defined(Nimdoc):
     wPaintDC* = object of wDC
       mPs: PAINTSTRUCT
 
-    wDialog* = ref object of RootObj
-      mParent: wWindow
+    wPrinterDC* = object of wDC
+
+    wDialog* = ref object of wWindow
+      mOwner: wWindow
 
     wMessageDialog* = ref object of wDialog
       mHook: HHOOK
@@ -581,20 +594,17 @@ when not defined(Nimdoc):
       mPaths: seq[string]
 
     wColorDialog* = ref object of wDialog
-      mColor: wColor
+      mCc: TCHOOSECOLOR
       mStyle: wStyle
       mCustomColor: array[16, wColor]
 
     wFontDialog* = ref object of wDialog
+      mCf: TCHOOSEFONT
+      mLf: LOGFONT
       mChosenFont: wFont
-      mInitialFont: wFont
-      mColor: wColor
-      mEnableEffects: bool
-      mAllowSymbols: bool
-      mShowHelp: bool
-      mRange: Slice[int]
 
-    wTextEnterDialog* = ref object of wDialog
+    wTextEntryDialog* = ref object of wDialog
+      mFrame: wFrame
       mMessage: string
       mCaption: string
       mValue: string
@@ -603,18 +613,24 @@ when not defined(Nimdoc):
       mPos: wPoint
       mOkLabel: string
       mCancelLabe: string
-      mFrame: wFrame
       mReturnId: wId
 
-    wPasswordEntryDialog* = ref object of wTextEnterDialog
+    wPasswordEntryDialog* = ref object of wTextEntryDialog
 
     wFindReplaceDialog* = ref object of wDialog
-      mFlags: int
+      mFr: FINDREPLACE
       mFindString: TString
       mReplaceString: TString
-      mFindReplace: FINDREPLACE
-      mFrame: wFrame
-      mHdlg: HWND
+      mIsReplace: bool
+      mMsgConn: wEventConnection
+
+    wPageSetupDialog* = ref object of wDialog
+      mPsd: TPAGESETUPDLG
+
+    wPrintDialog* = ref object of wDialog
+      mPd: TPRINTDLGEX
+      mRanges: array[64, PRINTPAGERANGE]
+      mPrintData: wPrintData
 
   proc `==`*(x: wCommandID, y: wCommandID): bool {.borrow.}
   proc `$`*(x: wCommandID): string {.borrow.}

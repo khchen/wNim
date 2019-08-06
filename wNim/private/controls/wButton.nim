@@ -18,9 +18,11 @@
 ##   ==============================  =============================================================
 ##   Styles                          Description
 ##   ==============================  =============================================================
-##   wSbAuto                         Automatically sizes the control to accommodate the bitmap.
-##   wSbFit                          Stretch or shrink the bitmap to fit the size.
-##   wSbCenter                       Center the bitmap and clip if needed.
+##   wBuLeft                         Left-justifies the label.
+##   wBuTop                          Aligns the label to the top of the button.
+##   wBuRight                        Right-justifies the bitmap label.
+##   wBuBottom                       Aligns the label to the bottom of the button.
+##   wBuNoBorder                     Creates a button without border.
 ##   ==============================  =============================================================
 #
 ## :Events:

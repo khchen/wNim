@@ -232,7 +232,7 @@ proc getTopItem*(self: wListBox): int {.validate, property, inline.} =
   result = int SendMessage(self.mHwnd, LB_GETTOPINDEX, 0, 0)
 
 proc hitTest*(self: wListBox, x, y: int): int {.validate, inline.} =
-  ## Returns the item located at point, or wNOT_FOUND(-1) if there is no item
+  ## Returns the item located at point, or wNotFound(-1) if there is no item
   ## located at point.
 
   # The return value contains the index of the nearest item in the LOWORD.
@@ -242,7 +242,7 @@ proc hitTest*(self: wListBox, x, y: int): int {.validate, inline.} =
   result = if HIWORD(ret) != 0: -1 else: int LOWORD(ret)
 
 proc hitTest*(self: wListBox, pos: wPoint): int {.validate, inline.} =
-  ## Returns the item located at point, or wNOT_FOUND(-1) if there is no item
+  ## Returns the item located at point, or wNotFound(-1) if there is no item
   ## located at point.
   result = self.hitTest(pos.x, pos.y)
 

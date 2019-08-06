@@ -9,6 +9,7 @@ import winim/inc/winimbase
 import winim/inc/windef
 const
   FACILITY_WIN32* = 7
+  ERROR_SUCCESS* = 0
   ERROR_CANCELLED* = 1223
   E_UNEXPECTED* = HRESULT 0x8000FFFF'i32
   E_NOTIMPL* = HRESULT 0x80004001'i32
@@ -44,7 +45,9 @@ type
 const
   LOAD_LIBRARY_AS_DATAFILE* = 0x2
   GMEM_FIXED* = 0x0
+  GMEM_MOVEABLE* = 0x2
   GMEM_ZEROINIT* = 0x40
+  GHND* = GMEM_MOVEABLE or GMEM_ZEROINIT
   GPTR* = GMEM_FIXED or GMEM_ZEROINIT
 type
   ENUMRESNAMEPROCA* = proc (hModule: HMODULE, lpType: LPCSTR, lpName: LPSTR, lParam: LONG_PTR): WINBOOL {.stdcall.}
@@ -57,8 +60,10 @@ proc GetProcAddress*(hModule: HMODULE, lpProcName: LPCSTR): FARPROC {.winapi, st
 proc GetCurrentThreadId*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetLocalTime*(lpSystemTime: LPSYSTEMTIME): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalAlloc*(uFlags: UINT, dwBytes: SIZE_T): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
+proc GlobalSize*(hMem: HGLOBAL): SIZE_T {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalLock*(hMem: HGLOBAL): LPVOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalUnlock*(hMem: HGLOBAL): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc.}
+proc GlobalFree*(hMem: HGLOBAL): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc MulDiv*(nNumber: int32, nNumerator: int32, nDenominator: int32): int32 {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc InterlockedIncrement*(Addend: ptr LONG): LONG {.importc: "InterlockedIncrement", header: "<windows.h>".}
 proc InterlockedDecrement*(Addend: ptr LONG): LONG {.importc: "InterlockedDecrement", header: "<windows.h>".}
@@ -111,6 +116,50 @@ type
   BITMAPINFO* {.pure.} = object
     bmiHeader*: BITMAPINFOHEADER
     bmiColors*: array[1, RGBQUAD]
+  TEXTMETRICA* {.pure.} = object
+    tmHeight*: LONG
+    tmAscent*: LONG
+    tmDescent*: LONG
+    tmInternalLeading*: LONG
+    tmExternalLeading*: LONG
+    tmAveCharWidth*: LONG
+    tmMaxCharWidth*: LONG
+    tmWeight*: LONG
+    tmOverhang*: LONG
+    tmDigitizedAspectX*: LONG
+    tmDigitizedAspectY*: LONG
+    tmFirstChar*: BYTE
+    tmLastChar*: BYTE
+    tmDefaultChar*: BYTE
+    tmBreakChar*: BYTE
+    tmItalic*: BYTE
+    tmUnderlined*: BYTE
+    tmStruckOut*: BYTE
+    tmPitchAndFamily*: BYTE
+    tmCharSet*: BYTE
+  LPTEXTMETRICA* = ptr TEXTMETRICA
+  TEXTMETRICW* {.pure.} = object
+    tmHeight*: LONG
+    tmAscent*: LONG
+    tmDescent*: LONG
+    tmInternalLeading*: LONG
+    tmExternalLeading*: LONG
+    tmAveCharWidth*: LONG
+    tmMaxCharWidth*: LONG
+    tmWeight*: LONG
+    tmOverhang*: LONG
+    tmDigitizedAspectX*: LONG
+    tmDigitizedAspectY*: LONG
+    tmFirstChar*: WCHAR
+    tmLastChar*: WCHAR
+    tmDefaultChar*: WCHAR
+    tmBreakChar*: WCHAR
+    tmItalic*: BYTE
+    tmUnderlined*: BYTE
+    tmStruckOut*: BYTE
+    tmPitchAndFamily*: BYTE
+    tmCharSet*: BYTE
+  LPTEXTMETRICW* = ptr TEXTMETRICW
   LOGBRUSH* {.pure.} = object
     lbStyle*: UINT
     lbColor*: COLORREF
@@ -167,6 +216,110 @@ type
     lfPitchAndFamily*: BYTE
     lfFaceName*: array[LF_FACESIZE, WCHAR]
   LPLOGFONTW* = ptr LOGFONTW
+const
+  CCHDEVICENAME* = 32
+type
+  DEVMODEA_UNION1_STRUCT1* {.pure.} = object
+    dmOrientation*: int16
+    dmPaperSize*: int16
+    dmPaperLength*: int16
+    dmPaperWidth*: int16
+    dmScale*: int16
+    dmCopies*: int16
+    dmDefaultSource*: int16
+    dmPrintQuality*: int16
+  DEVMODEA_UNION1_STRUCT2* {.pure.} = object
+    dmPosition*: POINTL
+    dmDisplayOrientation*: DWORD
+    dmDisplayFixedOutput*: DWORD
+  DEVMODEA_UNION1* {.pure, union.} = object
+    struct1*: DEVMODEA_UNION1_STRUCT1
+    struct2*: DEVMODEA_UNION1_STRUCT2
+const
+  CCHFORMNAME* = 32
+type
+  DEVMODEA_UNION2* {.pure, union.} = object
+    dmDisplayFlags*: DWORD
+    dmNup*: DWORD
+  DEVMODEA* {.pure.} = object
+    dmDeviceName*: array[CCHDEVICENAME, BYTE]
+    dmSpecVersion*: WORD
+    dmDriverVersion*: WORD
+    dmSize*: WORD
+    dmDriverExtra*: WORD
+    dmFields*: DWORD
+    union1*: DEVMODEA_UNION1
+    dmColor*: int16
+    dmDuplex*: int16
+    dmYResolution*: int16
+    dmTTOption*: int16
+    dmCollate*: int16
+    dmFormName*: array[CCHFORMNAME, BYTE]
+    dmLogPixels*: WORD
+    dmBitsPerPel*: DWORD
+    dmPelsWidth*: DWORD
+    dmPelsHeight*: DWORD
+    union2*: DEVMODEA_UNION2
+    dmDisplayFrequency*: DWORD
+    dmICMMethod*: DWORD
+    dmICMIntent*: DWORD
+    dmMediaType*: DWORD
+    dmDitherType*: DWORD
+    dmReserved1*: DWORD
+    dmReserved2*: DWORD
+    dmPanningWidth*: DWORD
+    dmPanningHeight*: DWORD
+  PDEVMODEA* = ptr DEVMODEA
+  LPDEVMODEA* = ptr DEVMODEA
+  DEVMODEW_UNION1_STRUCT1* {.pure.} = object
+    dmOrientation*: int16
+    dmPaperSize*: int16
+    dmPaperLength*: int16
+    dmPaperWidth*: int16
+    dmScale*: int16
+    dmCopies*: int16
+    dmDefaultSource*: int16
+    dmPrintQuality*: int16
+  DEVMODEW_UNION1_STRUCT2* {.pure.} = object
+    dmPosition*: POINTL
+    dmDisplayOrientation*: DWORD
+    dmDisplayFixedOutput*: DWORD
+  DEVMODEW_UNION1* {.pure, union.} = object
+    struct1*: DEVMODEW_UNION1_STRUCT1
+    struct2*: DEVMODEW_UNION1_STRUCT2
+  DEVMODEW_UNION2* {.pure, union.} = object
+    dmDisplayFlags*: DWORD
+    dmNup*: DWORD
+  DEVMODEW* {.pure.} = object
+    dmDeviceName*: array[CCHDEVICENAME, WCHAR]
+    dmSpecVersion*: WORD
+    dmDriverVersion*: WORD
+    dmSize*: WORD
+    dmDriverExtra*: WORD
+    dmFields*: DWORD
+    union1*: DEVMODEW_UNION1
+    dmColor*: int16
+    dmDuplex*: int16
+    dmYResolution*: int16
+    dmTTOption*: int16
+    dmCollate*: int16
+    dmFormName*: array[CCHFORMNAME, WCHAR]
+    dmLogPixels*: WORD
+    dmBitsPerPel*: DWORD
+    dmPelsWidth*: DWORD
+    dmPelsHeight*: DWORD
+    union2*: DEVMODEW_UNION2
+    dmDisplayFrequency*: DWORD
+    dmICMMethod*: DWORD
+    dmICMIntent*: DWORD
+    dmMediaType*: DWORD
+    dmDitherType*: DWORD
+    dmReserved1*: DWORD
+    dmReserved2*: DWORD
+    dmPanningWidth*: DWORD
+    dmPanningHeight*: DWORD
+  PDEVMODEW* = ptr DEVMODEW
+  LPDEVMODEW* = ptr DEVMODEW
   BLENDFUNCTION* {.pure.} = object
     BlendOp*: BYTE
     BlendFlags*: BYTE
@@ -178,6 +331,18 @@ type
     dsBitfields*: array[3, DWORD]
     dshSection*: HANDLE
     dsOffset*: DWORD
+  DOCINFOA* {.pure.} = object
+    cbSize*: int32
+    lpszDocName*: LPCSTR
+    lpszOutput*: LPCSTR
+    lpszDatatype*: LPCSTR
+    fwType*: DWORD
+  DOCINFOW* {.pure.} = object
+    cbSize*: int32
+    lpszDocName*: LPCWSTR
+    lpszOutput*: LPCWSTR
+    lpszDatatype*: LPCWSTR
+    fwType*: DWORD
 const
   R2_BLACK* = 1
   R2_NOTMERGEPEN* = 2
@@ -206,8 +371,18 @@ const
   DSTINVERT* = DWORD 0x00550009
   BLACKNESS* = DWORD 0x00000042
   WHITENESS* = DWORD 0x00FF0062
+  ERROR* = 0
+  RGN_AND* = 1
+  RGN_OR* = 2
+  RGN_XOR* = 3
+  RGN_DIFF* = 4
+  RGN_COPY* = 5
+  HALFTONE* = 4
   ALTERNATE* = 1
   WINDING* = 2
+  abortDoc* = 2
+  startDoc* = 10
+  endDoc* = 11
   DEFAULT_PITCH* = 0
   ANSI_CHARSET* = 0
   DEFAULT_CHARSET* = 1
@@ -276,29 +451,183 @@ const
   PLANES* = 14
   LOGPIXELSX* = 88
   LOGPIXELSY* = 90
+  PHYSICALWIDTH* = 110
+  PHYSICALHEIGHT* = 111
+  PHYSICALOFFSETX* = 112
+  PHYSICALOFFSETY* = 113
+  DM_ORIENTATION* = 0x00000001
+  DM_PAPERSIZE* = 0x00000002
+  DM_PAPERLENGTH* = 0x00000004
+  DM_PAPERWIDTH* = 0x00000008
+  DM_COPIES* = 0x00000100
+  DM_COLOR* = 0x00000800
+  DM_DUPLEX* = 0x00001000
+  DMORIENT_PORTRAIT* = 1
+  DMORIENT_LANDSCAPE* = 2
+  DMPAPER_LETTER* = 1
+  DMPAPER_LETTERSMALL* = 2
+  DMPAPER_TABLOID* = 3
+  DMPAPER_LEDGER* = 4
+  DMPAPER_LEGAL* = 5
+  DMPAPER_STATEMENT* = 6
+  DMPAPER_EXECUTIVE* = 7
+  DMPAPER_A3* = 8
+  DMPAPER_A4* = 9
+  DMPAPER_A4SMALL* = 10
+  DMPAPER_A5* = 11
+  DMPAPER_B4* = 12
+  DMPAPER_B5* = 13
+  DMPAPER_FOLIO* = 14
+  DMPAPER_QUARTO* = 15
+  DMPAPER_10X14* = 16
+  DMPAPER_11X17* = 17
+  DMPAPER_NOTE* = 18
+  DMPAPER_ENV_9* = 19
+  DMPAPER_ENV_10* = 20
+  DMPAPER_ENV_11* = 21
+  DMPAPER_ENV_12* = 22
+  DMPAPER_ENV_14* = 23
+  DMPAPER_CSHEET* = 24
+  DMPAPER_DSHEET* = 25
+  DMPAPER_ESHEET* = 26
+  DMPAPER_ENV_DL* = 27
+  DMPAPER_ENV_C5* = 28
+  DMPAPER_ENV_C3* = 29
+  DMPAPER_ENV_C4* = 30
+  DMPAPER_ENV_C6* = 31
+  DMPAPER_ENV_C65* = 32
+  DMPAPER_ENV_B4* = 33
+  DMPAPER_ENV_B5* = 34
+  DMPAPER_ENV_B6* = 35
+  DMPAPER_ENV_ITALY* = 36
+  DMPAPER_ENV_MONARCH* = 37
+  DMPAPER_ENV_PERSONAL* = 38
+  DMPAPER_FANFOLD_US* = 39
+  DMPAPER_FANFOLD_STD_GERMAN* = 40
+  DMPAPER_FANFOLD_LGL_GERMAN* = 41
+  DMPAPER_ISO_B4* = 42
+  DMPAPER_JAPANESE_POSTCARD* = 43
+  DMPAPER_9X11* = 44
+  DMPAPER_10X11* = 45
+  DMPAPER_15X11* = 46
+  DMPAPER_ENV_INVITE* = 47
+  DMPAPER_RESERVED_48* = 48
+  DMPAPER_RESERVED_49* = 49
+  DMPAPER_LETTER_EXTRA* = 50
+  DMPAPER_LEGAL_EXTRA* = 51
+  DMPAPER_TABLOID_EXTRA* = 52
+  DMPAPER_A4_EXTRA* = 53
+  DMPAPER_LETTER_TRANSVERSE* = 54
+  DMPAPER_A4_TRANSVERSE* = 55
+  DMPAPER_LETTER_EXTRA_TRANSVERSE* = 56
+  DMPAPER_A_PLUS* = 57
+  DMPAPER_B_PLUS* = 58
+  DMPAPER_LETTER_PLUS* = 59
+  DMPAPER_A4_PLUS* = 60
+  DMPAPER_A5_TRANSVERSE* = 61
+  DMPAPER_B5_TRANSVERSE* = 62
+  DMPAPER_A3_EXTRA* = 63
+  DMPAPER_A5_EXTRA* = 64
+  DMPAPER_B5_EXTRA* = 65
+  DMPAPER_A2* = 66
+  DMPAPER_A3_TRANSVERSE* = 67
+  DMPAPER_A3_EXTRA_TRANSVERSE* = 68
+  DMPAPER_DBL_JAPANESE_POSTCARD* = 69
+  DMPAPER_A6* = 70
+  DMPAPER_JENV_KAKU2* = 71
+  DMPAPER_JENV_KAKU3* = 72
+  DMPAPER_JENV_CHOU3* = 73
+  DMPAPER_JENV_CHOU4* = 74
+  DMPAPER_LETTER_ROTATED* = 75
+  DMPAPER_A3_ROTATED* = 76
+  DMPAPER_A4_ROTATED* = 77
+  DMPAPER_A5_ROTATED* = 78
+  DMPAPER_B4_JIS_ROTATED* = 79
+  DMPAPER_B5_JIS_ROTATED* = 80
+  DMPAPER_JAPANESE_POSTCARD_ROTATED* = 81
+  DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED* = 82
+  DMPAPER_A6_ROTATED* = 83
+  DMPAPER_JENV_KAKU2_ROTATED* = 84
+  DMPAPER_JENV_KAKU3_ROTATED* = 85
+  DMPAPER_JENV_CHOU3_ROTATED* = 86
+  DMPAPER_JENV_CHOU4_ROTATED* = 87
+  DMPAPER_B6_JIS* = 88
+  DMPAPER_B6_JIS_ROTATED* = 89
+  DMPAPER_12X11* = 90
+  DMPAPER_JENV_YOU4* = 91
+  DMPAPER_JENV_YOU4_ROTATED* = 92
+  DMPAPER_P16K* = 93
+  DMPAPER_P32K* = 94
+  DMPAPER_P32KBIG* = 95
+  DMPAPER_PENV_1* = 96
+  DMPAPER_PENV_2* = 97
+  DMPAPER_PENV_3* = 98
+  DMPAPER_PENV_4* = 99
+  DMPAPER_PENV_5* = 100
+  DMPAPER_PENV_6* = 101
+  DMPAPER_PENV_7* = 102
+  DMPAPER_PENV_8* = 103
+  DMPAPER_PENV_9* = 104
+  DMPAPER_PENV_10* = 105
+  DMPAPER_P16K_ROTATED* = 106
+  DMPAPER_P32K_ROTATED* = 107
+  DMPAPER_P32KBIG_ROTATED* = 108
+  DMPAPER_PENV_1_ROTATED* = 109
+  DMPAPER_PENV_2_ROTATED* = 110
+  DMPAPER_PENV_3_ROTATED* = 111
+  DMPAPER_PENV_4_ROTATED* = 112
+  DMPAPER_PENV_5_ROTATED* = 113
+  DMPAPER_PENV_6_ROTATED* = 114
+  DMPAPER_PENV_7_ROTATED* = 115
+  DMPAPER_PENV_8_ROTATED* = 116
+  DMPAPER_PENV_9_ROTATED* = 117
+  DMPAPER_PENV_10_ROTATED* = 118
+  DMPAPER_USER* = 256
+  DMCOLOR_MONOCHROME* = 1
+  DMCOLOR_COLOR* = 2
+  DMDUP_SIMPLEX* = 1
+  DMDUP_VERTICAL* = 2
+  DMDUP_HORIZONTAL* = 3
+  DMCOLLATE_FALSE* = 0
   AC_SRC_OVER* = 0x00
   AC_SRC_ALPHA* = 0x01
+when winimUnicode:
+  type
+    LPDEVMODE* = LPDEVMODEW
+when winimAnsi:
+  type
+    LPDEVMODE* = LPDEVMODEA
 proc Arc*(hdc: HDC, x1: int32, y1: int32, x2: int32, y2: int32, x3: int32, y3: int32, x4: int32, y4: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc BitBlt*(hdc: HDC, x: int32, y: int32, cx: int32, cy: int32, hdcSrc: HDC, x1: int32, y1: int32, rop: DWORD): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CombineRgn*(hrgnDst: HRGN, hrgnSrc1: HRGN, hrgnSrc2: HRGN, iMode: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateBitmap*(nWidth: int32, nHeight: int32, nPlanes: UINT, nBitCount: UINT, lpBits: pointer): HBITMAP {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateBrushIndirect*(plbrush: ptr LOGBRUSH): HBRUSH {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateCompatibleBitmap*(hdc: HDC, cx: int32, cy: int32): HBITMAP {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateCompatibleDC*(hdc: HDC): HDC {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CreateEllipticRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CreateRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CreateRoundRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32, w: int32, h: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteDC*(hdc: HDC): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteObject*(ho: HGDIOBJ): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Ellipse*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc EqualRgn*(hrgn1: HRGN, hrgn2: HRGN): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetROP2*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetBkMode*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetDeviceCaps*(hdc: HDC, index: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetObjectType*(h: HGDIOBJ): DWORD {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetPixel*(hdc: HDC, x: int32, y: int32): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc GetRgnBox*(hrgn: HRGN, lprc: LPRECT): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetStockObject*(i: int32): HGDIOBJ {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetViewportOrgEx*(hdc: HDC, lppoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc LineTo*(hdc: HDC, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc OffsetRgn*(hrgn: HRGN, x: int32, y: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Pie*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32, xr1: int32, yr1: int32, xr2: int32, yr2: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc PolyPolygon*(hdc: HDC, apt: ptr POINT, asz: ptr INT, csz: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc PtInRegion*(hrgn: HRGN, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc RectInRegion*(hrgn: HRGN, lprect: ptr RECT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Rectangle*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc RoundRect*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32, width: int32, height: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc SelectClipRgn*(hdc: HDC, hrgn: HRGN): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SelectObject*(hdc: HDC, h: HGDIOBJ): HGDIOBJ {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetBkColor*(hdc: HDC, color: COLORREF): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetBkMode*(hdc: HDC, mode: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
@@ -308,10 +637,15 @@ proc SetPixel*(hdc: HDC, x: int32, y: int32, color: COLORREF): COLORREF {.winapi
 proc SetPolyFillMode*(hdc: HDC, mode: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc StretchBlt*(hdcDest: HDC, xDest: int32, yDest: int32, wDest: int32, hDest: int32, hdcSrc: HDC, xSrc: int32, ySrc: int32, wSrc: int32, hSrc: int32, rop: DWORD): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetROP2*(hdc: HDC, rop2: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc SetStretchBltMode*(hdc: HDC, mode: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetTextColor*(hdc: HDC, color: COLORREF): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc AlphaBlend*(hdcDest: HDC, xoriginDest: int32, yoriginDest: int32, wDest: int32, hDest: int32, hdcSrc: HDC, xoriginSrc: int32, yoriginSrc: int32, wSrc: int32, hSrc: int32, ftn: BLENDFUNCTION): WINBOOL {.winapi, stdcall, dynlib: "msimg32", importc.}
 proc TransparentBlt*(hdcDest: HDC, xoriginDest: int32, yoriginDest: int32, wDest: int32, hDest: int32, hdcSrc: HDC, xoriginSrc: int32, yoriginSrc: int32, wSrc: int32, hSrc: int32, crTransparent: UINT): WINBOOL {.winapi, stdcall, dynlib: "msimg32", importc.}
 proc CreateDIBSection*(hdc: HDC, lpbmi: ptr BITMAPINFO, usage: UINT, ppvBits: ptr pointer, hSection: HANDLE, offset: DWORD): HBITMAP {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc EndDoc*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc StartPage*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc EndPage*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc AbortDoc*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc ExtCreatePen*(iPenStyle: DWORD, cWidth: DWORD, plbrush: ptr LOGBRUSH, cStyle: DWORD, pstyle: ptr DWORD): HPEN {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc MoveToEx*(hdc: HDC, x: int32, y: int32, lppt: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Polygon*(hdc: HDC, apt: ptr POINT, cpt: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
@@ -320,24 +654,117 @@ proc PolyBezier*(hdc: HDC, apt: ptr POINT, cpt: DWORD): WINBOOL {.winapi, stdcal
 proc SetViewportExtEx*(hdc: HDC, x: int32, y: int32, lpsz: LPSIZE): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetViewportOrgEx*(hdc: HDC, x: int32, y: int32, lppt: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc SetWindowExtEx*(hdc: HDC, x: int32, y: int32, lpsz: LPSIZE): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc SetBrushOrgEx*(hdc: HDC, x: int32, y: int32, lppt: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 template RGB*(r: untyped, g: untyped, b: untyped): COLORREF = COLORREF(COLORREF(r and 0xff) or (COLORREF(g and 0xff) shl 8) or (COLORREF(b and 0xff) shl 16))
 template GetRValue*(c: untyped): BYTE = BYTE((c) and 0xff)
 template GetGValue*(c: untyped): BYTE = BYTE((c shr 8) and 0xff)
 template GetBValue*(c: untyped): BYTE = BYTE((c shr 16) and 0xff)
+proc `dmOrientation=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmOrientation = x
+proc dmOrientation*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmOrientation
+proc dmOrientation*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmOrientation
+proc `dmPaperSize=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmPaperSize = x
+proc dmPaperSize*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmPaperSize
+proc dmPaperSize*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmPaperSize
+proc `dmPaperLength=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmPaperLength = x
+proc dmPaperLength*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmPaperLength
+proc dmPaperLength*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmPaperLength
+proc `dmPaperWidth=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmPaperWidth = x
+proc dmPaperWidth*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmPaperWidth
+proc dmPaperWidth*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmPaperWidth
+proc `dmScale=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmScale = x
+proc dmScale*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmScale
+proc dmScale*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmScale
+proc `dmCopies=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmCopies = x
+proc dmCopies*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmCopies
+proc dmCopies*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmCopies
+proc `dmDefaultSource=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmDefaultSource = x
+proc dmDefaultSource*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmDefaultSource
+proc dmDefaultSource*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmDefaultSource
+proc `dmPrintQuality=`*(self: var DEVMODEA, x: int16) {.inline.} = self.union1.struct1.dmPrintQuality = x
+proc dmPrintQuality*(self: DEVMODEA): int16 {.inline.} = self.union1.struct1.dmPrintQuality
+proc dmPrintQuality*(self: var DEVMODEA): var int16 {.inline.} = self.union1.struct1.dmPrintQuality
+proc `dmPosition=`*(self: var DEVMODEA, x: POINTL) {.inline.} = self.union1.struct2.dmPosition = x
+proc dmPosition*(self: DEVMODEA): POINTL {.inline.} = self.union1.struct2.dmPosition
+proc dmPosition*(self: var DEVMODEA): var POINTL {.inline.} = self.union1.struct2.dmPosition
+proc `dmDisplayOrientation=`*(self: var DEVMODEA, x: DWORD) {.inline.} = self.union1.struct2.dmDisplayOrientation = x
+proc dmDisplayOrientation*(self: DEVMODEA): DWORD {.inline.} = self.union1.struct2.dmDisplayOrientation
+proc dmDisplayOrientation*(self: var DEVMODEA): var DWORD {.inline.} = self.union1.struct2.dmDisplayOrientation
+proc `dmDisplayFixedOutput=`*(self: var DEVMODEA, x: DWORD) {.inline.} = self.union1.struct2.dmDisplayFixedOutput = x
+proc dmDisplayFixedOutput*(self: DEVMODEA): DWORD {.inline.} = self.union1.struct2.dmDisplayFixedOutput
+proc dmDisplayFixedOutput*(self: var DEVMODEA): var DWORD {.inline.} = self.union1.struct2.dmDisplayFixedOutput
+proc `dmDisplayFlags=`*(self: var DEVMODEA, x: DWORD) {.inline.} = self.union2.dmDisplayFlags = x
+proc dmDisplayFlags*(self: DEVMODEA): DWORD {.inline.} = self.union2.dmDisplayFlags
+proc dmDisplayFlags*(self: var DEVMODEA): var DWORD {.inline.} = self.union2.dmDisplayFlags
+proc `dmNup=`*(self: var DEVMODEA, x: DWORD) {.inline.} = self.union2.dmNup = x
+proc dmNup*(self: DEVMODEA): DWORD {.inline.} = self.union2.dmNup
+proc dmNup*(self: var DEVMODEA): var DWORD {.inline.} = self.union2.dmNup
+proc `dmOrientation=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmOrientation = x
+proc dmOrientation*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmOrientation
+proc dmOrientation*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmOrientation
+proc `dmPaperSize=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmPaperSize = x
+proc dmPaperSize*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmPaperSize
+proc dmPaperSize*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmPaperSize
+proc `dmPaperLength=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmPaperLength = x
+proc dmPaperLength*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmPaperLength
+proc dmPaperLength*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmPaperLength
+proc `dmPaperWidth=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmPaperWidth = x
+proc dmPaperWidth*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmPaperWidth
+proc dmPaperWidth*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmPaperWidth
+proc `dmScale=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmScale = x
+proc dmScale*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmScale
+proc dmScale*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmScale
+proc `dmCopies=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmCopies = x
+proc dmCopies*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmCopies
+proc dmCopies*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmCopies
+proc `dmDefaultSource=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmDefaultSource = x
+proc dmDefaultSource*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmDefaultSource
+proc dmDefaultSource*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmDefaultSource
+proc `dmPrintQuality=`*(self: var DEVMODEW, x: int16) {.inline.} = self.union1.struct1.dmPrintQuality = x
+proc dmPrintQuality*(self: DEVMODEW): int16 {.inline.} = self.union1.struct1.dmPrintQuality
+proc dmPrintQuality*(self: var DEVMODEW): var int16 {.inline.} = self.union1.struct1.dmPrintQuality
+proc `dmPosition=`*(self: var DEVMODEW, x: POINTL) {.inline.} = self.union1.struct2.dmPosition = x
+proc dmPosition*(self: DEVMODEW): POINTL {.inline.} = self.union1.struct2.dmPosition
+proc dmPosition*(self: var DEVMODEW): var POINTL {.inline.} = self.union1.struct2.dmPosition
+proc `dmDisplayOrientation=`*(self: var DEVMODEW, x: DWORD) {.inline.} = self.union1.struct2.dmDisplayOrientation = x
+proc dmDisplayOrientation*(self: DEVMODEW): DWORD {.inline.} = self.union1.struct2.dmDisplayOrientation
+proc dmDisplayOrientation*(self: var DEVMODEW): var DWORD {.inline.} = self.union1.struct2.dmDisplayOrientation
+proc `dmDisplayFixedOutput=`*(self: var DEVMODEW, x: DWORD) {.inline.} = self.union1.struct2.dmDisplayFixedOutput = x
+proc dmDisplayFixedOutput*(self: DEVMODEW): DWORD {.inline.} = self.union1.struct2.dmDisplayFixedOutput
+proc dmDisplayFixedOutput*(self: var DEVMODEW): var DWORD {.inline.} = self.union1.struct2.dmDisplayFixedOutput
+proc `dmDisplayFlags=`*(self: var DEVMODEW, x: DWORD) {.inline.} = self.union2.dmDisplayFlags = x
+proc dmDisplayFlags*(self: DEVMODEW): DWORD {.inline.} = self.union2.dmDisplayFlags
+proc dmDisplayFlags*(self: var DEVMODEW): var DWORD {.inline.} = self.union2.dmDisplayFlags
+proc `dmNup=`*(self: var DEVMODEW, x: DWORD) {.inline.} = self.union2.dmNup = x
+proc dmNup*(self: DEVMODEW): DWORD {.inline.} = self.union2.dmNup
+proc dmNup*(self: var DEVMODEW): var DWORD {.inline.} = self.union2.dmNup
 when winimUnicode:
   type
+    TEXTMETRIC* = TEXTMETRICW
     LOGFONT* = LOGFONTW
+    DEVMODE* = DEVMODEW
+    DOCINFO* = DOCINFOW
+  proc CreateDC*(pwszDriver: LPCWSTR, pwszDevice: LPCWSTR, pszPort: LPCWSTR, pdm: ptr DEVMODEW): HDC {.winapi, stdcall, dynlib: "gdi32", importc: "CreateDCW".}
   proc CreateFontIndirect*(lplf: ptr LOGFONTW): HFONT {.winapi, stdcall, dynlib: "gdi32", importc: "CreateFontIndirectW".}
+  proc DeviceCapabilities*(pDevice: LPCWSTR, pPort: LPCWSTR, fwCapability: WORD, pOutput: LPWSTR, pDevMode: ptr DEVMODEW): int32 {.winapi, stdcall, dynlib: "winspool.drv", importc: "DeviceCapabilitiesW".}
   proc GetCharWidth*(hdc: HDC, iFirst: UINT, iLast: UINT, lpBuffer: LPINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetCharWidthW".}
   proc GetTextExtentPoint32*(hdc: HDC, lpString: LPCWSTR, c: int32, psizl: LPSIZE): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetTextExtentPoint32W".}
+  proc GetTextMetrics*(hdc: HDC, lptm: LPTEXTMETRICW): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetTextMetricsW".}
+  proc StartDoc*(hdc: HDC, lpdi: ptr DOCINFOW): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "StartDocW".}
   proc GetObject*(h: HANDLE, c: int32, pv: LPVOID): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "GetObjectW".}
   proc TextOut*(hdc: HDC, x: int32, y: int32, lpString: LPCWSTR, c: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "TextOutW".}
 when winimAnsi:
   type
+    TEXTMETRIC* = TEXTMETRICA
     LOGFONT* = LOGFONTA
+    DEVMODE* = DEVMODEA
+    DOCINFO* = DOCINFOA
+  proc CreateDC*(pwszDriver: LPCSTR, pwszDevice: LPCSTR, pszPort: LPCSTR, pdm: ptr DEVMODEA): HDC {.winapi, stdcall, dynlib: "gdi32", importc: "CreateDCA".}
   proc CreateFontIndirect*(lplf: ptr LOGFONTA): HFONT {.winapi, stdcall, dynlib: "gdi32", importc: "CreateFontIndirectA".}
+  proc DeviceCapabilities*(pDevice: LPCSTR, pPort: LPCSTR, fwCapability: WORD, pOutput: LPSTR, pDevMode: ptr DEVMODEA): int32 {.winapi, stdcall, dynlib: "winspool.drv", importc: "DeviceCapabilitiesA".}
   proc GetCharWidth*(hdc: HDC, iFirst: UINT, iLast: UINT, lpBuffer: LPINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetCharWidthA".}
   proc GetTextExtentPoint32*(hdc: HDC, lpString: LPCSTR, c: int32, psizl: LPSIZE): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetTextExtentPoint32A".}
+  proc GetTextMetrics*(hdc: HDC, lptm: LPTEXTMETRICA): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "GetTextMetricsA".}
+  proc StartDoc*(hdc: HDC, lpdi: ptr DOCINFOA): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "StartDocA".}
   proc GetObject*(h: HANDLE, c: int32, pv: LPVOID): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "GetObjectA".}
   proc TextOut*(hdc: HDC, x: int32, y: int32, lpString: LPCSTR, c: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "TextOutA".}
 type
@@ -598,9 +1025,17 @@ const
   SB_ENDSCROLL* = 8
   SW_HIDE* = 0
   SW_SHOWNORMAL* = 1
+  SW_SHOWMINIMIZED* = 2
+  SW_SHOWMAXIMIZED* = 3
   SW_MAXIMIZE* = 3
+  SW_SHOWNOACTIVATE* = 4
+  SW_SHOW* = 5
   SW_MINIMIZE* = 6
+  SW_SHOWMINNOACTIVE* = 7
+  SW_SHOWNA* = 8
   SW_RESTORE* = 9
+  SW_SHOWDEFAULT* = 10
+  SW_FORCEMINIMIZE* = 11
   VK_LBUTTON* = 0x01
   VK_RBUTTON* = 0x02
   VK_CANCEL* = 0x03
@@ -793,6 +1228,7 @@ const
   WM_CONTEXTMENU* = 0x007B
   WM_SETICON* = 0x0080
   WM_NCDESTROY* = 0x0082
+  WM_NCHITTEST* = 0x0084
   WM_NCPAINT* = 0x0085
   WM_NCMOUSEMOVE* = 0x00A0
   WM_NCLBUTTONDOWN* = 0x00A1
@@ -815,6 +1251,7 @@ const
   WM_KEYLAST* = 0x0109
   WM_INITDIALOG* = 0x0110
   WM_COMMAND* = 0x0111
+  WM_SYSCOMMAND* = 0x0112
   WM_TIMER* = 0x0113
   WM_HSCROLL* = 0x0114
   WM_VSCROLL* = 0x0115
@@ -851,6 +1288,7 @@ const
   WM_APP* = 0x8000
   WM_USER* = 0x0400
   HTCLIENT* = 1
+  HTCAPTION* = 2
   ICON_SMALL* = 0
   SIZE_RESTORED* = 0
   SIZE_MINIMIZED* = 1
@@ -921,19 +1359,41 @@ const
   SM_CYSCREEN* = 1
   SM_CXVSCROLL* = 2
   SM_CYHSCROLL* = 3
+  SM_CYCAPTION* = 4
+  SM_CXBORDER* = 5
+  SM_CYBORDER* = 6
+  SM_CYVTHUMB* = 9
+  SM_CXHTHUMB* = 10
   SM_CXICON* = 11
   SM_CYICON* = 12
   SM_CXCURSOR* = 13
   SM_CYCURSOR* = 14
+  SM_CYMENU* = 15
   SM_CYVSCROLL* = 20
   SM_CXHSCROLL* = 21
+  SM_SWAPBUTTON* = 23
+  SM_CXMIN* = 28
+  SM_CYMIN* = 29
+  SM_CXFRAME* = 32
+  SM_CYFRAME* = 33
+  SM_CXDOUBLECLK* = 36
+  SM_CYDOUBLECLK* = 37
+  SM_CXICONSPACING* = 38
+  SM_CYICONSPACING* = 39
   SM_MENUDROPALIGNMENT* = 40
+  SM_PENWINDOWS* = 41
+  SM_CXSIZEFRAME* = SM_CXFRAME
+  SM_CYSIZEFRAME* = SM_CYFRAME
+  SM_CXEDGE* = 45
+  SM_CYEDGE* = 46
   SM_CXSMICON* = 49
   SM_CYSMICON* = 50
   SM_CXMENUSIZE* = 54
   SM_CYMENUSIZE* = 55
+  SM_NETWORK* = 63
   SM_CXDRAG* = 68
   SM_CYDRAG* = 69
+  SM_SHOWSOUNDS* = 70
   MNS_NOTIFYBYPOS* = 0x08000000
   MNS_CHECKORBMP* = 0x04000000
   MIM_MENUDATA* = 0x00000008
@@ -1000,7 +1460,25 @@ const
   MFS_GRAYED* = 0x00000003
   MFS_DISABLED* = MFS_GRAYED
   MFS_CHECKED* = MF_CHECKED
+  SC_SIZE* = 0xF000
+  SC_MOVE* = 0xF010
+  SC_MINIMIZE* = 0xF020
+  SC_MAXIMIZE* = 0xF030
+  SC_NEXTWINDOW* = 0xF040
+  SC_PREVWINDOW* = 0xF050
   SC_CLOSE* = 0xF060
+  SC_VSCROLL* = 0xF070
+  SC_HSCROLL* = 0xF080
+  SC_MOUSEMENU* = 0xF090
+  SC_KEYMENU* = 0xF100
+  SC_RESTORE* = 0xF120
+  SC_TASKLIST* = 0xF130
+  SC_SCREENSAVE* = 0xF140
+  SC_HOTKEY* = 0xF150
+  SC_DEFAULT* = 0xF160
+  SC_MONITORPOWER* = 0xF170
+  SC_CONTEXTHELP* = 0xF180
+  SCF_ISSECURE* = 0x00000001
   IDC_ARROW* = MAKEINTRESOURCE(32512)
   IMAGE_BITMAP* = 0
   LR_COPYDELETEORG* = 0x0008
@@ -1147,6 +1625,7 @@ const
   SPI_GETNONCLIENTMETRICS* = 0x0029
   OBJID_VSCROLL* = LONG 0xFFFFFFFB'i32
   OBJID_HSCROLL* = LONG 0xFFFFFFFA'i32
+  STATE_SYSTEM_INVISIBLE* = 0x00008000
   GA_ROOT* = 2
   RT_GROUP_CURSOR* = MAKEINTRESOURCE(1+DIFFERENCE)
   RT_GROUP_ICON* = MAKEINTRESOURCE(3+DIFFERENCE)
@@ -1215,6 +1694,7 @@ proc ReleaseDC*(hWnd: HWND, hDC: HDC): int32 {.winapi, stdcall, dynlib: "user32"
 proc BeginPaint*(hWnd: HWND, lpPaint: LPPAINTSTRUCT): HDC {.winapi, stdcall, dynlib: "user32", importc.}
 proc EndPaint*(hWnd: HWND, lpPaint: ptr PAINTSTRUCT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetUpdateRect*(hWnd: HWND, lpRect: LPRECT, bErase: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc SetWindowRgn*(hWnd: HWND, hRgn: HRGN, bRedraw: WINBOOL): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc InvalidateRect*(hWnd: HWND, lpRect: ptr RECT, bErase: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc RedrawWindow*(hWnd: HWND, lprcUpdate: ptr RECT, hrgnUpdate: HRGN, flags: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ShowScrollBar*(hWnd: HWND, wBar: int32, bShow: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1249,6 +1729,8 @@ proc CreateIconIndirect*(piconinfo: PICONINFO): HICON {.winapi, stdcall, dynlib:
 proc GetIconInfo*(hIcon: HICON, piconinfo: PICONINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPCSCROLLINFO, redraw: WINBOOL): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPSCROLLINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc SetProcessDPIAware*(): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc IsProcessDPIAware*(): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetScrollBarInfo*(hwnd: HWND, idObject: LONG, psbi: PSCROLLBARINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetComboBoxInfo*(hwndCombo: HWND, pcbi: PCOMBOBOXINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetAncestor*(hwnd: HWND, gaFlags: UINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1337,6 +1819,17 @@ when winimAnsi and winimCpu32:
 const
   CP_ACP* = 0
 type
+  REGSAM* = ACCESS_MASK
+const
+  HKEY_CURRENT_USER* = HKEY 0x80000001'i32
+proc RegCloseKey*(hKey: HKEY): LONG {.winapi, stdcall, dynlib: "advapi32", importc.}
+when winimUnicode:
+  proc RegCreateKeyEx*(hKey: HKEY, lpSubKey: LPCWSTR, Reserved: DWORD, lpClass: LPWSTR, dwOptions: DWORD, samDesired: REGSAM, lpSecurityAttributes: LPSECURITY_ATTRIBUTES, phkResult: PHKEY, lpdwDisposition: LPDWORD): LONG {.winapi, stdcall, dynlib: "advapi32", importc: "RegCreateKeyExW".}
+  proc RegSetValueEx*(hKey: HKEY, lpValueName: LPCWSTR, Reserved: DWORD, dwType: DWORD, lpData: ptr BYTE, cbData: DWORD): LONG {.winapi, stdcall, dynlib: "advapi32", importc: "RegSetValueExW".}
+when winimAnsi:
+  proc RegCreateKeyEx*(hKey: HKEY, lpSubKey: LPCSTR, Reserved: DWORD, lpClass: LPSTR, dwOptions: DWORD, samDesired: REGSAM, lpSecurityAttributes: LPSECURITY_ATTRIBUTES, phkResult: PHKEY, lpdwDisposition: LPDWORD): LONG {.winapi, stdcall, dynlib: "advapi32", importc: "RegCreateKeyExA".}
+  proc RegSetValueEx*(hKey: HKEY, lpValueName: LPCSTR, Reserved: DWORD, dwType: DWORD, lpData: ptr BYTE, cbData: DWORD): LONG {.winapi, stdcall, dynlib: "advapi32", importc: "RegSetValueExA".}
+type
   SOCKET* = int
 const
   FD_SETSIZE* = 64
@@ -1355,6 +1848,8 @@ proc accept*(s: SOCKET, `addr`: ptr sockaddr, addrlen: ptr int32): SOCKET {.wina
 proc connect*(s: SOCKET, name: ptr sockaddr, namelen: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 proc select*(nfds: int32, readfds: ptr fd_set, writefds: ptr fd_set, exceptfds: ptr fd_set, timeout: PTIMEVAL): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 proc send*(s: SOCKET, buf: cstring, len: int32, flags: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
+const
+  network* = 3
 type
   VARTYPE* = uint16
   TYPEKIND* = int32
@@ -2008,10 +2503,15 @@ type
     OnInPlaceActivateEx*: proc(self: ptr IOleInPlaceSiteEx, pfNoRedraw: ptr WINBOOL, dwFlags: DWORD): HRESULT {.stdcall.}
     OnInPlaceDeactivateEx*: proc(self: ptr IOleInPlaceSiteEx, fNoRedraw: WINBOOL): HRESULT {.stdcall.}
     RequestUIActivate*: proc(self: ptr IOleInPlaceSiteEx): HRESULT {.stdcall.}
-  SHITEMID* {.pure.} = object
+  IObjectWithSite* {.pure.} = object
+    lpVtbl*: ptr IObjectWithSiteVtbl
+  IObjectWithSiteVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    SetSite*: proc(self: ptr IObjectWithSite, pUnkSite: ptr IUnknown): HRESULT {.stdcall.}
+    GetSite*: proc(self: ptr IObjectWithSite, riid: REFIID, ppvSite: ptr pointer): HRESULT {.stdcall.}
+  SHITEMID* {.pure, packed.} = object
     cb*: USHORT
     abID*: array[1, BYTE]
-  ITEMIDLIST* {.pure.} = object
+  ITEMIDLIST* {.pure, packed.} = object
     mkid*: SHITEMID
   ITEMIDLIST_RELATIVE* = ITEMIDLIST
   ITEMID_CHILD* = ITEMIDLIST
@@ -2075,6 +2575,7 @@ const
   DROPEFFECT_LINK* = 4
   IID_IConnectionPointContainer* = DEFINE_GUID(0xb196b284'i32, 0xbab4, 0x101a, [0xb6'u8, 0x9c, 0x00, 0xaa, 0x00, 0x34, 0x1d, 0x07])
   IID_IOleInPlaceSiteEx* = DEFINE_GUID(0x9c2cad80'i32, 0x3424, 0x11cf, [0xb6'u8, 0x70, 0x00, 0xaa, 0x00, 0x4c, 0xd6, 0xd8])
+  IID_IObjectWithSite* = DEFINE_GUID(0xfc4801a3'i32, 0x2ba9, 0x11cf, [0xa2'u8, 0x29, 0x00, 0xaa, 0x00, 0x3d, 0x73, 0x52])
   navNoHistory* = 0x2
   DIID_DWebBrowserEvents* = DEFINE_GUID(0xeab22ac2'i32, 0x30c1, 0x11cf, [0xa7'u8, 0xeb, 0x00, 0x00, 0xc0, 0x5b, 0xae, 0x0b])
   CSC_NAVIGATEFORWARD* = 1
@@ -2628,6 +3129,8 @@ proc FindConnectionPoint*(self: ptr IConnectionPointContainer, riid: REFIID, ppC
 proc OnInPlaceActivateEx*(self: ptr IOleInPlaceSiteEx, pfNoRedraw: ptr WINBOOL, dwFlags: DWORD): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceActivateEx(self, pfNoRedraw, dwFlags)
 proc OnInPlaceDeactivateEx*(self: ptr IOleInPlaceSiteEx, fNoRedraw: WINBOOL): HRESULT {.winapi, inline.} = self.lpVtbl.OnInPlaceDeactivateEx(self, fNoRedraw)
 proc RequestUIActivate*(self: ptr IOleInPlaceSiteEx): HRESULT {.winapi, inline.} = self.lpVtbl.RequestUIActivate(self)
+proc SetSite*(self: ptr IObjectWithSite, pUnkSite: ptr IUnknown): HRESULT {.winapi, inline.} = self.lpVtbl.SetSite(self, pUnkSite)
+proc GetSite*(self: ptr IObjectWithSite, riid: REFIID, ppvSite: ptr pointer): HRESULT {.winapi, inline.} = self.lpVtbl.GetSite(self, riid, ppvSite)
 proc QueryStatus*(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, cCmds: ULONG, prgCmds: ptr OLECMD, pCmdText: ptr OLECMDTEXT): HRESULT {.winapi, inline.} = self.lpVtbl.QueryStatus(self, pguidCmdGroup, cCmds, prgCmds, pCmdText)
 proc Exec*(self: ptr IOleCommandTarget, pguidCmdGroup: ptr GUID, nCmdID: DWORD, nCmdexecopt: DWORD, pvaIn: ptr VARIANT, pvaOut: ptr VARIANT): HRESULT {.winapi, inline.} = self.lpVtbl.Exec(self, pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut)
 proc GoBack*(self: ptr IWebBrowser): HRESULT {.winapi, inline.} = self.lpVtbl.GoBack(self)
@@ -2746,6 +3249,7 @@ converter winimConverterIConnectionPointContainerToIUnknown*(x: ptr IConnectionP
 converter winimConverterIOleInPlaceSiteExToIOleInPlaceSite*(x: ptr IOleInPlaceSiteEx): ptr IOleInPlaceSite = cast[ptr IOleInPlaceSite](x)
 converter winimConverterIOleInPlaceSiteExToIOleWindow*(x: ptr IOleInPlaceSiteEx): ptr IOleWindow = cast[ptr IOleWindow](x)
 converter winimConverterIOleInPlaceSiteExToIUnknown*(x: ptr IOleInPlaceSiteEx): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIObjectWithSiteToIUnknown*(x: ptr IObjectWithSite): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIOleCommandTargetToIUnknown*(x: ptr IOleCommandTarget): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIWebBrowserToIDispatch*(x: ptr IWebBrowser): ptr IDispatch = cast[ptr IDispatch](x)
 converter winimConverterIWebBrowserToIUnknown*(x: ptr IWebBrowser): ptr IUnknown = cast[ptr IUnknown](x)
@@ -2758,6 +3262,7 @@ converter winimConverterIWebBrowser2ToIDispatch*(x: ptr IWebBrowser2): ptr IDisp
 converter winimConverterIWebBrowser2ToIUnknown*(x: ptr IWebBrowser2): ptr IUnknown = cast[ptr IUnknown](x)
 type
   HIMAGELIST* = HANDLE
+  HPROPSHEETPAGE* = HANDLE
   HTREEITEM* = HANDLE
   TINITCOMMONCONTROLSEX* {.pure.} = object
     dwSize*: DWORD
@@ -4236,7 +4741,191 @@ type
     nSizeMin*: INT
     nSizeMax*: INT
   LPCHOOSEFONTW* = ptr TCHOOSEFONTW
+  LPPRINTHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+  LPSETUPHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+when winimCpu64:
+  type
+    TPRINTDLGA* {.pure.} = object
+      lStructSize*: DWORD
+      hwndOwner*: HWND
+      hDevMode*: HGLOBAL
+      hDevNames*: HGLOBAL
+      hDC*: HDC
+      Flags*: DWORD
+      nFromPage*: WORD
+      nToPage*: WORD
+      nMinPage*: WORD
+      nMaxPage*: WORD
+      nCopies*: WORD
+      hInstance*: HINSTANCE
+      lCustData*: LPARAM
+      lpfnPrintHook*: LPPRINTHOOKPROC
+      lpfnSetupHook*: LPSETUPHOOKPROC
+      lpPrintTemplateName*: LPCSTR
+      lpSetupTemplateName*: LPCSTR
+      hPrintTemplate*: HGLOBAL
+      hSetupTemplate*: HGLOBAL
+when winimCpu32:
+  type
+    TPRINTDLGA* {.pure, packed.} = object
+      lStructSize*: DWORD
+      hwndOwner*: HWND
+      hDevMode*: HGLOBAL
+      hDevNames*: HGLOBAL
+      hDC*: HDC
+      Flags*: DWORD
+      nFromPage*: WORD
+      nToPage*: WORD
+      nMinPage*: WORD
+      nMaxPage*: WORD
+      nCopies*: WORD
+      hInstance*: HINSTANCE
+      lCustData*: LPARAM
+      lpfnPrintHook*: LPPRINTHOOKPROC
+      lpfnSetupHook*: LPSETUPHOOKPROC
+      lpPrintTemplateName*: LPCSTR
+      lpSetupTemplateName*: LPCSTR
+      hPrintTemplate*: HGLOBAL
+      hSetupTemplate*: HGLOBAL
+type
+  LPPRINTDLGA* = ptr TPRINTDLGA
+when winimCpu64:
+  type
+    TPRINTDLGW* {.pure.} = object
+      lStructSize*: DWORD
+      hwndOwner*: HWND
+      hDevMode*: HGLOBAL
+      hDevNames*: HGLOBAL
+      hDC*: HDC
+      Flags*: DWORD
+      nFromPage*: WORD
+      nToPage*: WORD
+      nMinPage*: WORD
+      nMaxPage*: WORD
+      nCopies*: WORD
+      hInstance*: HINSTANCE
+      lCustData*: LPARAM
+      lpfnPrintHook*: LPPRINTHOOKPROC
+      lpfnSetupHook*: LPSETUPHOOKPROC
+      lpPrintTemplateName*: LPCWSTR
+      lpSetupTemplateName*: LPCWSTR
+      hPrintTemplate*: HGLOBAL
+      hSetupTemplate*: HGLOBAL
+when winimCpu32:
+  type
+    TPRINTDLGW* {.pure, packed.} = object
+      lStructSize*: DWORD
+      hwndOwner*: HWND
+      hDevMode*: HGLOBAL
+      hDevNames*: HGLOBAL
+      hDC*: HDC
+      Flags*: DWORD
+      nFromPage*: WORD
+      nToPage*: WORD
+      nMinPage*: WORD
+      nMaxPage*: WORD
+      nCopies*: WORD
+      hInstance*: HINSTANCE
+      lCustData*: LPARAM
+      lpfnPrintHook*: LPPRINTHOOKPROC
+      lpfnSetupHook*: LPSETUPHOOKPROC
+      lpPrintTemplateName*: LPCWSTR
+      lpSetupTemplateName*: LPCWSTR
+      hPrintTemplate*: HGLOBAL
+      hSetupTemplate*: HGLOBAL
+type
+  LPPRINTDLGW* = ptr TPRINTDLGW
+  PRINTPAGERANGE* {.pure.} = object
+    nFromPage*: DWORD
+    nToPage*: DWORD
+  LPPRINTPAGERANGE* = ptr PRINTPAGERANGE
+  TPRINTDLGEXA* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDevMode*: HGLOBAL
+    hDevNames*: HGLOBAL
+    hDC*: HDC
+    Flags*: DWORD
+    Flags2*: DWORD
+    ExclusionFlags*: DWORD
+    nPageRanges*: DWORD
+    nMaxPageRanges*: DWORD
+    lpPageRanges*: LPPRINTPAGERANGE
+    nMinPage*: DWORD
+    nMaxPage*: DWORD
+    nCopies*: DWORD
+    hInstance*: HINSTANCE
+    lpPrintTemplateName*: LPCSTR
+    lpCallback*: LPUNKNOWN
+    nPropertyPages*: DWORD
+    lphPropertyPages*: ptr HPROPSHEETPAGE
+    nStartPage*: DWORD
+    dwResultAction*: DWORD
+  LPPRINTDLGEXA* = ptr TPRINTDLGEXA
+  TPRINTDLGEXW* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDevMode*: HGLOBAL
+    hDevNames*: HGLOBAL
+    hDC*: HDC
+    Flags*: DWORD
+    Flags2*: DWORD
+    ExclusionFlags*: DWORD
+    nPageRanges*: DWORD
+    nMaxPageRanges*: DWORD
+    lpPageRanges*: LPPRINTPAGERANGE
+    nMinPage*: DWORD
+    nMaxPage*: DWORD
+    nCopies*: DWORD
+    hInstance*: HINSTANCE
+    lpPrintTemplateName*: LPCWSTR
+    lpCallback*: LPUNKNOWN
+    nPropertyPages*: DWORD
+    lphPropertyPages*: ptr HPROPSHEETPAGE
+    nStartPage*: DWORD
+    dwResultAction*: DWORD
+  LPPRINTDLGEXW* = ptr TPRINTDLGEXW
+  DEVNAMES* {.pure.} = object
+    wDriverOffset*: WORD
+    wDeviceOffset*: WORD
+    wOutputOffset*: WORD
+    wDefault*: WORD
+  LPPAGESETUPHOOK* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+  LPPAGEPAINTHOOK* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
+  TPAGESETUPDLGA* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDevMode*: HGLOBAL
+    hDevNames*: HGLOBAL
+    Flags*: DWORD
+    ptPaperSize*: POINT
+    rtMinMargin*: RECT
+    rtMargin*: RECT
+    hInstance*: HINSTANCE
+    lCustData*: LPARAM
+    lpfnPageSetupHook*: LPPAGESETUPHOOK
+    lpfnPagePaintHook*: LPPAGEPAINTHOOK
+    lpPageSetupTemplateName*: LPCSTR
+    hPageSetupTemplate*: HGLOBAL
+  LPPAGESETUPDLGA* = ptr TPAGESETUPDLGA
+  TPAGESETUPDLGW* {.pure.} = object
+    lStructSize*: DWORD
+    hwndOwner*: HWND
+    hDevMode*: HGLOBAL
+    hDevNames*: HGLOBAL
+    Flags*: DWORD
+    ptPaperSize*: POINT
+    rtMinMargin*: RECT
+    rtMargin*: RECT
+    hInstance*: HINSTANCE
+    lCustData*: LPARAM
+    lpfnPageSetupHook*: LPPAGESETUPHOOK
+    lpfnPagePaintHook*: LPPAGEPAINTHOOK
+    lpPageSetupTemplateName*: LPCWSTR
+    hPageSetupTemplate*: HGLOBAL
+  LPPAGESETUPDLGW* = ptr TPAGESETUPDLGW
 const
+  IID_IPrintDialogCallback* = DEFINE_GUID(0x5852a2c3'i32, 0x6530, 0x11d1, [0xb6'u8, 0xa3, 0x0, 0x0, 0xf8, 0x75, 0x7b, 0xf9])
   OFN_OVERWRITEPROMPT* = 0x2
   OFN_ENABLEHOOK* = 0x20
   OFN_ALLOWMULTISELECT* = 0x200
@@ -4246,6 +4935,7 @@ const
   OFN_NODEREFERENCELINKS* = 0x100000
   CC_RGBINIT* = 0x1
   CC_FULLOPEN* = 0x2
+  CC_SHOWHELP* = 0x8
   CC_ENABLEHOOK* = 0x10
   CC_ANYCOLOR* = 0x100
   FR_DOWN* = 0x1
@@ -4255,6 +4945,7 @@ const
   FR_REPLACE* = 0x10
   FR_REPLACEALL* = 0x20
   FR_DIALOGTERM* = 0x40
+  FR_SHOWHELP* = 0x80
   FR_ENABLEHOOK* = 0x100
   FR_NOUPDOWN* = 0x400
   FR_NOMATCHCASE* = 0x800
@@ -4263,19 +4954,69 @@ const
   FR_HIDEMATCHCASE* = 0x8000
   FR_HIDEWHOLEWORD* = 0x10000
   CF_SHOWHELP* = 0x4
+  CF_ENABLEHOOK* = 0x8
   CF_INITTOLOGFONTSTRUCT* = 0x40
   CF_EFFECTS* = 0x100
+  CF_APPLY* = 0x200
   CF_ANSIONLY* = 0x400
   CF_SCRIPTSONLY* = CF_ANSIONLY
   CF_LIMITSIZE* = 0x2000
+  WM_CHOOSEFONT_GETLOGFONT* = WM_USER+1
   FINDMSGSTRINGA* = "commdlg_FindReplace"
   FINDMSGSTRINGW* = "commdlg_FindReplace"
+  PD_SELECTION* = 0x1
+  PD_PAGENUMS* = 0x2
+  PD_NOSELECTION* = 0x4
+  PD_NOPAGENUMS* = 0x8
+  PD_COLLATE* = 0x10
+  PD_PRINTTOFILE* = 0x20
+  PD_RETURNDEFAULT* = 0x400
+  PD_DISABLEPRINTTOFILE* = 0x80000
+  PD_CURRENTPAGE* = 0x400000
+  PD_NOCURRENTPAGE* = 0x800000
+  START_PAGE_GENERAL* = 0xffffffff'i32
+  PD_RESULT_PRINT* = 1
+  PD_RESULT_APPLY* = 2
+  PSD_MINMARGINS* = 0x1
+  PSD_MARGINS* = 0x2
+  PSD_INHUNDREDTHSOFMILLIMETERS* = 0x8
+  PSD_DISABLEMARGINS* = 0x10
+  PSD_DISABLEPRINTER* = 0x20
+  PSD_DISABLEORIENTATION* = 0x100
+  PSD_RETURNDEFAULT* = 0x400
+  PSD_DISABLEPAPER* = 0x200
+  PSD_SHOWHELP* = 0x800
+  PSD_ENABLEPAGESETUPHOOK* = 0x2000
+type
+  IPrintDialogCallback* {.pure.} = object
+    lpVtbl*: ptr IPrintDialogCallbackVtbl
+  IPrintDialogCallbackVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    InitDone*: proc(self: ptr IPrintDialogCallback): HRESULT {.stdcall.}
+    SelectionChange*: proc(self: ptr IPrintDialogCallback): HRESULT {.stdcall.}
+    HandleMessage*: proc(self: ptr IPrintDialogCallback, hDlg: HWND, uMsg: UINT, wParam: WPARAM, lParam: LPARAM, pResult: ptr LRESULT): HRESULT {.stdcall.}
+  IPrintDialogServices* {.pure.} = object
+    lpVtbl*: ptr IPrintDialogServicesVtbl
+  IPrintDialogServicesVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    GetCurrentDevMode*: proc(self: ptr IPrintDialogServices, pDevMode: LPDEVMODE, pcbSize: ptr UINT): HRESULT {.stdcall.}
+    GetCurrentPrinterName*: proc(self: ptr IPrintDialogServices, pPrinterName: LPTSTR, pcchSize: ptr UINT): HRESULT {.stdcall.}
+    GetCurrentPortName*: proc(self: ptr IPrintDialogServices, pPortName: LPTSTR, pcchSize: ptr UINT): HRESULT {.stdcall.}
+proc InitDone*(self: ptr IPrintDialogCallback): HRESULT {.winapi, inline.} = self.lpVtbl.InitDone(self)
+proc SelectionChange*(self: ptr IPrintDialogCallback): HRESULT {.winapi, inline.} = self.lpVtbl.SelectionChange(self)
+proc HandleMessage*(self: ptr IPrintDialogCallback, hDlg: HWND, uMsg: UINT, wParam: WPARAM, lParam: LPARAM, pResult: ptr LRESULT): HRESULT {.winapi, inline.} = self.lpVtbl.HandleMessage(self, hDlg, uMsg, wParam, lParam, pResult)
+proc GetCurrentDevMode*(self: ptr IPrintDialogServices, pDevMode: LPDEVMODE, pcbSize: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetCurrentDevMode(self, pDevMode, pcbSize)
+proc GetCurrentPrinterName*(self: ptr IPrintDialogServices, pPrinterName: LPTSTR, pcchSize: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetCurrentPrinterName(self, pPrinterName, pcchSize)
+proc GetCurrentPortName*(self: ptr IPrintDialogServices, pPortName: LPTSTR, pcchSize: ptr UINT): HRESULT {.winapi, inline.} = self.lpVtbl.GetCurrentPortName(self, pPortName, pcchSize)
+converter winimConverterIPrintDialogCallbackToIUnknown*(x: ptr IPrintDialogCallback): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIPrintDialogServicesToIUnknown*(x: ptr IPrintDialogServices): ptr IUnknown = cast[ptr IUnknown](x)
 when winimUnicode:
   type
     OPENFILENAME* = OPENFILENAMEW
     TCHOOSECOLOR* = TCHOOSECOLORW
     FINDREPLACE* = FINDREPLACEW
     TCHOOSEFONT* = TCHOOSEFONTW
+    TPRINTDLG* = TPRINTDLGW
+    TPRINTDLGEX* = TPRINTDLGEXW
+    TPAGESETUPDLG* = TPAGESETUPDLGW
   const
     FINDMSGSTRING* = FINDMSGSTRINGW
   proc GetOpenFileName*(P1: LPOPENFILENAMEW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameW".}
@@ -4284,12 +5025,18 @@ when winimUnicode:
   proc FindText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextW".}
   proc ReplaceText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextW".}
   proc ChooseFont*(P1: LPCHOOSEFONTW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontW".}
+  proc PrintDlg*(P1: LPPRINTDLGW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgW".}
+  proc PrintDlgEx*(P1: LPPRINTDLGEXW): HRESULT {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgExW".}
+  proc PageSetupDlg*(P1: LPPAGESETUPDLGW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PageSetupDlgW".}
 when winimAnsi:
   type
     OPENFILENAME* = OPENFILENAMEA
     TCHOOSECOLOR* = TCHOOSECOLORA
     FINDREPLACE* = FINDREPLACEA
     TCHOOSEFONT* = TCHOOSEFONTA
+    TPRINTDLG* = TPRINTDLGA
+    TPRINTDLGEX* = TPRINTDLGEXA
+    TPAGESETUPDLG* = TPAGESETUPDLGA
   const
     FINDMSGSTRING* = FINDMSGSTRINGA
   proc GetOpenFileName*(P1: LPOPENFILENAMEA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "GetOpenFileNameA".}
@@ -4298,6 +5045,9 @@ when winimAnsi:
   proc FindText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextA".}
   proc ReplaceText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextA".}
   proc ChooseFont*(P1: LPCHOOSEFONTA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontA".}
+  proc PrintDlg*(P1: LPPRINTDLGA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgA".}
+  proc PrintDlgEx*(P1: LPPRINTDLGEXA): HRESULT {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgExA".}
+  proc PageSetupDlg*(P1: LPPAGESETUPDLGA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PageSetupDlgA".}
 type
   CHARRANGE* {.pure.} = object
     cpMin*: LONG
@@ -4795,8 +5545,11 @@ when winimUnicode:
   const
     BFFM_SETSELECTION* = BFFM_SETSELECTIONW
   proc DragQueryFile*(hDrop: HDROP, iFile: UINT, lpszFile: LPWSTR, cch: UINT): UINT {.winapi, stdcall, dynlib: "shell32", importc: "DragQueryFileW".}
+  proc ShellExecute*(hwnd: HWND, lpOperation: LPCWSTR, lpFile: LPCWSTR, lpParameters: LPCWSTR, lpDirectory: LPCWSTR, nShowCmd: INT): HINSTANCE {.winapi, stdcall, dynlib: "shell32", importc: "ShellExecuteW".}
+  proc ExtractIconEx*(lpszFile: LPCWSTR, nIconIndex: int32, phiconLarge: ptr HICON, phiconSmall: ptr HICON, nIcons: UINT): UINT {.winapi, stdcall, dynlib: "shell32", importc: "ExtractIconExW".}
   proc Shell_NotifyIcon*(dwMessage: DWORD, lpData: PNOTIFYICONDATAW): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "Shell_NotifyIconW".}
   proc PathFileExists*(pszPath: LPCWSTR): WINBOOL {.winapi, stdcall, dynlib: "shlwapi", importc: "PathFileExistsW".}
+  proc PathCompactPath*(hDC: HDC, pszPath: LPWSTR, dx: UINT): WINBOOL {.winapi, stdcall, dynlib: "shlwapi", importc: "PathCompactPathW".}
   proc ILCreateFromPath*(pszPath: PCWSTR): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "ILCreateFromPathW".}
   proc SHGetPathFromIDList*(pidl: PCIDLIST_ABSOLUTE, pszPath: LPWSTR): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "SHGetPathFromIDListW".}
   proc SHBrowseForFolder*(lpbi: LPBROWSEINFOW): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "SHBrowseForFolderW".}
@@ -4807,8 +5560,11 @@ when winimAnsi:
   const
     BFFM_SETSELECTION* = BFFM_SETSELECTIONA
   proc DragQueryFile*(hDrop: HDROP, iFile: UINT, lpszFile: LPSTR, cch: UINT): UINT {.winapi, stdcall, dynlib: "shell32", importc: "DragQueryFileA".}
+  proc ShellExecute*(hwnd: HWND, lpOperation: LPCSTR, lpFile: LPCSTR, lpParameters: LPCSTR, lpDirectory: LPCSTR, nShowCmd: INT): HINSTANCE {.winapi, stdcall, dynlib: "shell32", importc: "ShellExecuteA".}
+  proc ExtractIconEx*(lpszFile: LPCSTR, nIconIndex: int32, phiconLarge: ptr HICON, phiconSmall: ptr HICON, nIcons: UINT): UINT {.winapi, stdcall, dynlib: "shell32", importc: "ExtractIconExA".}
   proc Shell_NotifyIcon*(dwMessage: DWORD, lpData: PNOTIFYICONDATAA): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "Shell_NotifyIconA".}
   proc PathFileExists*(pszPath: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "shlwapi", importc: "PathFileExistsA".}
+  proc PathCompactPath*(hDC: HDC, pszPath: LPSTR, dx: UINT): WINBOOL {.winapi, stdcall, dynlib: "shlwapi", importc: "PathCompactPathA".}
   proc ILCreateFromPath*(pszPath: PCSTR): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "ILCreateFromPathA".}
   proc SHGetPathFromIDList*(pidl: PCIDLIST_ABSOLUTE, pszPath: LPSTR): WINBOOL {.winapi, stdcall, dynlib: "shell32", importc: "SHGetPathFromIDListA".}
   proc SHBrowseForFolder*(lpbi: LPBROWSEINFOA): PIDLIST_ABSOLUTE {.winapi, stdcall, dynlib: "shell32", importc: "SHBrowseForFolderA".}
@@ -6718,6 +7474,47 @@ converter winimConverterIDocHostUIHandlerToIUnknown*(x: ptr IDocHostUIHandler): 
 const
   unknown* = 0
   requestSize* = 0
+type
+  PRINTER_INFO_1A* {.pure.} = object
+    Flags*: DWORD
+    pDescription*: LPSTR
+    pName*: LPSTR
+    pComment*: LPSTR
+  PRINTER_INFO_1W* {.pure.} = object
+    Flags*: DWORD
+    pDescription*: LPWSTR
+    pName*: LPWSTR
+    pComment*: LPWSTR
+  PRINTER_DEFAULTSA* {.pure.} = object
+    pDatatype*: LPSTR
+    pDevMode*: LPDEVMODEA
+    DesiredAccess*: ACCESS_MASK
+  LPPRINTER_DEFAULTSA* = ptr PRINTER_DEFAULTSA
+  PRINTER_DEFAULTSW* {.pure.} = object
+    pDatatype*: LPWSTR
+    pDevMode*: LPDEVMODEW
+    DesiredAccess*: ACCESS_MASK
+  LPPRINTER_DEFAULTSW* = ptr PRINTER_DEFAULTSW
+const
+  PRINTER_ENUM_LOCAL* = 0x00000002
+proc ClosePrinter*(hPrinter: HANDLE): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc.}
+when winimUnicode:
+  type
+    PRINTER_INFO_1* = PRINTER_INFO_1W
+  proc EnumPrinters*(Flags: DWORD, Name: LPWSTR, Level: DWORD, pPrinterEnum: LPBYTE, cbBuf: DWORD, pcbNeeded: LPDWORD, pcReturned: LPDWORD): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "EnumPrintersW".}
+  proc OpenPrinter*(pPrinterName: LPWSTR, phPrinter: LPHANDLE, pDefault: LPPRINTER_DEFAULTSW): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "OpenPrinterW".}
+  proc DocumentProperties*(hWnd: HWND, hPrinter: HANDLE, pDeviceName: LPWSTR, pDevModeOutput: PDEVMODEW, pDevModeInput: PDEVMODEW, fMode: DWORD): LONG {.winapi, stdcall, dynlib: "winspool.drv", importc: "DocumentPropertiesW".}
+  proc GetDefaultPrinter*(pszBuffer: LPWSTR, pcchBuffer: LPDWORD): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "GetDefaultPrinterW".}
+  proc SetDefaultPrinter*(pszPrinter: LPCWSTR): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "SetDefaultPrinterW".}
+when winimAnsi:
+  type
+    PRINTER_INFO_1* = PRINTER_INFO_1A
+  proc EnumPrinters*(Flags: DWORD, Name: LPSTR, Level: DWORD, pPrinterEnum: LPBYTE, cbBuf: DWORD, pcbNeeded: LPDWORD, pcReturned: LPDWORD): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "EnumPrintersA".}
+  proc OpenPrinter*(pPrinterName: LPSTR, phPrinter: LPHANDLE, pDefault: LPPRINTER_DEFAULTSA): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "OpenPrinterA".}
+  proc DocumentProperties*(hWnd: HWND, hPrinter: HANDLE, pDeviceName: LPSTR, pDevModeOutput: PDEVMODEA, pDevModeInput: PDEVMODEA, fMode: DWORD): LONG {.winapi, stdcall, dynlib: "winspool.drv", importc: "DocumentPropertiesA".}
+  proc GetDefaultPrinter*(pszBuffer: LPSTR, pcchBuffer: LPDWORD): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "GetDefaultPrinterA".}
+  proc SetDefaultPrinter*(pszPrinter: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "SetDefaultPrinterA".}
+const
   TABP_BODY* = 10
 proc OpenThemeData*(hwnd: HWND, pszClassList: LPCWSTR): HTHEME {.winapi, stdcall, dynlib: "uxtheme", importc.}
 proc CloseThemeData*(hTheme: HTHEME): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}

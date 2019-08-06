@@ -1281,6 +1281,8 @@ function main() {
     title="setMenuBar(self: wFrame; menuBar: wMenuBar)"><wbr />set<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMenuBar%2CwFrame"
     title="getMenuBar(self: wFrame): wMenuBar"><wbr />get<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getStatusBar%2CwFrame"
+    title="getStatusBar(self: wFrame): wStatusBar"><wbr />get<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTopMost%2CwFrame"
     title="setTopMost(self: wFrame; top = true)"><wbr />set<wbr />Top<wbr />Most<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#createStatusBar%2CwFrame%2Cint%2CwStyle%2CwCommandID"
@@ -1313,12 +1315,14 @@ function main() {
     title="enableMinimizeButton(self: wFrame; flag = true)"><wbr />enable<wbr />Minimize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disableMinimizeButton%2CwFrame"
     title="disableMinimizeButton(self: wFrame)"><wbr />disable<wbr />Minimize<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#shortcut%2CwFrame%2Cint%2Cint%2CwEventHandler"
-    title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventHandler): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#shortcut%2CwFrame%2Cint%2Cint%2CwEventProc"
+    title="shortcut(self: wFrame; flag: int; keyCode: int; handler: wEventProc): wEventConnection"><wbr />shortcut<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setReturnCode%2CwFrame%2Cint"
     title="setReturnCode(self: wFrame; retCode: int)"><wbr />set<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getReturnCode%2CwFrame"
     title="getReturnCode(self: wFrame): int"><wbr />get<wbr />Return<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#isModal%2CwFrame"
+    title="isModal(self: wFrame): bool"><wbr />is<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwFrame"
     title="showModal(self: wFrame): int"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showWindowModal%2CwFrame"
@@ -1359,7 +1363,7 @@ function main() {
   <div id="tocRoot"></div>
   <p class="module-desc"><p>A frame is a top-level window in wNim. Since it is a top-level window, it cannot have a parent. However, it can has an owner. The frame will be minimized when its owner is minimized and restored when it is restored.</p>
 <p>A dialog is also a top-level window with the owner. So it can be designed in wNim by using a frame with a owner (another main frame), put a panel in it, and then adding some contorls inside.</p>
-<p>Notice that if a frame has exactly one child window, not counting the status and toolbar, this child is resized to take the entire frame client area. If two or more windows are present, they should be laid out explicitly by manually.</p>
+<p>Notice that if a frame has exactly one child window, not counting the status and toolbar, this child is resized to take the entire frame client area. If two or more windows are present, they should be laid out explicitly by manually. <strong>This behavior just a default wEvent_Size event handler for frame, and it can be overwrited (Since 0.7.0).</strong></p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wWindow.html">wWindow</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wIconize</td><td>Display the frame iconized (minimized).</td></tr>
@@ -1503,7 +1507,14 @@ Tells the frame to show the given menu bar.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns the menubar currently associated with the frame.
+Returns the menubar currently associated with the frame (if any).
+
+</dd>
+<a id="getStatusBar,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getStatusBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the status bar currently associated with the frame (if any).
 
 </dd>
 <a id="setTopMost,wFrame"></a>
@@ -1603,8 +1614,8 @@ Enables or disables the Minimize button.
 Disables the Minimize button.
 
 </dd>
-<a id="shortcut,wFrame,int,int,wEventHandler"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">shortcut</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<a id="shortcut,wFrame,int,int,wEventProc"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">shortcut</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Quickly bind a keyboard shortcut to an event handler. If this frame not yet have a accelerator table, it will create a new one. This function use wCommandID between 64257..65535.
@@ -1621,6 +1632,12 @@ Sets the return code for this window.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getReturnCode</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the return code for this window.
+
+</dd>
+<a id="isModal,wFrame"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns true if the frame is modal, false otherwise.
 
 </dd>
 <a id="showModal,wFrame"></a>
@@ -1704,7 +1721,7 @@ Returns the system suggested size of a window (usually used for GUI controls).
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:55:40 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:13 UTC</small>
       </div>
     </div>
   </div>

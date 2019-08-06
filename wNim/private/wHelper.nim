@@ -9,8 +9,12 @@
 converter IntToDWORD(x: int): DWORD = DWORD x
 converter PtrPtrObjectToPtrPointer(x: ptr ptr object): ptr pointer = cast[ptr pointer](x)
 
-template `^$`(x: untyped): untyped = winstr.`$`(x)
+template `^$`[T](x: T): untyped =
   # `$` cause ambiguous call since 0.2.0, use ^$ instead
+  when T is ptr char:
+    $x
+  else:
+    winstr.`$`(x)
 
 proc `-`(a, b: wPoint): wPoint =
   result = (a.x - b.x, a.y - b.y)
@@ -40,10 +44,12 @@ proc toWRect(r: RECT): wRect =
 template SendMessage(hwnd, msg, wparam, lparam: typed): untyped =
   SendMessage(hwnd, msg, cast[WPARAM](wparam), cast[LPARAM](lparam))
 
-proc wGetDPI(): int =
-  var hdc = GetDC(0)
-  result = GetDeviceCaps(hdc, LOGPIXELSY)
-  ReleaseDC(0, hdc)
+template objectOffset(Typ, member): int =
+  when declared(offsetOf):
+    offsetOf(Typ, member)
+  else:
+    var dummy: Typ
+    cast[int](dummy.member.addr) -% cast[int](dummy.addr)
 
 proc toWStyle(style, exstyle: DWORD): wStyle {.inline.} =
   result = exstyle.wStyle shl 32 or style.wStyle
@@ -94,7 +100,7 @@ proc isVaildPath(str: string): bool =
 
 proc getTextFontSize(text: string, hFont: HANDLE, hwnd: HWND): wSize =
   var
-    text = +$text
+    text = T(text)
     hdc = GetDC(hwnd)
     prev = SelectObject(hdc, hFont)
     rect: RECT

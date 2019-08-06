@@ -1259,10 +1259,10 @@ function main() {
       <li><a class="reference" href="#final%2CwFileDialog"
     title="final(self: wFileDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwFileDialog%2CwWindow%2Cstring%2Cstring%2Cstring%2Cstring%2CwStyle"
-    title="init(self: wFileDialog; parent: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;;
+    title="init(self: wFileDialog; owner: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;;
      defaultFile = &quot;&quot;; wildcard = &quot;*.*&quot;; style: wStyle = wFdOpen)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#FileDialog%2CwWindow%2Cstring%2Cstring%2Cstring%2Cstring%2CwStyle"
-    title="FileDialog(parent: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;; defaultFile = &quot;&quot;;
+    title="FileDialog(owner: wWindow = nil; message = &quot;&quot;; defaultDir = &quot;&quot;; defaultFile = &quot;&quot;;
            wildcard = &quot;*.*&quot;; style: wStyle = wFdOpen): wFileDialog"><wbr />File<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMessage%2CwFileDialog"
     title="getMessage(self: wFileDialog): string"><wbr />get<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1301,7 +1301,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class represents the file chooser dialog.Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wDirDialog.html">wDirDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a> <a class="reference external" href="wFindReplaceDialog.html">wFindReplaceDialog</a></td></tr>
+  <p class="module-desc">This class represents the file chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wDialog.html">wDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wFdOpen</td><td>This is an open dialog.</td></tr>
 <tr><td>wFdSave</td><td>This is a save dialog.</td></tr>
@@ -1369,7 +1369,7 @@ Default finalizer for wFileDialog.
 
 </dd>
 <a id="init,wFileDialog,wWindow,string,string,string,string,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
          <span class="Identifier">defaultFile</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1377,7 +1377,7 @@ Initializer.
 
 </dd>
 <a id="FileDialog,wWindow,string,string,string,string,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">FileDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultFile</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">FileDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultDir</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultFile</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
                <span class="Identifier">wildcard</span> <span class="Other">=</span> <span class="StringLit">&quot;*.*&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wFdOpen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFileDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1491,7 +1491,7 @@ Shows the dialog in modal mode, returning the selected files or @[].
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:23 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:49 UTC</small>
       </div>
     </div>
   </div>

@@ -1262,13 +1262,7 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#final%2CwFindReplaceDialog"
-    title="final(self: wFindReplaceDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwFindReplaceDialog%2CwWindow%2Cint"
-    title="init(self: wFindReplaceDialog; parent: wWindow; flags: int = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#FindReplaceDialog%2CwWindow%2Cint"
-    title="FindReplaceDialog(parent: wWindow; flags: int = 0): wFindReplaceDialog"><wbr />Find<wbr />Replace<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setFlags%2CwFindReplaceDialog%2Cint"
+      <li><a class="reference" href="#setFlags%2CwFindReplaceDialog%2Cint"
     title="setFlags(self: wFindReplaceDialog; flags: int)"><wbr />set<wbr />Flags<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getFlags%2CwFindReplaceDialog"
     title="getFlags(self: wFindReplaceDialog): int"><wbr />get<wbr />Flags<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1286,32 +1280,16 @@ function main() {
     title="isWholeword(self: wFindReplaceDialog): bool"><wbr />is<wbr />Wholeword<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isMatchcase%2CwFindReplaceDialog"
     title="isMatchcase(self: wFindReplaceDialog): bool"><wbr />is<wbr />Matchcase<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#enableHelp%2CwFindReplaceDialog"
+    title="enableHelp(self: wFindReplaceDialog; flag = true)"><wbr />enable<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#final%2CwFindReplaceDialog"
+    title="final(self: wFindReplaceDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwFindReplaceDialog%2CwWindow%2Cint"
+    title="init(self: wFindReplaceDialog; owner: wWindow; flags: int = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#FindReplaceDialog%2CwWindow%2Cint"
+    title="FindReplaceDialog(owner: wWindow; flags: int = 0): wFindReplaceDialog"><wbr />Find<wbr />Replace<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModaless%2CwFindReplaceDialog"
     title="showModaless(self: wFindReplaceDialog)"><wbr />show<wbr />Modaless<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#close%2CwFindReplaceDialog"
-    title="close(self: wFindReplaceDialog)"><wbr />close<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getFrame%2CwFindReplaceDialog"
-    title="getFrame(self: wFindReplaceDialog): wFrame"><wbr />get<wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getHandle%2CwFindReplaceDialog"
-    title="getHandle(self: wFindReplaceDialog): HWND"><wbr />get<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
-
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#connect.t%2CwFindReplaceDialog%2CUINT%2CwEventHandler"
-    title="connect(self: wFindReplaceDialog; msg: UINT; handler: wEventHandler): untyped"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#connect.t%2CwFindReplaceDialog%2CUINT%2CwEventNeatHandler"
-    title="connect(self: wFindReplaceDialog; msg: UINT; handler: wEventNeatHandler): untyped"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#..t%2CwFindReplaceDialog%2CUINT%2CwEventHandler"
-    title="`.`(self: wFindReplaceDialog; msg: UINT; handler: wEventHandler): untyped"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#..t%2CwFindReplaceDialog%2CUINT%2CwEventNeatHandler"
-    title="`.`(self: wFindReplaceDialog; msg: UINT; handler: wEventNeatHandler): untyped"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#disconnect.t%2CwFindReplaceDialog%2CUINT"
-    title="disconnect(self: wFindReplaceDialog; msg: UINT; limit = -1): untyped"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#disconnect.t%2CwFindReplaceDialog%2CwEventConnection"
-    title="disconnect(self: wFindReplaceDialog; connection: wEventConnection): untyped"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1321,7 +1299,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">wFindReplaceDialog is a standard modeless dialog which is used to allow the user to search for some text (and possibly replace it with something else). Note that unlike for the other standard dialogs this one must have a parent window. Also note that there is no way to use this dialog in a modal way; it is always, by design and implementation, modeless.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wDirDialog.html">wDirDialog</a> <a class="reference external" href="wColorDialog.html">wColorDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a></td></tr>
+  <p class="module-desc">wFindReplaceDialog is a standard modeless dialog which is used to allow the user to search for some text (and possibly replace it with something else). Note that unlike for the other standard dialogs this one must have a owner window. Also note that there is no way to use this dialog in a modal way; it is always, by design and implementation, modeless.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wDialog.html">wDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Flags:</th><td><table border="1" class="docutils"><tr><th>Flags</th><th>Description</th></tr>
 <tr><td>wFrReplace</td><td>Replace dialog (otherwise find dialog).</td></tr>
 <tr><td>wFrNoUpdown</td><td>Disables the search direction radio buttons (find dialog).</td></tr>
@@ -1333,6 +1311,14 @@ function main() {
 <tr><td>wFrDown</td><td>The down button of the direction radio buttons is selected.</td></tr>
 <tr><td>wFrWholeword</td><td>The whole word check box is selected.</td></tr>
 <tr><td>wFrMatchcase</td><td>The match case check box is selected.</td></tr>
+</table></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wDialogEvent.html">wDialogEvent</a><table border="1" class="docutils"><tr><th>wDialogEvent</th><th>Description</th></tr>
+<tr><td>wEvent_DialogCreated</td><td>When the dialog is created but not yet shown.</td></tr>
+<tr><td>wEvent_DialogClosed</td><td>When the dialog is being closed.</td></tr>
+<tr><td>wEvent_DialogHelp</td><td>When the Help button is pressed.</td></tr>
+<tr><td>wEvent_FindNext</td><td>When find next button was pressed.</td></tr>
+<tr><td>wEvent_Replace</td><td>When replace button was pressed.</td></tr>
+<tr><td>wEvent_ReplaceAll</td><td>When replace all button was pressed .</td></tr>
 </table></td></tr>
 </tbody></table></p>
   <div class="section" id="10">
@@ -1403,26 +1389,6 @@ function main() {
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="final,wFindReplaceDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wFindReplaceDialog.
-
-</dd>
-<a id="init,wFindReplaceDialog,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
-<a id="FindReplaceDialog,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">FindReplaceDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Constructor.
-
-</dd>
 <a id="setFlags,wFindReplaceDialog,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setFlags</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1485,71 +1451,36 @@ Check whether whole word search/replace selected.
 Case whether sensitive search/replace selected.
 
 </dd>
+<a id="enableHelp,wFindReplaceDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableHelp</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Display a Help button, the dialog got wEvent_DialogHelp event when the button pressed.
+
+</dd>
+<a id="final,wFindReplaceDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Default finalizer for wFindReplaceDialog.
+
+</dd>
+<a id="init,wFindReplaceDialog,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
+<a id="FindReplaceDialog,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">FindReplaceDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Constructor.
+
+</dd>
 <a id="showModaless,wFindReplaceDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModaless</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog in modaless mode. The frame of this dialog will recieve wEvent_DialogClosed event when the dialog is closed.
-
-</dd>
-<a id="close,wFindReplaceDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">close</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Close a modaless dialog.
-
-</dd>
-<a id="getFrame,wFindReplaceDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getFrame</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFrame</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the wFrame object for a modaless dialog. For wFindReplaceDialog, the frame is just a dummy. So don't use this unless you know what you are doing.
-
-</dd>
-<a id="getHandle,wFindReplaceDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHandle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the system HWND of this dialog. This function seems useless, but maybe someday we need it, who knows?
-
-</dd>
-
-</dl></div>
-<div class="section" id="18">
-<h1><a class="toc-backref" href="#18">Templates</a></h1>
-<dl class="item">
-<a id="connect.t,wFindReplaceDialog,UINT,wEventHandler"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.connect() =&gt; dialog.connect().
-
-</dd>
-<a id="connect.t,wFindReplaceDialog,UINT,wEventNeatHandler"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventNeatHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.connect() =&gt; dialog.connect().
-
-</dd>
-<a id="..t,wFindReplaceDialog,UINT,wEventHandler"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.wEvent_DialogClosed =&gt; dialog.wEvent_DialogClosed.
-
-</dd>
-<a id="..t,wFindReplaceDialog,UINT,wEventNeatHandler"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventNeatHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.wEvent_DialogClosed =&gt; dialog.wEvent_DialogClosed.
-
-</dd>
-<a id="disconnect.t,wFindReplaceDialog,UINT"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">disconnect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">limit</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.disconnect() =&gt; dialog.disconnect().
-
-</dd>
-<a id="disconnect.t,wFindReplaceDialog,wEventConnection"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">disconnect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">connection</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-Syntax sugar: dialog.frame.disconnect() =&gt; dialog.disconnect().
 
 </dd>
 
@@ -1562,7 +1493,7 @@ Syntax sugar: dialog.frame.disconnect() =&gt; dialog.disconnect().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:24 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:50 UTC</small>
       </div>
     </div>
   </div>

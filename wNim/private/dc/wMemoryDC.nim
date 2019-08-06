@@ -31,6 +31,11 @@ proc MemoryDC*(): wMemoryDC =
   result.mHdc = CreateCompatibleDC(0)
   result.wDC.init()
 
+proc MemoryDC*(dc: wDC): wMemoryDC =
+  ## Constructs a new memory device context compatible with the specified device.
+  result.mHdc = CreateCompatibleDC(dc.mHdc)
+  result.wDC.init()
+
 proc delete*(self: var wMemoryDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.

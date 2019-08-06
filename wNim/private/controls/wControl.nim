@@ -147,6 +147,8 @@ proc wControl_DoKillFocus(event: wEvent) =
   if event.notControl(): return
 
   let self = wControl(event.mWindow)
+  if not self.isFocusable(): return
+
   # always save current focus to top level window
   # if top level window get focus after window switch, the control can get focus again
   self.getTopParent().mSaveFocus = self
@@ -160,6 +162,8 @@ proc wControl_DoSetFocus(event: wEvent) =
   if event.notControl(): return
 
   let self = wControl(event.mWindow)
+  if not self.isFocusable(): return
+
   # some button get focus => set itself and clear all others
   if self of wButton:
     self.drawSiblingButtons() do (win: wWindow) -> bool: win == self
@@ -171,7 +175,7 @@ proc wControl_DoSetFocus(event: wEvent) =
 
 proc wControl_OnNavigation(event: wEvent) =
   if event.notControl(): return
-  let self = wControl(event.window)
+  let self = wControl(event.mWindow)
   var processed = false
   defer: event.skip(if processed: false else: true)
 

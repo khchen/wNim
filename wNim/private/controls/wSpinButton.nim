@@ -74,6 +74,9 @@ proc wSpinButton_OnNotify(self: wSpinButton, event: wEvent) =
     if processed:
       event.result = spinEvent.result
 
+method release(self: wSpinButton) =
+  self.mParent.disconnect(self.mNotifyConn)
+
 proc final*(self: wSpinButton) =
   ## Default finalizer for wSpinButton.
   discard
@@ -90,7 +93,7 @@ proc init*(self: wSpinButton, parent: wWindow, id = wDefaultID,
   self.wControl.init(className=UPDOWN_CLASS, parent=parent, id=id, pos=pos, size=size,
     style=style or UDS_HOTTRACK or WS_CHILD or WS_VISIBLE)
 
-  parent.hardConnect(WM_NOTIFY) do (event: wEvent):
+  self.mNotifyConn = parent.hardConnect(WM_NOTIFY) do (event: wEvent):
     wSpinButton_OnNotify(self, event)
 
 proc SpinButton*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,

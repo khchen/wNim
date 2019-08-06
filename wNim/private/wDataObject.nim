@@ -123,7 +123,7 @@ proc newBmpDataObject(bmp: HBITMAP): ptr BmpDataObject =
     return E_NOTIMPL
 
 proc error(self: wDataObject) {.inline.} =
-  raise newException(wDataObjectError, "wDataObject creation failure")
+  raise newException(wDataObjectError, "wDataObject creation failed")
 
 proc isText*(self: wDataObject): bool {.validate.} =
   ## Checks the data is text or not.
@@ -140,7 +140,7 @@ proc isText*(self: wDataObject): bool {.validate.} =
   if self.mObj.QueryGetData(&format) == S_OK:
     return true
 
-proc getText*(self: wDataObject): string {.validate.} =
+proc getText*(self: wDataObject): string {.validate, property.}  =
   ## Gets the data in text format.
   var ret: string
   defer: result = ret
@@ -206,7 +206,7 @@ iterator getFiles*(self: wDataObject): string {.validate.} =
 
     ReleaseStgMedium(&medium)
 
-proc getFiles*(self: wDataObject): seq[string] {.validate, inline.} =
+proc getFiles*(self: wDataObject): seq[string] {.validate, property.} =
   ## Gets the files list as seq.
   result = @[]
   for file in self.getFiles():
@@ -223,7 +223,7 @@ proc isBitmap*(self: wDataObject): bool {.validate.} =
   if self.mObj.QueryGetData(&format) == S_OK:
     return true
 
-proc getBitmap*(self: wDataObject): wBitmap {.validate.} =
+proc getBitmap*(self: wDataObject): wBitmap {.validate, property.} =
   ## Gets the data in bitmap format.
   var format = FORMATETC(
     cfFormat: CF_BITMAP,

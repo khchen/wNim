@@ -1315,8 +1315,8 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"><p>This class encapsulates a Windows icon image. Unline wImage, wBitmap, wIcon, wCursor, etc., wIconImage doesn't store any Windows resource handle, but only an icon image in binary format. Except the binary image data, wIconImage aslo stores the hotspot for cursor if the icon image is created from a cursor resource.</p>
-<p>A wIconImage object can be created from Windows PE files (.exe or .dll) or icon files (.ico or .cur). It also can be created by wImage, wBitmap, wIcon, or wCursor. Furthermore, wIconImage can be converted to wImage, wBitmap, wIcon, wCursor, or .ico/.cur files. In summary, it is easy to deal with Windows' image like resource and image files with wIconImage.</p>
+  <p class="module-desc"><p>This class encapsulates a Windows icon image. Unlike wImage, wBitmap, wIcon, wCursor, etc., wIconImage doesn't store any Windows resource handle, but only an icon image in binary format. Except the binary image data, wIconImage also stores the hotspot for cursor if the icon image is created from a cursor resource.</p>
+<p>A wIconImage object can be created from Windows PE files (.exe or .dll) or icon files (.ico or .cur). It also can be created by wImage, wBitmap, wIcon, or wCursor. Furthermore, wIconImage can be converted to wImage, wBitmap, wIcon, wCursor, or .ico/.cur files. In summary, it is easy to deal with Windows' image-like resource and image files with wIconImage.</p>
 <p>The wIconImage class use the same binary format as an image inside the icon files. So there are two possible format of wIconImage object: BMP or PNG. Since Windows XP don't support PNG format icon files, it is recommend to use toBmp() before saving a wIconImage object to icon file if the icon file will be used under Windows XP.</p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wImage.html">wImage</a> <a class="reference external" href="wBitmap.html">wBitmap</a> <a class="reference external" href="wIcon.html">wIcon</a> <a class="reference external" href="wCursor.html">wCursor</a></td></tr>
 </tbody></table></p>
@@ -1545,7 +1545,7 @@ Stores single icon image to a .ico or .cur format file depends on <em>isIcon</em
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:55:41 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:49:05 UTC</small>
       </div>
     </div>
   </div>

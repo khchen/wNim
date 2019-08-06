@@ -254,8 +254,13 @@ proc drawArc*(self: wDC, point1, point2, center: wPoint) =
 
 proc drawRoundedRectangle*(self: wDC, x, y, width, height: int, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
-  var r = int radius
+  ## The corners are quarter-circles using the given radius.
+  ## The current pen is used for the outline and the current brush for filling the shape.
+  ## If radius is positive, the value is assumed to be the radius of the rounded corner.
+  ## If radius is negative, the absolute value is assumed to be the proportion of the
+  ## smallest dimension of the rectangle.
   var
+    r = int radius
     x2 = x + width
     y2 = y + height
 
@@ -270,10 +275,12 @@ proc drawRoundedRectangle*(self: wDC, x, y, width, height: int, radius: float) =
 
 proc drawRoundedRectangle*(self: wDC, point: wPoint, size: wSize, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
+  ## The corners are quarter-circles using the given radius.
   self.drawRoundedRectangle(point.x, point.y, size.width, size.height, radius)
 
 proc drawRoundedRectangle*(self: wDC, rect: wRect, radius: float) =
   ## Draws a rectangle with the given top left corner, and with the given size.
+  ## The corners are quarter-circles using the given radius.
   self.drawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, radius)
 
 proc addPoints(pseq: var seq[POINT], points: openarray[wPoint], xoffset: int = 0,
@@ -508,6 +515,10 @@ proc getFont*(self: wDC): wFont {.inline, property.} =
   ## Gets the current font.
   result = self.mFont
 
+proc getRegion*(self: wDC): wRegion {.inline, property.} =
+  ## Gets the current region.
+  result = self.mRegion
+
 proc getTextForeground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text foreground color.
   result = self.mTextForegroundColor
@@ -576,6 +587,13 @@ proc setFont*(self: var wDC, font: wFont) {.inline, property.} =
   self.mFont = font
   let hFont = SelectObject(self.mHdc, font.mHandle)
   if self.mhOldFont == 0: self.mhOldFont = hFont
+
+proc setRegion*(self: var wDC, region: wRegion) {.inline, property.} =
+  ## Sets the current region for the DC.
+  wValidate(region)
+  self.mRegion = region
+  # if region.mHandle == 0: just clear the clipping region
+  SelectClipRgn(self.mHdc, region.mHandle)
 
 proc setTextBackground*(self: var wDC, color: wColor) {.inline, property.} =
   ## Sets the current text background color for the DC.
@@ -692,6 +710,20 @@ proc stretchBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
   StretchBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
     srcWidth, srcHeight, rop.dwRop)
 
+proc stretchBlitQuality*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
+    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
+  ## Copy from a source DC to this DC possibly changing the scale.
+  ## *rop* is the raster operation. Using halftone mode for higher quality.
+  var prevPoint: POINT
+  let prevMode = SetStretchBltMode(self.mHdc, HALFTONE)
+  SetBrushOrgEx(self.mHdc, 0, 0, &prevPoint)
+
+  StretchBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
+    srcWidth, srcHeight, rop.dwRop)
+
+  SetStretchBltMode(self.mHdc, prevMode)
+  SetBrushOrgEx(self.mHdc, prevPoint.x, prevPoint.y, nil)
+
 proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
     source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, alpha: int = 255) =
   ## Copy from a source DC to this DC transparently.
@@ -750,6 +782,30 @@ proc drawIcon*(self: wDC, icon: wIcon, x, y: int = 0) =
   wValidate(icon)
   DrawIconEx(self.mHdc, x, y, icon.mHandle, icon.mWidth, icon.mHeight, 0, 0, DI_NORMAL)
 
+proc getCharHeight*(self: wDC): int {.property.} =
+  ## Gets the character height of the currently set font.
+  var textMetric: TEXTMETRIC
+  GetTextMetrics(self.mHdc, &textMetric)
+  result = textMetric.tmHeight
+
+proc getCharWidth*(self: wDC): int {.property.} =
+  ## Gets the average character width of the currently set font.
+  var textMetric: TEXTMETRIC
+  GetTextMetrics(self.mHdc, &textMetric)
+  result = textMetric.tmAveCharWidth
+
+proc getFontMetrics*(self: wDC): tuple[height, ascent, descent, internalLeading,
+  externalLeading, averageWidth: int] {.property.} =
+  ## Returns the various font characteristics.
+  var textMetric: TEXTMETRIC
+  GetTextMetrics(self.mHdc, &textMetric)
+  result.height = textMetric.tmHeight
+  result.ascent = textMetric.tmAscent
+  result.descent = textMetric.tmDescent
+  result.internalLeading = textMetric.tmInternalLeading
+  result.externalLeading = textMetric.tmExternalLeading
+  result.averageWidth = textMetric.tmAveCharWidth
+
 proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
     font = wDefaultFont, pen = wDefaultPen, brush = wDefaultBrush,
     background = wDefaultBrush) =
@@ -760,6 +816,7 @@ proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
   self.setPen(if pen != nil: pen else: wDefaultPen)
   self.setBrush(if brush != nil: brush else: wDefaultBrush)
   self.setBackground(if background != nil: background else: wDefaultBrush)
+  self.setRegion(wNilRegion)
 
 proc final*(self: var wDC) =
   ## Default finalizer for wDC.

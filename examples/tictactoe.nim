@@ -51,7 +51,7 @@ proc drawBoard(self: wBoard) =
   offset.x = (size.width div 3 - pieceSize.width) div 2
   offset.y = (size.height div 3 - pieceSize.height) div 2
 
-  var board = self.mGame.getBoard()
+  let board = self.mGame.getBoard()
   for i in 0..2:
     for j in 0..2:
       let piece = board[i * 3 + j]
@@ -86,8 +86,8 @@ proc init(self: wBoard, title: string) =
   self.mUseAi[P2] = true
 
   StatusBar(self)
-  var menubar = MenuBar(self)
-  var menu = Menu(menubar, "&Game")
+  let menubar = MenuBar(self)
+  let menu = Menu(menubar, "&Game")
   menu.append(idNew, "&New Game")
   menu.appendSeparator()
   menu.appendCheckItem(idAi1, "Computer Paly O")

@@ -1,6 +1,26 @@
+Version 0.7.0
+-------------
+* Add wRegion, wPrinterDC, wPrintData, wPageSetupDialog, and wPrintDialog.
+* Add wDialog class. All common dialogs are now subclasses of wWindow.
+* Add new events for dialogs: wEvent_DialogCreated, wEvent_DialogHelp, wEvent_DialogApply, etc.
+* wWidnow: add setShape(), hasScrollbar(), scrollLines(), scrollPages(), disableFocus(), getDpi(), getDpiScaleRatio(), dpiScale(), dpiAutoScale().
+* wWidnow: setDraggable() can be used by top-level window now.
+* wWidnow: event handler can be disconnected from window by given proc now.
+* wWindow: can use specified command to show a window.
+* wWindow: exports processMessage() for convenient.
+* wFrame: add isModal(), getStatusBar().
+* wFrame: the default event handler for wEvent_Size can be changed now **(Breaking Change)**.
+* wToolBar: add wTbNoAlign, wTbNoResize.
+* wDC: add getRegion(), setRegion(), getCharHeight(), getCharWidth(), getFontMetrics(), stretchBlitQuality().
+* wEvent: add wWparam and wLparam types. In case we need "cast" for creation event object.
+* wUtil: add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSysemDpiAware(), wSetPerMonitorDpiAware().
+* wPredefined: add wNilRegion.
+* Add examples: shapewin.nim and printpreview.nim
+* Fix bugs.
+
 Version 0.6.0
 -------------
-* Add wWebView, wFontDialog, wTextEnterDialog, wPasswordEntryDialog, and wFindReplaceDialog
+* Add wWebView, wFontDialog, wTextEntryDialog, wPasswordEntryDialog, and wFindReplaceDialog.
 * wFont: add getStrikeOut(), setStrikeOut().
 * wFrame: add showWindowModal(), wDefaultDialogStyle.
 * wCheckBox, wRadioButton: add click().

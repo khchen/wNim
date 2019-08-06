@@ -19,7 +19,7 @@
 ##   ==============================  =============================================================
 ##   wScrollWinEvent                 Description
 ##   ==============================  =============================================================
-##   wEvent_ScrollWin                Sent to wSlider before all of following event.
+##   wEvent_ScrollWin                Sent to window before all of following event.
 ##                                   Use getKind() to know what kind of type it is.
 ##   wEvent_ScrollWinTop             Scroll to top or leftmost.
 ##   wEvent_ScrollWinBottom          Scroll to bottom or rightmost.
@@ -54,7 +54,7 @@ method getKind*(self: wScrollWinEvent): int {.property, inline.} =
   result = dataPtr.kind
 
 method getOrientation*(self: wScrollWinEvent): int {.property, inline.} =
-  ## Returns wHORIZONTAL or wVERTICAL
+  ## Returns wHorizontal or wVertical
   let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.orientation
 

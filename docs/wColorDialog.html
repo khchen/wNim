@@ -1248,13 +1248,7 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#final%2CwColorDialog"
-    title="final(self: wColorDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwColorDialog%2CwWindow%2CwStyle"
-    title="init(self: wColorDialog; parent: wWindow = nil; defaultColor = wBlack; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#ColorDialog%2CwWindow%2CwStyle"
-    title="ColorDialog(parent: wWindow = nil; defaultColor = wBlack; style: wStyle = 0): wColorDialog"><wbr />Color<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getColor%2CwColorDialog"
+      <li><a class="reference" href="#getColor%2CwColorDialog"
     title="getColor(self: wColorDialog): wColor"><wbr />get<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getCustomColor%2CwColorDialog%2Crange%5B%5D"
     title="getCustomColor(self: wColorDialog; i: range[0 .. 15]): wColor"><wbr />get<wbr />Custom<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1262,6 +1256,14 @@ function main() {
     title="setColor(self: wColorDialog; color: wColor)"><wbr />set<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setCustomColor%2CwColorDialog%2Crange%5B%5D%2CwColor"
     title="setCustomColor(self: wColorDialog; i: range[0 .. 15]; color: wColor)"><wbr />set<wbr />Custom<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#enableHelp%2CwColorDialog"
+    title="enableHelp(self: wColorDialog; flag = true)"><wbr />enable<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#final%2CwColorDialog"
+    title="final(self: wColorDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwColorDialog%2CwWindow%2CwStyle"
+    title="init(self: wColorDialog; owner: wWindow = nil; defaultColor = wBlack; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#ColorDialog%2CwWindow%2CwStyle"
+    title="ColorDialog(owner: wWindow = nil; defaultColor = wBlack; style: wStyle = 0): wColorDialog"><wbr />Color<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwColorDialog"
     title="showModal(self: wColorDialog): wId"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#display%2CwColorDialog"
@@ -1275,11 +1277,16 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">This class represents the color chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wMessageDialog.html">wMessageDialog</a> <a class="reference external" href="wFileDialog.html">wFileDialog</a> <a class="reference external" href="wDirDialog.html">wDirDialog</a> <a class="reference external" href="wFontDialog.html">wFontDialog</a> <a class="reference external" href="wTextEnterDialog.html">wTextEnterDialog</a> <a class="reference external" href="wPasswordEntryDialog.html">wPasswordEntryDialog</a> <a class="reference external" href="wFindReplaceDialog.html">wFindReplaceDialog</a></td></tr>
+  <p class="module-desc">This class represents the color chooser dialog. Only modal dialog is supported.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wDialog.html">wDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wCdFullOpen</td><td>Displays the full dialog with custom color selection controls.</td></tr>
 <tr><td>wCdCenter</td><td>Centers the window relative to it's owner.</td></tr>
 <tr><td>wCdScreenCenter</td><td>Centers the window on screen.</td></tr>
+</table></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wDialogEvent.html">wDialogEvent</a><table border="1" class="docutils"><tr><th>wDialogEvent</th><th>Description</th></tr>
+<tr><td>wEvent_DialogCreated</td><td>When the dialog is created but not yet shown.</td></tr>
+<tr><td>wEvent_DialogClosed</td><td>When the dialog is being closed.</td></tr>
+<tr><td>wEvent_DialogHelp</td><td>When the Help button is pressed.</td></tr>
 </table></td></tr>
 </tbody></table></p>
   <div class="section" id="10">
@@ -1308,26 +1315,6 @@ function main() {
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="final,wColorDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wColorDialog.
-
-</dd>
-<a id="init,wColorDialog,wWindow,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultColor</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span>
-         <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
-<a id="ColorDialog,wWindow,wStyle"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">ColorDialog</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultColor</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Constructor.
-
-</dd>
 <a id="getColor,wColorDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                         <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1356,6 +1343,32 @@ Sets the default color.
 Sets custom colors for the color dialog.
 
 </dd>
+<a id="enableHelp,wColorDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableHelp</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Display a Help button, the dialog got wEvent_DialogHelp event when the button pressed.
+
+</dd>
+<a id="final,wColorDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Default finalizer for wColorDialog.
+
+</dd>
+<a id="init,wColorDialog,wWindow,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultColor</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span>
+         <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
+<a id="ColorDialog,wWindow,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">ColorDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">defaultColor</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Constructor.
+
+</dd>
 <a id="showModal,wColorDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wColorDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1379,7 +1392,7 @@ Shows the dialog in modal mode, returning the user-selected color or -1.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:22 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:47 UTC</small>
       </div>
     </div>
   </div>

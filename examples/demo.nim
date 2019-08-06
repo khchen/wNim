@@ -9,48 +9,46 @@ import
   resource/resource,
   wNim
 
-var app = App()
-var frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)
-
-frame.size = (800, 600)
-frame.minSize = (500, 500)
+let app = App()
+let frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)
 frame.icon = Icon("", 0) # load icon from exe file.
+frame.dpiAutoScale:
+  frame.size = (640, 500)
+  frame.minSize = (400, 400)
 
-var statusBar = StatusBar(frame)
-var panel = Panel(frame)
-panel.margin = 10
+let statusBar = StatusBar(frame)
+let panel = Panel(frame)
+let staticbox1 = StaticBox(panel, label="Basic Controls")
+let staticbox2 = StaticBox(panel, label="Numbers Controls")
+let staticbox3 = StaticBox(panel, label="Lists Controls")
 
-var staticbox1 = StaticBox(panel, label="Basic Controls")
-var staticbox2 = StaticBox(panel, label="Numbers Controls")
-var staticbox3 = StaticBox(panel, label="Lists Controls")
+let button = Button(panel, label="Button")
+let checkbox = CheckBox(panel, label="CheckBox")
+let textctrl = TextCtrl(panel, value="TextCtrl", style=wBorderSunken)
+let statictext = StaticText(panel, label="StaticText")
+let staticline = StaticLine(panel)
 
-var button = Button(panel, label="Button")
-var checkbox = CheckBox(panel, label="CheckBox")
-var textctrl = TextCtrl(panel, value="TextCtrl", style=wBorderSunken)
-var statictext = StaticText(panel, label="StaticText")
-var staticline = StaticLine(panel)
+let datepickerctrl = DatePickerCtrl(panel)
+let timepickerctrl = TimePickerCtrl(panel)
+let calendarctrl = CalendarCtrl(panel, style=wCalNoToday)
 
-var datepickerctrl = DatePickerCtrl(panel)
-var timepickerctrl = TimePickerCtrl(panel)
-var calendarctrl = CalendarCtrl(panel, style=wCalNoToday)
+let spinctrl = SpinCtrl(panel, value=50, style=wSpArrowKeys)
+let slider = Slider(panel, value=50)
+let gauge = Gauge(panel, value=50)
 
-var spinctrl = SpinCtrl(panel, value=50, style=wSpArrowKeys)
-var slider = Slider(panel, value=50)
-var gauge = Gauge(panel, value=50)
-
-var combobox = ComboBox(panel, value="Combobox Item1",
+let combobox = ComboBox(panel, value="Combobox Item1",
   choices=["Combobox Item1", "Combobox Item2", "Combobox Item3"],
   style=wCbReadOnly)
 
-var editable = ComboBox(panel, value="Editable Item1",
+let editable = ComboBox(panel, value="Editable Item1",
   choices=["Editable Item1", "Editable Item2", "Editable Item3"],
   style=wCbDropDown)
 
-var radiobutton1 = RadioButton(panel, label="Radio Button 1")
-var radiobutton2 = RadioButton(panel, label="Radio Button 2")
-var radiobutton3 = RadioButton(panel, label="Radio Button 3")
+let radiobutton1 = RadioButton(panel, label="Radio Button 1")
+let radiobutton2 = RadioButton(panel, label="Radio Button 2")
+let radiobutton3 = RadioButton(panel, label="Radio Button 3")
 
-var notebook = NoteBook(panel)
+let notebook = NoteBook(panel)
 notebook.addPage("Page1")
 notebook.addPage("Page2")
 notebook.addPage("Page3")
@@ -59,12 +57,12 @@ const logo = staticRead(r"images\logo.png")
 notebook.page(0).backgroundColor = panel.backgroundColor
 notebook.page(1).backgroundColor = wGrey
 
-var staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bmp(logo), style=wSbFit)
+let staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bmp(logo), style=wSbFit)
 
 notebook.page(1).wEvent_Paint do (event: wEvent):
-  var size = event.window.clientSize
-  var factorX = size.width / 460
-  var factorY = size.height / 120
+  let size = event.window.clientSize
+  let factorX = size.width / 460
+  let factorY = size.height / 120
 
   var dc = PaintDC(event.window)
   dc.scale = (factorX, factorY)
@@ -73,10 +71,10 @@ notebook.page(1).wEvent_Paint do (event: wEvent):
   dc.drawArc(240, 45, 340, 45, 290, 30)
   dc.drawPolygon([(355, 65), (405, 95), (405, 65), (445, 35), (365, 25)])
 
-var listbox = ListBox(notebook.page(2), style=wLbNoSel or wBorderSimple or wLbNeededScroll)
+let listbox = ListBox(notebook.page(2), style=wLbNoSel or wBorderSimple or wLbNeededScroll)
 
 listbox.wEvent_ContextMenu do ():
-  var menu = Menu()
+  let menu = Menu()
   menu.append(wIdClear, "&Clear")
   listbox.popupMenu(menu)
 
@@ -106,138 +104,33 @@ notebook.wEvent_NoteBookPageChanged do (): listbox.add "notebook.wEvent_NoteBook
 staticbitmap.wEvent_CommandLeftClick do (): listbox.add "staticbitmap.wEvent_CommandLeftClick"
 
 proc layout() =
-  panel.layout:
-    staticbox1:
-      top = panel.top
-      bottom = panel.bottom
-      left = panel.left
-      innerWidth = calendarctrl.bestSize.width
+  panel.autolayout """
+    spacing: 10
+    H:|-[staticbox1]-[staticbox2..3,notebook]-|
+    V:|-[staticbox1]-|
+    V:|-[staticbox2]-[staticbox3]-[notebook]-|
+    C: staticbox1.innerWidth = calendarctrl.bestSize.width
 
-    button:
-      top = staticbox1.innerTop + 5
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox1
+    V:|-5-{stack1:[button]-[checkbox]-[textctrl]-[statictext]}-[staticline]-
+      {stack2:[datepickerctrl]-[timepickerctrl]}-[calendarctrl]
+    H:|-5-[stack1..2,staticline,calendarctrl]-5-|
 
-    checkbox:
-      top = button.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox2
+    V:|-5-{stack3:[spinctrl]-[slider]-[gauge]}-5-|
+    H:|-5-[stack3]-5-|
 
-    textctrl:
-      top = checkbox.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    outer: staticbox3
+    V:|-5-{stack4:[combobox]-[editable]-
+      [radiobutton1][radiobutton2][radiobutton3]}-5-|
+    H:|-5-[stack4]-5-|
 
-    statictext:
-      top = textctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
+    V:[stack1..4(25)]
+  """
 
-    staticline:
-      top = statictext.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 2
-
-    datepickerctrl:
-      top = staticline.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
-
-    timepickerctrl:
-      top = datepickerctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-      height = 25
-
-    calendarctrl:
-      top = timepickerctrl.bottom + 10
-      left = staticbox1.innerLeft + 5
-      right = staticbox1.innerRight - 5
-
-    staticbox2:
-      top = panel.top
-      left = staticbox1.right + 10
-      right = panel.right
-      innerBottom = gauge.bottom + 5
-
-    spinctrl:
-      top = staticbox2.innerTop + 5
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    slider:
-      top = spinctrl.bottom + 10
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    gauge:
-      top = slider.bottom + 10
-      left = staticbox2.innerLeft + 5
-      right = staticbox2.innerRight - 5
-      height = 25
-
-    staticbox3:
-      top = staticbox2.bottom + 10
-      left = staticbox1.right + 10
-      right = panel.right
-      innerBottom = radiobutton3.bottom + 5
-
-    combobox:
-      top = staticbox3.innerTop + 5
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 25
-
-    editable:
-      top = combobox.bottom + 10
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 25
-
-    radiobutton1:
-      top = editable.bottom + 10
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    radiobutton2:
-      top = radiobutton1.bottom
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    radiobutton3:
-      top = radiobutton2.bottom
-      left = staticbox3.innerLeft + 5
-      right = staticbox3.innerRight - 5
-      height = 22
-
-    notebook:
-      top = staticbox3.bottom + 10
-      bottom = panel.bottom
-      left = staticbox3.left
-      right = panel.right
-
-  notebook.layout:
-    staticbitmap:
-      left = notebook.left
-      right = notebook.right
-      top = notebook.top
-      bottom = notebook.bottom
-
-    listbox:
-      left = notebook.left
-      right = notebook.right
-      top = notebook.top
-      bottom = notebook.bottom
+  notebook.autolayout """
+    HV:|[staticbitmap,listbox]|
+  """
 
 panel.wEvent_Size do ():
   layout()

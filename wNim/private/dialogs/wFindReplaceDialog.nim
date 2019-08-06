@@ -7,18 +7,12 @@
 
 ## wFindReplaceDialog is a standard modeless dialog which is used to allow the
 ## user to search for some text (and possibly replace it with something else).
-## Note that unlike for the other standard dialogs this one must have a parent
+## Note that unlike for the other standard dialogs this one must have a owner
 ## window. Also note that there is no way to use this dialog in a modal way;
 ## it is always, by design and implementation, modeless.
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wFileDialog <wFileDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
-##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
+## :Superclass:
+##   `wDialog <wDialog.html>`_
 #
 ## :Flags:
 ##   ==============================  =============================================================
@@ -35,6 +29,19 @@
 ##   wFrWholeword                    The whole word check box is selected.
 ##   wFrMatchcase                    The match case check box is selected.
 ##   ==============================  =============================================================
+#
+## :Events:
+##   `wDialogEvent <wDialogEvent.html>`_
+##   ==============================   =============================================================
+##   wDialogEvent                     Description
+##   ==============================   =============================================================
+##   wEvent_DialogCreated             When the dialog is created but not yet shown.
+##   wEvent_DialogClosed              When the dialog is being closed.
+##   wEvent_DialogHelp                When the Help button is pressed.
+##   wEvent_FindNext                  When find next button was pressed.
+##   wEvent_Replace                   When replace button was pressed.
+##   wEvent_ReplaceAll                When replace all button was pressed .
+##   ===============================  =============================================================
 
 const
   wFrReplace* = 0x20000
@@ -47,106 +54,15 @@ const
   wFrDown* = FR_DOWN
   wFrWholeword* = FR_WHOLEWORD
   wFrMatchcase* = FR_MATCHCASE
-  wFrMask = FR_NOUPDOWN or FR_NOMATCHCASE or FR_NOWHOLEWORD or FR_HIDEUPDOWN or
-    FR_HIDEMATCHCASE or FR_HIDEWHOLEWORD or FR_DOWN or FR_WHOLEWORD or FR_MATCHCASE
-
-proc final*(self: wFindReplaceDialog) =
-  ## Default finalizer for wFindReplaceDialog.
-  discard
-
-proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
-    {.stdcall.} =
-  case msg
-  of WM_DESTROY:
-    let pFr = cast[ptr FINDREPLACE](GetWindowLongPtr(hwnd, GWLP_USERDATA))
-    let self = cast[wFindReplaceDialog](pFr.lCustData)
-
-    let event = wDialogEvent Event(window=self.mFrame, msg=wEvent_DialogClosed)
-    event.mDialog = self
-    self.mFrame.processEvent(event)
-
-  of WM_NCDESTROY:
-    wAppWindowDelete(hwnd)
-
-  of WM_INITDIALOG:
-    # lParam point to FINDREPLACE
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, lParam)
-    return TRUE
-
-  else: discard
-
-proc init*(self: wFindReplaceDialog, parent: wWindow, flags: int = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mParent = parent
-  self.mFlags = flags
-  self.mFindString = T(1024)
-  self.mReplaceString = T(1024)
-
-proc create(self: wFindReplaceDialog): wFrame =
-  # create a dummy frame for the dialog
-  let frame = Frame(owner=self.mParent)
-  frame.setSize(self.mParent.getRect())
-
-  let pFr = &self.mFindReplace
-  zeroMem(pFr, sizeof(FINDREPLACE))
-  pFr.lStructSize = sizeof(FINDREPLACE)
-  pFr.hwndOwner = frame.mHwnd
-  pFr.lpstrFindWhat = &self.mFindString
-  pFr.lpstrReplaceWith = &self.mReplaceString
-  pFr.wFindWhatLen = WORD self.mFindString.len
-  pFr.wReplaceWithLen = WORD self.mReplaceString.len
-  pFr.Flags = self.mFlags and wFrMask or FR_ENABLEHOOK
-  pFr.lpfnHook = wFindReplaceHookProc
-  pFr.lCustData = cast[LPARAM](self)
-
-  let findMsgId = RegisterWindowMessage(FINDMSGSTRING)
-  frame.systemConnect(findMsgId) do (event: wEvent):
-    # save the current state.
-    self.mFlags = (self.mFlags and wFrReplace) or (pFr.Flags and wFrMask)
-
-    if (pFr.Flags and FR_DIALOGTERM) != 0:
-      # delete the dummy frame will cause it's child, aka. the actually find
-      # dialog also be deleted. and then it's WM_DESTROY occur.
-      frame.delete()
-
-    elif (pFr.Flags and FR_FINDNEXT) != 0:
-      let event = wDialogEvent Event(window=frame, msg=wEvent_FindNext)
-      event.mDialog = self
-      frame.processEvent(event)
-
-    elif (pFr.Flags and FR_REPLACE) != 0:
-      let event = wDialogEvent Event(window=frame, msg=wEvent_Replace)
-      event.mDialog = self
-      frame.processEvent(event)
-
-    elif (pFr.Flags and FR_REPLACEALL) != 0:
-      let event = wDialogEvent Event(window=frame, msg=wEvent_ReplaceAll)
-      event.mDialog = self
-      frame.processEvent(event)
-
-  if (self.mFlags and wFrReplace) != 0:
-    self.mHdlg = ReplaceText(pFr)
-  else:
-    self.mHdlg = FindText(pFr)
-
-  if self.mHdlg != 0:
-    wAppTopLevelWindowAdd(self.mHdlg)
-    result = frame
-
-proc FindReplaceDialog*(parent: wWindow, flags: int = 0): wFindReplaceDialog
-    {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(parent, flags)
 
 proc setFlags*(self: wFindReplaceDialog, flags: int) {.validate, property, inline.} =
   ## Set the flags to use to initialize the controls of the dialog.
-  self.mFlags = flags
+  self.mFr.Flags = (flags and (not wFrReplace)) or FR_ENABLEHOOK
+  self.mIsReplace = (flags and wFrReplace) != 0
 
 proc getFlags*(self: wFindReplaceDialog): int {.validate, property, inline.} =
   ## Get the combination of flag values.
-  result = self.mFlags
+  result = self.mFr.Flags or (if self.mIsReplace: wFrReplace else: 0)
 
 proc setFindString*(self: wFindReplaceDialog, str: string) {.validate, property, inline.} =
   ## Set the string to find (used as initial value by the dialog).
@@ -168,67 +84,116 @@ proc getReplaceString*(self: wFindReplaceDialog): string {.validate, property, i
 
 proc isDownward*(self: wFindReplaceDialog): bool {.validate, inline.} =
   ## Check whether downward search/replace selected.
-  result = (self.mFlags and wFrDown) != 0
+  result = (self.mFr.Flags and wFrDown) != 0
 
 proc isWholeword*(self: wFindReplaceDialog): bool {.validate, inline.} =
   ## Check whether whole word search/replace selected.
-  result = (self.mFlags and wFrWholeword) != 0
+  result = (self.mFr.Flags and wFrWholeword) != 0
 
 proc isMatchcase*(self: wFindReplaceDialog): bool {.validate, inline.} =
   ## Case whether sensitive search/replace selected.
-  result = (self.mFlags and wFrMatchcase) != 0
+  result = (self.mFr.Flags and wFrMatchcase) != 0
+
+proc enableHelp*(self: wFindReplaceDialog, flag = true) =
+  ## Display a Help button, the dialog got wEvent_DialogHelp event when the
+  ## button pressed.
+  if flag:
+    self.mFr.Flags = self.mFr.Flags or FR_SHOWHELP
+  else:
+    self.mFr.Flags = self.mFr.Flags and (not FR_SHOWHELP)
+
+proc enableFindEvent(self: wFindReplaceDialog, flag = true) =
+  # enable must be called when WM_INITDIALOG, and disable when WM_NCDESTROY
+  # so that gc will collect "self" object and final() will be called.
+  assert self.mOwner != nil
+  if flag:
+    let findMsgId = RegisterWindowMessage(FINDMSGSTRING)
+    self.mMsgConn = self.mOwner.systemConnect(findMsgId) do (event: wEvent):
+      let pFr = &self.mFr
+      if event.lParam != cast[LPARAM](pFr): return
+
+      if (pFr.Flags and FR_DIALOGTERM) != 0:
+        # the system won't delete the dialog, let's do it by ourself, so that
+        # WM_DESTROY/WM_NCDESTROY occur
+        DestroyWindow(self.mHwnd)
+
+      elif (pFr.Flags and FR_FINDNEXT) != 0:
+        let event = Event(window=self, msg=wEvent_FindNext)
+        self.processEvent(event)
+
+      elif (pFr.Flags and FR_REPLACE) != 0:
+        let event = Event(window=self, msg=wEvent_Replace)
+        self.processEvent(event)
+
+      elif (pFr.Flags and FR_REPLACEALL) != 0:
+        let event = Event(window=self, msg=wEvent_ReplaceAll)
+        self.processEvent(event)
+
+  else:
+    self.mOwner.systemDisconnect(self.mMsgConn)
+
+proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
+    {.stdcall.} =
+  var self = cast[wFindReplaceDialog](GetWindowLongPtr(hwnd, GWLP_USERDATA))
+
+  case msg
+  of WM_INITDIALOG:
+    self = cast[wFindReplaceDialog](cast[ptr FINDREPLACE](lParam).lCustData)
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, cast[LPARAM](self))
+    assert self != nil
+
+    # add to wnim's top level window table so that wnim's modal works
+    wAppTopLevelWindowAdd(hwnd)
+
+    # handle FINDMSGSTRING event
+    self.enableFindEvent(true)
+
+  of WM_NCDESTROY:
+    assert self != nil
+    self.enableFindEvent(false)
+    wAppWindowDelete(hwnd)
+    self.mHwnd = 0
+
+  else: discard
+
+  if self != nil:
+    result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
+
+proc final*(self: wFindReplaceDialog) =
+  ## Default finalizer for wFindReplaceDialog.
+  self.wDialog.final()
+
+proc init*(self: wFindReplaceDialog, owner: wWindow, flags: int = 0) {.validate.} =
+  ## Initializer.
+  wValidate(owner)
+  self.wDialog.init(owner)
+  self.mFindString = T(1024)
+  self.mReplaceString = T(1024)
+  self.mFr = FINDREPLACE(
+    lStructSize: sizeof(FINDREPLACE),
+    lpfnHook: wFindReplaceHookProc,
+    lCustData: cast[LPARAM](self),
+    lpstrFindWhat: &self.mFindString,
+    lpstrReplaceWith: &self.mReplaceString,
+    wFindWhatLen: WORD self.mFindString.len,
+    wReplaceWithLen: WORD self.mReplaceString.len,
+    hwndOwner: owner.mHwnd)
+
+  self.setFlags(flags)
+
+proc FindReplaceDialog*(owner: wWindow, flags: int = 0): wFindReplaceDialog
+    {.inline.} =
+  ## Constructor.
+  new(result, final)
+  result.init(owner, flags)
 
 proc showModaless*(self: wFindReplaceDialog) {.validate.} =
   ## Shows the dialog in modaless mode. The frame of this dialog will recieve
   ## wEvent_DialogClosed event when the dialog is closed.
-  if self.mFrame == nil:
-    self.mFrame = self.create()
+  if self.mHwnd == 0:
+    if self.mIsReplace:
+      self.mHwnd = ReplaceText(&self.mFr)
+    else:
+      self.mHwnd = FindText(&self.mFr)
 
-    self.mFrame.systemConnect(wEvent_Destroy) do (event: wEvent):
-      self.mFrame = nil
-
-  if self.mHdlg != 0:
-    ShowWindow(self.mHdlg, SW_SHOWNORMAL)
-
-proc close*(self: wFindReplaceDialog) {.validate, inline.} =
-  ## Close a modaless dialog.
-  if self.mFrame != nil:
-    self.mFrame.delete()
-
-proc getFrame*(self: wFindReplaceDialog): wFrame {.validate, property, inline.} =
-  ## Gets the wFrame object for a modaless dialog. For wFindReplaceDialog, the
-  ## frame is just a dummy. So don't use this unless you know what you are doing.
-  result = self.mFrame
-
-proc getHandle*(self: wFindReplaceDialog): HWND {.validate, property, inline.} =
-  ## Returns the system HWND of this dialog. This function seems useless, but
-  ## maybe someday we need it, who knows?
-  result = self.mHdlg
-
-template connect*(self: wFindReplaceDialog, msg: UINT,
-    handler: wEventHandler): untyped =
-  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
-  self.mFrame.connect(msg, handler)
-
-template connect*(self: wFindReplaceDialog, msg: UINT,
-    handler: wEventNeatHandler): untyped =
-  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
-  self.mFrame.connect(msg, handler)
-
-template `.`*(self: wFindReplaceDialog, msg: UINT,
-    handler: wEventHandler): untyped =
-  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
-  self.connect(msg, handler)
-
-template `.`*(self: wFindReplaceDialog, msg: UINT,
-    handler: wEventNeatHandler): untyped =
-  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
-  self.connect(msg, handler)
-
-template disconnect*(self: wFindReplaceDialog, msg: UINT, limit = -1): untyped =
-  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
-  self.mFrame.disconnect(msg, limit)
-
-template disconnect*(self: wFindReplaceDialog, connection: wEventConnection): untyped =
-  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
-  self.mFrame.disconnect(connection)
+  ShowWindow(self.mHwnd, SW_SHOWNORMAL)

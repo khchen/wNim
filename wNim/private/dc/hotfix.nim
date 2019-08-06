@@ -17,6 +17,7 @@ proc copy(dest: var wDC; src: wDC) =
   dest.mBrush = src.mBrush
   dest.mBackground = src.mBackground
   dest.mBitmap = src.mBitmap
+  dest.mRegion = src.mRegion
   dest.mScale = src.mScale
   dest.mCanvas = src.mCanvas
   dest.mhOldFont = src.mhOldFont
@@ -38,4 +39,7 @@ proc `=sink`(dest: var wClientDC; src: wClientDC) =
   copy(dest, src)
 
 proc `=sink`(dest: var wMemoryDC; src: wMemoryDC) =
+  copy(dest, src)
+
+proc `=sink`(dest: var wPrinterDC; src: wPrinterDC) =
   copy(dest, src)

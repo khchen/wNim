@@ -1264,6 +1264,32 @@ function main() {
     title="wPopup = int64(cast[uint32](0x80000000&apos;i32))"><wbr />w<wbr />Popup<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPopupWindow"
     title="wPopupWindow = int64(cast[uint32](-2138570752))"><wbr />w<wbr />Popup<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowHide"
+    title="wShowHide = 0"><wbr />w<wbr />Show<wbr />Hide<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowNormal"
+    title="wShowNormal = 1"><wbr />w<wbr />Show<wbr />Normal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowMinimized"
+    title="wShowMinimized = 2"><wbr />w<wbr />Show<wbr />Minimized<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowMaximized"
+    title="wShowMaximized = 3"><wbr />w<wbr />Show<wbr />Maximized<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowMaximize"
+    title="wShowMaximize = 3"><wbr />w<wbr />Show<wbr />Maximize<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowNoActivate"
+    title="wShowNoActivate = 4"><wbr />w<wbr />Show<wbr />No<wbr />Activate<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShow"
+    title="wShow = 5"><wbr />w<wbr />Show<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowMinimize"
+    title="wShowMinimize = 6"><wbr />w<wbr />Show<wbr />Minimize<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowMinNoactive"
+    title="wShowMinNoactive = 7"><wbr />w<wbr />Show<wbr />Min<wbr />Noactive<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowShowNa"
+    title="wShowShowNa = 8"><wbr />w<wbr />Show<wbr />Show<wbr />Na<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowRestore"
+    title="wShowRestore = 9"><wbr />w<wbr />Show<wbr />Restore<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowDefault"
+    title="wShowDefault = 10"><wbr />w<wbr />Show<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wShowForceMinimize"
+    title="wShowForceMinimize = 11"><wbr />w<wbr />Show<wbr />Force<wbr />Minimize<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wModShift"
     title="wModShift = 0x00000004"><wbr />w<wbr />Mod<wbr />Shift<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wModCtrl"
@@ -1364,6 +1390,14 @@ function main() {
     title="screenToClient(self: wWindow; pos: wPoint): wPoint"><wbr />screen<wbr />To<wbr />Client<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#clientToScreen%2CwWindow%2CwPoint"
     title="clientToScreen(self: wWindow; pos: wPoint): wPoint"><wbr />client<wbr />To<wbr />Screen<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getDpi%2CwWindow"
+    title="getDpi(self: wWindow): int"><wbr />get<wbr />Dpi<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getDpiScaleRatio%2CwWindow"
+    title="getDpiScaleRatio(self: wWindow): float"><wbr />get<wbr />Dpi<wbr />Scale<wbr />Ratio<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#dpiScale%2CwWindow%2Cint"
+    title="dpiScale(self: wWindow; value: int): int"><wbr />dpi<wbr />Scale<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#dpiScale%2CwWindow%2Cfloat"
+    title="dpiScale(self: wWindow; value: float): float"><wbr />dpi<wbr />Scale<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getWindowStyle%2CwWindow"
     title="getWindowStyle(self: wWindow): wStyle"><wbr />get<wbr />Window<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setWindowStyle%2CwWindow%2CwStyle"
@@ -1376,6 +1410,8 @@ function main() {
     title="refresh(self: wWindow; eraseBackground = true)"><wbr />refresh<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#refresh%2CwWindow%2CwRect"
     title="refresh(self: wWindow; eraseBackground = true; rect: wRect)"><wbr />refresh<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#show%2CwWindow%2Cint"
+    title="show(self: wWindow; cmd: int)"><wbr />show<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#hide%2CwWindow"
     title="hide(self: wWindow)"><wbr />hide<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isShownOnScreen%2CwWindow"
@@ -1394,6 +1430,8 @@ function main() {
     title="isFocusable(self: wWindow): bool"><wbr />is<wbr />Focusable<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#hasFocus%2CwWindow"
     title="hasFocus(self: wWindow): bool"><wbr />has<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#disableFocus%2CwWindow"
+    title="disableFocus(self: wWindow; flag = true)"><wbr />disable<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#captureMouse%2CwWindow"
     title="captureMouse(self: wWindow)"><wbr />capture<wbr />Mouse<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#releaseMouse%2CwWindow"
@@ -1465,6 +1503,12 @@ function main() {
     title="getPageSize(self: wWindow; orientation: int): int"><wbr />get<wbr />Page<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getScrollPos%2CwWindow%2Cint"
     title="getScrollPos(self: wWindow; orientation: int): int"><wbr />get<wbr />Scroll<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#hasScrollbar%2CwWindow%2Cint"
+    title="hasScrollbar(self: wWindow; orientation: int): bool"><wbr />has<wbr />Scrollbar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#scrollLines%2CwWindow%2Cint"
+    title="scrollLines(self: wWindow; lines: int = 1)"><wbr />scroll<wbr />Lines<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#scrollPages%2CwWindow%2Cint"
+    title="scrollPages(self: wWindow; pages: int = 1)"><wbr />scroll<wbr />Pages<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#center%2CwWindow"
     title="center(self: wWindow; direction = wBoth)"><wbr />center<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2CwPoint"
@@ -1487,25 +1531,28 @@ function main() {
     title="processEvent(self: wWindow; event: wEvent): bool"><wbr />process<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#queueEvent%2CwWindow%2CwEvent"
     title="queueEvent(self: wWindow; event: wEvent)"><wbr />queue<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwEventHandler%2Cint"
-    title="connect(self: wWindow; msg: UINT; handler: wEventHandler; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwCommandID%2CwEventHandler%2Cint"
-    title="connect(self: wWindow; msg: UINT; id: wCommandID; handler: wEventHandler;
-        userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#connect%2CwWindow%2CwCommandID%2CwEventHandler%2Cint"
-    title="connect(self: wWindow; id: wCommandID; handler: wEventHandler; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#processMessage%2CwWindow%2CUINT%2CWPARAM%2CLPARAM"
+    title="processMessage(self: wWindow; msg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): bool"><wbr />process<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwEventProc%2Cint"
+    title="connect(self: wWindow; msg: UINT; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwCommandID%2CwEventProc%2Cint"
+    title="connect(self: wWindow; msg: UINT; id: wCommandID; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#connect%2CwWindow%2CwCommandID%2CwEventProc%2Cint"
+    title="connect(self: wWindow; id: wCommandID; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CUINT"
     title="disconnect(self: wWindow; msg: UINT; limit = -1)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CUINT%2CwCommandID"
     title="disconnect(self: wWindow; msg: UINT; id: wCommandID; limit = -1)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CwCommandID"
     title="disconnect(self: wWindow; id: wCommandID; limit = -1)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#disconnect%2CwWindow%2CUINT%2CwEventProc"
+    title="disconnect(self: wWindow; msg: UINT; handler: wEventProc)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CwEventConnection"
     title="disconnect(self: wWindow; connection: wEventConnection)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#.%2CwWindow%2CUINT%2CwEventHandler"
-    title="`.`(self: wWindow; msg: UINT; handler: wEventHandler): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#.%2CwWindow%2CwCommandID%2CwEventHandler"
-    title="`.`(self: wWindow; id: wCommandID; handler: wEventHandler): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#.%2CwWindow%2CUINT%2CwEventProc"
+    title="`.`(self: wWindow; msg: UINT; handler: wEventProc): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#.%2CwWindow%2CwCommandID%2CwEventProc"
+    title="`.`(self: wWindow; id: wCommandID; handler: wEventProc): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDraggable%2CwWindow"
     title="setDraggable(self: wWindow; flag = true; inClient = true)"><wbr />set<wbr />Draggable<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setSizingBorder%2CwWindow%2CwDirection"
@@ -1521,6 +1568,8 @@ function main() {
   <li><a class="reference" href="#setToolTip%2CwWindow"
     title="setToolTip(self: wWindow; maxWidth = wDefault; autoPop = wDefault; delay = wDefault;
            reshow = wDefault)"><wbr />set<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setShape%2CwWindow%2CwRegion"
+    title="setShape(self: wWindow; region: wRegion)"><wbr />set<wbr />Shape<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwWindow"
     title="final(self: wWindow)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwWindow%2CHWND"
@@ -1568,6 +1617,14 @@ function main() {
 
   </ul>
 </li>
+<li>
+  <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#dpiAutoScale.m%2CwWindow%2Cuntyped"
+    title="dpiAutoScale(self: wWindow; body: untyped): untyped"><wbr />dpi<wbr />Auto<wbr />Scale<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
 
 </ul>
 
@@ -1575,7 +1632,7 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   <p class="module-desc"><em>wWindow</em> is the base for all windows and represents any visible object on screen.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wResizable.html">wResizable</a></td></tr>
-</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wFrame.html">wFrame</a> <a class="reference external" href="wPanel.html">wPanel</a> <a class="reference external" href="wControl.html">wControl</a></td></tr>
+</tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wFrame.html">wFrame</a> <a class="reference external" href="wPanel.html">wPanel</a> <a class="reference external" href="wControl.html">wControl</a> <a class="reference external" href="wDialog.html">wDialog</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wEvent.html">wEvent</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wBorderSimple</td><td>Displays a thin border around the window.</td></tr>
@@ -1687,6 +1744,84 @@ function main() {
 </dd>
 <a id="wPopupWindow"></a>
 <dt><pre><span class="Identifier">wPopupWindow</span> <span class="Other">=</span> <span class="Identifier">int64</span><span class="Other">(</span><span class="Keyword">cast</span><span class="Other">[</span><span class="Identifier">uint32</span><span class="Other">]</span><span class="Other">(</span><span class="DecNumber">-2138570752</span><span class="Other">)</span><span class="Other">)</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowHide"></a>
+<dt><pre><span class="Identifier">wShowHide</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowNormal"></a>
+<dt><pre><span class="Identifier">wShowNormal</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowMinimized"></a>
+<dt><pre><span class="Identifier">wShowMinimized</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowMaximized"></a>
+<dt><pre><span class="Identifier">wShowMaximized</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowMaximize"></a>
+<dt><pre><span class="Identifier">wShowMaximize</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowNoActivate"></a>
+<dt><pre><span class="Identifier">wShowNoActivate</span> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShow"></a>
+<dt><pre><span class="Identifier">wShow</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowMinimize"></a>
+<dt><pre><span class="Identifier">wShowMinimize</span> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowMinNoactive"></a>
+<dt><pre><span class="Identifier">wShowMinNoactive</span> <span class="Other">=</span> <span class="DecNumber">7</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowShowNa"></a>
+<dt><pre><span class="Identifier">wShowShowNa</span> <span class="Other">=</span> <span class="DecNumber">8</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowRestore"></a>
+<dt><pre><span class="Identifier">wShowRestore</span> <span class="Other">=</span> <span class="DecNumber">9</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowDefault"></a>
+<dt><pre><span class="Identifier">wShowDefault</span> <span class="Other">=</span> <span class="DecNumber">10</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wShowForceMinimize"></a>
+<dt><pre><span class="Identifier">wShowForceMinimize</span> <span class="Other">=</span> <span class="DecNumber">11</span></pre></dt>
 <dd>
 
 
@@ -2004,6 +2139,31 @@ Converts from screen to client window coordinates.
 Converts to screen coordinates from coordinates relative to this window.
 
 </dd>
+<a id="getDpi,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpi</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the dpi value for the window. This function use GetDpiForWindow() api (requires win 10) to get the current dpi if possible.
+
+</dd>
+<a id="getDpiScaleRatio,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpiScaleRatio</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the dpi scale ratio for the window.
+
+</dd>
+<a id="dpiScale,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">dpiScale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the relative value according to current dpi setting.
+
+</dd>
+<a id="dpiScale,wWindow,float"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">dpiScale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the relative value according to current dpi setting.
+
+</dd>
 <a id="getWindowStyle,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWindowStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2042,6 +2202,12 @@ Redraws the contents of the window.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Redraws the contents of the given rectangle: only the area inside it will be repainted.
+
+</dd>
+<a id="show,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">show</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">cmd</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Shows the window using specified command.
 
 </dd>
 <a id="hide,wWindow"></a>
@@ -2096,6 +2262,12 @@ Can this window itself have focus?
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">hasFocus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the window or it's child window has the focus.
+
+</dd>
+<a id="disableFocus,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableFocus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Disable (or reenable) focus to a window.
 
 </dd>
 <a id="captureMouse,wWindow"></a>
@@ -2328,6 +2500,24 @@ Returns the built-in scrollbar page size.
 Returns the built-in scrollbar position.
 
 </dd>
+<a id="hasScrollbar,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hasScrollbar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">orientation</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns true if this window currently has a scroll bar for this orientation.
+
+</dd>
+<a id="scrollLines,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">scrollLines</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">lines</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Scrolls the window by the given number of lines down (if lines is positive) or up.
+
+</dd>
+<a id="scrollPages,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">scrollPages</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">pages</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Scrolls the window by the given number of pages down (if pages is positive) or up.
+
+</dd>
 <a id="center,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">center</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">direction</span> <span class="Other">=</span> <span class="Identifier">wBoth</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2392,7 +2582,7 @@ Returns true if the window contents is double-buffered by the system
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">processEvent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Processes an event, searching event tables and calling event handler. Returned true if a suitable event handler function was found and executed and the function did not call wEvent.skip.
+Processes an event: searching event tables and calling event handler. Returned true if a suitable event handler function was executed and it did not call wEvent.skip().
 
 </dd>
 <a id="queueEvent,wWindow,wEvent"></a>
@@ -2401,23 +2591,30 @@ Processes an event, searching event tables and calling event handler. Returned t
 Queue event for a later processing.
 
 </dd>
-<a id="connect,wWindow,UINT,wEventHandler,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<a id="processMessage,wWindow,UINT,WPARAM,LPARAM"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">processMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Create an event object of specified message and then call processEvent() to process it. Returned true if a suitable event handler function was executed and it did not call wEvent.skip().
+
+</dd>
+<a id="connect,wWindow,UINT,wEventProc,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Connects the given event type with the event handler defined as &quot;proc (event: wEvent)&quot;.
 
 </dd>
-<a id="connect,wWindow,UINT,wCommandID,wEventHandler,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">;</span>
+<a id="connect,wWindow,UINT,wCommandID,wEventProc,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">;</span>
             <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Connects the given event type and specified ID with the event handler defined as &quot;proc (event: wEvent)&quot;.
 
 </dd>
-<a id="connect,wWindow,wCommandID,wEventHandler,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<a id="connect,wWindow,wCommandID,wEventProc,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Connects the specified ID with the event handler defined as &quot;proc (event: wEvent)&quot;.
@@ -2442,22 +2639,29 @@ Disconnects the given event type and specified ID from the event handler.
 Disconnects the specified ID from the event handler.
 
 </dd>
+<a id="disconnect,wWindow,UINT,wEventProc"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disconnect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Disconnects the specified handler proc from the event handler.
+
+</dd>
 <a id="disconnect,wWindow,wEventConnection"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">disconnect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">connection</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Disconnects the specified token that returned by connect().
 
 </dd>
-<a id=".,wWindow,UINT,wEventHandler"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+<a id=".,wWindow,UINT,wEventProc"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Symbol alias for connect.
 
 </dd>
-<a id=".,wWindow,wCommandID,wEventHandler"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventHandler</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id=".,wWindow,wCommandID,wEventProc"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`.`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Symbol alias for connect.
 
@@ -2466,7 +2670,7 @@ Symbol alias for connect.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDraggable</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">inClient</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Allow a child window to be moved using the mouse. If inClient is true, the window is limited inside the client area. When a window is dragging by user, it receive wEvent_Dragging event.
+Allow a window to be moved by dragging. If the window is a top-level window, this means to allow dragging by it's client area. In this case, inClient is ignored, and no wEvent_Dragging event will be triggered. Otherwise, When a child window is dragging by user, it receive wEvent_Dragging event. If inClient is true, the window is limited to move inside client area of it's parent.
 
 </dd>
 <a id="setSizingBorder,wWindow,wDirection"></a>
@@ -2505,6 +2709,12 @@ Unset any existing tooltip.
                <span class="Identifier">reshow</span> <span class="Other">=</span> <span class="Identifier">wDefault</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the parameters of the associated tooltip. -1 to restore the default.
+
+</dd>
+<a id="setShape,wWindow,wRegion"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setShape</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">region</span><span class="Other">:</span> <span class="Identifier">wRegion</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Set the shape of the window to the given region. Nil to clear it.
 
 </dd>
 <a id="final,wWindow"></a>
@@ -2617,6 +2827,19 @@ Iterates over each window's sibling.
 </dd>
 
 </dl></div>
+<div class="section" id="17">
+<h1><a class="toc-backref" href="#17">Macros</a></h1>
+<dl class="item">
+<a id="dpiAutoScale.m,wWindow,untyped"></a>
+<dt><pre><span class="Keyword">macro</span> <span class="Identifier">dpiAutoScale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+A macro to convert all int literal and float literal by dpiScale(). For example:<pre class="listing"><span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">dpiAutoScale</span><span class="Punctuation">:</span>
+  <span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">minSize</span> <span class="Operator">=</span> <span class="Punctuation">(</span><span class="DecNumber">300</span><span class="Punctuation">,</span> <span class="DecNumber">200</span><span class="Punctuation">)</span>
+  <span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">size</span> <span class="Operator">=</span> <span class="Punctuation">(</span><span class="DecNumber">350</span><span class="Punctuation">,</span> <span class="DecNumber">200</span><span class="Punctuation">)</span></pre>
+
+</dd>
+
+</dl></div>
 
   </div>
 </div>
@@ -2625,7 +2848,7 @@ Iterates over each window's sibling.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:55:51 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:40:20 UTC</small>
       </div>
     </div>
   </div>

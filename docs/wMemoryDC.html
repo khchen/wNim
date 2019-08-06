@@ -1240,6 +1240,8 @@ function main() {
     title="selectObject(self: var wMemoryDC; bitmap: wBitmap)"><wbr />select<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#MemoryDC"
     title="MemoryDC(): wMemoryDC"><wbr />Memory<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#MemoryDC%2CwDC"
+    title="MemoryDC(dc: wDC): wMemoryDC"><wbr />Memory<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delete%2CwMemoryDC"
     title="delete(self: var wMemoryDC)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1269,6 +1271,12 @@ Selects the given bitmap into the device context, to use as the memory bitmap.
 Constructs a new memory device context.
 
 </dd>
+<a id="MemoryDC,wDC"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">MemoryDC</span><span class="Other">(</span><span class="Identifier">dc</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMemoryDC</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Constructs a new memory device context compatible with the specified device.
+
+</dd>
 <a id="delete,wMemoryDC"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wMemoryDC</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1285,7 +1293,7 @@ Nim's destructors will delete this object by default. However, sometimes you may
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:30 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:27:57 UTC</small>
       </div>
     </div>
   </div>

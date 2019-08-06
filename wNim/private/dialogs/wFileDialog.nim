@@ -5,16 +5,10 @@
 #
 #====================================================================
 
-## This class represents the file chooser dialog.Only modal dialog is supported.
+## This class represents the file chooser dialog. Only modal dialog is supported.
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
-##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Superclass:
+##   `wDialog <wDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -24,7 +18,8 @@
 ##   wFdSave                         This is a save dialog.
 ##   wFdOverwritePrompt              Pprompt for a confirmation if a file will be overwritten.
 ##   wFdCreatePrompt                 Pprompt for a confirmation if a file will be create.
-##   wFdNoFollow                     Directs the dialog to return the path and file name of the selected shortcut file, not its target as it does by default.
+##   wFdNoFollow                     Directs the dialog to return the path and file name of the selected
+##                                   shortcut file, not its target as it does by default.
 ##   wFdFileMustExist                The user may only select files that actually exist.
 ##   wFdMultiple                     Allows selecting multiple files.
 ##   ==============================  =============================================================
@@ -41,24 +36,24 @@ const
 
 proc final*(self: wFileDialog) =
   ## Default finalizer for wFileDialog.
-  discard
+  self.wDialog.final()
 
-proc init*(self: wFileDialog, parent: wWindow = nil, message = "", defaultDir = "",
+proc init*(self: wFileDialog, owner: wWindow = nil, message = "", defaultDir = "",
     defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
   ## Initializer.
-  self.mParent = parent
+  self.wDialog.init(owner)
   self.mMessage = message
   self.mDefaultDir = defaultDir
   self.mDefaultFile = defaultFile
   self.mWildcard = wildcard
   self.mStyle = style
 
-proc FileDialog*(parent: wWindow = nil, message = "", defaultDir = "",
+proc FileDialog*(owner: wWindow = nil, message = "", defaultDir = "",
     defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen): wFileDialog
     {.inline.} =
   ## Constructor.
   new(result, final)
-  result.init(parent, message, defaultDir, defaultFile, wildcard, style)
+  result.init(owner, message, defaultDir, defaultFile, wildcard, style)
 
 proc getMessage*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
@@ -136,8 +131,8 @@ proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
   ofn.Flags = OFN_EXPLORER or
     cast[DWORD](self.mStyle and 0xffffffff)
 
-  if self.mParent != nil:
-    ofn.hwndOwner = self.mParent.mHwnd
+  if self.mOwner != nil:
+    ofn.hwndOwner = self.mOwner.mHwnd
 
   if self.mDefaultDir.len != 0:
     ofn.lpstrInitialDir = &T(self.mDefaultDir)
@@ -153,6 +148,8 @@ proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
       GetSaveFileName(&ofn)
     else:
       GetOpenFileName(&ofn)
+
+  self.dialogQuit()
 
   self.mPaths = @[]
   self.mPath = ""

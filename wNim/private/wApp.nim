@@ -13,7 +13,7 @@ const
 
 var wTheApp {.threadvar.}: wApp
 
-proc App*(): wApp =
+proc App*(): wApp {.discardable.} =
   ## Constructor.
   if not wTheApp.isNil:
     # "allow only one instance of wApp"
@@ -49,6 +49,14 @@ proc wAppGetCurrentApp*(): wApp {.inline.} =
 
 proc wAppGetInstance(): HANDLE {.inline.} =
   result = wTheApp.mInstance
+
+proc wAppGetDpi(): int =
+  if wTheApp.mDpi == 0:
+    var hdc = GetDC(0)
+    wTheApp.mDpi = GetDeviceCaps(hdc, LOGPIXELSY)
+    ReleaseDC(0, hdc)
+
+  result = wTheApp.mDpi
 
 proc wAppHasTopLevelWindow(): bool {.inline.} =
   result = (wTheApp.mTopLevelWindowTable.len != 0)
@@ -168,9 +176,7 @@ proc MessageLoop(modalWin: HWND = 0): int =
 
   result = int msg.wParam
 
-# user functions
-
-proc mainLoop*(self: wApp): int {.discardable.}=
+proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## Execute the main GUI event loop.
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
@@ -179,7 +185,7 @@ proc mainLoop*(self: wApp): int {.discardable.}=
   for win in wAppWindows():
     discard DestroyWindow(win.mHwnd)
 
-proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) =
+proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) {.validate.} =
   # Events of the classes deriving from wCommandEvent are propagated by default
   # to the parent window if they are not processed in this window itself.
 
@@ -193,5 +199,5 @@ proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) =
     self.mPropagationSet.excl msg
 
 proc isMessagePropagation*(self: wApp, msg: UINT): bool =
+  ## Checks whether the msg is propagated by default.
   result = msg in self.mPropagationSet
-

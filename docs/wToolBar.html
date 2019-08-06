@@ -1248,6 +1248,10 @@ function main() {
     title="wTbBottom = 0x00000003"><wbr />w<wbr />Tb<wbr />Bottom<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTbRight"
     title="wTbRight = 131"><wbr />w<wbr />Tb<wbr />Right<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wTbNoAlign"
+    title="wTbNoAlign = 0x00000008"><wbr />w<wbr />Tb<wbr />No<wbr />Align<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wTbNoResize"
+    title="wTbNoResize = 0x00000004"><wbr />w<wbr />Tb<wbr />No<wbr />Resize<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTbDefaultStyle"
     title="wTbDefaultStyle = 2048"><wbr />w<wbr />Tb<wbr />Default<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTbNormal"
@@ -1363,6 +1367,8 @@ function main() {
 <tr><td>wTbVertical</td><td>Specifies vertical layout.</td></tr>
 <tr><td>wTbBottom</td><td>Align the toolbar at the bottom of parent window.</td></tr>
 <tr><td>wTbRight</td><td>Align the toolbar at the right side of parent window.</td></tr>
+<tr><td>wTbNoAlign</td><td>Specifies no alignment with the parent window.</td></tr>
+<tr><td>wTbNoResize</td><td>Specifies no resize.</td></tr>
 <tr><td>wTbDefaultStyle</td><td>Combination of wTbHorizontal and wTbFlat</td></tr>
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a><table border="1" class="docutils"><tr><th>wCommandEvent</th><th>Description</th></tr>
@@ -1407,6 +1413,18 @@ function main() {
 </dd>
 <a id="wTbRight"></a>
 <dt><pre><span class="Identifier">wTbRight</span> <span class="Other">=</span> <span class="DecNumber">131</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wTbNoAlign"></a>
+<dt><pre><span class="Identifier">wTbNoAlign</span> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wTbNoResize"></a>
+<dt><pre><span class="Identifier">wTbNoResize</span> <span class="Other">=</span> <span class="DecNumber">0x00000004</span></pre></dt>
 <dd>
 
 
@@ -1456,7 +1474,7 @@ function main() {
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getToolPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wToolBar</span><span class="Other">;</span> <span class="Identifier">toolId</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns the tool position in the toolbar, or wNOT_FOUND if the tool is not found.
+Returns the tool position in the toolbar, or wNotFound if the tool is not found.
 
 </dd>
 <a id="getToolSize,wToolBar"></a>
@@ -1695,7 +1713,7 @@ Returns the default size for the tool bar.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-07-17 08:56:55 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-05 23:28:21 UTC</small>
       </div>
     </div>
   </div>

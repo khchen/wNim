@@ -5,17 +5,17 @@
 #
 #====================================================================
 
-## This class encapsulates a Windows icon image. Unline wImage, wBitmap,
+## This class encapsulates a Windows icon image. Unlike wImage, wBitmap,
 ## wIcon, wCursor, etc., wIconImage doesn't store any Windows resource handle,
 ## but only an icon image in binary format. Except the binary image data,
-## wIconImage aslo stores the hotspot for cursor if the icon image is created
+## wIconImage also stores the hotspot for cursor if the icon image is created
 ## from a cursor resource.
 ##
 ## A wIconImage object can be created from Windows PE files (.exe or .dll)
 ## or icon files (.ico or .cur). It also can be created by wImage, wBitmap,
 ## wIcon, or wCursor. Furthermore, wIconImage can be converted to wImage,
 ## wBitmap, wIcon, wCursor, or .ico/.cur files. In summary, it is easy to deal
-## with Windows' image like resource and image files with wIconImage.
+## with Windows' image-like resource and image files with wIconImage.
 ##
 ## The wIconImage class use the same binary format as an image inside the icon
 ## files. So there are two possible format of wIconImage object: BMP or PNG.
@@ -81,7 +81,8 @@ type
     y: WORD
 
 const
-  # don't use sizeof(ICONDIR) because tcc don't supprot size of UncheckedArray
+  # 0.19 don't use sizeof(ICONDIR) because tcc don't supprot size of UncheckedArray
+  # 0.20 support it, but still use const size for compatibility
   IcondirSize = 6
   GrpIcondirSize = 6
 
@@ -435,7 +436,7 @@ proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefault
         int iconDir.idEntries[index].wBitCount)
 
 proc error(self: wIconImage) {.inline.} =
-  raise newException(wIconImageError, "wIconImage creation failure")
+  raise newException(wIconImageError, "wIconImage creation failed")
 
 proc final*(self: wIconImage) =
   ## Default finalizer for wIconImage.

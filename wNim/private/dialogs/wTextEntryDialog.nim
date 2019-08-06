@@ -8,82 +8,86 @@
 ## This class represents a dialog that requests a one-line text string from
 ## the user. Both modal or modaless dialog are supported.
 #
+## :Superclass:
+##   `wDialog <wDialog.html>`_
+#
 ## :Subclass:
 ##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
 #
-## :Seealso:
-##   `wMessageDialog <wMessageDialog.html>`_
-##   `wFileDialog <wFileDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Events:
+##   `wDialogEvent <wDialogEvent.html>`_
+##   ==============================   =============================================================
+##   wDialogEvent                     Description
+##   ==============================   =============================================================
+##   wEvent_DialogCreated             When the dialog is created but not yet shown.
+##   wEvent_DialogClosed              When the dialog is being closed.
+##   ===============================  =============================================================
 
-proc getValue*(self: wTextEnterDialog): string {.validate, property, inline.} =
+proc getValue*(self: wTextEntryDialog): string {.validate, property, inline.} =
   ## Returns the text that the user has entered if the user has pressed OK,
   ## or the original value if the user has pressed Cancel.
   result = self.mValue
 
-proc setValue*(self: wTextEnterDialog, value: string) {.validate, property, inline.} =
+proc setValue*(self: wTextEntryDialog, value: string) {.validate, property, inline.} =
   ## Sets the default text value.
   self.mValue = value
 
-proc getMaxLength*(self: wTextEnterDialog): int {.validate, property, inline.} =
+proc getMaxLength*(self: wTextEntryDialog): int {.validate, property, inline.} =
   ## Returns the maximum number of characters.
   result = self.mMaxLength
 
-proc setMaxLength*(self: wTextEnterDialog, length: int) {.validate, property, inline.} =
+proc setMaxLength*(self: wTextEntryDialog, length: int) {.validate, property, inline.} =
   ## Sets the maximum number of characters the user can enter into this dialog.
   self.mMaxLength = length
 
-proc getMessage*(self: wTextEnterDialog): string {.validate, property, inline.} =
+proc getMessage*(self: wTextEntryDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
   result = self.mMessage
 
-proc setMessage*(self: wTextEnterDialog, message: string) {.validate, property, inline.} =
+proc setMessage*(self: wTextEntryDialog, message: string) {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
   self.mMessage = message
 
-proc getCaption*(self: wTextEnterDialog): string {.validate, property, inline.} =
+proc getCaption*(self: wTextEntryDialog): string {.validate, property, inline.} =
   ## Gets the caption that will be displayed on the dialog.
   result = self.mCaption
 
-proc setCaption*(self: wTextEnterDialog, caption: string) {.validate, property, inline.} =
+proc setCaption*(self: wTextEntryDialog, caption: string) {.validate, property, inline.} =
   ## Sets the caption that will be displayed on the dialog.
   self.mCaption = caption
 
-proc getStyle*(self: wTextEnterDialog): wStyle {.validate, property, inline.} =
+proc getStyle*(self: wTextEntryDialog): wStyle {.validate, property, inline.} =
   ## Gets the window style of the dialog.
   result = self.mStyle
 
-proc setStyle*(self: wTextEnterDialog, style: wStyle) {.validate, property, inline.} =
+proc setStyle*(self: wTextEntryDialog, style: wStyle) {.validate, property, inline.} =
   ## Sets the window style of the dialog.
   ## The styles for wWindow and wFrame can be use here.
   self.mStyle = style
 
-proc getPosition*(self: wTextEnterDialog): wPoint {.validate, property, inline.} =
+proc getPosition*(self: wTextEntryDialog): wPoint {.validate, property, inline.} =
   ## Gets the initial position of the dialog.
   result = self.mPos
 
-proc setPosition*(self: wTextEnterDialog, pos: wPoint) {.validate, property, inline.} =
+proc setPosition*(self: wTextEntryDialog, pos: wPoint) {.validate, property, inline.} =
   ## Sets the position of the dialog. Using wDefaultPoint to centre the dialog.
   self.mPos = pos
 
-proc setOKCancelLabels*(self: wTextEnterDialog, ok: string, cancel: string)
+proc setOKCancelLabels*(self: wTextEntryDialog, ok: string, cancel: string)
     {.validate, property, inline.} =
   ## Overrides the default labels of the OK and Cancel buttons.
   self.mOkLabel = ok
   self.mCancelLabe = cancel
 
-proc final*(self: wTextEnterDialog) =
-  ## Default finalizer for wTextEnterDialog.
-  discard
+proc final*(self: wTextEntryDialog) =
+  ## Default finalizer for wTextEntryDialog.
+  self.wDialog.final()
 
-proc init*(self: wTextEnterDialog, parent: wWindow = nil, message = "Input text",
+proc init*(self: wTextEntryDialog, owner: wWindow = nil, message = "Input text",
     caption = "", value = "", style: wStyle = wDefaultDialogStyle,
     pos = wDefaultPoint) {.validate.} =
   ## Initializer.
-  self.mParent = parent
+  self.wDialog.init(owner)
   self.mMessage = message
   self.mCaption = caption
   self.mValue = value
@@ -91,20 +95,39 @@ proc init*(self: wTextEnterDialog, parent: wWindow = nil, message = "Input text"
   self.mPos = pos
   self.mOkLabel = "&OK"
   self.mCancelLabe = "&Cancel"
-  self.mFrame = nil
-  self.mReturnId = wIdCancel
 
-proc TextEnterDialog*(parent: wWindow = nil, message = "Input text",
+proc TextEntryDialog*(owner: wWindow = nil, message = "Input text",
     caption = "", value = "", style: wStyle = wDefaultDialogStyle,
-    pos = wDefaultPoint): wTextEnterDialog {.inline.} =
+    pos = wDefaultPoint): wTextEntryDialog {.inline.} =
   ## Constructor.
   new(result, final)
-  result.init(parent, message, caption, value, style, pos)
+  result.init(owner, message, caption, value, style, pos)
 
-proc create(self: wTextEnterDialog): wFrame =
+proc wTextEntryHookProc(win: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM): bool =
+  let self = cast[wTextEntryDialog](GetWindowLongPtr(win.mHwnd, GWLP_USERDATA))
+  let frame = wFrame win
+  assert frame != nil and self != nil
+
+  if msg == WM_DESTROY:
+    if frame.isModal: frame.endModal()
+    # a very strange memory leak for WC_EDIT under windows 10 found here !!
+    # in theory, the system will delete all child of frame
+    # but under window 10, if we don't manually delete textctrl or panel here
+    # the system don't release the memory of WC_EDIT
+    # if we add wTeRich to use rich edit, then it works fine
+    # even winxp or win7 don't have this bug
+    # memory leak only apper in "WC_EDIT" under "win10"
+    frame.mChildren[0].delete # mChildren[0] is wPanel here
+
+  elif msg == WM_NCDESTROY:
+    self.mFrame = nil
+
+  result = bool self.wDialogHookProc(frame.mHwnd, msg, wParam, lParam)
+
+proc create(self: wTextEntryDialog): wFrame =
   let
     passwordStyle = if self of wPasswordEntryDialog: wTePassword else: 0
-    frame = Frame(owner=self.mParent, title=self.mCaption, style=self.mStyle)
+    frame = Frame(owner=self.mOwner, title=self.mCaption, style=self.mStyle)
     panel = Panel(frame)
     statictext = StaticText(panel, label=self.mMessage)
     textctrl = TextCtrl(panel, style=wBorderSunken or passwordStyle)
@@ -139,14 +162,10 @@ proc create(self: wTextEnterDialog): wFrame =
   frame.wEvent_Size do ():
     layout()
 
-  frame.systemConnect(wEvent_Destroy) do (event: wEvent):
-    let event = wDialogEvent Event(window=frame, msg=wEvent_DialogClosed,
-      wParam=WPARAM self.mReturnId)
-    event.mDialog = self
-    frame.processEvent(event)
+  textctrl.wEvent_Text do ():
+    self.mValue = textctrl.value
 
   buttonOk.wEvent_Button do ():
-    self.mValue = textctrl.value
     self.mReturnId = wIdOk
     frame.close()
 
@@ -162,85 +181,47 @@ proc create(self: wTextEnterDialog): wFrame =
     textctrl.value = self.mValue
     textctrl.selectAll()
 
+  SetWindowLongPtr(frame.mHwnd, GWLP_USERDATA, cast[LPARAM](self))
+  frame.mHookProc = wTextEntryHookProc
+  SendMessage(frame.mHwnd, WM_INITDIALOG, 0, 0)
+
   result = frame
 
-proc showModal*(self: wTextEnterDialog): wId {.validate, discardable.} =
+proc showModal*(self: wTextEntryDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
   self.mFrame = self.create()
 
-  self.mFrame.systemConnect(wEvent_Destroy) do (event: wEvent):
-    self.mFrame = nil
-
-  self.mFrame.systemConnect(wEvent_Close) do (event: wEvent):
-    self.mFrame.endModal()
-
   # use showWindowModal insted of showModal, like other system common dialogs do.
+  self.mReturnId = wIdCancel
   self.mFrame.showWindowModal()
   result = self.mReturnId
 
-proc display*(self: wTextEnterDialog): string {.validate, inline, discardable.} =
+proc display*(self: wTextEntryDialog): string {.validate, inline, discardable.} =
   ## Shows the dialog in modal mode, returning the user-entered text or empty
   ## string.
   if self.showModal() == wIdOk:
     result = self.getValue()
 
-proc showModaless*(self: wTextEnterDialog) {.validate.} =
+proc showModaless*(self: wTextEntryDialog) {.validate.} =
   ## Shows the dialog in modaless mode. The frame of this dialog will recieve
   ## wEvent_DialogClosed event when the dialog is closed.
   if self.mFrame == nil:
     self.mFrame = self.create()
 
-    self.mFrame.systemConnect(wEvent_Destroy) do (event: wEvent):
-      self.mFrame = nil
-
+  self.mReturnId = wIdCancel
   self.mFrame.show()
 
-proc close*(self: wTextEnterDialog) {.validate, inline.} =
+proc close*(self: wTextEntryDialog) {.validate, inline.} =
   ## Close a modaless dialog.
   if self.mFrame != nil:
     self.mFrame.close()
 
-proc getReturnCode*(self: wTextEnterDialog): wId {.validate, property, inline.} =
+proc getReturnCode*(self: wTextEntryDialog): wId {.validate, property, inline.} =
   ## Gets the return code for a modaless dialog. Returning wIdOk if the user
   ## pressed OK, and wIdCancel otherwise.
   result = self.mReturnId
 
-proc getReturnId*(self: wTextEnterDialog): wId {.validate, property, inline.} =
+proc getReturnId*(self: wTextEntryDialog): wId {.validate, property, inline.} =
   ## The same as getReturnCode().
   result = self.getReturnCode()
-
-proc getFrame*(self: wTextEnterDialog): wFrame {.validate, property, inline.} =
-  ## Gets the wFrame object for a modaless dialog. This function let a modaless
-  ## dialog can be controlled as a wWindow/wFrame object.
-  result = self.mFrame
-
-# cannot use wEventHandler|wEventNeatHandler -> seems compiler's bug
-
-template connect*(self: wTextEnterDialog, msg: UINT,
-    handler: wEventHandler): untyped =
-  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
-  self.mFrame.connect(msg, handler)
-
-template connect*(self: wTextEnterDialog, msg: UINT,
-    handler: wEventNeatHandler): untyped =
-  ## Syntax sugar: dialog.frame.connect() => dialog.connect().
-  self.mFrame.connect(msg, handler)
-
-template `.`*(self: wTextEnterDialog, msg: UINT,
-    handler: wEventHandler): untyped =
-  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
-  self.connect(msg, handler)
-
-template `.`*(self: wTextEnterDialog, msg: UINT,
-    handler: wEventNeatHandler): untyped =
-  ## Syntax sugar: dialog.frame.wEvent_DialogClosed => dialog.wEvent_DialogClosed.
-  self.connect(msg, handler)
-
-template disconnect*(self: wTextEnterDialog, msg: UINT, limit = -1): untyped =
-  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
-  self.mFrame.disconnect(msg, limit)
-
-template disconnect*(self: wTextEnterDialog, connection: wEventConnection): untyped =
-  ## Syntax sugar: dialog.frame.disconnect() => dialog.disconnect().
-  self.mFrame.disconnect(connection)

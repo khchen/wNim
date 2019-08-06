@@ -95,7 +95,7 @@ const
   wBITMAP_TYPE_ICO* = "ICO"
 
 proc error(self: wImage) {.inline.} =
-  raise newException(wImageError, "wImage creation failure")
+  raise newException(wImageError, "wImage creation failed")
 
 type
   SHCreateMemStreamType = proc (pInit: pointer, cbInit: UINT): ptr IStream {.stdcall.}

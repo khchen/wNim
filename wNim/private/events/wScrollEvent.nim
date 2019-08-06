@@ -61,7 +61,7 @@ method getKind*(self: wScrollEvent): int {.property, inline.} =
   result = dataPtr.kind
 
 method getOrientation*(self: wScrollEvent): int {.property, inline.} =
-  ## Returns wHORIZONTAL or wVERTICAL
+  ## Returns wHorizontal or wVertical
   let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.orientation
 

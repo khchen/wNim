@@ -19,8 +19,9 @@
 ##  - `wIconImage <wIconImage.html>`_
 ##  - `wResizer <wResizer.html>`_
 ##  - `wResizable <wResizable.html>`_
-##  - `wDataObject <wDataObject.html>`_
 ##  - `wAcceleratorTable <wAcceleratorTable.html>`_
+##  - `wDataObject <wDataObject.html>`_
+##  - `wPrintData <wPrintData.html>`_
 ##  - `wUtils <wUtils.html>`_
 ##
 ##  Windows
@@ -76,6 +77,7 @@
 ##  - `wWindowDC <wWindowDC.html>`_
 ##  - `wScreenDC <wScreenDC.html>`_
 ##  - `wPaintDC <wPaintDC.html>`_
+##  - `wPrinterDC <wPrinterDC.html>`_
 ##
 ##  GDI Objects
 ##  -----------
@@ -86,18 +88,22 @@
 ##  - `wBitmap <wBitmap.html>`_
 ##  - `wIcon <wIcon.html>`_
 ##  - `wCursor <wCursor.html>`_
+##  - `wRegion <wRegion.html>`_
 ##  - `wPredefined <wPredefined.html>`_
 ##
 ##  Dialogs
 ##  -------
+##  - `wDialog <wDialog.html>`_
 ##  - `wMessageDialog <wMessageDialog.html>`_
 ##  - `wDirDialog <wDirDialog.html>`_
 ##  - `wFileDialog <wFileDialog.html>`_
 ##  - `wColorDialog <wColorDialog.html>`_
 ##  - `wFontDialog <wFontDialog.html>`_
-##  - `wTextEnterDialog <wTextEnterDialog.html>`_
+##  - `wTextEntryDialog <wTextEntryDialog.html>`_
 ##  - `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
 ##  - `wFindReplaceDialog <wFindReplaceDialog.html>`_
+##  - `wPageSetupDialog <wPageSetupDialog.html>`_
+##  - `wPrintDialog <wPrintDialog.html>`_
 ##
 ##  Events
 ##  ------
@@ -135,7 +141,7 @@
 {.experimental, deadCodeElim: on.}
 
 import
-  tables, lists, math, strutils, dynlib, hashes, macros, times, sets, os, net,
+  tables, lists, math, strutils, dynlib, hashes, macros, times, sets, net,
   winim/[winstr, utils], wNim/autolayout, winim/inc/windef, wNim/private/wWinimx,
   wNim/private/kiwi/[variable, constraint, term, expression, symbolics,
   solver, strength]
@@ -186,9 +192,11 @@ include
   wNim/private/gdiobjects/wBitmap,
   wNim/private/gdiobjects/wIcon,
   wNim/private/gdiobjects/wCursor,
+  wNim/private/gdiobjects/wRegion,
   wNim/private/gdiobjects/wPredefined,
   wNim/private/wImageList,
   wNim/private/wDataObject,
+  wNim/private/wPrintData,
   wNim/private/wResizer,
   wNim/private/wResizable,
   wNim/private/wWindow,
@@ -199,6 +207,7 @@ include
   wNim/private/dc/wWindowDC,
   wNim/private/dc/wScreenDC,
   wNim/private/dc/wPaintDC,
+  wNim/private/dc/wPrinterDC,
   wNim/private/dc/hotfix,
   wNim/private/menu/wMenuBar,
   wNim/private/menu/wMenu,
@@ -234,11 +243,14 @@ include
   wNim/private/controls/wIpCtrl,
   wNim/private/controls/wWebView,
   wNim/private/wFrame,
+  wNim/private/dialogs/wDialog,
   wNim/private/dialogs/wMessageDialog,
   wNim/private/dialogs/wDirDialog,
   wNim/private/dialogs/wFileDialog,
   wNim/private/dialogs/wColorDialog,
   wNim/private/dialogs/wFontDialog,
-  wNim/private/dialogs/wTextEnterDialog,
+  wNim/private/dialogs/wTextEntryDialog,
   wNim/private/dialogs/wPasswordEntryDialog,
-  wNim/private/dialogs/wFindReplaceDialog
+  wNim/private/dialogs/wFindReplaceDialog,
+  wNim/private/dialogs/wPageSetupDialog,
+  wNim/private/dialogs/wPrintDialog

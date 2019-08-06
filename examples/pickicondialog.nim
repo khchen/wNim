@@ -19,7 +19,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     "netshell.dll", "networkmap.dll", "pifmgr.dll", "sensorscpl.dll",
     "setupapi.dll", "shell32.dll", "wmp.dll", "wmploc.dll", "wpdshext.dll"]
 
-  var
+  let
     dialog = Frame(owner=owner, title="Pick Icon Dialog", size=(440, 440),
       style=wCaption or wSystemMenu or wModalFrame or wResizeBorder)
 
@@ -35,6 +35,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     ok = Button(panel, label="Ok")
     cancel = Button(panel, label="Cancel")
 
+  var
     imageList: wImageList
     currentFile = initFile
     ret: string

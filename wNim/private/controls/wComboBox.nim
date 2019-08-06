@@ -136,13 +136,13 @@ proc findText*(self: wComboBox, text: string): int {.validate, inline.} =
   result = self.find(text)
 
 proc getSelection*(self: wComboBox): int {.validate, property, inline.} =
-  ## Returns the index of the selected item or wNOT_FOUND(-1) if no item is
+  ## Returns the index of the selected item or wNotFound(-1) if no item is
   ## selected.
   result = int SendMessage(self.mHwnd, CB_GETCURSEL, 0, 0)
 
 proc select*(self: wComboBox, index: int) {.validate, inline.} =
   ## Sets the selection to the given index or removes the selection entirely if
-  ## index == wNOT_FOUND(-1).
+  ## index == wNotFound(-1).
   SendMessage(self.mHwnd, CB_SETCURSEL, index, 0)
 
 proc setSelection*(self: wComboBox, index: int) {.validate, property, inline.} =

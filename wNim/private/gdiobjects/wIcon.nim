@@ -18,10 +18,10 @@
 
 type
   wIconError* = object of wGdiObjectError
-    ## An error raised when wIcon creation failure.
+    ## An error raised when wIcon creation failed.
 
 proc error(self: wIcon) {.inline.} =
-  raise newException(wIconError, "wIcon creation failure")
+  raise newException(wIconError, "wIcon creation failed")
 
 proc getSize*(self: wIcon): wSize {.validate, property, inline.} =
   ## Gets the size of the icon in pixels.

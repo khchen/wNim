@@ -66,11 +66,7 @@ type
     uiHandler: IDocHostUIHandler
 
 template wWebBase(web, member): ptr wWeb =
-  template offset(Typ, member): int =
-    var dummy: Typ
-    cast[int](dummy.member.addr) -% cast[int](dummy.addr)
-
-  cast[ptr wWeb](cast[int](web) - offset(wWeb, member))
+  cast[ptr wWeb](cast[int](web) - objectOffset(wWeb, member))
 
 proc AddRef(web: ptr wWeb): ULONG {.discardable.} =
   discard InterlockedIncrement(&web.refs)

@@ -10,9 +10,12 @@ import
   wNim
 
 let app = App()
-let frame = Frame(title="Hello World", size=(350, 200))
+let frame = Frame(title="Hello World")
 frame.icon = Icon("", 0) # load icon from exe file.
-frame.minSize = (300, 200)
+
+frame.dpiAutoScale:
+  frame.minSize = (300, 200)
+  frame.size = (350, 200)
 
 let menuBar = MenuBar(frame)
 let statusBar = StatusBar(frame)
@@ -37,17 +40,19 @@ proc layout() =
   """
 
 staticText.wEvent_CommandLeftClick do ():
-  let textEnterDialog = TextEnterDialog(frame, value=staticText.label,
+  let TextEntryDialog = TextEntryDialog(frame, value=staticText.label,
     caption="Change The Text")
 
-  if textEnterDialog.showModal() == wIdOk:
-    staticText.label = textEnterDialog.value
+  if TextEntryDialog.showModal() == wIdOk:
+    staticText.label = TextEntryDialog.value
     staticText.fit()
     staticText.refresh()
 
 button.wEvent_Button do ():
-  let fontDialog = FontDialog(frame, staticText.font,
-    color=staticText.foregroundColor, allowSymbols=false, range=0..24)
+  let fontDialog = FontDialog(frame, staticText.font)
+  fontDialog.color = staticText.foregroundColor
+  fontDialog.enableSymbols(false)
+  fontDialog.range = 0..24
 
   if fontDialog.showModal() == wIdOk:
     staticText.font = fontDialog.chosenFont
@@ -58,9 +63,10 @@ button.wEvent_Button do ():
 frame.wIdExit do ():
   frame.close()
 
-frame.wEvent_Size do ():
+panel.wEvent_Size do ():
   layout()
 
+layout()
 frame.center()
 frame.show()
 app.mainLoop()

@@ -19,10 +19,10 @@
 
 type
   wBitmapError* = object of wGdiObjectError
-    ## An error raised when wBitmap creation failure.
+    ## An error raised when wBitmap creation failed.
 
 proc error(self: wBitmap) {.inline.} =
-  raise newException(wBitmapError, "wBitmap creation failure")
+  raise newException(wBitmapError, "wBitmap creation failed")
 
 proc final*(self: wBitmap) =
   ## Default finalizer for wBitmap.

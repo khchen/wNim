@@ -8,14 +8,8 @@
 ## A dialog that shows a single or multi-line message, with a choice of
 ## OK, Yes, No and Cancel buttons. Only modal dialog is supported.
 #
-## :Seealso:
-##   `wFileDialog <wFileDialog.html>`_
-##   `wDirDialog <wDirDialog.html>`_
-##   `wColorDialog <wColorDialog.html>`_
-##   `wFontDialog <wFontDialog.html>`_
-##   `wTextEnterDialog <wTextEnterDialog.html>`_
-##   `wPasswordEntryDialog <wPasswordEntryDialog.html>`_
-##   `wFindReplaceDialog <wFindReplaceDialog.html>`_
+## :Superclass:
+##   `wDialog <wDialog.html>`_
 #
 ## :Styles:
 ##   ==============================  =============================================================
@@ -71,24 +65,24 @@ const
 
 proc final*(self: wMessageDialog) =
   ## Default finalizer for wMessageDialog.
-  discard
+  self.wDialog.final()
 
-proc init*(self: wMessageDialog, parent: wWindow = nil, message: string = "" ,
+proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK) {.validate.} =
   ## Initializer.
   wValidate(message, caption)
-  self.mParent = parent
+  self.wDialog.init(owner)
   self.mMessage = message
   self.mCaption = caption
   self.mStyle = style
   self.mLabelText = initTable[INT, string]()
 
-proc MessageDialog*(parent: wWindow = nil, message: string = "" ,
+proc MessageDialog*(owner: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK): wMessageDialog {.inline.} =
   ## Constructor specifying the message box properties.
   wValidate(message, caption)
   new(result, final)
-  result.init(parent, message, caption, style)
+  result.init(owner, message, caption, style)
 
 proc getMessage*(self: wMessageDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
@@ -188,11 +182,11 @@ proc showModal*(self: wMessageDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning one of wIdOk, wIdYes, wIdNo, wIdCancel,
   ## wIdTryAgain, wIdContinue, wIdAbort, wIdRetry or wIdIgnore.
   var
-    hParent: HWND
+    hOwner: HWND
     mbStyle = cast[DWORD](self.mStyle and 0xFFFFFFFF)
 
-  if self.mParent != nil:
-    hParent = self.mParent.mHwnd
+  if self.mOwner != nil:
+    hOwner = self.mOwner.mHwnd
     mbStyle = mbStyle or MB_APPLMODAL
   else:
     mbStyle = mbStyle or MB_TASKMODAL
@@ -204,7 +198,7 @@ proc showModal*(self: wMessageDialog): wId {.validate, discardable.} =
   defer: gMessageDialog = nil
 
   self.mHook = SetWindowsHookEx(WH_CBT, wMessageDialog_CBTProc, 0, GetCurrentThreadId())
-  result = case MessageBox(hParent, self.mMessage, self.mCaption, mbStyle)
+  result = case MessageBox(hOwner, self.mMessage, self.mCaption, mbStyle)
   of IDABORT: wIdAbort
   of IDCANCEL: wIdCancel
   of IDCONTINUE: wIdContinue
@@ -214,6 +208,9 @@ proc showModal*(self: wMessageDialog): wId {.validate, discardable.} =
   of IDTRYAGAIN: wIdTryAgain
   of IDYES: wIdYes
   else: wIdOk
+
+  # we don't need this because we let messagebox always in Modal mode (MB_APPLMODAL or MB_TASKMODAL)
+  # self.dialogQuit()
 
 proc display*(self: wMessageDialog): wId {.validate, inline, discardable.} =
   ## Shows the dialog in modal mode, returning the selected button id.

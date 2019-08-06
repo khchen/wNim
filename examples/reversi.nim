@@ -55,7 +55,7 @@ proc drawBoard(self: wBoard) =
   self.mMemDc.clear()
   self.mMemDc.drawImage(self.mBoard)
 
-  var board = self.mGame.getBoard()
+  let board = self.mGame.getBoard()
   for i in 1..8:
     for j in 1..8:
       var x = 37 + 50 * (i - 1)
@@ -92,11 +92,11 @@ proc init(self: wBoard, title: string) =
   self.mUseAi[P2] = true
   self.mAiTimeout = 1
 
-  var statusbar = StatusBar(self)
+  let statusbar = StatusBar(self)
   statusbar.setStatusWidths([-2, -1])
 
-  var menubar = MenuBar(self)
-  var menu = Menu(menubar, "&Game")
+  let menubar = MenuBar(self)
+  let menu = Menu(menubar, "&Game")
   menu.append(idNew, "&New Game")
   menu.appendSeparator()
   menu.appendCheckItem(idAi1, "Computer Play Black")

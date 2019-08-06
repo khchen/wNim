@@ -7,7 +7,42 @@
 
 ## wNim's utilities and convenience functions.
 
-# forward declaration
+const
+  wSysBorderX* = SM_CXBORDER ## Width of single border.
+  wSysBorderY* = SM_CYBORDER ## Height of single border.
+  wSysCursorX* = SM_CXCURSOR ## Width of cursor.
+  wSysCursorY* = SM_CYCURSOR ## Height of cursor.
+  wSysDclickX* = SM_CXDOUBLECLK ## Width in pixels of rectangle within which two successive mouse clicks must fall to generate a double-click.
+  wSysDclickY* = SM_CYDOUBLECLK ## Height in pixels of rectangle within which two successive mouse clicks must fall to generate a double-click.
+  wSysDragX* = SM_CXDRAG ## Width in pixels of a rectangle centered on a drag point to allow for limited movement of the mouse pointer before a drag operation begins.
+  wSysDragY* = SM_CYDRAG ## Height in pixels of a rectangle centered on a drag point to allow for limited movement of the mouse pointer before a drag operation begins.
+  wSysEdgeX* = SM_CXEDGE ## Width of a 3D border, in pixels.
+  wSysEdgeY* = SM_CYEDGE ## Height of a 3D border, in pixels.
+  wSysVThumbY* = SM_CYVTHUMB ## Height of vertical scrollbar thumb.
+  wSysHThumbX* = SM_CXHTHUMB ## Width of horizontal scrollbar thumb.
+  wSysIconX* = SM_CXICON ## The default width of an icon.
+  wSysIconY* = SM_CYICON ## The default height of an icon.
+  wSysIconSpacingX* = SM_CXICONSPACING ## Width of a grid cell for items in large icon view, in pixels. Each item fits into a rectangle of this size when arranged.
+  wSysIconSpacingY* = SM_CYICONSPACING ## Height of a grid cell for items in large icon view, in pixels. Each item fits into a rectangle of this size when arranged.
+  wSysWindowMinX* = SM_CXMIN ## Minimum width of a window.
+  wSysWindowMinY* = SM_CYMIN ## Minimum height of a window.
+  wSysScreenX* = SM_CXSCREEN ## Width of the screen in pixels.
+  wSysScreenY* = SM_CYSCREEN ## Height of the screen in pixels.
+  wSysFrameSizeX* = SM_CXSIZEFRAME ## Width of the window frame for a wResizeBorder window.
+  wSysFrameSizeY* = SM_CYSIZEFRAME ## Height of the window frame for a wResizeBorder window.
+  wSysSmallIconX* = SM_CXSMICON ## Recommended width of a small icon (in window captions, and small icon view).
+  wSysSmallIconY* = SM_CYSMICON ## Recommended height of a small icon (in window captions, and small icon view).
+  wSysHScrollY* = SM_CYHSCROLL ## The height of a horizontal scroll bar, in pixels.
+  wSysVScrollX* = SM_CXVSCROLL ## The width of a vertical scroll bar, in pixels.
+  wSysHScrollArrowX* = SM_CXHSCROLL ## The width of the arrow bitmap on a horizontal scroll bar, in pixels.
+  wSysVScrollArrowY* = SM_CYVSCROLL ## The height of the arrow bitmap on a vertical scroll bar, in pixels.
+  wSysCaptionY* = SM_CYCAPTION ## Height of normal caption area.
+  wSysMenuY* = SM_CYMENU  ## Height of single-line menu bar.
+  wSysNetworkPresent* = SM_NETWORK ## 1 if there is a network present, 0 otherwise.
+  wSysPenWindowsPresent* = SM_PENWINDOWS ## 1 if PenWindows is installed, 0 otherwise.
+  wSysShowSounds* = SM_SHOWSOUNDS ## Non-zero if the user requires an application to present information visually in situations where it would otherwise present the information only in audible form; zero otherwise.
+  wSysSwapButtons* = SM_SWAPBUTTON  ## Non-zero if the meanings of the left and right mouse buttons are swapped; zero otherwise.
+
 proc DataObject*(dataObj: ptr IDataObject): wDataObject {.inline.}
 
 proc wGetMousePosition*(): wPoint =
@@ -82,3 +117,70 @@ proc wFlushClipboard*() =
   ## Flushes the clipboard: this means that the data which is currently on
   ## clipboard will stay available even after the application exits.
   OleFlushClipboard()
+
+proc wGetSystemMetric*(index: int): int {.inline.} =
+  ## Returns the value of a system metric. Possible value for index listed in consts.
+  result = int GetSystemMetrics(index)
+
+proc wGetDefaultPrinter*(): string =
+  ## Returns the printer name of the default printer for the current user.
+  var needed: DWORD
+  GetDefaultPrinter(nil, &needed)
+  if needed != 0:
+    var buffer = T(needed)
+    if GetDefaultPrinter(&buffer, &needed) != 0:
+      result = $buffer
+
+proc wSetDefaultPrinter*(device: string) {.inline.} =
+  ## Sets the printer name of the default printer for the current user
+  SetDefaultPrinter(device)
+
+proc wGetPrinters*(): seq[string] =
+  ## Returns available printers.
+  var needed, returned: DWORD
+  EnumPrinters(PRINTER_ENUM_LOCAL, "", 1, nil, 0, &needed, &returned)
+
+  let buffer = cast[LPBYTE](alloc(needed))
+  defer: dealloc(buffer)
+  EnumPrinters(PRINTER_ENUM_LOCAL, "", 1, buffer, needed, &needed, &returned)
+
+  let printers = cast[ptr UncheckedArray[PRINTER_INFO_1]](buffer)
+  for i in 0..<returned:
+    result.add $printers[i].pName
+
+proc wSetSysemDpiAware*(): bool {.discardable.} =
+  ## Sets the default DPI awareness to system aware (Windows Vista later).
+  ## Return true if the function succeeds.
+  when not defined(useWinXP):
+    if SetProcessDPIAware() != 0:
+      return true
+
+proc wSetPerMonitorDpiAware*(): bool {.discardable.} =
+  ## Sets the default DPI awareness to per monitor aware v2 (Windows 10 version 1607 later),
+  ## or per monitor aware (Windows 8.1 later).
+  ## Return true if the function succeeds.
+  when not defined(useWinXP):
+    const DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
+    const PROCESS_PER_MONITOR_DPI_AWARE = 2
+
+    type
+      SetProcessDpiAwarenessContext = proc (value: HANDLE): BOOL {.stdcall.}
+      SetProcessDpiAwareness = proc (value: cint): HRESULT {.stdcall.}
+
+    var lib = loadLib("user32.dll")
+    if not lib.isNil:
+      defer: unloadLib(lib)
+
+      let api = cast[SetProcessDpiAwarenessContext](lib.symAddr("SetProcessDpiAwarenessContext"))
+      if not api.isNil:
+        if api(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) != 0:
+          return true
+
+    lib = loadLib("shcore.dll")
+    if not lib.isNil:
+      defer: unloadLib(lib)
+
+      let api = cast[SetProcessDpiAwareness](lib.symAddr("SetProcessDpiAwareness"))
+      if not api.isNil:
+        if api(PROCESS_PER_MONITOR_DPI_AWARE) == S_OK:
+          return true

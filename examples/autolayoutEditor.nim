@@ -6,7 +6,7 @@
 #====================================================================
 
 import
-  ../resource/resource,
+  resource/resource,
   wNim,
   strutils, macros
 
@@ -19,8 +19,8 @@ type
     vfl: string
     show: proc ()
 
-var app = App()
-var frame = Frame(title="AutoLayout Editor", size=(900, 600))
+let app = App()
+let frame = Frame(title="AutoLayout Editor", size=(900, 600))
 frame.icon = Icon("", 0) # load icon from exe file.
 
 macro generateExamples(x: untyped): untyped =
@@ -31,13 +31,14 @@ macro generateExamples(x: untyped): untyped =
 
   var templ = """
   examples.add Example(name: $1, vfl: $2, show: proc () =
-    var win = Frame(frame, title=$1, size=(400, 400))
-    var panel = Panel(win)
+    let win = Frame(frame, title=$1, size=(400, 400))
+    let panel = Panel(win)
     const style = wAlignCentre or wAlignMiddle or wBorderSimple
 $3
-    win.wEvent_Size do (event: wEvent):
-      panel.autorelayout $2
+    proc laytout = panel.autorelayout $2
+    panel.wEvent_Size do (event: wEvent): laytout()
 
+    laytout()
     win.center()
     win.show()
   )
@@ -230,15 +231,15 @@ generateExamples:
       V:[stack1..4(25)]
     """
 
-var splitter = Splitter(frame, style=wSpHorizontal or wDoubleBuffered, size=(8, 8))
-var statusBar = StatusBar(frame)
-var menuBar = MenuBar(frame)
+let splitter = Splitter(frame, style=wSpHorizontal or wDoubleBuffered, size=(8, 8))
+let statusBar = StatusBar(frame)
+let menuBar = MenuBar(frame)
 
-var textCtrl1 = TextCtrl(splitter.panel1,
+let textCtrl1 = TextCtrl(splitter.panel1,
   style=wTeRich or wTeMultiLine or wTeDontWrap or wVScroll)
 textCtrl1.font = Font(12, faceName="Consolas", encoding=wFontEncodingCp1252)
 
-var textCtrl2 = TextCtrl(splitter.panel2,
+let textCtrl2 = TextCtrl(splitter.panel2,
   style=wTeRich or wTeMultiLine or wTeReadOnly or wTeDontWrap or wVScroll)
 textCtrl2.font = Font(12, faceName="Consolas", encoding=wFontEncodingCp1252)
 
@@ -248,13 +249,13 @@ proc switchSplitter(mode: int) =
   let size = frame.clientSize
   splitter.move(size.width div 2, size.height div 2)
 
-var menu = Menu(menuBar, "&Layout")
+let menu = Menu(menuBar, "&Layout")
 menu.appendRadioItem(idHorizontal, "&Horizontal").check()
 menu.appendRadioItem(idVertical, "&Vertical")
 menu.appendSeparator()
 menu.append(idExit, "E&xit")
 
-var menuExample = Menu(menuBar, "&Example")
+let menuExample = Menu(menuBar, "&Example")
 for i, e in examples:
   menuExample.append(wCommandID(idExample.ord + i), e.name)
 

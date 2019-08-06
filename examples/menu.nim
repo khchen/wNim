@@ -26,24 +26,24 @@ const resources: array[idIcon1..idIcon6, string] = [
   staticRead(r"images\5.png"),
   staticRead(r"images\6.png") ]
 
-var app = App()
-var frame = Frame(title="wNim Menu Demo")
+let app = App()
+let frame = Frame(title="wNim Menu Demo")
 frame.icon = Icon("", 0) # load icon from exe file.
 
-var statusBar = StatusBar(frame)
-var menuBar = MenuBar(frame)
+let statusBar = StatusBar(frame)
+let menuBar = MenuBar(frame)
 
-var menuFile = Menu(menuBar, "&File")
+let menuFile = Menu(menuBar, "&File")
 menuFile.append(idOpen, "&Open", "Open a file.")
 menuFile.appendSeparator()
 menuFile.append(idExit, "E&xit", "Exit the program.")
 
-var menuIcon = Menu(menuBar, "&Icon")
+let menuIcon = Menu(menuBar, "&Icon")
 for id in idIcon1..idIcon6:
-  var bmp = Bmp(Image(resources[id]).scale(36, 36))
+  let bmp = Bmp(Image(resources[id]).scale(36, 36))
   menuIcon.append(id, $id, $id & " Help", bmp)
 
-var menuTest = Menu(menuBar, "&Test")
+let menuTest = Menu(menuBar, "&Test")
 menuTest.appendCheckItem(idCheck1, "Check 1", "Check 1 Help").check()
 menuTest.appendCheckItem(idCheck2, "Check 2", "Check 2 Help")
 menuTest.appendSeparator()
@@ -56,8 +56,8 @@ menuTest.append(idDisable, "Disable", "Disable the icon menu and about")
 menuTest.appendSeparator()
 menuTest.appendSubMenu(menuIcon, "&Icon", "Icon menu here.").disable()
 
-var menuAbout = Menu(menuBar, "&About")
-var itemAbout = menuAbout.append(idAbout, "About", "About")
+let menuAbout = Menu(menuBar, "&About")
+let itemAbout = menuAbout.append(idAbout, "About", "About")
 
 # frame.connect(idExit) is syntax sugar for frame.connect(wEvent_Menu, idExit)
 # frame.idExit is syntax sugar for frame.connect(idExit)
@@ -74,8 +74,8 @@ frame.idDisable do ():
   itemAbout.disable
 
 frame.wEvent_Menu do (event: wEvent):
-  var item = menuBar.findItem(event.id)
-  var help = menuBar.getHelp(event.id)
+  let item = menuBar.findItem(event.id)
+  let help = menuBar.getHelp(event.id)
   var msg: string
 
   if item != nil and item.isCheck:
