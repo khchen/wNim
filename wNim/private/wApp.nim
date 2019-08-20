@@ -8,6 +8,9 @@
 ## The wApp object represents the application itself. It allow only one instance
 ## for a thread.
 
+# forward declarations
+proc wGetWinVersion*(): float
+
 const
   wEvent_AppQuit = WM_APP + 1
 
@@ -34,6 +37,7 @@ proc App*(): wApp {.discardable.} =
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initCountTable[UINT]()
+  result.mWinVersion = wGetWinVersion()
 
   # initSet is deprecated since v0.20
   when declared(initHashSet):
@@ -49,6 +53,9 @@ proc wAppGetCurrentApp*(): wApp {.inline.} =
 
 proc wAppGetInstance(): HANDLE {.inline.} =
   result = wTheApp.mInstance
+
+proc wAppWinVersion(): float {.inline.} =
+  result = wTheApp.mWinVersion
 
 proc wAppGetDpi(): int =
   if wTheApp.mDpi == 0:

@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.7.0"
+version       = "0.7.1"
 author        = "Ward"
 description   = "wNim - Nim\'s Windows GUI framework"
 license       = "MIT"

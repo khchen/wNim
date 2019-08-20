@@ -80,7 +80,7 @@ proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
     when defined(useWinXP):
       menuItemInfo.hbmpItem = HBMMENU_CALLBACK
       # don't use callback if windows version is vista or latter
-      if wGetWinVersion() > 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
+      if wAppWinVersion() >= 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
 
     else:
       menuItemInfo.hbmpItem = bitmap.mHandle

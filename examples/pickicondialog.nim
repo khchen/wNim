@@ -7,7 +7,7 @@
 
 import
   resource/resource,
-  wNim,
+  ../wNim,
   strutils, os,
   winim/inc/[windef, winuser, shellapi]
 
@@ -105,11 +105,12 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
 
       except: discard
 
-  menu.append(1, "Browse...")
-  menu.appendSeparator()
+  if wGetWinVersion() < 6.0:
+    menu.append(1, "Browse...")
+    menu.appendSeparator()
 
   for i, file in iconFiles:
-    # MSDN: If this value is –1 and phiconLarge and phiconSmall are both NULL,
+    # MSDN: If this value is -1 and phiconLarge and phiconSmall are both NULL,
     # the function returns the total number of icons
     let n = ExtractIconEx(file, -1, nil, nil, 0)
     if n != 0:
@@ -120,7 +121,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   ok.setDefault()
   showIcons()
 
-  dialog.wEvent_Size do (event: wEvent):
+  proc layout() =
     panel.autolayout """
       spacing: 12
       H:|-[staticText]-[select(select.defaultWidth)]-|
@@ -134,17 +135,22 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     dialog.minClientSize = (n, n)
     showFilename()
 
-  dialog.wEvent_Menu do (event: wEvent):
+  proc browse() =
+    var files = FileDialog(dialog, "Select Icon Files",
+      defaultDir=getCurrentDir(), wildcard="Icon Files|*.ico;*.cur;*.dll;*.exe",
+      style=wFdOpen or wFdFileMustExist).display()
+
+    if files.len == 1:
+      currentFile = files[0]
+      showFilename()
+      showIcons()
+
+  panel.wEvent_Size do (event: wEvent): layout()
+
+  select.wEvent_Menu do (event: wEvent):
     var i = int event.id
     if i == 1:
-      var files = FileDialog(dialog, "Select Icon Files",
-        defaultDir=getCurrentDir(), wildcard="Icon Files|*.ico;*.cur;*.dll;*.exe",
-        style=wFdOpen or wFdFileMustExist).display()
-
-      if files.len == 1:
-        currentFile = files[0]
-        showFilename()
-        showIcons()
+      browse()
 
     else:
       i -= 2
@@ -157,7 +163,10 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     showIcons()
 
   select.wEvent_Button do ():
-    select.showDropdownMenu()
+    if wGetWinVersion() >= 6.0:
+      browse()
+    else:
+      select.showDropdownMenu()
 
   cancel.wEvent_Button do ():
     dialog.close()
@@ -176,6 +185,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   dialog.wEvent_Close do ():
     dialog.endModal()
 
+  layout()
   dialog.center()
   dialog.showModal()
   dialog.delete()

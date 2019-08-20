@@ -83,7 +83,7 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
     when defined(useWinXP):
       menuItemInfo.hbmpItem = HBMMENU_CALLBACK
       # don't use callback if windows version is vista or latter
-      if wGetWinVersion() > 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
+      if wAppWinVersion() >= 6.0: menuItemInfo.hbmpItem = bitmap.mHandle
 
     else:
       menuItemInfo.hbmpItem = bitmap.mHandle
@@ -338,7 +338,7 @@ proc setBitmap*(self: wMenu, pos: int, bitmap: wBitmap = nil) {.validate, proper
     if item.mKind != wMenuItemSeparator:
       var hbmp = 0
       if bitmap != nil:
-        hbmp = (if wGetWinVersion() > 6.0: bitmap.mHandle else: HBMMENU_CALLBACK)
+        hbmp = (if wAppWinVersion() >= 6.0: bitmap.mHandle else: HBMMENU_CALLBACK)
 
       var menuItemInfo = MENUITEMINFO(
         cbSize: sizeof(MENUITEMINFO),

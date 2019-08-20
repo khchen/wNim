@@ -1,3 +1,8 @@
+Version 0.7.1
+-------------
+* wUtil: add wGetWinVersion().
+* Fix bug in pickicondialog.nim.
+
 Version 0.7.0
 -------------
 * Add wRegion, wPrinterDC, wPrintData, wPageSetupDialog, and wPrintDialog.

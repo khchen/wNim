@@ -61,11 +61,6 @@ proc toolBarDirection(hwnd: HWND): int =
   of CCS_BOTTOM: result = wBottom
   else: result = wTop
 
-proc wGetWinVersion(): float =
-  var osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
-  GetVersionEx(osv)
-  result = osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
-
 proc centerWindow(hwnd: HWND, inScreen = false, direction = wBoth) =
   # this works on top level window only
   var rect: RECT

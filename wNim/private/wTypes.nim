@@ -144,6 +144,7 @@ when not defined(Nimdoc):
       mExitCode: uint
       mAccelExists: bool
       mDpi: int
+      mWinVersion: float
 
     wEvent* = ref object of RootObj
       mWindow: wWindow

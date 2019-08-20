@@ -184,3 +184,30 @@ proc wSetPerMonitorDpiAware*(): bool {.discardable.} =
       if not api.isNil:
         if api(PROCESS_PER_MONITOR_DPI_AWARE) == S_OK:
           return true
+
+proc wGetWinVersion*(): float =
+  ## Get Windows release version number.
+  ## ================================  =============================================================
+  ## Windows Version                   Release Version
+  ## ================================  =============================================================
+  ## Windows 10                        10.0
+  ## Windows 8.1                       6.3
+  ## Windows 8                         6.2
+  ## Windows 7                         6.1
+  ## Windows Vista                     6.0
+  ## Windows XP                        5.1
+  ## ================================  =============================================================
+  type RtlGetVersion = proc (lp: ptr OSVERSIONINFO) {.stdcall.}
+  var
+    osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
+    lib = loadLib("ntdll.dll")
+
+  if not lib.isNil:
+    defer: unloadLib(lib)
+    let api = cast[RtlGetVersion](lib.symAddr("RtlGetVersion"))
+    if not api.isNil:
+      api(osv)
+      return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
+
+  GetVersionEx(osv)
+  return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
