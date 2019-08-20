@@ -7,7 +7,7 @@
 
 import
   resource/resource,
-  ../wNim,
+  wNim,
   strutils, os,
   winim/inc/[windef, winuser, shellapi]
 
