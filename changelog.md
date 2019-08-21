@@ -1,5 +1,9 @@
 Version 0.7.1
 -------------
+* Add wHotkeyCtrl.
+* wEvent: add getHotkeyId() and getHotkey().
+* wWindow: add wModNoRepeat const for registerHotKey().
+* wDC: add drawLabel().
 * wUtil: add wGetWinVersion().
 * Fix bug in pickicondialog.nim.
 

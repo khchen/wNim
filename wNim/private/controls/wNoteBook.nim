@@ -25,8 +25,8 @@
 ##   ==============================   =============================================================
 ##   wCommandEvent                    Description
 ##   ==============================   =============================================================
-##   wEvent_NoteBookPageChanged       The page selection was changed.
 ##   wEvent_NoteBookPageChanging      The page selection is about to be changed. This event can be vetoed.
+##   wEvent_NoteBookPageChanged       The page selection was changed.
 ##   ===============================  =============================================================
 
 const

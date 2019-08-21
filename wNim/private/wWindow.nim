@@ -94,6 +94,7 @@ const
   wModCtrl* = MOD_CONTROL
   wModAlt* = MOD_ALT
   wModWin* = MOD_WIN
+  wModNoRepeat* = MOD_NOREPEAT
 
 method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base.} =
   var rect: RECT
@@ -1070,8 +1071,18 @@ proc registerHotKey*(self: wWindow, id: int, modifiers: int,
     keyCode: int): bool {.validate, inline, discardable.} =
   ## Registers a system wide hotkey. Every time the user presses the hotkey
   ## registered here, this window will receive a wEvent_HotKey event.
-  ## Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin.
+  ## Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin,
+  ## and wModNoRepeat (Windows 7 later).
+  var modifiers = modifiers
+  if wAppWinVersion() <= 6.0:
+    modifiers = modifiers and (not wModNoRepeat)
+
   result = RegisterHotKey(self.mHwnd, id, modifiers, keyCode) != 0
+
+proc registerHotKey*(self: wWindow, id: int,
+    hotkey: tuple[modifiers: int, keyCode: int]): bool {.validate, inline, discardable.} =
+  ## Registers a system wide hotkey.
+  result = self.registerHotKey(id, hotkey.modifiers, hotkey.keyCode)
 
 proc unregisterHotKey*(self: wWindow, id: int): bool
     {.validate, inline, discardable.} =

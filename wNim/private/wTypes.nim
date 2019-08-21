@@ -455,6 +455,17 @@ when not defined(Nimdoc):
 
     wWebView* = ref object of wControl
 
+    wHotkeyCtrl* = ref object of wControl
+      mProcessTab: bool
+      mHook: HHOOK
+      mCtrl: bool
+      mAlt: bool
+      mShift: bool
+      mWin: bool
+      mValue: string
+      mKeyCode: int
+      mModifiers: int
+
     wMenuBase* = ref object of RootObj
       mHmenu: HMENU
 

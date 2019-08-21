@@ -242,6 +242,7 @@ include
   wNim/private/controls/wSplitter,
   wNim/private/controls/wIpCtrl,
   wNim/private/controls/wWebView,
+  wNim/private/controls/wHotkeyCtrl,
   wNim/private/wFrame,
   wNim/private/dialogs/wDialog,
   wNim/private/dialogs/wMessageDialog,

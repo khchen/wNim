@@ -58,6 +58,7 @@ proc SizeofResource*(hModule: HMODULE, hResInfo: HRSRC): DWORD {.winapi, stdcall
 proc FreeLibrary*(hLibModule: HMODULE): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetProcAddress*(hModule: HMODULE, lpProcName: LPCSTR): FARPROC {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetCurrentThreadId*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
+proc Sleep*(dwMilliseconds: DWORD): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetLocalTime*(lpSystemTime: LPSYSTEMTIME): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalAlloc*(uFlags: UINT, dwBytes: SIZE_T): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalSize*(hMem: HGLOBAL): SIZE_T {.winapi, stdcall, dynlib: "kernel32", importc.}
@@ -794,6 +795,13 @@ type
     lpszName*: LPCWSTR
     lpszClass*: LPCWSTR
     dwExStyle*: DWORD
+  KBDLLHOOKSTRUCT* {.pure.} = object
+    vkCode*: DWORD
+    scanCode*: DWORD
+    flags*: DWORD
+    time*: DWORD
+    dwExtraInfo*: ULONG_PTR
+  LPKBDLLHOOKSTRUCT* = ptr KBDLLHOOKSTRUCT
   WNDPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): LRESULT {.stdcall.}
   WNDCLASSEXA* {.pure.} = object
     cbSize*: UINT
@@ -1197,6 +1205,7 @@ const
   VK_PA1* = 0xFD
   VK_OEM_CLEAR* = 0xFE
   WH_CBT* = 5
+  WH_KEYBOARD_LL* = 13
   HCBT_ACTIVATE* = 5
   GWL_STYLE* = -16
   GWL_EXSTYLE* = -20
@@ -1345,6 +1354,7 @@ const
   MOD_CONTROL* = 0x0002
   MOD_SHIFT* = 0x0004
   MOD_WIN* = 0x0008
+  MOD_NOREPEAT* = 0x4000
   CW_USEDEFAULT* = int32 0x80000000'i32
   LWA_ALPHA* = 0x00000002
   SWP_NOSIZE* = 0x0001
@@ -1412,7 +1422,15 @@ const
   TPM_RECURSE* = 0x0001
   TPM_HORPOSANIMATION* = 0x0400
   TPM_HORNEGANIMATION* = 0x0800
+  DT_TOP* = 0x00000000
+  DT_LEFT* = 0x00000000
+  DT_CENTER* = 0x00000001
+  DT_RIGHT* = 0x00000002
+  DT_VCENTER* = 0x00000004
+  DT_BOTTOM* = 0x00000008
+  DT_SINGLELINE* = 0x00000020
   DT_CALCRECT* = 0x00000400
+  DT_NOPREFIX* = 0x00000800
   RDW_INVALIDATE* = 0x0001
   RDW_ERASE* = 0x0004
   RDW_ALLCHILDREN* = 0x0080
@@ -1704,6 +1722,9 @@ proc GetWindowRect*(hWnd: HWND, lpRect: LPRECT): WINBOOL {.winapi, stdcall, dynl
 proc SetCursorPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetCursor*(hCursor: HCURSOR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetCursorPos*(lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc CreateCaret*(hWnd: HWND, hBitmap: HBITMAP, nWidth: int32, nHeight: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc ShowCaret*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc SetCaretPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ClientToScreen*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ScreenToClient*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc WindowFromPoint*(Point: POINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1730,7 +1751,6 @@ proc GetIconInfo*(hIcon: HICON, piconinfo: PICONINFO): WINBOOL {.winapi, stdcall
 proc SetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPCSCROLLINFO, redraw: WINBOOL): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetScrollInfo*(hwnd: HWND, nBar: int32, lpsi: LPSCROLLINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetProcessDPIAware*(): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
-proc IsProcessDPIAware*(): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetScrollBarInfo*(hwnd: HWND, idObject: LONG, psbi: PSCROLLBARINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetComboBoxInfo*(hwndCombo: HWND, pcbi: PCOMBOBOXINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetAncestor*(hwnd: HWND, gaFlags: UINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
@@ -4741,100 +4761,6 @@ type
     nSizeMin*: INT
     nSizeMax*: INT
   LPCHOOSEFONTW* = ptr TCHOOSEFONTW
-  LPPRINTHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
-  LPSETUPHOOKPROC* = proc (P1: HWND, P2: UINT, P3: WPARAM, P4: LPARAM): UINT_PTR {.stdcall.}
-when winimCpu64:
-  type
-    TPRINTDLGA* {.pure.} = object
-      lStructSize*: DWORD
-      hwndOwner*: HWND
-      hDevMode*: HGLOBAL
-      hDevNames*: HGLOBAL
-      hDC*: HDC
-      Flags*: DWORD
-      nFromPage*: WORD
-      nToPage*: WORD
-      nMinPage*: WORD
-      nMaxPage*: WORD
-      nCopies*: WORD
-      hInstance*: HINSTANCE
-      lCustData*: LPARAM
-      lpfnPrintHook*: LPPRINTHOOKPROC
-      lpfnSetupHook*: LPSETUPHOOKPROC
-      lpPrintTemplateName*: LPCSTR
-      lpSetupTemplateName*: LPCSTR
-      hPrintTemplate*: HGLOBAL
-      hSetupTemplate*: HGLOBAL
-when winimCpu32:
-  type
-    TPRINTDLGA* {.pure, packed.} = object
-      lStructSize*: DWORD
-      hwndOwner*: HWND
-      hDevMode*: HGLOBAL
-      hDevNames*: HGLOBAL
-      hDC*: HDC
-      Flags*: DWORD
-      nFromPage*: WORD
-      nToPage*: WORD
-      nMinPage*: WORD
-      nMaxPage*: WORD
-      nCopies*: WORD
-      hInstance*: HINSTANCE
-      lCustData*: LPARAM
-      lpfnPrintHook*: LPPRINTHOOKPROC
-      lpfnSetupHook*: LPSETUPHOOKPROC
-      lpPrintTemplateName*: LPCSTR
-      lpSetupTemplateName*: LPCSTR
-      hPrintTemplate*: HGLOBAL
-      hSetupTemplate*: HGLOBAL
-type
-  LPPRINTDLGA* = ptr TPRINTDLGA
-when winimCpu64:
-  type
-    TPRINTDLGW* {.pure.} = object
-      lStructSize*: DWORD
-      hwndOwner*: HWND
-      hDevMode*: HGLOBAL
-      hDevNames*: HGLOBAL
-      hDC*: HDC
-      Flags*: DWORD
-      nFromPage*: WORD
-      nToPage*: WORD
-      nMinPage*: WORD
-      nMaxPage*: WORD
-      nCopies*: WORD
-      hInstance*: HINSTANCE
-      lCustData*: LPARAM
-      lpfnPrintHook*: LPPRINTHOOKPROC
-      lpfnSetupHook*: LPSETUPHOOKPROC
-      lpPrintTemplateName*: LPCWSTR
-      lpSetupTemplateName*: LPCWSTR
-      hPrintTemplate*: HGLOBAL
-      hSetupTemplate*: HGLOBAL
-when winimCpu32:
-  type
-    TPRINTDLGW* {.pure, packed.} = object
-      lStructSize*: DWORD
-      hwndOwner*: HWND
-      hDevMode*: HGLOBAL
-      hDevNames*: HGLOBAL
-      hDC*: HDC
-      Flags*: DWORD
-      nFromPage*: WORD
-      nToPage*: WORD
-      nMinPage*: WORD
-      nMaxPage*: WORD
-      nCopies*: WORD
-      hInstance*: HINSTANCE
-      lCustData*: LPARAM
-      lpfnPrintHook*: LPPRINTHOOKPROC
-      lpfnSetupHook*: LPSETUPHOOKPROC
-      lpPrintTemplateName*: LPCWSTR
-      lpSetupTemplateName*: LPCWSTR
-      hPrintTemplate*: HGLOBAL
-      hSetupTemplate*: HGLOBAL
-type
-  LPPRINTDLGW* = ptr TPRINTDLGW
   PRINTPAGERANGE* {.pure.} = object
     nFromPage*: DWORD
     nToPage*: DWORD
@@ -5014,7 +4940,6 @@ when winimUnicode:
     TCHOOSECOLOR* = TCHOOSECOLORW
     FINDREPLACE* = FINDREPLACEW
     TCHOOSEFONT* = TCHOOSEFONTW
-    TPRINTDLG* = TPRINTDLGW
     TPRINTDLGEX* = TPRINTDLGEXW
     TPAGESETUPDLG* = TPAGESETUPDLGW
   const
@@ -5025,7 +4950,6 @@ when winimUnicode:
   proc FindText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextW".}
   proc ReplaceText*(P1: LPFINDREPLACEW): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextW".}
   proc ChooseFont*(P1: LPCHOOSEFONTW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontW".}
-  proc PrintDlg*(P1: LPPRINTDLGW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgW".}
   proc PrintDlgEx*(P1: LPPRINTDLGEXW): HRESULT {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgExW".}
   proc PageSetupDlg*(P1: LPPAGESETUPDLGW): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PageSetupDlgW".}
 when winimAnsi:
@@ -5034,7 +4958,6 @@ when winimAnsi:
     TCHOOSECOLOR* = TCHOOSECOLORA
     FINDREPLACE* = FINDREPLACEA
     TCHOOSEFONT* = TCHOOSEFONTA
-    TPRINTDLG* = TPRINTDLGA
     TPRINTDLGEX* = TPRINTDLGEXA
     TPAGESETUPDLG* = TPAGESETUPDLGA
   const
@@ -5045,7 +4968,6 @@ when winimAnsi:
   proc FindText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "FindTextA".}
   proc ReplaceText*(P1: LPFINDREPLACEA): HWND {.winapi, stdcall, dynlib: "comdlg32", importc: "ReplaceTextA".}
   proc ChooseFont*(P1: LPCHOOSEFONTA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "ChooseFontA".}
-  proc PrintDlg*(P1: LPPRINTDLGA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgA".}
   proc PrintDlgEx*(P1: LPPRINTDLGEXA): HRESULT {.winapi, stdcall, dynlib: "comdlg32", importc: "PrintDlgExA".}
   proc PageSetupDlg*(P1: LPPAGESETUPDLGA): WINBOOL {.winapi, stdcall, dynlib: "comdlg32", importc: "PageSetupDlgA".}
 type

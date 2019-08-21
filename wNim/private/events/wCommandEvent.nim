@@ -88,8 +88,8 @@
 ##
 ##   wNoteBook                       Description
 ##   ==============================  =============================================================
-##   wEvent_NoteBookPageChanged      The page selection was changed.
 ##   wEvent_NoteBookPageChanging     The page selection is about to be changed. This event can be vetoed.
+##   wEvent_NoteBookPageChanged      The page selection was changed.
 ##
 ##   wCalendarCtrl                   Description
 ##   ==============================  =============================================================
@@ -107,6 +107,12 @@
 ##   wSplitter                       Description
 ##   ==============================  =============================================================
 ##   wEvent_Splitter                 The position is dragging by user. This event can be vetoed.
+##   ==============================  =============================================================
+##
+##   wHotkeyCtrl                     Description
+##   ==============================  =============================================================
+##   wEvent_HotkeyChanging           The hotkey is about to be changed. This event can be vetoed.
+##   wEvent_HotkeyChanged            The hotkey was changed.
 ##   ==============================  =============================================================
 
 DefineIncrement(wEvent_CommandFirst):
@@ -142,12 +148,14 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_CommandKillFocus
   wEvent_CommandEnter
   wEvent_CommandTab
-  wEvent_NoteBookPageChanged
   wEvent_NoteBookPageChanging
+  wEvent_NoteBookPageChanged
   wEvent_CalendarSelChanged
   wEvent_CalendarViewChanged
   wEvent_DateChanged
   wEvent_Splitter
+  wEvent_HotkeyChanging
+  wEvent_HotkeyChanged
 
 const
   wEvent_Tool* = wEvent_Menu
@@ -157,5 +165,5 @@ proc isCommandEvent(msg: UINT): bool {.inline.} =
   msg in wEvent_CommandFirst..wEvent_CommandLast
 
 method getMenuItem*(self: wCommandEvent): wMenuItem {.property, inline.} =
-  ## Returns the menu item (valid forwEvent_Menu and wEvent_MenuRightClick).
+  ## Returns the menu item (valid for wEvent_Menu and wEvent_MenuRightClick).
   result = cast[wMenuItem](self.mLparam)

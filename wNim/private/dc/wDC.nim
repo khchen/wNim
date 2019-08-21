@@ -209,6 +209,28 @@ proc drawRotatedText*(self: wDC, text: string, point: wPoint, angle: float = 0) 
   ## by the new line ('\n') characters.
   self.drawRotatedText(text, point.x, point.y, angle)
 
+proc drawLabel*(self: wDC, text: string, rect: wRect, align = wLeft or wTop) =
+  ## Draw the text into the given rectangle and aligns it as specified by alignment parameter.
+  var
+    flag = DT_NOPREFIX or DT_SINGLELINE
+    r = toRect(rect)
+
+  if (align and wCenter) == wCenter:
+    flag = flag or DT_CENTER
+  elif (align and wRight) != 0:
+    flag = flag or DT_RIGHT
+  elif (align and wLeft) != 0:
+    flag = flag or DT_LEFT
+
+  if (align and wMiddle) == wMiddle:
+    flag = flag or DT_VCENTER
+  elif (align and wBottom) != 0:
+    flag = flag or DT_BOTTOM
+  elif (align and wTop) != 0:
+    flag = flag or DT_TOP
+
+  DrawText(self.mHdc, text, text.len, r, flag)
+
 proc drawCheckMark*(self: wDC, x, y, width, height: int) =
   ## Draws a check mark inside the given rectangle.
   var rect: RECT

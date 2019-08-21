@@ -18,6 +18,9 @@
 ## If you need a disabled control, disable it again in the event handler
 ## of wEvent_WebViewLoaded.
 #
+## :Appearance:
+##   .. image:: images/wWebView.png
+#
 ## :Superclass:
 ##   `wControl <wControl.html>`_
 #

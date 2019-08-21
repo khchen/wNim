@@ -273,6 +273,15 @@ proc getTimerId*(self: wEvent): int {.validate, property, inline.} =
   ## Return the timer ID. Only for wEvent_Timer event.
   result = int self.mWparam
 
+proc getHotkeyId*(self: wEvent): int {.validate, property, inline.} =
+  ## Return the hotkey ID. Only for wEvent_HotKey event.
+  result = int self.mWparam
+
+proc getHotkey*(self: wEvent): tuple[modifiers: int, keyCode: int] {.validate, property, inline.} =
+  ## Returns the hotkey. Valid for wEvent_HotKey, wEvent_HotkeyChanged, and wEvent_HotkeyChanging.
+  result.modifiers = int LOWORD(self.mLparam)
+  result.keyCode = int HIWORD(self.mLparam)
+
 proc getlParam*(self: wEvent): LPARAM {.validate, property, inline.} =
   ## Returns the low-level LPARAM data of the associated windows message.
   result = self.mLparam
