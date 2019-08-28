@@ -145,6 +145,7 @@ when not defined(Nimdoc):
       mAccelExists: bool
       mDpi: int
       mWinVersion: float
+      mUseTheme: bool
 
     wEvent* = ref object of RootObj
       mWindow: wWindow
@@ -260,6 +261,7 @@ when not defined(Nimdoc):
       mHwnd: HWND
       mParent: wWindow
       mChildren: seq[wWindow]
+      mData: int
       mSystemConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
       mConnectionTable: Table[UINT, DoublyLinkedList[wEventConnection]]
       mMargin: wDirection
@@ -351,10 +353,24 @@ when not defined(Nimdoc):
 
     wComboBox* = ref object of wControl
       mEdit: wTextCtrl
-      mList: wWindow
+      mList: wListBox
       mOldEditProc: WNDPROC
       mInitData: ptr UncheckedArray[string]
       mInitCount: int
+      mCommandConn: wEventConnection
+
+    wCheckComboBox* = ref object of wControl
+      mTheme: HTHEME
+      mCheckTheme: HTHEME
+      mDrawTextFlag: DWORD
+      mSeparator: string
+      mValue: string
+      mEmpty: string
+      mList: wListBox
+      mIsPopup: bool
+      mInitData: ptr UncheckedArray[string]
+      mInitCount: int
+      mDrawItemConn: wEventConnection
       mCommandConn: wEventConnection
 
     wTextCtrl* = ref object of wControl
@@ -364,6 +380,7 @@ when not defined(Nimdoc):
       mCommandConn: wEventConnection
 
     wNoteBook* = ref object of wControl
+      mTheme: HTHEME
       mImageList: wImageList
       mSelection: int
       mPages: seq[wPanel]
@@ -457,6 +474,7 @@ when not defined(Nimdoc):
 
     wHotkeyCtrl* = ref object of wControl
       mProcessTab: bool
+      mClearKeyCode: int
       mHook: HHOOK
       mCtrl: bool
       mAlt: bool

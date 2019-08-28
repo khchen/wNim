@@ -211,84 +211,16 @@ proc loadRichDll(): bool =
       richDllLoaded = true
   result = richDllLoaded
 
-proc getThemeBackgroundColor*(hWnd: HWND): wColor =
-  var gResult {.global.}: wColor = wDefaultColor
-  if gResult != wDefaultColor:
-    return gResult
+proc useTheme(): bool =
+  let hDll = LoadLibrary("comctl32.dll")
+  if hDll != 0:
+    defer: FreeLibrary(hDll)
 
-  type
-    GetCurrentThemeName = proc (pszThemeFileName: LPWSTR, dwMaxNameChars: int32,
-      pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR,
-      cchMaxSizeChars: int32): HRESULT {.stdcall.}
-    OpenThemeData = proc (hwnd: HWND, pszClassList: LPCWSTR): HANDLE {.stdcall.}
-    CloseThemeData = proc (hTheme: HANDLE): HRESULT {.stdcall.}
-    GetThemeColor = proc (hTheme: HANDLE, iPartId, iStateId, iPropId: int32,
-      pColor: ptr wColor): HRESULT {.stdcall.}
-    IsAppThemed = proc (): BOOL {.stdcall.}
-    IsThemeActive = proc (): BOOL {.stdcall.}
-
-  let
-    comctl32Lib = loadLib("comctl32.dll")
-    themeLib = loadLib("uxtheme.dll")
-
-  if themeLib != nil:
-    # if aero theme is active: use white color
-    try:
-      if comctl32Lib == nil: raise
-      defer: comctl32Lib.unloadLib()
-
-      let
-        isAppThemed = cast[IsAppThemed](themeLib.checkedSymAddr("IsThemeActive"))
-        isThemeActive = cast[IsThemeActive](themeLib.checkedSymAddr("IsThemeActive"))
-        getCurrentThemeName = cast[GetCurrentThemeName](themeLib.checkedSymAddr("GetCurrentThemeName"))
-
-      if isAppThemed() == 0 or isThemeActive() == 0: raise
-
-      var
-        themeFile = newWString(1024)
-        themeColor = newWString(256)
-
-      if getCurrentThemeName(themeFile, 1024, themeColor, 256, nil, 0).FAILED or
-        "Aero" notin $themeFile or "NormalColor" notin $themeColor: raise
-
-      let dllGetVersion = cast[DLLGETVERSIONPROC](comctl32Lib.checkedSymAddr("DllGetVersion"))
-      var dvi = DLLVERSIONINFO(cbSize: sizeof(DLLVERSIONINFO).DWORD)
-      if dllGetVersion(dvi).FAILED or dvi.dwMajorVersion < 6.DWORD: raise
-
-      gResult = wWHITE
-      return gResult
-
-    except: discard
-
-    # check theme color
-    try:
-      const
-        TABP_BODY = 10
-        NORMAL = 1
-        FILLCOLORHINT = 3821
-        FILLCOLOR = 3802
-
-      let
-        openThemeData = cast[OpenThemeData](themeLib.checkedSymAddr("OpenThemeData"))
-        closeThemeData = cast[CloseThemeData](themeLib.checkedSymAddr("CloseThemeData"))
-        getThemeColor = cast[GetThemeColor](themeLib.checkedSymAddr("GetThemeColor"))
-        hTheme = openThemeData(hWnd, "TAB")
-
-      if hTheme == 0: raise
-      defer: discard closeThemeData(hTheme)
-
-      var color: wColor
-      if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLORHINT, addr color).SUCCEEDED and color != 1:
-        gResult = color
-        return gResult
-
-      if getThemeColor(hTheme, TABP_BODY, NORMAL, FILLCOLOR, addr color).SUCCEEDED:
-        gResult = color
-        return gResult
-
-    except: discard
-
-  return gResult
+    var dllGetVersion = cast[DLLGETVERSIONPROC](GetProcAddress(hDll, "DllGetVersion"))
+    if not dllGetVersion.isNil:
+      var vi = DLLVERSIONINFO(cbSize: int32 sizeof(DLLVERSIONINFO))
+      discard dllGetVersion(vi)
+      result = vi.dwMajorVersion >= 6
 
 proc getSize(iconInfo: ICONINFO): wSize =
   var bitmapInfo: BITMAP
@@ -303,39 +235,3 @@ proc getSize(iconInfo: ICONINFO): wSize =
     if GetObject(hbm, sizeof(bitmapInfo), cast[LPVOID](&bitmapInfo)) != 0:
       result.width = int bitmapInfo.bmWidth
       result.height = int bitmapInfo.bmHeight div 2
-
-
-# todo
-# try to fix windows 10 SetWindowPos problem
-# https://blog.forrestthewoods.com/building-a-better-aero-snap-757f68a1305f
-# https://stackoverflow.com/questions/32752728/window-positioning-results-in-space-around-windows-on-windows-10
-# no lucky for now, DwmAdjust seems works, but only work for showed window
-
-# proc GetSystemMargin(hwnd: HWND): RECT =
-#   const DWMWA_EXTENDED_FRAME_BOUNDS = 9
-#   var DwmGetWindowAttribute: proc(hwnd: HWND, dwAttribute: DWORD, pvAttribute: PVOID, cbAttribute: DWORD): HRESULT {.stdcall.}
-#   let dwmapi = loadLib("dwmapi")
-#   if not dwmapi.isNil:
-#     let p = dwmapi.symAddr("DwmGetWindowAttribute")
-#     if not p.isNil:
-#       var DwmGetWindowAttribute = cast[DwmGetWindowAttribute.type](p)
-#       if DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, addr result, DWORD sizeof(RECT)) == S_OK:
-#         echo result
-
-# proc DwmAdjust(hwnd: HWND, x, y, width, height: var int) =
-#   const DWMWA_EXTENDED_FRAME_BOUNDS = 9
-#   var DwmGetWindowAttribute: proc(hwnd: HWND, dwAttribute: DWORD, pvAttribute: PVOID, cbAttribute: DWORD): HRESULT {.stdcall.}
-#   let dwmapi = loadLib("dwmapi")
-#   if not dwmapi.isNil:
-#     let p = dwmapi.symAddr("DwmGetWindowAttribute")
-#     if not p.isNil:
-#       var DwmGetWindowAttribute = cast[DwmGetWindowAttribute.type](p)
-#       var withMargin, noMargin: RECT
-#       if DwmGetWindowAttribute(hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, addr withMargin, DWORD sizeof(RECT)) == S_OK:
-#         GetWindowRect(hwnd, addr noMargin)
-
-#         x -= withMargin.left - noMargin.left
-#         y -= withMargin.top - noMargin.top
-#         width += (withMargin.left - noMargin.left) + (noMargin.right - withMargin.right)
-#         height += (withMargin.top - noMargin.top) + (noMargin.bottom - withMargin.bottom)
-

@@ -804,9 +804,13 @@ method setForegroundColor*(self: wWindow, color: wColor)
   self.mForegroundColor = color
 
 method setBackgroundColor*(self: wWindow, color: wColor) {.base, property.} =
-  ## Sets the background color of the window.
+  ## Sets the background color of the window, -1 means transparent.
   self.mBackgroundColor = color
-  self.mBackgroundBrush = Brush(color)
+  if color == -1:
+    self.mBackgroundBrush = wTransparentBrush
+  else:
+    self.mBackgroundBrush = Brush(color)
+
   SetClassLongPtr(self.mHwnd, GCL_HBRBACKGROUND,
     cast[LONG_PTR](self.mBackgroundBrush.mHandle))
   self.refresh()
@@ -824,6 +828,14 @@ proc setLabel*(self: wWindow, label: string) {.validate, property, inline.} =
   ## Sets the window's label. The same as setTitle().
   wValidate(label)
   SetWindowText(self.mHwnd, label)
+
+proc getData*(self: wWindow): int {.validate, property, inline.} =
+  ## Returns the data associated with the window.
+  result = self.mData
+
+proc setData*(self: wWindow, data: int) {.validate, property.} =
+  ## Sets the window associated data.
+  self.mData = data
 
 method setFont*(self: wWindow, font: wFont) {.base, validate, property.} =
   ## Sets the font for this window.
@@ -2149,6 +2161,10 @@ proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
   if msg == WM_NCDESTROY:
     RemoveWindowSubclass(hwnd, wSubProc, uIdSubclass)
 
+  if self.mHookProc != nil:
+    if self.mHookProc(self, msg, wParam, lParam):
+      return result
+
   return DefSubclassProc(hwnd, msg, wParam, lParam)
 
 proc final*(self: wWindow) =
@@ -2261,6 +2277,10 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   if self.mHwnd == 0:
     raise newException(wError, className & " window creation failed")
 
+  # preapre something after window creation asap but before set size.
+  # aka WM_CREATE for wnim window.
+  self.trigger()
+
   wAppWindowAdd(self)
   var font: wFont
   if parent.isNil:
@@ -2272,10 +2292,6 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
 
   # call window's setFont method. for rich edit, it need more work than WM_SETFONT
   self.setFont(font)
-
-  # preapre something after window creating but before set size.
-  # aka WM_CREATE for wnim window.
-  self.trigger()
 
   # set size after window create and font setting ok
   # because getDefaultSize usually use font to calculate size

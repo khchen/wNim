@@ -284,9 +284,7 @@ proc getPaperSize*(self: wPrintData): wSize {.validate, property, inline.} =
     # some printer driver returned wrong value, we fix it here
     if pDevMode.dmPaperSize != 0:
       let n = DeviceCapabilities(self.mDevice, nil, DC_PAPERS, nil, nil)
-      echo self.mDevice
       if n != 0:
-        echo "here"
         var papers = newSeq[int16](n)
         var paperSizes = newSeq[POINT](n)
         DeviceCapabilities(self.mDevice, nil, DC_PAPERS, cast[LPTSTR](&(papers[0])), nil)

@@ -1254,6 +1254,8 @@ function main() {
     title="getValue(self: wDatePickerCtrl): wTime"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setValue%2CwDatePickerCtrl%2CwTime"
     title="setValue(self: wDatePickerCtrl; time: wTime)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getRange%2CwDatePickerCtrl"
+    title="getRange(self: wDatePickerCtrl): (wTime, wTime)"><wbr />get<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setRange%2CwDatePickerCtrl"
     title="setRange(self: wDatePickerCtrl; time1 = wDefaultTime; time2 = wDefaultTime)"><wbr />set<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwDatePickerCtrl"
@@ -1337,7 +1339,14 @@ Returns the currently entered date.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDatePickerCtrl</span><span class="Other">;</span> <span class="Identifier">time</span><span class="Other">:</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Changes the current value of the control. If the control had been previously limited to a range of dates, returns the lower and upper bounds of this range.
+Changes the current value of the control.
+
+</dd>
+<a id="getRange,wDatePickerCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getRange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDatePickerCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">wTime</span><span class="Other">,</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+If the control had been previously limited to a range of dates, returns the lower and upper bounds of this range.
 
 </dd>
 <a id="setRange,wDatePickerCtrl"></a>
@@ -1404,7 +1413,7 @@ Returns the default size for the window.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:25:33 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:55 UTC</small>
       </div>
     </div>
   </div>

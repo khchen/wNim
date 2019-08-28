@@ -1298,6 +1298,8 @@ function main() {
     title="wModAlt = 0x00000001"><wbr />w<wbr />Mod<wbr />Alt<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wModWin"
     title="wModWin = 0x00000008"><wbr />w<wbr />Mod<wbr />Win<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wModNoRepeat"
+    title="wModNoRepeat = 0x00004000"><wbr />w<wbr />Mod<wbr />No<wbr />Repeat<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1478,6 +1480,10 @@ function main() {
     title="setTitle(self: wWindow; title: string)"><wbr />set<wbr />Title<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setLabel%2CwWindow%2Cstring"
     title="setLabel(self: wWindow; label: string)"><wbr />set<wbr />Label<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getData%2CwWindow"
+    title="getData(self: wWindow): int"><wbr />get<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setData%2CwWindow%2Cint"
+    title="setData(self: wWindow; data: int)"><wbr />set<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTransparent%2CwWindow"
     title="getTransparent(self: wWindow): int"><wbr />get<wbr />Transparent<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setAcceleratorTable%2CwWindow%2CwAcceleratorTable"
@@ -1521,6 +1527,8 @@ function main() {
     title="stopTimer(self: wWindow; id = 1)"><wbr />stop<wbr />Timer<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#registerHotKey%2CwWindow%2Cint%2Cint%2Cint"
     title="registerHotKey(self: wWindow; id: int; modifiers: int; keyCode: int): bool"><wbr />register<wbr />Hot<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#registerHotKey%2CwWindow%2Cint%2Ctuple%5Bint%2Cint%5D"
+    title="registerHotKey(self: wWindow; id: int; hotkey: tuple[modifiers: int, keyCode: int]): bool"><wbr />register<wbr />Hot<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#unregisterHotKey%2CwWindow%2Cint"
     title="unregisterHotKey(self: wWindow; id: int): bool"><wbr />unregister<wbr />Hot<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDoubleBuffered%2CwWindow"
@@ -1846,6 +1854,12 @@ function main() {
 </dd>
 <a id="wModWin"></a>
 <dt><pre><span class="Identifier">wModWin</span> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wModNoRepeat"></a>
+<dt><pre><span class="Identifier">wModNoRepeat</span> <span class="Other">=</span> <span class="DecNumber">0x00004000</span></pre></dt>
 <dd>
 
 
@@ -2417,6 +2431,18 @@ Sets the window's title.
 Sets the window's label. The same as setTitle().
 
 </dd>
+<a id="getData,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the data associated with the window.
+
+</dd>
+<a id="setData,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the window associated data.
+
+</dd>
 <a id="getTransparent,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getTransparent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2555,7 +2581,15 @@ Stop the timer.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">registerHotKey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Registers a system wide hotkey. Every time the user presses the hotkey registered here, this window will receive a wEvent_HotKey event. Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin.
+Registers a system wide hotkey. Every time the user presses the hotkey registered here, this window will receive a wEvent_HotKey event. Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin, and wModNoRepeat (Windows 7 later).
+
+</dd>
+<a id="registerHotKey,wWindow,int,tuple[int,int]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">registerHotKey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span>
+                   <span class="Identifier">hotkey</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Registers a system wide hotkey.
 
 </dd>
 <a id="unregisterHotKey,wWindow,int"></a>
@@ -2798,7 +2832,7 @@ Sets the foreground color of the window.
 <dt><pre><span class="Keyword">method</span> <span class="Identifier">setBackgroundColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the background color of the window.
+Sets the background color of the window, -1 means transparent.
 
 </dd>
 <a id="setFont.e,wWindow,wFont"></a>
@@ -2848,7 +2882,7 @@ A macro to convert all int literal and float literal by dpiScale(). For example:
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-05 23:40:20 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:12 UTC</small>
       </div>
     </div>
   </div>

@@ -294,7 +294,7 @@ proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
   ## Sets the new text control value.
   ## Note that, unlike most other functions changing the controls values,
   ## this function generates a wEvent_Text event. To avoid this you can use
-  ## ChangeValue() instead.
+  ## changeValue() instead.
   wValidate(value)
   self.setLabel(value)
   self.discardEdits()
@@ -544,6 +544,7 @@ proc TextCtrl*(parent: wWindow, id = wDefaultID,
   result.init(parent, id, value, pos, size, style)
 
 proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
+  ## Initializer.
   # only wrap a wWindow's child for now
   let parent = wAppWindowFindByHwnd(GetParent(hWnd))
   if parent == nil:

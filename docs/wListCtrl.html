@@ -1536,6 +1536,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#items.i%2CwListCtrl"
     title="items(self: wListCtrl): string"><wbr />items<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#pairs.i%2CwListCtrl"
+    title="pairs(self: wListCtrl): (int, string)"><wbr />pairs<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -2477,7 +2479,13 @@ Returns the best acceptable minimal size for the control.
 <a id="items.i,wListCtrl"></a>
 <dt><pre><span class="Keyword">iterator</span> <span class="Identifier">items</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wListCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Iterate each item in this list control. Iterates over each item in list control. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
+Iterate each item in this list control.
+
+</dd>
+<a id="pairs.i,wListCtrl"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">pairs</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wListCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Iterates over each item in list control. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
 
 </dd>
 
@@ -2490,7 +2498,7 @@ Iterate each item in this list control. Iterates over each item in list control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:25:37 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:19:00 UTC</small>
       </div>
     </div>
   </div>

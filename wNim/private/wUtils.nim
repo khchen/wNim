@@ -198,15 +198,14 @@ proc wGetWinVersion*(): float =
   ## Windows XP                        5.1
   ## ================================  =============================================================
   type RtlGetVersion = proc (lp: ptr OSVERSIONINFO) {.stdcall.}
-  var
-    osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
-    lib = loadLib("ntdll.dll")
+  var osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
+  let hDll = LoadLibrary("ntdll.dll")
+  if hDll != 0:
+    defer: FreeLibrary(hDll)
 
-  if not lib.isNil:
-    defer: unloadLib(lib)
-    let api = cast[RtlGetVersion](lib.symAddr("RtlGetVersion"))
-    if not api.isNil:
-      api(osv)
+    var rtlGetVersion = cast[RtlGetVersion](GetProcAddress(hDll, "RtlGetVersion"))
+    if not rtlGetVersion.isNil:
+      rtlGetVersion(osv)
       return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
 
   GetVersionEx(osv)

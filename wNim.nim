@@ -47,7 +47,9 @@
 ##  - `wRadioButton <wRadioButton.html>`_
 ##  - `wStaticBox <wStaticBox.html>`_
 ##  - `wTextCtrl <wTextCtrl.html>`_
+##  - `wListBox <wListBox.html>`_
 ##  - `wComboBox <wComboBox.html>`_
+##  - `wCheckComboBox <wCheckComboBox.html>`_
 ##  - `wStaticText <wStaticText.html>`_
 ##  - `wStaticBitmap <wStaticBitmap.html>`_
 ##  - `wStaticLine <wStaticLine.html>`_
@@ -60,14 +62,14 @@
 ##  - `wCalendarCtrl <wCalendarCtrl.html>`_
 ##  - `wDatePickerCtrl <wDatePickerCtrl.html>`_
 ##  - `wTimePickerCtrl <wTimePickerCtrl.html>`_
-##  - `wListBox <wListBox.html>`_
 ##  - `wListCtrl <wListCtrl.html>`_
 ##  - `wTreeCtrl <wTreeCtrl.html>`_
 ##  - `wHyperlinkCtrl <wHyperlinkCtrl.html>`_
 ##  - `wSplitter <wSplitter.html>`_
 ##  - `wIpCtrl <wIpCtrl.html>`_
-##  - `wRebar <wRebar.html>`_  (experimental)
 ##  - `wWebView <wWebView.html>`_
+##  - `wHotkeyCtrl <wHotkeyCtrl.html>`_
+##  - `wRebar <wRebar.html>`_  (experimental)
 ##
 ##  Device Contexts
 ##  ---------------
@@ -222,7 +224,9 @@ include
   wNim/private/controls/wRadioButton,
   wNim/private/controls/wStaticBox,
   wNim/private/controls/wTextCtrl,
+  wNim/private/controls/wListBox,
   wNim/private/controls/wComboBox,
+  wNim/private/controls/wCheckComboBox,
   wNim/private/controls/wStaticText,
   wNim/private/controls/wStaticBitmap,
   wNim/private/controls/wStaticLine,
@@ -235,7 +239,6 @@ include
   wNim/private/controls/wCalendarCtrl,
   wNim/private/controls/wDatePickerCtrl,
   wNim/private/controls/wTimePickerCtrl,
-  wNim/private/controls/wListBox,
   wNim/private/controls/wListCtrl,
   wNim/private/controls/wTreeCtrl,
   wNim/private/controls/wHyperlinkCtrl,

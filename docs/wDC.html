@@ -1310,6 +1310,8 @@ function main() {
     title="drawRotatedText(self: wDC; text: string; x, y: int = 0; angle: float = 0)"><wbr />draw<wbr />Rotated<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawRotatedText%2CwDC%2Cstring%2CwPoint%2Cfloat"
     title="drawRotatedText(self: wDC; text: string; point: wPoint; angle: float = 0)"><wbr />draw<wbr />Rotated<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#drawLabel%2CwDC%2Cstring%2CwRect"
+    title="drawLabel(self: wDC; text: string; rect: wRect; align = wLeft or wTop)"><wbr />draw<wbr />Label<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawCheckMark%2CwDC%2Cint%2Cint%2Cint%2Cint"
     title="drawCheckMark(self: wDC; x, y, width, height: int)"><wbr />draw<wbr />Check<wbr />Mark<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawCheckMark%2CwDC%2CwPoint%2CwSize"
@@ -1708,6 +1710,13 @@ Draws the text rotated by angle degrees (positive angles are counterclockwise; t
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Draws the text rotated by angle degrees (positive angles are counterclockwise; the full angle is 360 degrees). The text can contain multiple lines separated by the new line ('n') characters.
+
+</dd>
+<a id="drawLabel,wDC,string,wRect"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">drawLabel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="Identifier">wLeft</span> <span class="Keyword">or</span> <span class="Identifier">wTop</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Draw the text into the given rectangle and aligns it as specified by alignment parameter.
 
 </dd>
 <a id="drawCheckMark,wDC,int,int,int,int"></a>
@@ -2157,7 +2166,7 @@ Default finalizer for wDC.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-05 23:27:56 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:46 UTC</small>
       </div>
     </div>
   </div>

@@ -1256,6 +1256,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#getDate%2CwCalendarCtrl"
     title="getDate(self: wCalendarCtrl): wTime"><wbr />get<wbr />Date<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getDates%2CwCalendarCtrl"
+    title="getDates(self: wCalendarCtrl): (wTime, wTime)"><wbr />get<wbr />Dates<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDate%2CwCalendarCtrl%2CwTime"
     title="setDate(self: wCalendarCtrl; time: wTime)"><wbr />set<wbr />Date<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDates%2CwCalendarCtrl%2CwTime%2CwTime"
@@ -1264,6 +1266,8 @@ function main() {
     title="getToday(self: wCalendarCtrl): wTime"><wbr />get<wbr />Today<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setToday%2CwCalendarCtrl%2CwTime"
     title="setToday(self: wCalendarCtrl; time: wTime)"><wbr />set<wbr />Today<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getDateRange%2CwCalendarCtrl"
+    title="getDateRange(self: wCalendarCtrl): (wTime, wTime)"><wbr />get<wbr />Date<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDateRange%2CwCalendarCtrl"
     title="setDateRange(self: wCalendarCtrl; time1 = wDefaultTime; time2 = wDefaultTime)"><wbr />set<wbr />Date<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enableMonthChange%2CwCalendarCtrl"
@@ -1361,7 +1365,14 @@ function main() {
 <a id="getDate,wCalendarCtrl"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTime</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Gets the currently selected date. Gets the currently selected date range.
+Gets the currently selected date.
+
+</dd>
+<a id="getDates,wCalendarCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDates</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">wTime</span><span class="Other">,</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Gets the currently selected date range.
 
 </dd>
 <a id="setDate,wCalendarCtrl,wTime"></a>
@@ -1387,7 +1398,14 @@ Retrieves the date information for the date specified as &quot;today&quot;
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setToday</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">time</span><span class="Other">:</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the &quot;today&quot; value. If the control had been previously limited to a range of dates, returns the lower and upper bounds of this range.
+Sets the &quot;today&quot; value.
+
+</dd>
+<a id="getDateRange,wCalendarCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDateRange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">wTime</span><span class="Other">,</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+If the control had been previously limited to a range of dates, returns the lower and upper bounds of this range.
 
 </dd>
 <a id="setDateRange,wCalendarCtrl"></a>
@@ -1474,7 +1492,7 @@ Returns the default size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:25:30 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:51 UTC</small>
       </div>
     </div>
   </div>

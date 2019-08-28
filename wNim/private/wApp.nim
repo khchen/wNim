@@ -37,7 +37,9 @@ proc App*(): wApp {.discardable.} =
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initCountTable[UINT]()
-  result.mWinVersion = wGetWinVersion()
+  {.gcsafe.}:
+    result.mWinVersion = wGetWinVersion()
+    result.mUseTheme = useTheme()
 
   # initSet is deprecated since v0.20
   when declared(initHashSet):
@@ -56,6 +58,9 @@ proc wAppGetInstance(): HANDLE {.inline.} =
 
 proc wAppWinVersion(): float {.inline.} =
   result = wTheApp.mWinVersion
+
+proc wUseTheme(): bool {.inline.} =
+  result = wTheApp.mUseTheme
 
 proc wAppGetDpi(): int =
   if wTheApp.mDpi == 0:

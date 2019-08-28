@@ -1,11 +1,16 @@
-Version 0.7.1
+Version 0.8.0
 -------------
-* Add wHotkeyCtrl.
+* Add wCheckComboBox and wHotkeyCtrl.
 * wEvent: add getHotkeyId() and getHotkey().
-* wWindow: add wModNoRepeat const for registerHotKey().
+* wWindow: add getData(), setData(), wModNoRepeat const for registerHotKey().
+* wWindow: setBackgroundColor() supports transparent.
 * wDC: add drawLabel().
+* wPaintDC: add getPaintRect().
+* wListBox: add selectAll(), deselectAll().
 * wUtil: add wGetWinVersion().
-* Fix bug in pickicondialog.nim.
+* wNoteBook: theme background is used by default.
+* wComboBox: press enter key to popup/dismiss drop-down.
+* Fix bugs.
 
 Version 0.7.0
 -------------

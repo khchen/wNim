@@ -37,8 +37,8 @@
 ##   wCommandEvent                    Description
 ##   ==============================   =============================================================
 ##   wEvent_ComboBox                  When an item on the list is selected, calling getValue() returns the new value of selection.
-##   wEvent_ComboBoxCloseUp           When the list box of the combo box disappears.
-##   wEvent_ComboBoxDropDown          When the list box part of the combo box is shown.
+##   wEvent_ComboBoxCloseUp           When the list box of the combobox disappears.
+##   wEvent_ComboBoxDropDown          When the list box part of the combobox is shown.
 ##   wEvent_Text                      When the text changes.
 ##   wEvent_TextUpdate                When the control is about to redraw itself.
 ##   wEvent_TextMaxlen                When the user tries to enter more text into the control than the limit.
@@ -87,12 +87,12 @@ proc `[]`*(self: wComboBox, index: int): string {.validate, inline.} =
     raise newException(IndexError, "index out of bounds")
 
 iterator items*(self: wComboBox): string {.validate, inline.} =
-  ## Iterate each item in this combo box.
+  ## Iterate each item in this control.
   for i in 0..<self.len:
     yield self.getText(i)
 
 iterator pairs*(self: wComboBox): (int, string) {.validate, inline.} =
-  ## Iterates over each item in this combo box. Yields ``(index, [index])`` pairs.
+  ## Iterates over each item in this control. Yields ``(index, [index])`` pairs.
   var i = 0
   for item in self:
     yield (i, item)
@@ -110,7 +110,7 @@ proc insert*(self: wComboBox, pos: int, list: openarray[string]) {.validate, inl
     self.insert(if pos < 0: pos else: i + pos, text)
 
 proc append*(self: wComboBox, text: string) {.validate, inline.} =
-  ## Appends the given string to the end. If the combo box has the wCbSort style,
+  ## Appends the given string to the end. If the combobox has the wCbSort style,
   ## the string is inserted into the list and the list is sorted.
   SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))
 
@@ -120,15 +120,15 @@ proc append*(self: wComboBox, list: openarray[string]) {.validate, inline.} =
     self.append(text)
 
 proc delete*(self: wComboBox, index: int) {.validate, inline.} =
-  ## Delete a string in the combo box.
+  ## Delete a string in the combobox.
   if index >= 0: SendMessage(self.mHwnd, CB_DELETESTRING, index, 0)
 
-proc delete*(self: wComboBox, text: string)  {.validate, inline.} =
-  ## Search and delete the specified string in the combo box.
+proc delete*(self: wComboBox, text: string) {.validate, inline.} =
+  ## Search and delete the specified string in the combobox.
   self.delete(self.find(text))
 
-proc clear*(self: wComboBox)  {.validate, inline.} =
-  ## Remove all items from a combo box.
+proc clear*(self: wComboBox) {.validate, inline.} =
+  ## Remove all items from a combobox.
   SendMessage(self.mHwnd, CB_RESETCONTENT, 0, 0)
 
 proc findText*(self: wComboBox, text: string): int {.validate, inline.} =
@@ -187,11 +187,11 @@ proc isTextEmpty*(self: wComboBox): bool {.validate,  inline.} =
   result = GetWindowTextLength(self.mHwnd) == 0
 
 proc popup*(self: wComboBox) {.validate,  inline.} =
-  ## Shows the list box portion of the combo box.
+  ## Shows the list box portion of the combobox.
   SendMessage(self.mHwnd, CB_SHOWDROPDOWN, TRUE, 0)
 
 proc dismiss*(self: wComboBox) {.validate,  inline.} =
-  ## Hides the list box portion of the combo box.
+  ## Hides the list box portion of the combobox.
   SendMessage(self.mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
 
 proc getEditControl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
@@ -203,9 +203,8 @@ proc getTextCtrl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
   ## The same as getEditControl().
   result = self.getEditControl()
 
-proc getListControl*(self: wComboBox): wWindow {.validate, property, inline.} =
+proc getListControl*(self: wComboBox): wListBox {.validate, property, inline.} =
   ## Returns the list control part of this combobox, or nil if no such control.
-  ## Notice that the result is wWindow for event handler only, not a wListBox.
   result = self.mList
 
 proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
@@ -252,8 +251,7 @@ method getBestSize*(self: wComboBox): wSize =
 
 method trigger(self: wComboBox) {.locks: "unknown".} =
   for i in 0..<self.mInitCount:
-    let text = self.mInitData[i]
-    SendMessage(self.mHwnd, CB_ADDSTRING, 0, &T(text))
+    self.append(self.mInitData[i])
 
 method release(self: wComboBox) =
   self.mParent.systemDisconnect(self.mCommandConn)
@@ -312,7 +310,7 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
         event.skip
 
   if cbi.hwndList != self.mHwnd:
-    self.mList = Window(cbi.hwndList)
+    self.mList = ListBox(cbi.hwndList)
     # don't need hook navigation events because list window by defult won't get focus
 
   self.setValue(value)
@@ -341,6 +339,16 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
   self.hardConnect(wEvent_Navigation) do (event: wEvent):
     if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
       event.veto
+
+  if (style and wCbStyleMask) == wCbReadOnly:
+    self.hardConnect(WM_KEYDOWN) do (event: wEvent):
+      if event.keyCode == VK_RETURN:
+        if SendMessage(self.mHwnd, CB_GETDROPPEDSTATE, 0, 0) == 0:
+          self.popup()
+        else:
+          self.dismiss()
+      else:
+        event.skip
 
 proc ComboBox*(parent: wWindow, id = wDefaultID, value: string = "",
     pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],

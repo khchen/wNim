@@ -1372,6 +1372,8 @@ function main() {
   <li><a class="reference" href="#TextCtrl%2CwWindow%2Cstring%2CwStyle"
     title="TextCtrl(parent: wWindow; id = wDefaultID; value: string = &quot;&quot;; pos = wDefaultPoint;
          size = wDefaultSize; style: wStyle = wTeLeft): wTextCtrl"><wbr />Text<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwTextCtrl%2CHWND"
+    title="init(self: wTextCtrl; hWnd: HWND)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#TextCtrl%2CHWND"
     title="TextCtrl(hWnd: HWND): wTextCtrl"><wbr />Text<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1746,7 +1748,7 @@ This function sets the maximum number of characters the user can enter into the 
 <a id="setValue,wTextCtrl,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the new text control value. Note that, unlike most other functions changing the controls values, this function generates a wEvent_Text event. To avoid this you can use ChangeValue() instead.
+Sets the new text control value. Note that, unlike most other functions changing the controls values, this function generates a wEvent_Text event. To avoid this you can use changeValue() instead.
 
 </dd>
 <a id="changeValue,wTextCtrl,string"></a>
@@ -1846,6 +1848,12 @@ Initializer.
 　Constructor, creating and showing a text control.
 
 </dd>
+<a id="init,wTextCtrl,HWND"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span><span class="Other">;</span> <span class="Identifier">hWnd</span><span class="Other">:</span> <span class="Identifier">HWND</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Initializer.
+
+</dd>
 <a id="TextCtrl,HWND"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">TextCtrl</span><span class="Other">(</span><span class="Identifier">hWnd</span><span class="Other">:</span> <span class="Identifier">HWND</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1903,7 +1911,7 @@ Iterates over each line in the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:25:48 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:19:10 UTC</small>
       </div>
     </div>
   </div>

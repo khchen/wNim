@@ -1316,6 +1316,8 @@ function main() {
     title="findMenuText(self: wMenuBar; text: string): wMenu"><wbr />find<wbr />Menu<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#items.i%2CwMenuBar"
     title="items(self: wMenuBar): wMenu"><wbr />items<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#pairs.i%2CwMenuBar"
+    title="pairs(self: wMenuBar): (int, wMenu)"><wbr />pairs<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1561,7 +1563,13 @@ Iterates over each wMenu object with the given title (not include any accelerato
 <a id="items.i,wMenuBar"></a>
 <dt><pre><span class="Keyword">iterator</span> <span class="Identifier">items</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenu</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Items iterator for menus in a menubar. Iterates over each menu of menubar. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
+Items iterator for menus in a menubar.
+
+</dd>
+<a id="pairs.i,wMenuBar"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">pairs</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">wMenu</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Iterates over each menu of menubar. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
 
 </dd>
 
@@ -1574,7 +1582,7 @@ Items iterator for menus in a menubar. Iterates over each menu of menubar. Yield
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-05 23:27:23 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:14 UTC</small>
       </div>
     </div>
   </div>

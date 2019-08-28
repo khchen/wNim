@@ -62,7 +62,7 @@ echo frame.label
 ```
 
 ## Screenshots
-![demo.nim](https://github.com/khchen/wNim/blob/master/examples/images/screenshot.png)
+![demo.nim](https://github.com/khchen/wNim/blob/master/docs/images/screenshot.png)
 
 ## Install
 With git on windows:

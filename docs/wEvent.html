@@ -1299,6 +1299,10 @@ function main() {
     title="getIntId(self: wEvent): int"><wbr />get<wbr />Int<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTimerId%2CwEvent"
     title="getTimerId(self: wEvent): int"><wbr />get<wbr />Timer<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getHotkeyId%2CwEvent"
+    title="getHotkeyId(self: wEvent): int"><wbr />get<wbr />Hotkey<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getHotkey%2CwEvent"
+    title="getHotkey(self: wEvent): tuple[modifiers: int, keyCode: int]"><wbr />get<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getlParam%2CwEvent"
     title="getlParam(self: wEvent): LPARAM"><wbr />getl<wbr />Param<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getwParam%2CwEvent"
@@ -1645,6 +1649,19 @@ Returns the ID associated with this event, aka command ID or menu ID.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getTimerId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the timer ID. Only for wEvent_Timer event.
+
+</dd>
+<a id="getHotkeyId,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHotkeyId</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Return the hotkey ID. Only for wEvent_HotKey event.
+
+</dd>
+<a id="getHotkey,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns the hotkey. Valid for wEvent_HotKey, wEvent_HotkeyChanged, and wEvent_HotkeyChanging.
 
 </dd>
 <a id="getlParam,wEvent"></a>
@@ -2090,7 +2107,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-05 23:27:35 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:26 UTC</small>
       </div>
     </div>
   </div>

@@ -26,6 +26,7 @@
 ##   `wRadioButton <wRadioButton.html>`_
 ##   `wListBox <wListBox.html>`_
 ##   `wComboBox <wComboBox.html>`_
+##   `wCheckComboBox <wCheckComboBox.html>`_
 ##   `wToolBar <wToolBar.html>`_
 ##   `wTextCtrl <wTextCtrl.html>`_
 ##   `wNoteBook <wNoteBook.html>`_
@@ -69,8 +70,14 @@
 ##   wComboBox                       Description
 ##   ==============================  =============================================================
 ##   wEvent_ComboBox                 When an item on the list is selected, calling getValue() returns the new value of selection.
-##   wEvent_ComboBoxCloseUp          When the list box of the combo box disappears.
-##   wEvent_ComboBoxDropDown         When the list box part of the combo box is shown.
+##   wEvent_ComboBoxCloseUp          When the list box of the combobox disappears.
+##   wEvent_ComboBoxDropDown         When the list box part of the combobox is shown.
+##
+##   wCheckComboBox                  Description
+##   ==============================  =============================================================
+##   wEvent_CheckComboBox            When the value of the checkcombobox changed.
+##   wEvent_CheckComboBoxCloseUp     When the list box of the checkcombobox disappears.
+##   wEvent_CheckComboBoxDropDown    When the list box part of the checkcombobox is shown.
 ##
 ##   wToolBar                        Description
 ##   ==============================  =============================================================
@@ -107,7 +114,6 @@
 ##   wSplitter                       Description
 ##   ==============================  =============================================================
 ##   wEvent_Splitter                 The position is dragging by user. This event can be vetoed.
-##   ==============================  =============================================================
 ##
 ##   wHotkeyCtrl                     Description
 ##   ==============================  =============================================================
@@ -156,6 +162,9 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_Splitter
   wEvent_HotkeyChanging
   wEvent_HotkeyChanged
+  wEvent_CheckComboBox
+  wEvent_CheckComboBoxCloseUp
+  wEvent_CheckComboBoxDropDown
 
 const
   wEvent_Tool* = wEvent_Menu

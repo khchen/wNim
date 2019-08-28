@@ -30,6 +30,10 @@ proc PaintDC*(canvas: wWindow): wPaintDC =
   result.wDC.init(fgColor=canvas.mForegroundColor, bgColor=canvas.mBackgroundColor,
     background=canvas.mBackgroundBrush, font=canvas.mFont)
 
+proc getPaintRect*(self: wPaintDC): wRect {.property.} =
+  ## Gets the rectangle in which the painting is requested.
+  result = self.mPs.rcPaint.toWRect()
+
 proc delete*(self: var wPaintDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.

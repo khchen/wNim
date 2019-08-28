@@ -1307,7 +1307,7 @@ function main() {
   <li><a class="reference" href="#getTextCtrl%2CwComboBox"
     title="getTextCtrl(self: wComboBox): wTextCtrl"><wbr />get<wbr />Text<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getListControl%2CwComboBox"
-    title="getListControl(self: wComboBox): wWindow"><wbr />get<wbr />List<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="getListControl(self: wComboBox): wListBox"><wbr />get<wbr />List<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwComboBox"
     title="final(self: wComboBox)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwComboBox%2CwWindow%2Cstring%2CopenArray%5Bstring%5D%2CwStyle"
@@ -1336,6 +1336,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#items.i%2CwComboBox"
     title="items(self: wComboBox): string"><wbr />items<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#pairs.i%2CwComboBox"
+    title="pairs(self: wComboBox): (int, string)"><wbr />pairs<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1360,8 +1362,8 @@ function main() {
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a><table border="1" class="docutils"><tr><th>wCommandEvent</th><th>Description</th></tr>
 <tr><td>wEvent_ComboBox</td><td>When an item on the list is selected, calling getValue() returns the new value of selection.</td></tr>
-<tr><td>wEvent_ComboBoxCloseUp</td><td>When the list box of the combo box disappears.</td></tr>
-<tr><td>wEvent_ComboBoxDropDown</td><td>When the list box part of the combo box is shown.</td></tr>
+<tr><td>wEvent_ComboBoxCloseUp</td><td>When the list box of the combobox disappears.</td></tr>
+<tr><td>wEvent_ComboBoxDropDown</td><td>When the list box part of the combobox is shown.</td></tr>
 <tr><td>wEvent_Text</td><td>When the text changes.</td></tr>
 <tr><td>wEvent_TextUpdate</td><td>When the control is about to redraw itself.</td></tr>
 <tr><td>wEvent_TextMaxlen</td><td>When the user tries to enter more text into the control than the limit.</td></tr>
@@ -1462,7 +1464,7 @@ Inserts multiple strings in the same time.
 <a id="append,wComboBox,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">append</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Appends the given string to the end. If the combo box has the wCbSort style, the string is inserted into the list and the list is sorted.
+Appends the given string to the end. If the combobox has the wCbSort style, the string is inserted into the list and the list is sorted.
 
 </dd>
 <a id="append,wComboBox,openArray[string]"></a>
@@ -1475,19 +1477,19 @@ Appends multiple strings in the same time.
 <a id="delete,wComboBox,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Delete a string in the combo box.
+Delete a string in the combobox.
 
 </dd>
 <a id="delete,wComboBox,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Search and delete the specified string in the combo box.
+Search and delete the specified string in the combobox.
 
 </dd>
 <a id="clear,wComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">clear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Remove all items from a combo box.
+Remove all items from a combobox.
 
 </dd>
 <a id="findText,wComboBox,string"></a>
@@ -1558,13 +1560,13 @@ Returns true if the text of the combobox is empty.
 <a id="popup,wComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">popup</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Shows the list box portion of the combo box.
+Shows the list box portion of the combobox.
 
 </dd>
 <a id="dismiss,wComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">dismiss</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Hides the list box portion of the combo box.
+Hides the list box portion of the combobox.
 
 </dd>
 <a id="getEditControl,wComboBox"></a>
@@ -1582,10 +1584,10 @@ Returns the text control part of this combobox, or nil if no such control. The s
 
 </dd>
 <a id="getListControl,wComboBox"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getListControl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getListControl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wListBox</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns the list control part of this combobox, or nil if no such control. Notice that the result is wWindow for event handler only, not a wListBox.
+Returns the list control part of this combobox, or nil if no such control.
 
 </dd>
 <a id="final,wComboBox"></a>
@@ -1636,7 +1638,13 @@ Returns the best acceptable minimal size for the control.
 <a id="items.i,wComboBox"></a>
 <dt><pre><span class="Keyword">iterator</span> <span class="Identifier">items</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Iterate each item in this combo box. Iterates over each item in this combo box. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
+Iterate each item in this control.
+
+</dd>
+<a id="pairs.i,wComboBox"></a>
+<dt><pre><span class="Keyword">iterator</span> <span class="Identifier">pairs</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Iterates over each item in this control. Yields <tt class="docutils literal"><span class="pre">(index, [index])</span></tt> pairs.
 
 </dd>
 
@@ -1649,7 +1657,7 @@ Iterate each item in this combo box. Iterates over each item in this combo box. 
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:25:31 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:54 UTC</small>
       </div>
     </div>
   </div>

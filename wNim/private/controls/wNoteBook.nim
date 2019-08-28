@@ -32,6 +32,21 @@
 const
   wNbIconLeft* = TCS_FORCEICONLEFT
 
+proc notebookPageOnPaint(event: wEvent) =
+  let page = event.window
+  let self = wNoteBook page.mParent
+
+  var clipRect, clientRect: RECT
+  GetUpdateRect(page.mHwnd, clipRect, FALSE)
+  GetClientRect(page.mHwnd, clientRect)
+
+  var dc = PaintDC(page)
+  DrawThemeBackground(self.mTheme, dc.handle, TABP_BODY, 0, clientRect, nil)
+  dc.delete()
+
+  # So that following event handler for wEvent_Paint can work.
+  InvalidateRect(page.mHwnd, clipRect, FALSE)
+
 method getClientSize*(self: wNoteBook): wSize {.property.} =
   ## Returns the size of the notebook 'client area' in pixels.
   var r: RECT
@@ -111,6 +126,9 @@ proc insertPage*(self: wNoteBook, pos = -1, page: wPanel, text = "",
 
   if select or self.mSelection == -1:
     self.updateSelection(pos)
+
+  if wUseTheme() and self.mTheme != 0:
+    page.systemConnect(wEvent_Paint, notebookPageOnPaint)
 
 proc insertPage*(self: wNoteBook, pos = -1, text = "", select = false,
     image: wImage = nil, imageId: int = -1): wPanel
@@ -200,6 +218,7 @@ proc removePageImpl(self: wNoteBook, pos: int, delete = false): wPanel
       self.mPages[pos].delete()
     else:
       self.mPages[pos].hide()
+      self.mPages[pos].systemDisconnect(wEvent_Paint, notebookPageOnPaint)
       result = self.mPages[pos]
 
     self.mPages.delete(pos)
@@ -227,6 +246,7 @@ proc removeAllPagesImpl(self: wNoteBook, delete = false) =
       page.delete()
     else:
       page.hide()
+      page.systemDisconnect(wEvent_Paint, notebookPageOnPaint)
 
   self.mPages.setLen(0)
   SendMessage(self.mHwnd, TCM_DELETEALLITEMS, 0, 0)
@@ -308,6 +328,10 @@ method release(self: wNoteBook) {.locks: "unknown".} =
   for page in self.mPages:
     page.delete()
 
+  if self.mTheme != 0:
+    CloseThemeData(self.mTheme)
+    self.mTheme = 0
+
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
 
@@ -351,9 +375,9 @@ proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
   self.mImageList = ImageList(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))
   SendMessage(self.mHwnd, TCM_SETIMAGELIST, 0, self.mImageList.mHandle)
 
-  let bkColor = getThemeBackgroundColor(self.mHwnd)
-  if bkColor != wDefaultColor:
-    self.setBackgroundColor(bkColor)
+  self.setBackgroundColor(GetSysColor(COLOR_BTNFACE))
+  if wUseTheme():
+    self.mTheme = OpenThemeData(self.mHwnd, "TAB")
 
   self.systemConnect(WM_SIZE) do (event: wEvent):
     self.adjustPageSize()

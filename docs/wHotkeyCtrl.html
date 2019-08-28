@@ -1236,32 +1236,54 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wHkProcessTab"
-    title="wHkProcessTab = 1"><wbr />w<wbr />Hk<wbr />Process<wbr />Tab<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#wHkLeft"
+    title="wHkLeft = 0x00000000"><wbr />w<wbr />Hk<wbr />Left<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHkCentre"
+    title="wHkCentre = 0x00000001"><wbr />w<wbr />Hk<wbr />Centre<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHkCenter"
+    title="wHkCenter = 0x00000001"><wbr />w<wbr />Hk<wbr />Center<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHkRight"
+    title="wHkRight = 0x00000002"><wbr />w<wbr />Hk<wbr />Right<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHkProcessTab"
+    title="wHkProcessTab = 0x00004000"><wbr />w<wbr />Hk<wbr />Process<wbr />Tab<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getHotkey%2CwHotkeyCtrl"
+      <li><a class="reference" href="#wHotkeyToString%2Ctuple%5Bint%2Cint%5D"
+    title="wHotkeyToString(hotkey: tuple[modifiers: int, keyCode: int]): string"><wbr />w<wbr />Hotkey<wbr />To<wbr />String<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStringToHotkey%2Cstring"
+    title="wStringToHotkey(value: string): tuple[modifiers: int, keyCode: int]"><wbr />w<wbr />String<wbr />To<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getHotkey%2CwHotkeyCtrl"
     title="getHotkey(self: wHotkeyCtrl): tuple[modifiers: int, keyCode: int]"><wbr />get<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getValue%2CwHotkeyCtrl"
+    title="getValue(self: wHotkeyCtrl): string"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getClearKey%2CwHotkeyCtrl"
+    title="getClearKey(self: wHotkeyCtrl): int"><wbr />get<wbr />Clear<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#changeHotkey%2CwHotkeyCtrl%2Cint%2Cint"
+    title="changeHotkey(self: wHotkeyCtrl; modifiers: int; keyCode: int)"><wbr />change<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#changeHotkey%2CwHotkeyCtrl%2Ctuple%5Bint%2Cint%5D"
+    title="changeHotkey(self: wHotkeyCtrl; hotkey: tuple[modifiers: int, keyCode: int])"><wbr />change<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setHotkey%2CwHotkeyCtrl%2Cint%2Cint"
     title="setHotkey(self: wHotkeyCtrl; modifiers: int; keyCode: int)"><wbr />set<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setHotkey%2CwHotkeyCtrl%2Ctuple%5Bint%2Cint%5D"
     title="setHotkey(self: wHotkeyCtrl; hotkey: tuple[modifiers: int, keyCode: int])"><wbr />set<wbr />Hotkey<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getValue%2CwHotkeyCtrl"
-    title="getValue(self: wHotkeyCtrl): string"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#changeValue%2CwHotkeyCtrl%2Cstring"
+    title="changeValue(self: wHotkeyCtrl; value: string)"><wbr />change<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setValue%2CwHotkeyCtrl%2Cstring"
     title="setValue(self: wHotkeyCtrl; value: string)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setClearKey%2CwHotkeyCtrl%2Cint"
+    title="setClearKey(self: wHotkeyCtrl; clearKey: int)"><wbr />set<wbr />Clear<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwHotkeyCtrl"
     title="final(self: wHotkeyCtrl)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwHotkeyCtrl%2CwWindow%2Cstring%2CwStyle"
     title="init(self: wHotkeyCtrl; parent: wWindow; id = wDefaultID; value: string = &quot;&quot;;
-     pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wTeLeft)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+     pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wHkLeft)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#HotkeyCtrl%2CwWindow%2Cstring%2CwStyle"
     title="HotkeyCtrl(parent: wWindow; id = wDefaultID; value: string = &quot;&quot;; pos = wDefaultPoint;
-           size = wDefaultSize; style: wStyle = wTeLeft): wHotkeyCtrl"><wbr />Hotkey<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+           size = wDefaultSize; style: wStyle = wHkLeft): wHotkeyCtrl"><wbr />Hotkey<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1281,9 +1303,13 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">A hotkey control enables the user to enter a combination of keystrokes to be used as a hotkey. The returned hotkey tuple can be used directly in wWindow.registerHotKey().<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Appearance:</th><td><img src="images/wHotkeyCtrl.png"/></td></tr>
+  <p class="module-desc">A hotkey control enables the user to enter a combination of keystrokes to be used as a hotkey. The returned hotkey tuple can be used directly in wWindow.registerHotKey(). The default key to clear current content is Esc.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Appearance:</th><td><img src="images/wHotkeyCtrl.png"/></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
+<tr><td>wHkLeft</td><td>The text in the control will be left-justified (default).</td></tr>
+<tr><td>wHkCentre</td><td>The text in the control will be centered.</td></tr>
+<tr><td>wHkCenter</td><td>The text in the control will be centered.</td></tr>
+<tr><td>wHkRight</td><td>The text in the control will be right-justified.</td></tr>
 <tr><td>wHkProcessTab</td><td>With this style, press TAB key to set TAB as hotkey instead of switches focus to the next control.</td></tr>
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a><table border="1" class="docutils"><tr><th>wCommandEvent</th><th>Description</th></tr>
@@ -1294,8 +1320,32 @@ function main() {
   <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
+<a id="wHkLeft"></a>
+<dt><pre><span class="Identifier">wHkLeft</span> <span class="Other">=</span> <span class="DecNumber">0x00000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wHkCentre"></a>
+<dt><pre><span class="Identifier">wHkCentre</span> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wHkCenter"></a>
+<dt><pre><span class="Identifier">wHkCenter</span> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wHkRight"></a>
+<dt><pre><span class="Identifier">wHkRight</span> <span class="Other">=</span> <span class="DecNumber">0x00000002</span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="wHkProcessTab"></a>
-<dt><pre><span class="Identifier">wHkProcessTab</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dt><pre><span class="Identifier">wHkProcessTab</span> <span class="Other">=</span> <span class="DecNumber">0x00004000</span></pre></dt>
 <dd>
 
 
@@ -1305,25 +1355,25 @@ function main() {
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
+<a id="wHotkeyToString,tuple[int,int]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wHotkeyToString</span><span class="Other">(</span><span class="Identifier">hotkey</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Helper function to convert from hotkey to string. Returns &quot;&quot; if failed.
+
+</dd>
+<a id="wStringToHotkey,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wStringToHotkey</span><span class="Other">(</span><span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Helper function to convert from string to hotkey. Returns (0, 0) if failed.
+
+</dd>
 <a id="getHotkey,wHotkeyCtrl"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
     <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the modifiers and keyCode of the current hotkey. Modifiers is a bitwise combination of wModShift, wModCtrl, wModAlt, wModWin.
-
-</dd>
-<a id="setHotkey,wHotkeyCtrl,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets current hotkey by given modifiers and keyCode.
-
-</dd>
-<a id="setHotkey,wHotkeyCtrl,tuple[int,int]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">hotkey</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets current hotkey by given modifiers and keyCode in tuple.
 
 </dd>
 <a id="getValue,wHotkeyCtrl"></a>
@@ -1333,11 +1383,64 @@ Sets current hotkey by given modifiers and keyCode in tuple.
 Gets the text of current hotkey.
 
 </dd>
-<a id="setValue,wHotkeyCtrl,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="getClearKey,wHotkeyCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getClearKey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets current hotkey by given text (case-insensitive and ignored spaces).
+Gets the key code that clears current content. The default key is Esc.
+
+</dd>
+<a id="changeHotkey,wHotkeyCtrl,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">changeHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey by given modifiers and keyCode. This functions does not generate the wEvent_HotkeyChanged event.
+
+</dd>
+<a id="changeHotkey,wHotkeyCtrl,tuple[int,int]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">changeHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">hotkey</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey. This functions does not generate the wEvent_HotkeyChanged event.
+
+</dd>
+<a id="setHotkey,wHotkeyCtrl,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey by given modifiers and keyCode. This function generates a wEvent_HotkeyChanged event. To avoid this you can use changeHotkey() instead.
+
+</dd>
+<a id="setHotkey,wHotkeyCtrl,tuple[int,int]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setHotkey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">hotkey</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">modifiers</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">keyCode</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey. This function generates a wEvent_HotkeyChanged event. To avoid this you can use changeHotkey() instead.
+
+</dd>
+<a id="changeValue,wHotkeyCtrl,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">changeValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey by given text (case-insensitive and ignored spaces). This functions does not generate the wEvent_HotkeyChanged event.
+
+</dd>
+<a id="setValue,wHotkeyCtrl,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setValue</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets current hotkey by given text (case-insensitive and ignored spaces). This function generates a wEvent_HotkeyChanged event. To avoid this you can use changeValue() instead.
+
+</dd>
+<a id="setClearKey,wHotkeyCtrl,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setClearKey</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">clearKey</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets a key to clear current content. The default key is Esc. If more keys are needed, you can do it by handling wEvent_HotkeyChanging. For example:<pre class="listing"><span class="Identifier">hotkeyCtrl</span><span class="Operator">.</span><span class="Identifier">wEvent_HotkeyChanging</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">hotkey</span> <span class="Operator">=</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">getHotkey</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+  <span class="Keyword">if</span> <span class="Identifier">hotkey</span><span class="Operator">.</span><span class="Identifier">modifiers</span> <span class="Operator">==</span> <span class="DecNumber">0</span> <span class="Keyword">and</span> <span class="Identifier">hotkey</span><span class="Operator">.</span><span class="Identifier">keyCode</span> <span class="Keyword">in</span> <span class="Punctuation">{</span><span class="Identifier">wKey_Esc</span><span class="Punctuation">,</span> <span class="Identifier">wKey_Delete</span><span class="Punctuation">,</span> <span class="Identifier">wKey_Back</span><span class="Punctuation">}</span><span class="Punctuation">:</span>
+    <span class="Identifier">hotkeyCtrl</span><span class="Operator">.</span><span class="Identifier">hotkey</span> <span class="Operator">=</span> <span class="Punctuation">(</span><span class="DecNumber">0</span><span class="Punctuation">,</span> <span class="DecNumber">0</span><span class="Punctuation">)</span>
+    <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">veto</span></pre>
 
 </dd>
 <a id="final,wHotkeyCtrl"></a>
@@ -1348,7 +1451,7 @@ Default finalizer for wHotkeyCtrl.
 </dd>
 <a id="init,wHotkeyCtrl,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
-         <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wTeLeft</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+         <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wHkLeft</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
@@ -1356,10 +1459,10 @@ Initializer.
 </dd>
 <a id="HotkeyCtrl,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">HotkeyCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
-               <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wTeLeft</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+               <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wHkLeft</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wHotkeyCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-　Constructor, creating a hotkey control.
+Constructor, creating a hotkey control.
 
 </dd>
 
@@ -1389,7 +1492,7 @@ Returns the best acceptable minimal size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-21 03:32:20 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:56 UTC</small>
       </div>
     </div>
   </div>

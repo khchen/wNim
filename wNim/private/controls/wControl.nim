@@ -17,8 +17,10 @@
 ##   `wCheckBox <wCheckBox.html>`_
 ##   `wRadioButton <wRadioButton.html>`_
 ##   `wStaticBox <wStaticBox.html>`_
+##   `wListBox <wListBox.html>`_
 ##   `wTextCtrl <wTextCtrl.html>`_
 ##   `wComboBox <wComboBox.html>`_
+##   `wCheckComboBox <wCheckComboBox.html>`_
 ##   `wStaticText <wStaticText.html>`_
 ##   `wStaticBitmap <wStaticBitmap.html>`_
 ##   `wStaticLine <wStaticLine.html>`_
@@ -31,7 +33,6 @@
 ##   `wCalendarCtrl <wCalendarCtrl.html>`_
 ##   `wDatePickerCtrl <wDatePickerCtrl.html>`_
 ##   `wTimePickerCtrl <wTimePickerCtrl.html>`_
-##   `wListBox <wListBox.html>`_
 ##   `wListCtrl <wListCtrl.html>`_
 ##   `wTreeCtrl <wTreeCtrl.html>`_
 ##   `wHyperlinkCtrl <wHyperlinkCtrl.html>`_

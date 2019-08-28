@@ -381,6 +381,7 @@ const
   HALFTONE* = 4
   ALTERNATE* = 1
   WINDING* = 2
+  ETO_OPAQUE* = 0x0002
   abortDoc* = 2
   startDoc* = 10
   endDoc* = 11
@@ -753,6 +754,7 @@ when winimUnicode:
   proc StartDoc*(hdc: HDC, lpdi: ptr DOCINFOW): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "StartDocW".}
   proc GetObject*(h: HANDLE, c: int32, pv: LPVOID): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "GetObjectW".}
   proc TextOut*(hdc: HDC, x: int32, y: int32, lpString: LPCWSTR, c: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "TextOutW".}
+  proc ExtTextOut*(hdc: HDC, x: int32, y: int32, options: UINT, lprect: ptr RECT, lpString: LPCWSTR, c: UINT, lpDx: ptr INT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "ExtTextOutW".}
 when winimAnsi:
   type
     TEXTMETRIC* = TEXTMETRICA
@@ -768,6 +770,7 @@ when winimAnsi:
   proc StartDoc*(hdc: HDC, lpdi: ptr DOCINFOA): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "StartDocA".}
   proc GetObject*(h: HANDLE, c: int32, pv: LPVOID): int32 {.winapi, stdcall, dynlib: "gdi32", importc: "GetObjectA".}
   proc TextOut*(hdc: HDC, x: int32, y: int32, lpString: LPCSTR, c: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "TextOutA".}
+  proc ExtTextOut*(hdc: HDC, x: int32, y: int32, options: UINT, lprect: ptr RECT, lpString: LPCSTR, c: UINT, lpDx: ptr INT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc: "ExtTextOutA".}
 type
   CREATESTRUCTA* {.pure.} = object
     lpCreateParams*: LPVOID
@@ -1350,6 +1353,11 @@ const
   FCONTROL* = 0x08
   FALT* = 0x10
   ODT_MENU* = 1
+  ODT_COMBOBOX* = 3
+  ODA_DRAWENTIRE* = 0x0001
+  ODA_SELECT* = 0x0002
+  ODS_SELECTED* = 0x0001
+  ODS_COMBOBOXEDIT* = 0x1000
   MOD_ALT* = 0x0001
   MOD_CONTROL* = 0x0002
   MOD_SHIFT* = 0x0004
@@ -1431,6 +1439,7 @@ const
   DT_SINGLELINE* = 0x00000020
   DT_CALCRECT* = 0x00000400
   DT_NOPREFIX* = 0x00000800
+  DT_END_ELLIPSIS* = 0x00008000
   RDW_INVALIDATE* = 0x0001
   RDW_ERASE* = 0x0004
   RDW_ALLCHILDREN* = 0x0080
@@ -1461,7 +1470,10 @@ const
   MB_TOPMOST* = 0x00040000
   COLOR_ACTIVEBORDER* = 10
   COLOR_APPWORKSPACE* = 12
+  COLOR_HIGHLIGHT* = 13
+  COLOR_HIGHLIGHTTEXT* = 14
   COLOR_BTNFACE* = 15
+  COLOR_GRAYTEXT* = 17
   GW_HWNDNEXT* = 2
   GW_OWNER* = 4
   GW_CHILD* = 5
@@ -1618,8 +1630,11 @@ const
   CBS_SIMPLE* = 0x0001
   CBS_DROPDOWN* = 0x0002
   CBS_DROPDOWNLIST* = 0x0003
+  CBS_OWNERDRAWFIXED* = 0x0010
+  CBS_OWNERDRAWVARIABLE* = 0x0020
   CBS_AUTOHSCROLL* = 0x0040
   CBS_SORT* = 0x0100
+  CBS_HASSTRINGS* = 0x0200
   CBS_NOINTEGRALHEIGHT* = 0x0400
   CBS_DISABLENOSCROLL* = 0x0800
   CB_ADDSTRING* = 0x0143
@@ -1632,7 +1647,11 @@ const
   CB_RESETCONTENT* = 0x014B
   CB_SETCURSEL* = 0x014E
   CB_SHOWDROPDOWN* = 0x014F
+  CB_GETITEMDATA* = 0x0150
+  CB_SETITEMDATA* = 0x0151
+  CB_SETITEMHEIGHT* = 0x0153
   CB_GETITEMHEIGHT* = 0x0154
+  CB_GETDROPPEDSTATE* = 0x0157
   SBS_HORZ* = 0x0000
   SBS_VERT* = 0x0001
   SIF_RANGE* = 0x0001
@@ -1643,6 +1662,7 @@ const
   SPI_GETNONCLIENTMETRICS* = 0x0029
   OBJID_VSCROLL* = LONG 0xFFFFFFFB'i32
   OBJID_HSCROLL* = LONG 0xFFFFFFFA'i32
+  STATE_SYSTEM_PRESSED* = 0x00000008
   STATE_SYSTEM_INVISIBLE* = 0x00008000
   GA_ROOT* = 2
   RT_GROUP_CURSOR* = MAKEINTRESOURCE(1+DIFFERENCE)
@@ -1722,14 +1742,13 @@ proc GetWindowRect*(hWnd: HWND, lpRect: LPRECT): WINBOOL {.winapi, stdcall, dynl
 proc SetCursorPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetCursor*(hCursor: HCURSOR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetCursorPos*(lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
-proc CreateCaret*(hWnd: HWND, hBitmap: HBITMAP, nWidth: int32, nHeight: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
-proc ShowCaret*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
-proc SetCaretPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ClientToScreen*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ScreenToClient*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc WindowFromPoint*(Point: POINT): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetSysColor*(nIndex: int32): DWORD {.winapi, stdcall, dynlib: "user32", importc.}
+proc DrawFocusRect*(hDC: HDC, lprc: ptr RECT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc FillRect*(hDC: HDC, lprc: ptr RECT, hbr: HBRUSH): int32 {.winapi, stdcall, dynlib: "user32", importc.}
+proc InflateRect*(lprc: LPRECT, dx: int32, dy: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc IntersectRect*(lprcDst: LPRECT, lprcSrc1: ptr RECT, lprcSrc2: ptr RECT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetDesktopWindow*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetParent*(hWnd: HWND): HWND {.winapi, stdcall, dynlib: "user32", importc.}
@@ -7437,14 +7456,31 @@ when winimAnsi:
   proc GetDefaultPrinter*(pszBuffer: LPSTR, pcchBuffer: LPDWORD): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "GetDefaultPrinterA".}
   proc SetDefaultPrinter*(pszPrinter: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc: "SetDefaultPrinterA".}
 const
+  BP_CHECKBOX* = 3
+  CBS_UNCHECKEDNORMAL* = 1
+  CBS_UNCHECKEDHOT* = 2
+  CBS_UNCHECKEDDISABLED* = 4
+  CBS_CHECKEDNORMAL* = 5
+  CBS_CHECKEDHOT* = 6
+  CBS_CHECKEDDISABLED* = 8
+  CP_DROPDOWNBUTTON* = 1
+  CP_READONLY* = 5
+  CP_DROPDOWNBUTTONRIGHT* = 6
+  CBRO_NORMAL* = 1
+  CBRO_HOT* = 2
+  CBRO_PRESSED* = 3
   TABP_BODY* = 10
+type
+  THEMESIZE* = int32
+const
+  TS_DRAW* = 2
 proc OpenThemeData*(hwnd: HWND, pszClassList: LPCWSTR): HTHEME {.winapi, stdcall, dynlib: "uxtheme", importc.}
 proc CloseThemeData*(hTheme: HTHEME): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
-proc GetThemeColor*(hTheme: HTHEME, iPartId: int32, iStateId: int32, iPropId: int32, pColor: ptr COLORREF): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc DrawThemeBackground*(hTheme: HTHEME, hdc: HDC, iPartId: int32, iStateId: int32, pRect: ptr RECT, pClipRect: ptr RECT): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc DrawThemeText*(hTheme: HTHEME, hdc: HDC, iPartId: int32, iStateId: int32, pszText: LPCWSTR, iCharCount: int32, dwTextFlags: DWORD, dwTextFlags2: DWORD, pRect: ptr RECT): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc GetThemePartSize*(hTheme: HTHEME, hdc: HDC, iPartId: int32, iStateId: int32, prc: ptr RECT, eSize: THEMESIZE, psz: ptr SIZE): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
 proc SetWindowTheme*(hwnd: HWND, pszSubAppName: LPCWSTR, pszSubIdList: LPCWSTR): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
-proc IsThemeActive*(): WINBOOL {.winapi, stdcall, dynlib: "uxtheme", importc.}
-proc IsAppThemed*(): WINBOOL {.winapi, stdcall, dynlib: "uxtheme", importc.}
-proc GetCurrentThemeName*(pszThemeFileName: LPWSTR, cchMaxNameChars: int32, pszColorBuff: LPWSTR, cchMaxColorChars: int32, pszSizeBuff: LPWSTR, cchMaxSizeChars: int32): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc GetThemeSysColor*(hTheme: HTHEME, iColorId: int32): COLORREF {.winapi, stdcall, dynlib: "uxtheme", importc.}
 type
   InterpolationMode* = int32
   GpMatrixOrder* = int32

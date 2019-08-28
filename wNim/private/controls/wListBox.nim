@@ -173,6 +173,10 @@ proc select*(self: wListBox, index: int = -1) {.validate.} =
   else:
     SendMessage(self.mHwnd, LB_SETCURSEL, index, 0)
 
+proc selectAll*(self: wListBox) {.validate, inline.} =
+  ## Selects all items.
+  self.select(-1)
+
 proc deselect*(self: wListBox, index: int = -1) {.validate.} =
   ## Deselects an item in the list box.
   ## For multiple-selection list box, -1 means deselect all.
@@ -180,6 +184,10 @@ proc deselect*(self: wListBox, index: int = -1) {.validate.} =
     SendMessage(self.mHwnd, LB_SETSEL, false, index)
   else:
     SendMessage(self.mHwnd, LB_SETCURSEL, -1, 0)
+
+proc deselectAll*(self: wListBox) {.validate, inline.} =
+  ## Deselects all items.
+  self.deselect(-1)
 
 proc select*(self: wListBox, text: string) =
   ## Searches and selects an item in the list box.
@@ -316,12 +324,13 @@ method getBestSize*(self: wListBox): wSize =
   result = self.countSize(1, 1.0)
 
 method release(self: wListBox) =
-  self.mParent.systemDisconnect(self.mCommandConn)
+  # self.mParent may be nil for wrapped wListBox.
+  if not self.mParent.isNil:
+    self.mParent.systemDisconnect(self.mCommandConn)
 
 method trigger(self: wListBox) {.locks: "unknown".} =
   for i in 0..<self.mInitCount:
-    let text = self.mInitData[i]
-    SendMessage(self.mHwnd, LB_ADDSTRING, 0, &T(text))
+    self.append(self.mInitData[i])
 
 proc final*(self: wListBox) =
   ## Default finalizer for wListBox.
@@ -367,3 +376,12 @@ proc ListBox*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
   wValidate(parent)
   new(result, final)
   result.init(parent, id, pos, size, choices, style)
+
+proc init*(self: wListBox, hWnd: HWND) {.validate.} =
+  ## Initializer.
+  self.wWindow.init(hwnd)
+
+proc ListBox*(hWnd: HWND): wListBox {.inline, discardable.} =
+  ## A special constructor to subclass the listbox of other contorls.
+  new(result, final)
+  result.init(hWnd)

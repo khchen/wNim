@@ -283,9 +283,6 @@ proc initDispatchVtbl(): ptr IDispatchVtbl =
 
       assert win != nil
       if progress < 0 or progressMax < 0:
-        # echo "EnableWindow(web.hwnd, TRUE)"
-        # EnableWindow(web.hwnd, TRUE)
-
         let event = Event(window=win, msg=wEvent_WebViewLoaded)
         win.processEvent(event)
 
@@ -356,7 +353,6 @@ proc initDispatchVtbl(): ptr IDispatchVtbl =
         cancel[] = VARIANT_TRUE
 
     else:
-      # echo dispIdMember
       return DISP_E_MEMBERNOTFOUND
 
     return S_OK
@@ -739,8 +735,7 @@ proc wWebViewClassInit(className: string) =
     else:
       return DefWindowProc(hwnd, msg, wParam, lParam)
 
-  var wc: WNDCLASSEX
-  wc.cbSize = sizeof(wc)
+  var wc = WNDCLASSEX(cbSize: sizeof(WNDCLASSEX))
   wc.style = CS_PARENTDC
   wc.cbWndExtra = sizeof(ptr wWeb)
   wc.lpfnWndProc = wWebViewProc

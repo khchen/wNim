@@ -1238,6 +1238,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PaintDC%2CwWindow"
     title="PaintDC(canvas: wWindow): wPaintDC"><wbr />Paint<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getPaintRect%2CwPaintDC"
+    title="getPaintRect(self: wPaintDC): wRect"><wbr />get<wbr />Paint<wbr />Rect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delete%2CwPaintDC"
     title="delete(self: var wPaintDC)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1263,6 +1265,12 @@ Constructor. In wEvent_Paint event handler the wWindow object usually is event.w
   <span class="Keyword">var</span> <span class="Identifier">dc</span> <span class="Operator">=</span> <span class="Identifier">PaintDC</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">window</span><span class="Punctuation">)</span></pre>
 
 </dd>
+<a id="getPaintRect,wPaintDC"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPaintRect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPaintDC</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wRect</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Gets the rectangle in which the painting is requested.
+
+</dd>
 <a id="delete,wPaintDC"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wPaintDC</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1279,7 +1287,7 @@ Nim's destructors will delete this object by default. However, sometimes you may
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-05 23:27:57 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-28 04:18:48 UTC</small>
       </div>
     </div>
   </div>
