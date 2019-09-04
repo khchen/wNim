@@ -194,16 +194,6 @@ proc wCheckMenuItem(hmenu: HMENU, pos: int, flag: bool) =
     menuItemInfo.fState = menuItemInfo.fState and (not MFS_CHECKED)
   SetMenuItemInfo(hmenu, pos, true, menuItemInfo)
 
-proc isMouseInWindow(mHwnd: HWND): bool =
-  var mousePos: POINT
-  GetCursorPos(mousePos)
-
-  var hwnd = WindowFromPoint(mousePos)
-  while hwnd != 0 and hwnd != mHwnd:
-    hwnd = GetParent(hwnd)
-
-  result = hwnd != 0
-
 proc loadRichDll(): bool =
   var richDllLoaded {.global, threadvar.}: bool
   if not richDllLoaded:

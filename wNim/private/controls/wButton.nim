@@ -219,6 +219,7 @@ proc click*(self: wButton) {.validate, inline.} =
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
 method release(self: wButton) =
+  self.mMenu = nil # can avoid some GC bug about crashing on prepareDealloc?
   self.mParent.systemDisconnect(self.mCommandConn)
   if self.mImgData.himl != 0:
     ImageList_Destroy(self.mImgData.himl)

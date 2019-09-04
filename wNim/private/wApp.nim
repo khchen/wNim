@@ -163,7 +163,7 @@ proc wAppProcessAcceleratorMessage(msg: var MSG): bool =
       win = win.mParent
   return false
 
-proc MessageLoop(modalWin: HWND = 0): int =
+proc messageLoop(modalWin: HWND = 0): int =
   var msg: MSG
   while true:
     if GetMessage(msg, 0, 0, 0) == 0 or msg.message == wEvent_AppQuit:
@@ -186,13 +186,19 @@ proc MessageLoop(modalWin: HWND = 0): int =
     TranslateMessage(msg)
     DispatchMessage(msg)
 
+    # In some case (wFrame.showWindowModal() reenter), wEvent_AppQuit will miss
+    # the handle. So check whether the window is alive or not for a modal loop
+    # and break it anyway if the window is dead.
+    if modalWin != 0 and IsWindow(modalWin) == 0:
+      break
+
   result = int msg.wParam
 
 proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## Execute the main GUI event loop.
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
-    result = MessageLoop()
+    result = messageLoop()
 
   for win in wAppWindows():
     discard DestroyWindow(win.mHwnd)
@@ -213,3 +219,13 @@ proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) {.validate.} =
 proc isMessagePropagation*(self: wApp, msg: UINT): bool =
   ## Checks whether the msg is propagated by default.
   result = msg in self.mPropagationSet
+
+proc broadcastTopLevelMessage*(self: wApp, msg: UINT, wParam: wWparam, lParam: wLparam) =
+  ## Broadcast a event to all toplevel windows.
+  for hWnd in self.mTopLevelWindowTable.keys:
+    PostMessage(hWnd, msg, wParam, lParam)
+
+proc broadcastMessage*(self: wApp,  msg: UINT, wParam: wWparam, lParam: wLparam) =
+  ## Broadcast a event to all windows.
+  for hWnd in self.mWindowTable.keys:
+    PostMessage(hWnd, msg, wParam, lParam)

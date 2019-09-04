@@ -134,7 +134,7 @@ iterator items*(self: wAcceleratorTable): wAcceleratorEntry {.validate, inline.}
 
 proc final*(self: wAcceleratorTable) =
   ## Default finalizer for wAcceleratorTable.
-  self.mAccels.setLen(0)
+  # self.mAccels.setLen(0) # not sure is this safe for GC, but it should not need.
   if self.mHandle != 0:
     DestroyAcceleratorTable(self.mHandle)
   self.mHandle = 0

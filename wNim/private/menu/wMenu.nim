@@ -19,14 +19,6 @@ proc remove*(self: wMenu, submenu: wMenu)
 proc MenuItem*(id: wCommandID = 0, text = "", help = "", kind = wMenuItemNormal,
     bitmap: wBitmap = nil, submenu: wMenu = nil): wMenuItem {.inline.}
 
-# const
-#   wMenuItemNormal* = TBSTYLE_BUTTON
-#   wMenuItemSeparator* = TBSTYLE_SEP
-#   wMenuItemCheck* = TBSTYLE_CHECK
-#   wMenuItemRadio* = TBSTYLE_CHECKGROUP
-#   wItemDropDown* = BTNS_WHOLEDROPDOWN
-#   wMenuItemSubMenu* = wItemDropDown
-
 proc detach*(self: wMenu, menuBar: wMenuBar) {.validate.} =
   ## Detach a menu from a menubar.
   wValidate(menuBar)
@@ -504,17 +496,24 @@ proc len*(self: wMenu): int {.validate, inline.} =
   ## This shoud be equal to getCount() in most case.
   result = self.mItemList.len
 
-proc delete*(self: wMenu) {.validate.} =
-  ## Delete the menu.
+proc deleteImpl(self: wMenu) {.validate.} =
+  # Clear self.mItemList in final() will let GC crash somehow.
+  # So, only clear it in real delete().
+  # For final(), let GC clear it later automatically.
   if self.mHmenu != 0:
     self.detach()
     self.wAppMenuBaseDelete()
-    for i in 0..<self.getCount():
-      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-    DestroyMenu(self.mHmenu)
-
-    self.mItemList = @[]
+    if self.mDeletable:
+      for i in 0..<self.getCount():
+        RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+      DestroyMenu(self.mHmenu)
+    # self.mItemList.setLen(0)
     self.mHmenu = 0
+
+proc delete*(self: wMenu) {.validate.} =
+  ## Delete the menu.
+  self.deleteImpl()
+  self.mItemList.setLen(0)
 
 proc destroy*(self: wMenu, pos: int) {.validate.} =
   ## Destroy the menu item from the menu.
@@ -527,7 +526,7 @@ proc destroy*(self: wMenu, pos: int) {.validate.} =
 
 proc final*(self: wMenu) =
   ## Default finalizer for wMenu.
-  self.delete()
+  self.deleteImpl()
 
 proc init*(self: wMenu) {.validate.} =
   ## Initializer.
@@ -539,6 +538,7 @@ proc init*(self: wMenu) {.validate.} =
     dwMenuData: cast[ULONG_PTR](self))
   SetMenuInfo(self.mHmenu, menuInfo)
   self.mItemList = @[]
+  self.mDeletable = true
   self.wAppMenuBaseAdd()
 
 proc Menu*(): wMenu {.inline.} =
@@ -559,3 +559,45 @@ proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu
   wValidate(menuBar, text)
   new(result, final)
   result.init(menuBar, text, bitmap)
+
+# forward declarations
+proc Menu*(hMenu: HMENU): wMenu {.inline.}
+
+proc init*(self: wMenu, hMenu: HMENU) {.validate.} =
+  ## Initializer.
+  if IsMenu(hMenu) == 0:
+    raise newException(wError, "wMenu creation failed")
+
+  self.mHmenu = hMenu
+  var menuInfo = MENUINFO(
+    cbSize: sizeof(MENUINFO),
+    fMask: MIM_MENUDATA or MIM_STYLE,
+    dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS,
+    dwMenuData: cast[ULONG_PTR](self))
+  SetMenuInfo(self.mHmenu, menuInfo)
+  self.mItemList = @[]
+  self.mDeletable = false
+  self.wAppMenuBaseAdd()
+
+  let count = GetMenuItemCount(hMenu)
+  for i in 0..<count:
+    var text = T(65536)
+    text.setLen(wGetMenuItemString(hMenu, i, text))
+
+    var itemInfo = wGetMenuItemInfo(hMenu, i, MIIM_FTYPE or MIIM_ID or MIIM_SUBMENU)
+    let
+      submenu = if itemInfo.hSubMenu != 0: Menu(itemInfo.hSubMenu) else: nil
+      id = wCommandID itemInfo.wID
+      kind =
+        if not submenu.isNil: wMenuItemSubMenu
+        elif (itemInfo.fType and MFT_SEPARATOR) != 0: wMenuItemSeparator
+        else: wMenuItemNormal # wMenuItemCheck or wMenuItemRadio ?
+
+    var item = MenuItem(id=id, text=($text), kind=kind, submenu=submenu)
+    self.mItemList.add item
+
+proc Menu*(hMenu: HMENU): wMenu {.inline.} =
+  ## Construct a menu by a given system menu handle. The style (dwStyle) and
+  ## application-defined value (dwMenuData) of this menu will be overwritten.
+  new(result, final)
+  result.init(hMenu)

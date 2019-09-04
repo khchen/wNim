@@ -89,12 +89,19 @@ const
   wShowDefault* = SW_SHOWDEFAULT
   wShowForceMinimize* = SW_FORCEMINIMIZE
 
-const
+  # hotkey modifiers
   wModShift* = MOD_SHIFT
   wModCtrl* = MOD_CONTROL
   wModAlt* = MOD_ALT
   wModWin* = MOD_WIN
   wModNoRepeat* = MOD_NOREPEAT
+
+  # popupMenu flags
+  wPopMenuRecurse* = TPM_RECURSE
+  wPopMenuTopAlign* = TPM_TOPALIGN
+  wPopMenuBottomAlign* = TPM_BOTTOMALIGN
+  wPopMenuCenterAlign* = TPM_VCENTERALIGN
+  wPopMenuReturnId* = TPM_RETURNCMD
 
 method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base.} =
   var rect: RECT
@@ -597,11 +604,11 @@ proc clearWindowStyle*(self: wWindow, style: wStyle) {.validate, inline.} =
   ## Clear the specified style but don't change other styles.
   self.setWindowStyle(self.getWindowStyle() and (not style))
 
-proc refresh*(self: wWindow, eraseBackground = true) {.validate.} =
+proc refresh*(self: wWindow, eraseBackground = true) {.validate, inline.} =
   ## Redraws the contents of the window.
   InvalidateRect(self.mHwnd, nil, eraseBackground)
 
-proc refresh*(self: wWindow, eraseBackground = true, rect: wRect) {.validate.} =
+proc refresh*(self: wWindow, eraseBackground = true, rect: wRect) {.validate, inline.} =
   ## Redraws the contents of the given rectangle: only the area inside it will
   ## be repainted.
   var r = rect.toRECT()
@@ -625,12 +632,31 @@ proc isShownOnScreen*(self: wWindow): bool {.validate, inline.} =
   ## as well.
   result = bool IsWindowVisible(self.mHwnd)
 
-proc isShown*(self: wWindow): bool {.validate.} =
+proc isShown*(self: wWindow): bool {.validate, inline.} =
   ## Returns true if the window is shown, false if it has been hidden.
   if (GetWindowLongPtr(self.mHwnd, GWL_STYLE).DWORD and WS_VISIBLE) == 0:
     result = false
   else:
     result = true
+
+proc isMouseInWindow*(self: wWindow): bool {.validate.} =
+  ## Check whether the mouse pointer is inside the window.
+  var mousePos: POINT
+  GetCursorPos(mousePos)
+
+  var hwnd = WindowFromPoint(mousePos)
+  while hwnd != 0 and hwnd != self.mHwnd:
+    hwnd = GetParent(hwnd)
+
+  result = hwnd != 0
+
+proc setRedraw*(self: wWindow, flag = true) {.validate, property, inline.} =
+  ## Allows a window to be redrawn or prevents it from being redrawn.
+  let style = GetWindowLongPtr(self.mHwnd, GWL_STYLE)
+  if (style and WS_VISIBLE) != 0:
+    SendMessage(self.mHwnd, WM_SETREDRAW, if flag: TRUE else: FALSE, 0)
+    # WM_SETREDRAW may alter style, change it back
+    SetWindowLongPtr(self.mHwnd, GWL_STYLE, style)
 
 proc enable*(self: wWindow, flag = true) {.validate, inline.} =
   ## Enable or disable the window for user input.
@@ -1029,8 +1055,17 @@ proc center*(self: wWindow, direction = wBoth) {.validate.} =
     self.setWindowPos(rect.x, rect.y)
 
 proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
-    recurse = true) {.validate.} =
+    flag = 0): wCommandID {.validate, discardable.} =
   ## Pops up the given menu at the specified coordinates.
+  ## *flag* is a bitlist of the following:
+  ## ===========================  ==============================================
+  ## Flag                         Description
+  ## ===========================  ==============================================
+  ## wPopMenuRecurse              Display a menu when another menu is already displayed.
+  ## wPopMenuTopAlign             Top side of menu is aligned with the coordinate specified by the y parameter.
+  ## wPopMenuBottomAlign          Bottom side of menu is aligned with the coordinate specified by the y parameter.
+  ## wPopMenuCenterAlign          Centers the menu vertically relative to the coordinate specified by the y parameter.
+  ## wPopMenuReturnId             Not generates wEvent_Menu event but returns the wCommandID or 0 if an error occurs.
   wValidate(menu)
   var pos = self.clientToScreen(pos)
   if pos.x == wDefault or pos.y == wDefault:
@@ -1046,29 +1081,43 @@ proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
   # and then immediately disappears. To correct this, you must force a task switch to the application
   # that called TrackPopupMenu.
   var
+    isReturnId = (flag and wPopMenuReturnId) != 0
+    flag = flag
+    menuInfo = MENUINFO(cbSize: sizeof(MENUINFO), fMask: MIM_STYLE)
     attached = false
     topParent = self.getTopParent()
     foreId = GetWindowThreadProcessId(GetForegroundWindow(), nil)
     curId = GetCurrentThreadId()
-    flag = TPM_LEFTBUTTON or (if recurse: TPM_RECURSE else: 0) or
-      (if GetSystemMetrics(SM_MENUDROPALIGNMENT) != 0:
-        TPM_RIGHTALIGN or TPM_HORNEGANIMATION else: TPM_LEFTALIGN or TPM_HORPOSANIMATION)
+
+  if GetSystemMetrics(SM_MENUDROPALIGNMENT) != 0:
+    flag = flag or TPM_RIGHTALIGN or TPM_HORNEGANIMATION
+  else:
+    flag = flag or TPM_LEFTALIGN or TPM_HORPOSANIMATION
 
   if SetForegroundWindow(topParent.mHwnd) == 0:
     AttachThreadInput(curId, foreId, TRUE)
     SetForegroundWindow(topParent.mHwnd)
     attached = true
 
-  TrackPopupMenu(menu.mHmenu, flag, pos.x, pos.y, 0, self.mHwnd, nil)
+  if isReturnId:
+    menuInfo.dwStyle = MNS_CHECKORBMP
+    SetMenuInfo(menu.mHmenu, menuInfo)
+
+  let ret = TrackPopupMenu(menu.mHmenu, flag, pos.x, pos.y, 0, self.mHwnd, nil)
 
   PostMessage(topParent.mHwnd, WM_NULL, 0, 0)
   if attached:
     AttachThreadInput(curId, foreId, FALSE)
 
-proc popupMenu*(self: wWindow, menu: wMenu, x: int, y: int, recurse = true)
-    {.validate, inline.} =
+  if isReturnId:
+    menuInfo.dwStyle = MNS_CHECKORBMP or MNS_NOTIFYBYPOS
+    SetMenuInfo(menu.mHmenu, menuInfo)
+    result = wCommandID ret
+
+proc popupMenu*(self: wWindow, menu: wMenu, x: int, y: int, flag = 0): wCommandID
+    {.validate, inline, discardable.}=
   ## Pops up the given menu at the specified coordinates.
-  self.popupMenu(menu, (x, y), recurse)
+  result = self.popupMenu(menu, (x, y), flag)
 
 proc startTimer*(self: wWindow, seconds: float, id = 1) {.validate, inline.} =
   ## Start a timer. It generates wEvent_Timer event to the window.
@@ -1193,10 +1242,15 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
     else:
       event.mPropagationLevel.dec
 
-proc queueEvent*(self: wWindow, event: wEvent) {.validate.} =
+proc queueEvent*(self: wWindow, event: wEvent) {.validate, inline.} =
   ## Queue event for a later processing.
   wValidate(event)
   PostMessage(self.mHwnd, event.mMsg, event.mWparam, event.mLparam)
+
+proc queueMessage*(self: wWindow, msg: UINT, wParam: wWparam, lParam: wLparam)
+    {.validate, inline.} =
+  ## Queue message for a later processing.
+  PostMessage(self.mHwnd, msg, wParam, lParam)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret: var LRESULT, origin: HWND): bool {.discardable.} =
@@ -1212,8 +1266,8 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
   # Use internally, ignore origin means origin is self.mHwnd.
   result = self.processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
-proc processMessage*(self: wWindow, msg: UINT, wParam: WPARAM = 0,
-    lParam: LPARAM = 0): bool {.validate, inline, discardable.} =
+proc processMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0,
+    lParam: wLparam = 0): bool {.validate, inline, discardable.} =
   ## Create an event object of specified message and then call processEvent() to
   ## process it. Returned true if a suitable event handler function was executed
   ## and it did not call wEvent.skip().
@@ -1863,7 +1917,7 @@ proc wWindow_DoMouseMove(event: wEvent) =
     # event that the mouse is inside the window: although this is usually
     # true, it is not if we had captured the mouse, so we need to check
     # the mouse coordinates here
-    if not self.hasCapture() or isMouseInWindow(self.mHwnd):
+    if not self.hasCapture() or self.isMouseInWindow():
       self.mMouseInWindow = true
       self.processMessage(wEvent_MouseEnter, event.mWparam, event.mLparam)
 
@@ -1877,7 +1931,7 @@ proc wWindow_DoMouseMove(event: wEvent) =
   else:
     # Windows doesn't send WM_MOUSELEAVE if the mouse has been captured so
     # send it here if we are using native mouse leave tracking
-    if self.hasCapture() and not isMouseInWindow(self.mHwnd):
+    if self.hasCapture() and not self.isMouseInWindow():
       self.processMessage(wEvent_MouseLeave, event.mWparam, event.mLparam)
 
 proc wWindow_DoMouseLeave(event: wEvent) =
@@ -2148,6 +2202,10 @@ proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT
     if self.mHookProc != nil:
       if self.mHookProc(self, msg, wParam, lParam):
         return result
+
+  if msg == WM_NCDESTROY:
+    # It should be an ideal moment to call GC.
+    GC_FullCollect()
 
   return DefWindowProc(hwnd, msg, wParam, lParam)
 

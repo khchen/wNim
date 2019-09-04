@@ -105,10 +105,6 @@ proc isIpEvent(msg: UINT): bool {.inline.}
 proc isWebViewEvent(msg: UINT): bool {.inline.}
 proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
-type
-  wWparam* = WPARAM
-  wLparam* = LPARAM
-
 const
   WM_DPICHANGED = 0x02E0
 

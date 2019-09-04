@@ -214,7 +214,7 @@ proc showModal*(self: wFrame): int {.validate, discardable.} =
       self.mDisableList.add(hwnd)
 
   self.show()
-  result = MessageLoop(self.mHwnd)
+  result = messageLoop(self.mHwnd)
 
 proc showWindowModal*(self: wFrame): int {.validate, discardable.} =
   ## Shows a dialog modal to the parent top level window only.
@@ -230,7 +230,7 @@ proc showWindowModal*(self: wFrame): int {.validate, discardable.} =
           self.mDisableList.add(hwnd)
 
   self.show()
-  result = MessageLoop(self.mHwnd)
+  result = messageLoop(self.mHwnd)
 
 proc endModal*(self: wFrame, retCode: int = 0) =
   ## Ends a modal dialog, passing a value to be returned from the showModal()

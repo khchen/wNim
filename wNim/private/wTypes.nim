@@ -48,6 +48,9 @@ type
   wTime* = Time
     ## Represents a point in time.
 
+  wWparam* = WPARAM
+  wLparam* = LPARAM
+
 const
   wDefault* = int32.low.int
     ## Used in wNim as default value.
@@ -363,6 +366,7 @@ when not defined(Nimdoc):
       mTheme: HTHEME
       mCheckTheme: HTHEME
       mDrawTextFlag: DWORD
+      mComboPart: DWORD
       mSeparator: string
       mValue: string
       mEmpty: string
@@ -490,7 +494,7 @@ when not defined(Nimdoc):
     wMenu* = ref object of wMenuBase
       mBitmap: wBitmap
       mItemList: seq[wMenuItem]
-      # mParentMenuCountTable: CountTable[wMenuBase]
+      mDeletable: bool
 
     wMenuBar* = ref object of wMenuBase
       mMenuList: seq[wMenu]
@@ -512,8 +516,6 @@ when not defined(Nimdoc):
       mSubmenu: wMenu
       mData: int
       # mParentMenu: wMenu
-
-    wNewMenu* = ref object of wMenu
 
     wImage* = ref object of RootObj
       mGdipBmp: ptr GpBitmap

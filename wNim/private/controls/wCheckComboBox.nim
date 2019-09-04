@@ -22,6 +22,7 @@
 ##   wCcNeededScroll                 Only create a vertical scrollbar if needed.
 ##   wCcAlwaysScroll                 Always show a vertical scrollbar.
 ##   wCcEndEllipsis                  If the text value is too long, it is truncated and ellipses are added.
+##   wCcNormalColor                  Use normal color to draw the control instead of read-only color.
 ##   ==============================  =============================================================
 #
 ## :Events:
@@ -29,9 +30,9 @@
 ##   ==============================   =============================================================
 ##   wCommandEvent                    Description
 ##   ==============================   =============================================================
-##   wEvent_CheckComboBox             When the value of the checkcombobox changed.
-##   wEvent_CheckComboBoxCloseUp      When the list box of the checkcombobox disappears.
-##   wEvent_CheckComboBoxDropDown     When the list box part of the checkcombobox is shown.
+##   wEvent_CheckComboBox             When the value of the checkcombobox changed by user.
+##   wEvent_CheckComboBoxCloseUp      When the listbox of the checkcombobox disappears.
+##   wEvent_CheckComboBoxDropDown     When the listbox part of the checkcombobox is shown.
 ##   wEvent_CommandSetFocus           When the control receives the keyboard focus.
 ##   wEvent_CommandKillFocus          When the control loses the keyboard focus.
 ##   ===============================  =============================================================
@@ -40,7 +41,9 @@ const
   wCcSort* = CBS_SORT
   wCcNeededScroll* = WS_VSCROLL
   wCcAlwaysScroll* = WS_VSCROLL or CBS_DISABLENOSCROLL
+  # CBS_DROPDOWNLIST = 3, so 1 and 2 are free to use
   wCcEndEllipsis* = 1
+  wCcNormalColor* = 2
   SELECT = 0x01
   DISABLE = 0x02
 
@@ -81,7 +84,7 @@ iterator pairs*(self: wCheckComboBox): (int, string) {.validate, inline.} =
 
 proc insert*(self: wCheckComboBox, pos: int, text: string) {.validate, inline.} =
   ## Inserts the given string before the specified position.
-  ## Notice that the inserted item won't be sorted even the list box has wCbSort
+  ## Notice that the inserted item won't be sorted even the listbox has wCbSort
   ## style. If pos is -1, the string is added to the end of the list.
   cast[wComboBox](self).insert(pos, text)
 
@@ -105,10 +108,6 @@ proc delete*(self: wCheckComboBox, index: int) {.validate, inline.} =
 proc delete*(self: wCheckComboBox, text: string)  {.validate, inline.} =
   ## Search and delete the specified string in the checkcombobox.
   cast[wComboBox](self).delete(text)
-
-proc clear*(self: wCheckComboBox) {.validate, inline.} =
-  ## Remove all items from a checkcombobox.
-  cast[wComboBox](self).clear()
 
 proc findText*(self: wCheckComboBox, text: string): int {.validate, inline.} =
   ## Finds an item whose label matches the given text.
@@ -155,6 +154,7 @@ proc update(self: wCheckComboBox) {.validate.} =
   self.mValue = s.join(self.mSeparator)
   if oldValue != self.mValue:
     self.refresh(false)
+    self.mList.refresh(false)
 
 proc select*(self: wCheckComboBox, index: int = -1) {.validate.} =
   ## Selects an item, -1 means all items.
@@ -265,16 +265,24 @@ proc setValue*(self: wCheckComboBox, text: string) {.validate, property.} =
   ## the input text and then try to select the subitmes, leading or trailing
   ## spaces are ignored.
   self.deselectAll()
-  let fields = text.split(self.mSeparator.strip)
-  for item in fields:
+  for item in text.split(self.mSeparator.strip):
     self.select(item.strip)
 
 proc getValue*(self: wCheckComboBox): string {.validate, property, inline.} =
   ## Gets the text for the checkcombobox text field.
   result = self.mValue
 
+proc clear*(self: wCheckComboBox) {.validate, inline.} =
+  ## Remove all items from a checkcombobox.
+  cast[wComboBox](self).clear()
+  self.update()
+
+proc isPopup*(self: wCheckComboBox): bool {.validate, property, inline.} =
+  ## Returns whether or not the listbox is popup.
+  result = cast[wComboBox](self).isPopup()
+
 proc popup*(self: wCheckComboBox) {.validate, inline.} =
-  ## Shows the list box portion of the checkcombobox.
+  ## Shows the listbox portion of the checkcombobox.
   cast[wComboBox](self).popup()
 
   # Fix the mouse cursor problem (wrong cursor shape when mouse enters from outside).
@@ -286,7 +294,7 @@ proc popup*(self: wCheckComboBox) {.validate, inline.} =
     self.mList.systemDisconnect(conn)
 
 proc dismiss*(self: wCheckComboBox) {.validate, inline.} =
-  ## Hides the list box portion of the checkcombobox.
+  ## Hides the listbox portion of the checkcombobox.
   cast[wComboBox](self).dismiss()
 
 proc getEmpty*(self: wCheckComboBox): string {.validate, property, inline.} =
@@ -296,6 +304,19 @@ proc getEmpty*(self: wCheckComboBox): string {.validate, property, inline.} =
 proc setEmpty*(self: wCheckComboBox, text: string) {.validate, property, inline.} =
   ## Sets the displayed text if the value is empty.
   self.mEmpty = text
+
+proc changeStyle*(self: wCheckComboBox, style: wStyle) {.validate, inline.} =
+  ## Change the style of the contorl. Only wCcEndEllipsis or wCcNormalColor can
+  ## be changed.
+  if (style and wCcEndEllipsis) != 0:
+    self.mDrawTextFlag = DT_SINGLELINE or DT_VCENTER or DT_END_ELLIPSIS
+  else:
+    self.mDrawTextFlag = DT_SINGLELINE or DT_VCENTER
+
+  if (style and wCcNormalColor) != 0:
+    self.mComboPart = CP_BORDER
+  else:
+    self.mComboPart = CP_READONLY
 
 proc getCurrentSelection(self: wCheckComboBox): int {.validate, property, inline.} =
   # Returns the index of the selected item or wNotFound(-1) if no item is selected.
@@ -307,10 +328,6 @@ proc setCurrentSelection(self: wCheckComboBox, index: int) {.validate, property,
   # Only useful to set current hot position in listbox, it seems not need to
   # public.
   cast[wComboBox](self).select(index)
-
-proc isPopup(self: wCheckComboBox): bool {.validate, property, inline.} =
-  # use internally
-  result = (SendMessage(self.mHwnd, CB_GETDROPPEDSTATE, 0, 0) != 0)
 
 proc getListControl*(self: wCheckComboBox): wListBox {.validate, property, inline.} =
   ## Returns the list control part of this checkcombobox.
@@ -359,7 +376,7 @@ when defined(useWinXP):
   proc paintXp(self: wCheckComboBox, hdc: HDC, stateId: cint, isFocused: bool,
       clientRect: var RECT, cbi: var COMBOBOXINFO) =
 
-    DrawThemeBackground(self.mTheme, hdc, CP_READONLY, CBRO_NORMAL, clientRect, nil)
+    DrawThemeBackground(self.mTheme, hdc, self.mComboPart, CBRO_NORMAL, clientRect, nil)
     DrawThemeBackground(self.mTheme, hdc, CP_DROPDOWNBUTTON, stateId, cbi.rcButton, nil)
 
     var bkColor, txColor: wColor
@@ -389,13 +406,16 @@ when defined(useWinXP):
 proc paint(self: wCheckComboBox, hdc: HDC, stateId: cint, isFocused: bool,
     clientRect: var RECT, cbi: var COMBOBOXINFO) =
 
-  DrawThemeBackground(self.mTheme, hdc, CP_READONLY, stateId, clientRect, nil)
-  DrawThemeBackground(self.mTheme, hdc, CP_DROPDOWNBUTTONRIGHT, CBRO_NORMAL, cbi.rcButton, nil)
+  # button state only allow CBRO_DISABLED and CBRO_NORMAL
+  let buttonStateId = if stateId == CBRO_DISABLED: CBRO_DISABLED else: CBRO_NORMAL
+
+  DrawThemeBackground(self.mTheme, hdc, self.mComboPart, stateId, clientRect, nil)
+  DrawThemeBackground(self.mTheme, hdc, CP_DROPDOWNBUTTONRIGHT, buttonStateId, cbi.rcButton, nil)
 
   let text = if self.mValue.len == 0: self.mEmpty else: self.mValue
   var rect = cbi.rcItem
   InflateRect(rect, -2, -2)
-  DrawThemeText(self.mTheme, hdc, CP_READONLY, stateId, text, -1, self.mDrawTextFlag, 0, rect)
+  DrawThemeText(self.mTheme, hdc, self.mComboPart, stateId, text, -1, self.mDrawTextFlag, 0, rect)
 
   if isFocused:
     DrawFocusRect(hdc, cbi.rcItem)
@@ -463,7 +483,8 @@ proc onPaint(event: wEvent) =
   let hdc = dc.mHdc
   let isFocused = not self.mIsPopup and (self.mHwnd == GetFocus())
   let stateId =
-    if cbi.stateButton == STATE_SYSTEM_PRESSED or self.mIsPopup: CBRO_PRESSED
+    if not self.isEnabled(): CBRO_DISABLED
+    elif cbi.stateButton == STATE_SYSTEM_PRESSED or self.mIsPopup: CBRO_PRESSED
     elif self.mMouseInWindow: CBRO_HOT
     else: CBRO_NORMAL
 
@@ -531,9 +552,7 @@ proc onKeyDown(event: wEvent) =
       if pos >= 0:
         let oldValue = self.mValue
         self.toggle(pos)
-        if self.mValue != oldValue:
-          self.mList.refresh(false)
-          self.processMessage(wEvent_CheckComboBox, 0, 0)
+        if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
     else:
       if self.currentSelection < 0:
         self.currentSelection = 0
@@ -549,9 +568,7 @@ proc onKeyDown(event: wEvent) =
           self.select(pos)
         else:
           self.deselect(pos)
-        if self.mValue != oldValue:
-          self.mList.refresh(false)
-          self.processMessage(wEvent_CheckComboBox, 0, 0)
+        if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
       return
 
   of VK_UP, VK_PRIOR, VK_LEFT:
@@ -607,11 +624,7 @@ proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
   self.mInitCount = choices.len
   self.mSeparator = ", "
   self.mEmpty = ""
-
-  if (style and wCcEndEllipsis) != 0:
-    self.mDrawTextFlag = DT_SINGLELINE or DT_VCENTER or DT_END_ELLIPSIS
-  else:
-    self.mDrawTextFlag = DT_SINGLELINE or DT_VCENTER
+  self.changeStyle(style)
 
   let style = (style and (not CBS_OWNERDRAWVARIABLE)) or
     CBS_DROPDOWNLIST or CBS_HASSTRINGS or CBS_OWNERDRAWFIXED
@@ -662,9 +675,7 @@ proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
     if pos >= 0:
       let oldValue = self.mValue
       self.toggle(pos)
-      if oldValue != self.mValue:
-        self.mList.refresh(false)
-        self.processMessage(wEvent_CheckComboBox, 0, 0)
+      if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
     else:
       event.skip
 
@@ -675,9 +686,7 @@ proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
       self.selectAll()
       if oldValue == self.mValue:
         self.deselectAll()
-      if oldValue != self.mValue:
-        self.mList.refresh(false)
-        self.processMessage(wEvent_CheckComboBox, 0, 0)
+      if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
     else:
       self.dismiss()
 

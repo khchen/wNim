@@ -1,3 +1,13 @@
+Version 0.8.1
+-------------
+* wCheckComboBox: add changeStyle(), isPopup(), and wCcNormalColor style.
+* wComboBox: add isPopup().
+* wWindow: add isMouseInWindow(), setRedraw(), and queueMessage().
+* wMenu: add Menu(hMenu: HMENU) constructor for wrap system menu handle.
+* wApp: add broadcastTopLevelMessage() and broadcastMessage().
+* Rename/Rewrite examples/lowlevel.nim to win32sdk.nim.
+* Fix bugs.
+
 Version 0.8.0
 -------------
 * Add wCheckComboBox and wHotkeyCtrl.

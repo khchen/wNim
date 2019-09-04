@@ -37,8 +37,8 @@
 ##   wCommandEvent                    Description
 ##   ==============================   =============================================================
 ##   wEvent_ComboBox                  When an item on the list is selected, calling getValue() returns the new value of selection.
-##   wEvent_ComboBoxCloseUp           When the list box of the combobox disappears.
-##   wEvent_ComboBoxDropDown          When the list box part of the combobox is shown.
+##   wEvent_ComboBoxCloseUp           When the listbox of the combobox disappears.
+##   wEvent_ComboBoxDropDown          When the listbox part of the combobox is shown.
 ##   wEvent_Text                      When the text changes.
 ##   wEvent_TextUpdate                When the control is about to redraw itself.
 ##   wEvent_TextMaxlen                When the user tries to enter more text into the control than the limit.
@@ -100,7 +100,7 @@ iterator pairs*(self: wComboBox): (int, string) {.validate, inline.} =
 
 proc insert*(self: wComboBox, pos: int, text: string) {.validate, inline.} =
   ## Inserts the given string before the specified position.
-  ## Notice that the inserted item won't be sorted even the list box has wCbSort
+  ## Notice that the inserted item won't be sorted even the listbox has wCbSort
   ## style. If pos is -1, the string is added to the end of the list.
   SendMessage(self.mHwnd, CB_INSERTSTRING, pos, &T(text))
 
@@ -186,12 +186,16 @@ proc isTextEmpty*(self: wComboBox): bool {.validate,  inline.} =
   ## Returns true if the text of the combobox is empty.
   result = GetWindowTextLength(self.mHwnd) == 0
 
+proc isPopup*(self: wComboBox): bool {.validate, property, inline.} =
+  ## Returns whether or not the listbox is popup.
+  result = (SendMessage(self.mHwnd, CB_GETDROPPEDSTATE, 0, 0) != 0)
+
 proc popup*(self: wComboBox) {.validate,  inline.} =
-  ## Shows the list box portion of the combobox.
+  ## Shows the listbox portion of the combobox.
   SendMessage(self.mHwnd, CB_SHOWDROPDOWN, TRUE, 0)
 
 proc dismiss*(self: wComboBox) {.validate,  inline.} =
-  ## Hides the list box portion of the combobox.
+  ## Hides the listbox portion of the combobox.
   SendMessage(self.mHwnd, CB_SHOWDROPDOWN, FALSE, 0)
 
 proc getEditControl*(self: wComboBox): wTextCtrl {.validate, property, inline.} =
