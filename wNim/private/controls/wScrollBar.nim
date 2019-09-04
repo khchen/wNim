@@ -24,6 +24,11 @@
 ## :Events:
 ##   `wScrollEvent <wScrollEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # ScrollBar styles
   wSbHorizontal* = SBS_HORZ
@@ -62,17 +67,7 @@ proc setScrollbar*(self: wScrollBar, position: Natural, pageSize: Positive,
 
 proc setScrollPos*(self: wScrollBar, position: int) {.validate, property.} =
   ## Sets the position of the scrollbar.
-  var info = SCROLLINFO(
-    cbSize: sizeof(SCROLLINFO),
-    fMask: SIF_POS,
-    nPos: int32 position)
-  SetScrollInfo(self.mHwnd, SB_CTL, &info, true)
-
-proc getScrollInfo(self: wScrollBar): SCROLLINFO {.validate, property.} =
-  result = SCROLLINFO(
-    cbSize: sizeof(SCROLLINFO),
-    fMask: SIF_ALL)
-  GetScrollInfo(self.mHwnd, SB_CTL, &result)
+  self.wWindow.setScrollPos(0, position)
 
 proc getPageSize*(self: wScrollBar): int {.validate, property, inline.} =
   ## Returns the page size.

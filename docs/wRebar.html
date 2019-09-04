@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
@@ -1252,8 +1253,8 @@ function main() {
     title="getImageList(self: wRebar): wImageList"><wbr />get<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getCount%2CwRebar"
     title="getCount(self: wRebar): int"><wbr />get<wbr />Count<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#addControl%2CwRebar%2CwControl%2Cstring"
-    title="addControl(self: wRebar; control: wControl; image = -1; label = &quot;&quot;; isBreak = false)"><wbr />add<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#minimize%2CwRebar%2Cint"
+    title="minimize(self: wRebar; band: int)"><wbr />minimize<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#len%2CwRebar"
     title="len(self: wRebar): int"><wbr />len<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwRebar"
@@ -1267,6 +1268,7 @@ function main() {
   </ul>
 </li>
 
+
 </ul>
 
   </div>
@@ -1274,7 +1276,8 @@ function main() {
   <div id="tocRoot"></div>
   <p class="module-desc">A rebar control can contain one or more bands, and each band can have a gripper bar, a bitmap, a text label, and one child control. As you dynamically reposition a rebar control band, the rebar control manages the size and position of the child window assigned to that band. <strong>Notice: This is just a experimental module, not yet fully functional.</strong><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
 </tbody></table></p>
-  <div class="section" id="10">
+  
+<div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
 <a id="wRbBandBorder"></a>
@@ -1314,11 +1317,10 @@ Returns the specified image list.
 Returns the number of controls in the rebar.
 
 </dd>
-<a id="addControl,wRebar,wControl,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">addControl</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">;</span> <span class="Identifier">control</span><span class="Other">:</span> <span class="Identifier">wControl</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">isBreak</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="minimize,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">minimize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wRebar</span><span class="Other">;</span> <span class="Identifier">band</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Adds a control to the rebar.
+
 
 </dd>
 <a id="len,wRebar"></a>
@@ -1350,6 +1352,7 @@ Constructs a rebar.
 
 </dl></div>
 
+
   </div>
 </div>
 
@@ -1357,7 +1360,7 @@ Constructs a rebar.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:19:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:24 UTC</small>
       </div>
     </div>
   </div>

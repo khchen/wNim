@@ -25,15 +25,20 @@
 ##   wEvent_Sizing                   Window is sizing.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_Size
+  wEvent_Minimize
+  wEvent_Maximize
+  wEvent_Sizing
 
 const
-  wEvent_Size* = WM_APP + 52
-  wEvent_Iconize* = WM_APP + 53
-  wEvent_Minimize* = WM_APP + 53
-  wEvent_Maximize* = WM_APP + 54
-  wEvent_Sizing* = WM_APP + 55
+  wEvent_Iconize* = wEvent_Minimize
 
-proc isSizeEvent(msg: UINT): bool {.inline.} =
+proc isSizeEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_Size..wEvent_Sizing
 
 method getSize*(self: wSizeEvent): wSize {.property.} =

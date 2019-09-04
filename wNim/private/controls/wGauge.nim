@@ -24,12 +24,17 @@
 ##   wGaProgress                     Reflect the value of gauge in the taskbar button under Windows 7 and later.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # Gauge styles
   wGaHorizontal* = 0
   wGaVertical* = PBS_VERTICAL
   wGaSmooth* = PBS_SMOOTH
-  wGaProgress* = int64 0x10000000 shl 32
+  wGaProgress* = 0x10000000.int64 shl 32
 
 method getDefaultSize*(self: wGauge): wSize {.property.} =
   ## Returns the default size for the control.

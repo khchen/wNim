@@ -15,6 +15,14 @@
 ## :Seealso:
 ##   `wPrintData <wPrintData.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wPrintData, wDC
+export wDC
+
+type
+  wPrinterDC* = object of wDC
+
 proc getPaperRect*(self: wPrinterDC): wRect {.property.} =
   ## Return the rectangle in device coordinates that corresponds to the full
   ## paper area, including the nonprinting regions of the paper. The point (0,0)

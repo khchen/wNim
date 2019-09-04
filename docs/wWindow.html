@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
@@ -1300,6 +1301,16 @@ function main() {
     title="wModWin = 0x00000008"><wbr />w<wbr />Mod<wbr />Win<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wModNoRepeat"
     title="wModNoRepeat = 0x00004000"><wbr />w<wbr />Mod<wbr />No<wbr />Repeat<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPopMenuRecurse"
+    title="wPopMenuRecurse = 0x00000001"><wbr />w<wbr />Pop<wbr />Menu<wbr />Recurse<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPopMenuTopAlign"
+    title="wPopMenuTopAlign = 0x00000000"><wbr />w<wbr />Pop<wbr />Menu<wbr />Top<wbr />Align<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPopMenuBottomAlign"
+    title="wPopMenuBottomAlign = 0x00000020"><wbr />w<wbr />Pop<wbr />Menu<wbr />Bottom<wbr />Align<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPopMenuCenterAlign"
+    title="wPopMenuCenterAlign = 0x00000010"><wbr />w<wbr />Pop<wbr />Menu<wbr />Center<wbr />Align<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPopMenuReturnId"
+    title="wPopMenuReturnId = 0x00000100"><wbr />w<wbr />Pop<wbr />Menu<wbr />Return<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1364,34 +1375,22 @@ function main() {
     title="suit(self: wWindow)"><wbr />suit<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setClientSize%2CwWindow%2CwSize"
     title="setClientSize(self: wWindow; size: wSize)"><wbr />set<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setClientSize%2CwWindow%2Cint%2Cint"
-    title="setClientSize(self: wWindow; width: int; height: int)"><wbr />set<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#contain%2CwWindow%2Cvarargs%5BwWindow%2CwWindow%5D"
     title="contain(self: wWindow; windows: varargs[wWindow, wWindow])"><wbr />contain<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMinSize%2CwWindow%2CwSize"
     title="setMinSize(self: wWindow; size: wSize)"><wbr />set<wbr />Min<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setMinSize%2CwWindow%2Cint%2Cint"
-    title="setMinSize(self: wWindow; x: int; y: int)"><wbr />set<wbr />Min<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMinSize%2CwWindow"
     title="getMinSize(self: wWindow): wSize"><wbr />get<wbr />Min<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMaxSize%2CwWindow%2CwSize"
     title="setMaxSize(self: wWindow; size: wSize)"><wbr />set<wbr />Max<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setMaxSize%2CwWindow%2Cint%2Cint"
-    title="setMaxSize(self: wWindow; x: int; y: int)"><wbr />set<wbr />Max<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getMaxSize%2CwWindow"
     title="getMaxSize(self: wWindow): wSize"><wbr />get<wbr />Max<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMinClientSize%2CwWindow%2CwSize"
     title="setMinClientSize(self: wWindow; size: wSize)"><wbr />set<wbr />Min<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setMinClientSize%2CwWindow%2Cint%2Cint"
-    title="setMinClientSize(self: wWindow; x: int; y: int)"><wbr />set<wbr />Min<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMaxClientSize%2CwWindow%2CwSize"
     title="setMaxClientSize(self: wWindow; size: wSize)"><wbr />set<wbr />Max<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setMaxClientSize%2CwWindow%2Cint%2Cint"
-    title="setMaxClientSize(self: wWindow; x: int; y: int)"><wbr />set<wbr />Max<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#screenToClient%2CwWindow%2CwPoint"
     title="screenToClient(self: wWindow; pos: wPoint): wPoint"><wbr />screen<wbr />To<wbr />Client<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#clientToScreen%2CwWindow%2CwPoint"
-    title="clientToScreen(self: wWindow; pos: wPoint): wPoint"><wbr />client<wbr />To<wbr />Screen<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDpi%2CwWindow"
     title="getDpi(self: wWindow): int"><wbr />get<wbr />Dpi<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDpiScaleRatio%2CwWindow"
@@ -1420,6 +1419,10 @@ function main() {
     title="isShownOnScreen(self: wWindow): bool"><wbr />is<wbr />Shown<wbr />On<wbr />Screen<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isShown%2CwWindow"
     title="isShown(self: wWindow): bool"><wbr />is<wbr />Shown<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#isMouseInWindow%2CwWindow"
+    title="isMouseInWindow(self: wWindow): bool"><wbr />is<wbr />Mouse<wbr />In<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setRedraw%2CwWindow"
+    title="setRedraw(self: wWindow; flag = true)"><wbr />set<wbr />Redraw<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enable%2CwWindow"
     title="enable(self: wWindow; flag = true)"><wbr />enable<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disable%2CwWindow"
@@ -1462,10 +1465,6 @@ function main() {
     title="getChildren(self: wWindow): seq[wWindow]"><wbr />get<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTopParent%2CwWindow"
     title="getTopParent(self: wWindow): wWindow"><wbr />get<wbr />Top<wbr />Parent<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getNextSibling%2CwWindow"
-    title="getNextSibling(self: wWindow): wWindow"><wbr />get<wbr />Next<wbr />Sibling<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPrevSibling%2CwWindow"
-    title="getPrevSibling(self: wWindow): wWindow"><wbr />get<wbr />Prev<wbr />Sibling<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isDescendant%2CwWindow%2CwWindow"
     title="isDescendant(self: wWindow; win: wWindow): bool"><wbr />is<wbr />Descendant<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isTopLevel%2CwWindow"
@@ -1484,6 +1483,8 @@ function main() {
     title="getData(self: wWindow): int"><wbr />get<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setData%2CwWindow%2Cint"
     title="setData(self: wWindow; data: int)"><wbr />set<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setTransparent%2CwWindow%2Crange%5B%5D"
+    title="setTransparent(self: wWindow; alpha: range[0 .. 255])"><wbr />set<wbr />Transparent<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTransparent%2CwWindow"
     title="getTransparent(self: wWindow): int"><wbr />get<wbr />Transparent<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setAcceleratorTable%2CwWindow%2CwAcceleratorTable"
@@ -1509,18 +1510,16 @@ function main() {
     title="getPageSize(self: wWindow; orientation: int): int"><wbr />get<wbr />Page<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getScrollPos%2CwWindow%2Cint"
     title="getScrollPos(self: wWindow; orientation: int): int"><wbr />get<wbr />Scroll<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#hasScrollbar%2CwWindow%2Cint"
-    title="hasScrollbar(self: wWindow; orientation: int): bool"><wbr />has<wbr />Scrollbar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#scrollLines%2CwWindow%2Cint"
     title="scrollLines(self: wWindow; lines: int = 1)"><wbr />scroll<wbr />Lines<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#scrollPages%2CwWindow%2Cint"
     title="scrollPages(self: wWindow; pages: int = 1)"><wbr />scroll<wbr />Pages<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#center%2CwWindow"
     title="center(self: wWindow; direction = wBoth)"><wbr />center<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2CwPoint"
-    title="popupMenu(self: wWindow; menu: wMenu; pos: wPoint = wDefaultPoint; recurse = true)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2Cint%2Cint"
-    title="popupMenu(self: wWindow; menu: wMenu; x: int; y: int; recurse = true)"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#activate%2CwWindow"
+    title="activate(self: wWindow; force = false)"><wbr />activate<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#popupMenu%2CwWindow%2CwMenu%2CwPoint%2Cint"
+    title="popupMenu(self: wWindow; menu: wMenu; pos: wPoint = wDefaultPoint; flag = 0): wCommandID"><wbr />popup<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#startTimer%2CwWindow%2Cfloat%2Cint"
     title="startTimer(self: wWindow; seconds: float; id = 1)"><wbr />start<wbr />Timer<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#stopTimer%2CwWindow%2Cint"
@@ -1539,14 +1538,14 @@ function main() {
     title="processEvent(self: wWindow; event: wEvent): bool"><wbr />process<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#queueEvent%2CwWindow%2CwEvent"
     title="queueEvent(self: wWindow; event: wEvent)"><wbr />queue<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#processMessage%2CwWindow%2CUINT%2CWPARAM%2CLPARAM"
-    title="processMessage(self: wWindow; msg: UINT; wParam: WPARAM = 0; lParam: LPARAM = 0): bool"><wbr />process<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#queueMessage%2CwWindow%2CUINT%2CwWparam%2CwLparam"
+    title="queueMessage(self: wWindow; msg: UINT; wParam: wWparam; lParam: wLparam)"><wbr />queue<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#processMessage%2CwWindow%2CUINT%2CwWparam%2CwLparam"
+    title="processMessage(self: wWindow; msg: UINT; wParam: wWparam = 0; lParam: wLparam = 0): bool"><wbr />process<wbr />Message<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwEventProc%2Cint"
     title="connect(self: wWindow; msg: UINT; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#connect%2CwWindow%2CUINT%2CwCommandID%2CwEventProc%2Cint"
     title="connect(self: wWindow; msg: UINT; id: wCommandID; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#connect%2CwWindow%2CwCommandID%2CwEventProc%2Cint"
-    title="connect(self: wWindow; id: wCommandID; handler: wEventProc; userData: int = 0): wEventConnection"><wbr />connect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CUINT"
     title="disconnect(self: wWindow; msg: UINT; limit = -1)"><wbr />disconnect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#disconnect%2CwWindow%2CUINT%2CwCommandID"
@@ -1561,12 +1560,6 @@ function main() {
     title="`.`(self: wWindow; msg: UINT; handler: wEventProc): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#.%2CwWindow%2CwCommandID%2CwEventProc"
     title="`.`(self: wWindow; id: wCommandID; handler: wEventProc): wEventConnection"><wbr />`.`<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setDraggable%2CwWindow"
-    title="setDraggable(self: wWindow; flag = true; inClient = true)"><wbr />set<wbr />Draggable<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setSizingBorder%2CwWindow%2CwDirection"
-    title="setSizingBorder(self: wWindow; direction: wDirection)"><wbr />set<wbr />Sizing<wbr />Border<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setDropTarget%2CwWindow"
-    title="setDropTarget(self: wWindow; flag = true)"><wbr />set<wbr />Drop<wbr />Target<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getToolTip%2CwWindow"
     title="getToolTip(self: wWindow): string"><wbr />get<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setToolTip%2CwWindow%2Cstring"
@@ -1580,8 +1573,6 @@ function main() {
     title="setShape(self: wWindow; region: wRegion)"><wbr />set<wbr />Shape<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwWindow"
     title="final(self: wWindow)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwWindow%2CHWND"
-    title="init(self: wWindow; hWnd: HWND)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Window%2CHWND"
     title="Window(hWnd: HWND): wWindow"><wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwWindow%2CwWindow%2CwCommandID%2CwStyle%2Cstring"
@@ -1602,8 +1593,6 @@ function main() {
     title="getClientAreaOrigin(self: wWindow): wPoint"><wbr />get<wbr />Client<wbr />Area<wbr />Origin<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDefaultSize.e%2CwWindow"
     title="getDefaultSize(self: wWindow): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getBestSize.e%2CwWindow"
-    title="getBestSize(self: wWindow): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#show.e%2CwWindow"
     title="show(self: wWindow; flag = true)"><wbr />show<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setForegroundColor.e%2CwWindow%2CwColor"
@@ -1633,6 +1622,7 @@ function main() {
 
   </ul>
 </li>
+
 
 </ul>
 
@@ -1669,7 +1659,8 @@ function main() {
 </ul>
 </td></tr>
 </tbody></table></p>
-  <div class="section" id="10">
+  
+<div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
 <a id="wBorderSimple"></a>
@@ -1864,6 +1855,36 @@ function main() {
 
 
 </dd>
+<a id="wPopMenuRecurse"></a>
+<dt><pre><span class="Identifier">wPopMenuRecurse</span> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wPopMenuTopAlign"></a>
+<dt><pre><span class="Identifier">wPopMenuTopAlign</span> <span class="Other">=</span> <span class="DecNumber">0x00000000</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wPopMenuBottomAlign"></a>
+<dt><pre><span class="Identifier">wPopMenuBottomAlign</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wPopMenuCenterAlign"></a>
+<dt><pre><span class="Identifier">wPopMenuCenterAlign</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wPopMenuReturnId"></a>
+<dt><pre><span class="Identifier">wPopMenuReturnId</span> <span class="Other">=</span> <span class="DecNumber">0x00000100</span></pre></dt>
+<dd>
+
+
+</dd>
 
 </dl></div>
 <div class="section" id="12">
@@ -2044,7 +2065,7 @@ Returns client margin of all the direction.
 
 </dd>
 <a id="fit,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">fit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">fit</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sizes the window to fit its best size.
 
@@ -2057,13 +2078,6 @@ Sizes the window to suit its default size.
 </dd>
 <a id="setClientSize,wWindow,wSize"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setClientSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-This sets the size of the window client area in pixels.
-
-</dd>
-<a id="setClientSize,wWindow,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setClientSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 This sets the size of the window client area in pixels.
 
@@ -2081,13 +2095,6 @@ Sizes the window to contain all the specified windows. Basically used by staticb
 Sets the minimum size of the window.
 
 </dd>
-<a id="setMinSize,wWindow,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMinSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the minimum size of the window.
-
-</dd>
 <a id="getMinSize,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMinSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2096,13 +2103,6 @@ Returns the minimum size of the window.
 </dd>
 <a id="setMaxSize,wWindow,wSize"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the maximum size of the window.
-
-</dd>
-<a id="setMaxSize,wWindow,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the maximum size of the window.
 
@@ -2120,13 +2120,6 @@ Returns the maximum size of the window.
 Sets the minimum client size of the window.
 
 </dd>
-<a id="setMinClientSize,wWindow,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMinClientSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the minimum client size of the window.
-
-</dd>
 <a id="setMaxClientSize,wWindow,wSize"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxClientSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <span class="Identifier">wSize</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -2134,34 +2127,22 @@ Sets the minimum client size of the window.
 Sets the maximum client size of the window
 
 </dd>
-<a id="setMaxClientSize,wWindow,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMaxClientSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the maximum client size of the window
-
-</dd>
 <a id="screenToClient,wWindow,wPoint"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">screenToClient</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">screenToClient</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Converts from screen to client window coordinates.
 
 </dd>
-<a id="clientToScreen,wWindow,wPoint"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">clientToScreen</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Converts to screen coordinates from coordinates relative to this window.
-
-</dd>
 <a id="getDpi,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpi</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpi</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+                              <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the dpi value for the window. This function use GetDpiForWindow() api (requires win 10) to get the current dpi if possible.
 
 </dd>
 <a id="getDpiScaleRatio,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpiScaleRatio</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getDpiScaleRatio</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the dpi scale ratio for the window.
 
@@ -2173,7 +2154,8 @@ Returns the relative value according to current dpi setting.
 
 </dd>
 <a id="dpiScale,wWindow,float"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">dpiScale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">dpiScale</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the relative value according to current dpi setting.
 
@@ -2206,14 +2188,15 @@ Clear the specified style but don't change other styles.
 
 </dd>
 <a id="refresh,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">refresh</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">eraseBackground</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">refresh</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">eraseBackground</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Redraws the contents of the window.
 
 </dd>
 <a id="refresh,wWindow,wRect"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">refresh</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">eraseBackground</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">refresh</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">eraseBackground</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Redraws the contents of the given rectangle: only the area inside it will be repainted.
 
@@ -2237,9 +2220,22 @@ Returns true if the window is physically visible on the screen. i.e. it is shown
 
 </dd>
 <a id="isShown,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isShown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isShown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns true if the window is shown, false if it has been hidden.
+
+</dd>
+<a id="isMouseInWindow,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isMouseInWindow</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Check whether the mouse pointer is inside the window.
+
+</dd>
+<a id="setRedraw,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setRedraw</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Allows a window to be redrawn or prevents it from being redrawn.
 
 </dd>
 <a id="enable,wWindow"></a>
@@ -2279,7 +2275,8 @@ Returns true if the window or it's child window has the focus.
 
 </dd>
 <a id="disableFocus,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableFocus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">disableFocus</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Disable (or reenable) focus to a window.
 
@@ -2372,18 +2369,6 @@ Returns a seq of the window's children.
 Returns the first top level parent of the given window.
 
 </dd>
-<a id="getNextSibling,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getNextSibling</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the next window after this one among the parent's children.
-
-</dd>
-<a id="getPrevSibling,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPrevSibling</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the previous window before this one among the parent's children.
-
-</dd>
 <a id="isDescendant,wWindow,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">isDescendant</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">win</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2441,6 +2426,13 @@ Returns the data associated with the window.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the window associated data.
+
+</dd>
+<a id="setTransparent,wWindow,range[]"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setTransparent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">alpha</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">255</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
 
 </dd>
 <a id="getTransparent,wWindow"></a>
@@ -2526,12 +2518,6 @@ Returns the built-in scrollbar page size.
 Returns the built-in scrollbar position.
 
 </dd>
-<a id="hasScrollbar,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hasScrollbar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">orientation</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns true if this window currently has a scroll bar for this orientation.
-
-</dd>
 <a id="scrollLines,wWindow,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">scrollLines</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">lines</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2550,18 +2536,23 @@ Scrolls the window by the given number of pages down (if pages is positive) or u
 Centers the window. <em>direction</em> is a bitwise combination of wHorizontal and wVertical.
 
 </dd>
-<a id="popupMenu,wWindow,wMenu,wPoint"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">recurse</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="activate,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">activate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Pops up the given menu at the specified coordinates.
+Activates the window.
 
 </dd>
-<a id="popupMenu,wWindow,wMenu,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">recurse</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="popupMenu,wWindow,wMenu,wPoint,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">popupMenu</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">menu</span><span class="Other">:</span> <span class="Identifier">wMenu</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Pops up the given menu at the specified coordinates.
+Pops up the given menu at the specified coordinates. <em>flag</em> is a bitlist of the following:<table border="1" class="docutils"><tr><th>Flag</th><th>Description</th></tr>
+<tr><td>wPopMenuRecurse</td><td>Display a menu when another menu is already displayed.</td></tr>
+<tr><td>wPopMenuTopAlign</td><td>Top side of menu is aligned with the coordinate specified by the y parameter.</td></tr>
+<tr><td>wPopMenuBottomAlign</td><td>Bottom side of menu is aligned with the coordinate specified by the y parameter.</td></tr>
+<tr><td>wPopMenuCenterAlign</td><td>Centers the menu vertically relative to the coordinate specified by the y parameter.</td></tr>
+<tr><td>wPopMenuReturnId</td><td>Not generates wEvent_Menu event but returns the wCommandID or 0 if an error occurs.</td></tr>
+</table>
 
 </dd>
 <a id="startTimer,wWindow,float,int"></a>
@@ -2614,20 +2605,27 @@ Returns true if the window contents is double-buffered by the system
 </dd>
 <a id="processEvent,wWindow,wEvent"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">processEvent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Processes an event: searching event tables and calling event handler. Returned true if a suitable event handler function was executed and it did not call wEvent.skip().
 
 </dd>
 <a id="queueEvent,wWindow,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">queueEvent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">queueEvent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Queue event for a later processing.
 
 </dd>
-<a id="processMessage,wWindow,UINT,WPARAM,LPARAM"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">processMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="queueMessage,wWindow,UINT,wWparam,wLparam"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">queueMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">wWparam</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">wLparam</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Queue message for a later processing.
+
+</dd>
+<a id="processMessage,wWindow,UINT,wWparam,wLparam"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">processMessage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">wWparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">wLparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Create an event object of specified message and then call processEvent() to process it. Returned true if a suitable event handler function was executed and it did not call wEvent.skip().
 
@@ -2645,13 +2643,6 @@ Connects the given event type with the event handler defined as &quot;proc (even
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Connects the given event type and specified ID with the event handler defined as &quot;proc (event: wEvent)&quot;.
-
-</dd>
-<a id="connect,wWindow,wCommandID,wEventProc,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">connect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">;</span> <span class="Identifier">handler</span><span class="Other">:</span> <span class="Identifier">wEventProc</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Connects the specified ID with the event handler defined as &quot;proc (event: wEvent)&quot;.
 
 </dd>
 <a id="disconnect,wWindow,UINT"></a>
@@ -2700,26 +2691,6 @@ Symbol alias for connect.
 Symbol alias for connect.
 
 </dd>
-<a id="setDraggable,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDraggable</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">inClient</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Allow a window to be moved by dragging. If the window is a top-level window, this means to allow dragging by it's client area. In this case, inClient is ignored, and no wEvent_Dragging event will be triggered. Otherwise, When a child window is dragging by user, it receive wEvent_Dragging event. If inClient is true, the window is limited to move inside client area of it's parent.
-
-</dd>
-<a id="setSizingBorder,wWindow,wDirection"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setSizingBorder</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">direction</span><span class="Other">:</span> <span class="Identifier">wDirection</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Allow a child window to be changed size using the mouse. When a window is sizing by user, it receive wEvent_Sizing event.
-
-</dd>
-<a id="setDropTarget,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDropTarget</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Register the window as a drop target, or revoke it. The window will recieve wDragDropEvent during a drag-and-drop operation.
-
-</dd>
 <a id="getToolTip,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getToolTip</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2755,12 +2726,6 @@ Set the shape of the window to the given region. Nil to clear it.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Default finalizer for wWindow.
-
-</dd>
-<a id="init,wWindow,HWND"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">hWnd</span><span class="Other">:</span> <span class="Identifier">HWND</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
 
 </dd>
 <a id="Window,HWND"></a>
@@ -2807,12 +2772,6 @@ Gets the origin of the client area of the window relative to the window top left
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the system suggested size of a window (usually used for GUI controls).
-
-</dd>
-<a id="getBestSize.e,wWindow"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getBestSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the best acceptable minimal size for the window (usually used for GUI controls).
 
 </dd>
 <a id="show.e,wWindow"></a>
@@ -2875,6 +2834,7 @@ A macro to convert all int literal and float literal by dpiScale(). For example:
 
 </dl></div>
 
+
   </div>
 </div>
 
@@ -2882,7 +2842,7 @@ A macro to convert all int literal and float literal by dpiScale(). For example:
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:12 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:14:15 UTC</small>
       </div>
     </div>
   </div>

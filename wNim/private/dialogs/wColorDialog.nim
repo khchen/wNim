@@ -30,10 +30,15 @@
 ##   wEvent_DialogHelp                When the Help button is pressed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wDialog
+export wDialog
+
 const
   wCdFullOpen* = CC_FULLOPEN
-  wCdCenter* = int64 0x10000000 shl 32
-  wCdScreenCenter* = int64 0x20000000 shl 32
+  wCdCenter* = 0x10000000.int64 shl 32
+  wCdScreenCenter* = 0x20000000.int64 shl 32
 
 proc getColor*(self: wColorDialog): wColor {.validate, property, inline.} =
   ## Returns the default or user-selected color.

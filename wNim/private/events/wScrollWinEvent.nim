@@ -32,7 +32,15 @@
 ##   wEvent_ScrollWinChanged         End of scrolling events
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_ScrollWinFirst):
+# forward declaration
+# proc getScrollPos*(self: wWindow, orientation: int): int {.inline.}
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_ScrollWinFirst
   wEvent_ScrollWin
   wEvent_ScrollWinTop
   wEvent_ScrollWinBottom
@@ -45,7 +53,7 @@ DefineIncrement(wEvent_ScrollWinFirst):
   wEvent_ScrollWinChanged
   wEvent_ScrollWinLast
 
-proc isScrollWinEvent(msg: UINT): bool {.inline.} =
+proc isScrollWinEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_ScrollWinFirst..wEvent_ScrollWinLast
 
 method getKind*(self: wScrollWinEvent): int {.property, inline.} =
@@ -58,8 +66,6 @@ method getOrientation*(self: wScrollWinEvent): int {.property, inline.} =
   let dataPtr = cast[ptr wScrollData](self.mLparam)
   result = dataPtr.orientation
 
-proc getScrollPos*(self: wWindow, orientation: int): int {.inline.}
-
 method getScrollPos*(self: wScrollWinEvent): int {.property.} =
   ## Returns the position of the scrollbar.
-  result = self.mWindow.getScrollPos(self.getOrientation())
+  result = self.mScrollPos

@@ -24,6 +24,11 @@
 ## :Events:
 ##   `wSpinEvent <wSpinEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   wSpVertical* = 0
   wSpHorizontal* = UDS_HORZ

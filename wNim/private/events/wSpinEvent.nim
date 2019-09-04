@@ -25,7 +25,12 @@
 ##   wEvent_SpinRight                Pressing right arrow.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_SpinFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_SpinFirst
   wEvent_Spin
   wEvent_SpinUp
   wEvent_SpinDown
@@ -33,7 +38,7 @@ DefineIncrement(wEvent_SpinFirst):
   wEvent_SpinRight
   wEvent_SpinLast
 
-proc isSpinEvent(msg: UINT): bool {.inline.} =
+proc isSpinEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_SpinFirst..wEvent_SpinLast
 
 method getSpinPos*(self: wSpinEvent): int {.property, inline.} =

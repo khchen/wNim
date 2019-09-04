@@ -25,11 +25,16 @@
 ## :Seealso:
 ##   `wDialogEvent <wDialogEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wWindow, ../gdiobjects/wFont
+export wWindow
+
 proc getOwner*(self: wDialog): wWindow {.validate, property, inline.} =
   ## Returns the owner window of the dialog. The result may be nil.
   result = self.mOwner
 
-proc dialogQuit(self: wDialog) =
+proc dialogQuit(self: wDialog) {.shield.} =
   # a dialog must post wEvent_AppQuit message (just like a wWindow does in wWindow_DoDestroy)
   # so that the app will end correctly when a "no owner" dialog closed.
 
@@ -37,7 +42,7 @@ proc dialogQuit(self: wDialog) =
     PostMessage(0, wEvent_AppQuit, 0, self.mHwnd)
 
 proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
-    lParam: LPARAM): UINT_PTR =
+    lParam: LPARAM): UINT_PTR {.shield.} =
 
   case msg
   of WM_INITDIALOG:
@@ -70,11 +75,11 @@ proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
   if self.processMessage(msg, wParam, lParam):
     return TRUE
 
-proc final(self: wDialog) =
+proc final(self: wDialog) {.shield.} =
   ## Default finalizer for wDialog.
   discard
 
-proc init(self: wDialog, owner: wWindow) =
+proc init(self: wDialog, owner: wWindow) {.shield.} =
   ## Initializer.
   self.initBase()
   self.mOwner = owner # may be nil

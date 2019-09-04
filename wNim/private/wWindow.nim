@@ -50,27 +50,34 @@
 ##   - `wScrollWinEvent <wScrollWinEvent.html>`_
 ##   - `wDragDropEvent <wDragDropEvent.html>`_
 
-# forward declarations
-proc getScrollInfo(self: wScrollBar): SCROLLINFO
-proc setScrollPos*(self: wScrollBar, position: int)
-proc toggle*(self: wMenu, pos: int)
-proc check*(self: wMenu, pos: int, flag = true)
-proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable.}
-proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc)
+{.experimental, deadCodeElim: on.}
+
+import macros, dynlib, tables, lists
+import wBase, wUtils, wDataObject, gdiobjects/[wFont, wBrush, wCursor]
+
+# For recursive module dependencies.
+proc screenToClient*(self: wWindow, pos: wPoint): wPoint
+
+import wEvent, wResizable
+export wEvent, wResizable
+
+# Forward declarations
+proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.}
+proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc) {.shield.}
 
 const
   wBorderSimple* = WS_BORDER
-  wBorderSunken* = int64 WS_EX_CLIENTEDGE shl 32
-  wBorderRaised* = int64 WS_EX_WINDOWEDGE shl 32
-  wBorderStatic* = int64 WS_EX_STATICEDGE shl 32
-  wBorderDouble* = int64 WS_EX_DLGMODALFRAME shl 32
-  wTransparentWindow* = int64 WS_EX_TRANSPARENT shl 32
-  wDoubleBuffered* = int64 WS_EX_COMPOSITED shl 32
+  wBorderSunken* = WS_EX_CLIENTEDGE.int64 shl 32
+  wBorderRaised* = WS_EX_WINDOWEDGE.int64 shl 32
+  wBorderStatic* = WS_EX_STATICEDGE.int64 shl 32
+  wBorderDouble* = WS_EX_DLGMODALFRAME.int64 shl 32
+  wTransparentWindow* = WS_EX_TRANSPARENT.int64 shl 32
+  wDoubleBuffered* = WS_EX_COMPOSITED.int64 shl 32
   wVScroll* = WS_VSCROLL
   wHScroll* = WS_HSCROLL
   wClipChildren* = WS_CLIPCHILDREN
-  wHideTaskbar* = int64 0x10000000 shl 32
-  wInvisible* = int64 0x20000000 shl 32
+  wHideTaskbar* = 0x10000000.int64 shl 32
+  wInvisible* = 0x20000000.int64 shl 32
   wPopup* = int64 cast[uint32](WS_POPUP) # WS_POPUP is 0x80000000L
   wPopupWindow* = int64 cast[uint32](WS_POPUPWINDOW)
 
@@ -103,7 +110,7 @@ const
   wPopMenuCenterAlign* = TPM_VCENTERALIGN
   wPopMenuReturnId* = TPM_RETURNCMD
 
-method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base.} =
+method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base, shield.} =
   var rect: RECT
   GetWindowRect(self.mHwnd, rect)
 
@@ -118,7 +125,7 @@ method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base.} =
     result.y = rect.top
 
 method setWindowRect(self: wWindow, x, y, width, height, flag = 0)
-    {.base, inline.} =
+    {.base, inline, shield.} =
   # must use SWP_NOACTIVATE or window will steal focus after setsize
   SetWindowPos(self.mHwnd, 0, x, y, width, height,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE))
@@ -241,13 +248,13 @@ proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete().
   self.delete()
 
-method release(self: wWindow) {.base, inline, locks: "unknown".} =
+method release(self: wWindow) {.base, inline, shield, locks: "unknown".} =
   # override this if a window need extra code to release the resource
   # delete only destroy the window
   # really resoruce clear is in WM_NCDESTROY
   discard
 
-method trigger(self: wWindow) {.base, inline, locks: "unknown".} =
+method trigger(self: wWindow) {.base, inline, shield, locks: "unknown".} =
   # override this if a window need extra init after window create.
   # similar to WM_CREATE.
   discard
@@ -942,7 +949,7 @@ proc setCursor*(self: wWindow, cursor: wCursor) {.validate, property, inline.} =
   wValidate(cursor)
   self.setCursorImpl(cursor, override=false)
 
-proc setOverrideCursor(self: wWindow, cursor: wCursor) =
+proc setOverrideCursor(self: wWindow, cursor: wCursor) {.shield.} =
   # Sets a temporary cursor to override the default one.
   # Is this need to be public?
   self.setCursorImpl(cursor, override=true)
@@ -950,16 +957,6 @@ proc setOverrideCursor(self: wWindow, cursor: wCursor) =
 proc getCursor*(self: wWindow): wCursor {.validate, property, inline.} =
   ## Return the cursor associated with this window.
   result = self.mCursor
-
-proc toBar(orientation: int): int {.inline.} =
-  assert orientation in {wHorizontal, wVertical}
-  result = if orientation == wHorizontal: SB_HORZ else: SB_VERT
-
-proc getScrollInfo(self: wWindow, orientation: int): SCROLLINFO =
-  result = SCROLLINFO(
-    cbSize: sizeof(SCROLLINFO),
-    fMask: SIF_ALL)
-  GetScrollInfo(self.mHwnd, orientation.toBar, &result)
 
 proc setScrollbar*(self: wWindow, orientation: int, position: Natural,
     pageSize: Positive, range: Positive) {.validate, property.} =
@@ -1053,6 +1050,15 @@ proc center*(self: wWindow, direction = wBoth) {.validate.} =
       rect.y = (size.height - rect.height) div 2 + point.y
 
     self.setWindowPos(rect.x, rect.y)
+
+proc activate*(self: wWindow, force = false) {.validate.} =
+  ## Activates the window.
+  if SetForegroundWindow(self.mHwnd) == 0 and force:
+    let foreId = GetWindowThreadProcessId(GetForegroundWindow(), nil)
+    let curId = GetCurrentThreadId()
+    AttachThreadInput(curId, foreId, TRUE)
+    SetForegroundWindow(self.mHwnd)
+    AttachThreadInput(curId, foreId, FALSE)
 
 proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
     flag = 0): wCommandID {.validate, discardable.} =
@@ -1253,7 +1259,7 @@ proc queueMessage*(self: wWindow, msg: UINT, wParam: wWparam, lParam: wLparam)
   PostMessage(self.mHwnd, msg, wParam, lParam)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
-    ret: var LRESULT, origin: HWND): bool {.discardable.} =
+    ret: var LRESULT, origin: HWND): bool {.discardable, shield.} =
   # Use internally, generate the event object and process it.
   if wAppHasMessage(msg):
     let event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam,
@@ -1262,7 +1268,7 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret = event.mResult
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
-    ret: var LRESULT): bool {.inline, discardable.} =
+    ret: var LRESULT): bool {.inline, discardable, shield.} =
   # Use internally, ignore origin means origin is self.mHwnd.
   result = self.processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
@@ -1275,7 +1281,7 @@ proc processMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0,
   result = self.processMessage(msg, wParam, lParam, dummy)
 
 method processNotify(self: wWindow, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.base, locks: "unknown".} =
+    ret: var LRESULT): bool {.base, shield, locks: "unknown".} =
   # subclass can override this to process the nofity message
   discard
 
@@ -1312,16 +1318,11 @@ proc scrollEventTranslate(wParam: WPARAM, info: SCROLLINFO, position: var INT,
     else: 0
 
 proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
-    isControl: bool, processed: var bool) =
+    isControl: bool, processed: var bool) {.shield.} =
   # handle WM_VSCROLL and WM_HSCROLL for both standard scroll bar and scroll
   # bar control
   var
-    info =
-      if isControl:
-        wScrollBar(self).getScrollInfo()
-      else:
-        self.getScrollInfo(orientation)
-
+    info = self.getScrollInfo(if isControl: 0 else: orientation)
     position = info.nPos
     eventKind = scrollEventTranslate(wParam, info, position, isControl)
 
@@ -1331,10 +1332,7 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
   if position > maxPos: position = maxPos
 
   if position != info.nPos:
-    if isControl:
-      wScrollBar(self).setScrollPos(position)
-    else:
-      self.setScrollPos(orientation, position)
+    self.setScrollPos(if isControl: 0 else: orientation, position)
 
   # No more check the position to decide sending event or not.
   # It means: the behavior is more like wSlider, and simpler code.
@@ -1347,8 +1345,16 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
 
     # sent wEvent_ScrollWin/wEvent_ScrollBar first, if this is processed,
     # skip other event
-    let defaultKind = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
-    if not self.processMessage(defaultKind, wParam, dataPtr):
+    let event = Event(self, if isControl: wEvent_ScrollBar else: wEvent_ScrollWin,
+      wParam, dataPtr)
+
+    if isControl:
+      let info = self.getScrollInfo()
+      event.wScrollEvent.mScrollPos = info.nPos
+    else:
+      event.wScrollWinEvent.mScrollPos = self.getScrollPos(orientation)
+
+    if not self.processEvent(event):
       self.processMessage(eventKind, wParam, dataPtr)
 
 proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventProc = nil,
@@ -1358,14 +1364,14 @@ proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventProc = nil,
   result = wEventConnection(msg: msg, id: id, handler: handler,
     neatHandler: neatHandler, userData: userData, undeletable: undeletable)
 
-proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable.} =
+proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.} =
   # Used internally: a default behavior cannot be changed by user
   var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
   self.mSystemConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
   wAppIncMessage(msg)
   result = connection
 
-proc hardConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable.} =
+proc hardConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.} =
   # Used internally: a default behavior can be changed by user but cannot be deleted
   var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
   self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
@@ -1483,7 +1489,7 @@ proc disconnect*(self: wWindow, connection: wEventConnection) =
         list.remove(node)
         wAppDecMessage(msg)
 
-proc systemDisconnect(self: wWindow, connection: wEventConnection) {.validate.} =
+proc systemDisconnect(self: wWindow, connection: wEventConnection) {.validate, shield.} =
   # Used internally, disconnects the specified connection that returned by
   # systemConnect().
   let msg = connection.msg
@@ -1957,7 +1963,7 @@ proc wWindow_DoGetMinMaxInfo(event: wEvent) =
     if self.mMaxSize.width != wDefault: pInfo.ptMaxTrackSize.x = self.mMaxSize.width
     if self.mMaxSize.height != wDefault: pInfo.ptMaxTrackSize.y = self.mMaxSize.height
 
-proc wWindow_DoScroll(event: wEvent) =
+proc wWindow_DoScroll(event: wEvent) {.shield.} =
   var processed = false
   if event.mLparam == 0: # means the standard scroll bar
     let orientation = if event.mMsg == WM_VSCROLL: wVertical else: wHorizontal
@@ -2132,10 +2138,10 @@ proc wWindow_OnMenuCommand(event: wEvent) =
 
     else:
       if item.mKind == wMenuItemCheck:
-        menu.toggle(pos)
+        wMenuToggle(menu, pos)
 
       elif item.mKind == wMenuItemRadio:
-        menu.check(pos)
+        wMenuCheck(menu, pos)
 
       # convet to wEvent_Menu message.
       processed = self.processMessage(wEvent_Menu, cast[WPARAM](item.mId),
@@ -2210,7 +2216,7 @@ proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT
   return DefWindowProc(hwnd, msg, wParam, lParam)
 
 proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
-    uIdSubclass: UINT_PTR, dwRefData: DWORD_PTR): LRESULT {.stdcall.} =
+    uIdSubclass: UINT_PTR, dwRefData: DWORD_PTR): LRESULT {.stdcall, shield.} =
 
   let self = cast[wWindow](dwRefData)
   if self.processMessage(msg, wparam, lparam, result):
@@ -2230,7 +2236,7 @@ proc final*(self: wWindow) =
   # Just don't need do anything. WM_NCDESTROY does a lot.
   discard
 
-proc initBase(self: wWindow) =
+proc initBase(self: wWindow) {.shield.} =
   self.wResizable.init()
   self.mConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
   self.mSystemConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
@@ -2242,7 +2248,7 @@ proc initBase(self: wWindow) =
 proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     title = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
-    className = "wWindow", owner: wWindow = nil,  regist = true) =
+    className = "wWindow", owner: wWindow = nil,  regist = true) {.shield.} =
   # use internally
   self.initBase()
   self.mParent = parent
@@ -2441,3 +2447,8 @@ proc Window*(parent: wWindow = nil, id: wCommandID = 0,
   # a window there and don't do anything about it. Especially for controls.
   new(result, final)
   result.init(parent, id, pos, size, style, className)
+
+# Export wResizer for wWindow layout. But for recursive module dependencies,
+# So put it here.
+import wResizer
+export wResizer

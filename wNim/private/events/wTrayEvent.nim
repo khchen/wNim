@@ -29,7 +29,12 @@
 ##   wEvent_TrayBalloonClick         The balloon is dismissed because the user clicked the mouse.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_TrayFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_TrayFirst
   wEvent_TrayIcon
   wEvent_TrayLeftDown
   wEvent_TrayLeftUp
@@ -42,5 +47,5 @@ DefineIncrement(wEvent_TrayFirst):
   wEvent_TrayBalloonClick
   wEvent_TrayLast
 
-proc isTrayEvent(msg: UINT): bool {.inline.} =
+proc isTrayEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_TrayFirst..wEvent_TrayLast

@@ -14,6 +14,11 @@
 ## :Superclass:
 ##   `wControl <wControl.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl, wToolBar
+export wControl, wToolBar
+
 const
   wRbBandBorder* = RBS_BANDBORDERS
   wRbDoubleClickToggle* = RBS_DBLCLKTOGGLE
@@ -50,8 +55,8 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
   rbBand.hwndChild = control.mHwnd
   rbBand.iImage = image
 
-  if control of wToolBar:
-    var toolbar = wToolBar(control)
+  if control of wBase.wToolBar:
+    var toolbar = wBase.wToolBar(control)
     var toolSize = toolbar.getToolSize()
     rbBand.cxMinChild = toolbar.getToolsCount() * toolSize.width
     rbBand.cyMinChild = toolSize.height
@@ -83,7 +88,7 @@ proc len*(self: wRebar): int {.validate, inline.} =
   result = self.getCount()
 
 method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of RBN_BEGINDRAG:

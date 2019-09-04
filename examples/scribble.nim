@@ -6,9 +6,14 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim,
-  strutils
+  strutils,
+  resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wImage, wIcon, wPen, wCursor, wBitmap, wBrush, wUtils,
+    wPaintDC, wClientDC, wMemoryDC]
 
 type
   wScribble = ref object of wFrame
@@ -105,6 +110,12 @@ proc saveFile(self: wScribble, filename: string) =
   image.saveFile(filename)
 
 when isMainModule:
+  when defined(aio):
+    import wNim
+  else:
+    import wNim/[wApp, wMenuBar, wMenu, wStatusBar,
+      wFileDialog, wMessageDialog, wColorDialog]
+
   type
     MenuId = enum
       idNew = 100, idExit, idAbout, idOther, idLoad, idSave
@@ -161,7 +172,7 @@ when isMainModule:
 
   scribble.idLoad do ():
     let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
-    let dlg = FileDialog(wildcard=wildcard, style=wFdOpen or wFdFileMustExist)
+    let dlg = FileDialog(scribble, wildcard=wildcard, style=wFdOpen or wFdFileMustExist)
     if dlg.showModal() == wIdOk:
       try:
         scribble.loadFile(dlg.path)
@@ -170,7 +181,7 @@ when isMainModule:
 
   scribble.idSave do ():
     let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
-    let dlg = FileDialog(wildcard=wildcard, style=wFdSave or wFdOverwritePrompt)
+    let dlg = FileDialog(scribble, wildcard=wildcard, style=wFdSave or wFdOverwritePrompt)
     if dlg.showModal() == wIdOk:
       var path = dlg.path
       if dlg.filterIndex == 1 and not path.toLowerAscii.endsWith(".png"):

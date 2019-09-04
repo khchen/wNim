@@ -27,7 +27,12 @@
 ##   wEvent_PrintChanged             When the selected printer is changed.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_DialogFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_DialogFirst
   wEvent_DialogCreated
   wEvent_DialogClosed
   wEvent_DialogHelp
@@ -38,5 +43,5 @@ DefineIncrement(wEvent_DialogFirst):
   wEvent_PrintChanged
   wEvent_DialogLast
 
-proc isDialogEvent(msg: UINT): bool {.inline.} =
+proc isDialogEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_DialogFirst..wEvent_DialogLast

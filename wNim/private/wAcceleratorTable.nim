@@ -22,8 +22,9 @@
 ## :Seealso:
 ##   `wFrame <wFrame.html>`_
 
-# forward declarations
-proc setAcceleratorTable*(self: wWindow, accel: wAcceleratorTable) {.inline.}
+{.experimental, deadCodeElim: on.}
+
+import wBase
 
 const
   wAccelNormal* = 0
@@ -80,20 +81,6 @@ converter tupleTowAcceleratorEntry2*[T: enum|wCommandID](x: (char, T)):
     wAcceleratorEntry {.inline.} =
   ## Convert tuple to character code accelerator object.
   result = AcceleratorEntry(x[0], wCommandID x[1])
-
-proc getHandle(self: wAcceleratorTable): HACCEL =
-  # Use internally, generate the accelerator table on the fly.
-  if self.mModified:
-    if self.mHandle != 0:
-      DestroyAcceleratorTable(self.mHandle)
-
-    if self.mAccels.len != 0:
-      self.mHandle = CreateAcceleratorTable(addr self.mAccels[0], self.mAccels.len)
-    else:
-      self.mHandle = 0
-    self.mModified = false
-
-  result = self.mHandle
 
 proc add*(self: wAcceleratorTable, entry: wAcceleratorEntry)
     {.validate, inline.} =
@@ -164,7 +151,8 @@ proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]):
 proc init*(self: wAcceleratorTable, window: wWindow) {.validate, inline.} =
   ## Initializer.
   self.init()
-  window.setAcceleratorTable(self)
+  window.mAcceleratorTable = self
+  wAppAccelOn()
 
 proc AcceleratorTable*(window: wWindow): wAcceleratorTable {.inline.} =
   ## Construct an accelerator table, and attach it to *window*.
@@ -175,7 +163,8 @@ proc init*(self: wAcceleratorTable, window: wWindow,
     entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
   ## Initializer.
   self.init(entries)
-  window.setAcceleratorTable(self)
+  window.mAcceleratorTable = self
+  wAppAccelOn()
 
 proc AcceleratorTable*(window: wWindow, entries: openarray[wAcceleratorEntry]):
     wAcceleratorTable {.inline.} =

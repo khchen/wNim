@@ -5,9 +5,13 @@
 #
 #====================================================================
 
-import
-  resource/resource,
-  wNim
+import resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wPanel, wMenu, wIcon, wImage, wBitmap,
+    wStatusBar, wToolBar, wListBox]
 
 type
   MenuID = enum

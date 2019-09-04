@@ -37,7 +37,12 @@
 ##                                   either by a right click or by using the menu key.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_TreeFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_TreeFirst
   wEvent_TreeBeginDrag
   wEvent_TreeBeginRdrag
   wEvent_TreeEndDrag
@@ -55,7 +60,7 @@ DefineIncrement(wEvent_TreeFirst):
   wEvent_TreeItemMenu
   wEvent_TreeLast
 
-proc isTreeEvent(msg: UINT): bool {.inline.} =
+proc isTreeEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_TreeFirst..wEvent_TreeLast
 
 method getItem*(self: wTreeEvent): wTreeItem {.property, inline.} =

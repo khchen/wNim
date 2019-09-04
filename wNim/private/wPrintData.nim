@@ -13,6 +13,11 @@
 ##   `wPrintDialog <wPrintDialog.html>`_
 ##   `wPageSetupDialog <wPageSetupDialog.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import math
+import wBase
+
 type
   wPrintDataError* = object of wError
     ## An error raised when wPrntData creation failed or error occurred.
@@ -239,7 +244,7 @@ proc PrintData*(device: string): wPrintData {.inline.} =
   new(result, final)
   result.init(device)
 
-proc getDevMode(self: wPrintData): HGLOBAL =
+proc getDevMode(self: wPrintData): HGLOBAL {.shield.} =
   # convert wPrintData to movable block of memory. use internally.
   if self.mDevModeBuffer.len != 0:
     result = GlobalAlloc(GHND, SIZE_T self.mDevModeBuffer.len)

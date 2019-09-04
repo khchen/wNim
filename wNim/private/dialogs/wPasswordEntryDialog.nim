@@ -20,6 +20,11 @@
 ##   wEvent_DialogClosed              When the dialog is being closed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wFrame, wDialog, wTextEntryDialog
+export wDialog, wTextEntryDialog
+
 proc final*(self: wPasswordEntryDialog) =
   ## Default finalizer for wPasswordEntryDialog.
   wTextEntryDialog(self).final()

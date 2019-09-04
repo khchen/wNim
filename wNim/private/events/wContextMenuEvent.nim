@@ -21,10 +21,14 @@
 ##   wEvent_ContextMenu              Notifies a window that the user clicked the right mouse button.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
 const
   wEvent_ContextMenu* = WM_CONTEXTMENU
 
-proc isContextMenuEvent(msg: UINT): bool {.inline.} =
+proc isContextMenuEvent(msg: UINT): bool {.inline, shield.} =
   msg == wEvent_ContextMenu
 
 method getPosition*(self: wContextMenuEvent): wPoint {.property.} =

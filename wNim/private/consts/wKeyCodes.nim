@@ -5,6 +5,8 @@
 #
 #====================================================================
 
+import ../winimx
+
 ## The key-code used in wNim functions. These constants are in fact
 ## Windows' virtual-key codes.
 

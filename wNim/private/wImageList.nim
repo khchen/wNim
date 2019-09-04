@@ -13,6 +13,8 @@
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
 
+import wBase, gdiobjects/[wBitmap, wIcon]
+
 proc getHandle*(self: wImageList): HIMAGELIST {.validate, property, inline.} =
   ## Gets the real resource handle in system.
   result = self.mHandle

@@ -6,9 +6,14 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim,
-  strutils, macros
+  strutils, macros,
+  resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[autolayout, wApp, wFrame, wIcon, wPanel, wMenu, wMenuBar, wSplitter,
+    wStatusBar, wTextCtrl, wStaticText, wFont]
 
 type
   MenuID = enum

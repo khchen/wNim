@@ -7,8 +7,14 @@
 
 import
   resource/resource,
-  wNim,
   strformat
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wDataObject, wAcceleratorTable, wUtils,
+    wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
+    wStatusBar, wStaticText, wTextCtrl, wListBox, wStaticBitmap]
 
 type
   MenuID = enum

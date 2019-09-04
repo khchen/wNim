@@ -41,6 +41,11 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # SpinCtrl styles
   wSpReadOnly* = ES_READONLY
@@ -48,14 +53,14 @@ const
   wSpCenter* = ES_CENTER
   wSpRight* = ES_RIGHT
   # avoid style clash
-  wSpArrowKeys* = int64 0x10000000 shl 32
-  wSpWrap* = int64 0x20000000 shl 32
+  wSpArrowKeys* = 0x10000000.int64 shl 32
+  wSpWrap* = 0x20000000.int64 shl 32
 
 method getWindowRect(self: wSpinCtrl, sizeOnly = false): wRect =
   result = procCall wWindow(self).getWindowRect()
   result.width += self.mUpdownWidth
 
-method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0) =
+method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0) {.shield.} =
   var
     width = width
     height = height

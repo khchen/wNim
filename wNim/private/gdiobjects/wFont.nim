@@ -12,7 +12,6 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
 #
 ## :Consts:
 ##   ==============================  =============================================================
@@ -76,6 +75,12 @@
 ##   wFontEncodingCp437              OEM_CHARSET
 ##   wFontEncodingCp850              OEM_CHARSET
 ##   ==============================  =============================================================
+
+{.experimental, deadCodeElim: on.}
+
+import math
+import ../wBase, wGdiObject
+export wGdiObject
 
 type
   wFontError* = object of wGdiObjectError
@@ -191,7 +196,7 @@ proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
   result.init(pointSize, family, weight, italic, underline, strikeout, faceName,
     encoding)
 
-proc Font(lf: var LOGFONT): wFont {.inline.} =
+proc Font(lf: var LOGFONT): wFont {.inline, shield.} =
   # Use internally.
   new(result, final)
   result.initFromNative(lf)
@@ -310,3 +315,34 @@ proc setEncoding*(self: wFont, encoding: int) {.validate, property.} =
   self.init(pointSize=self.mPointSize, family=self.mFamily, weight=self.mWeight,
     italic=self.mItalic, underline=self.mUnderline, strikeout=self.mStrikeout,
     faceName=self.mFaceName, encoding=encoding)
+
+template wNormalFont*(): untyped =
+  ## Predefined normal font. **Don't delete**.
+  wGDIStock(wFont, NormalFont):
+    Font()
+
+template wSmallFont*(): untyped =
+  ## Predefined small font. **Don't delete**.
+  wGDIStock(wFont, SmallFont):
+    let font = Font()
+    Font(pointSize=font.pointSize - 2)
+
+template wLargeFont*(): untyped =
+  ## Predefined large font. **Don't delete**.
+  wGDIStock(wFont, LargeFont):
+    let font = Font()
+    Font(pointSize=font.pointSize + 2)
+
+template wItalicFont*(): untyped =
+  ## Predefined italic font. **Don't delete**.
+  wGDIStock(wFont, ItalicFont):
+    Font(family=wFontFamilyRoman, italic=true)
+
+template wBoldFont*(): untyped =
+  ## Predefined bold font. **Don't delete**.
+  wGDIStock(wFont, BoldFont):
+    Font(weight=wFontWeightBold)
+
+template wDefaultFont*(): untyped =
+  ## Predefined default font. **Don't delete**.
+  wNormalFont()

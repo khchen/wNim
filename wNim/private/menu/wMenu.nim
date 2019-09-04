@@ -14,10 +14,32 @@
 ##   `wMenuBar <wMenuBar.html>`_
 ##   `wMenuItem <wMenuItem.html>`_
 
-# forward declarations
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase
+
+# For recursive module dependencies.
+proc find*(self: wMenu, item: wMenuItem): int
+proc setText*(self: wMenu, pos: int, text: string) {.property.}
+proc setBitmap*(self: wMenu, pos: int, bitmap: wBitmap = nil) {.property.}
+proc setId*(self: wMenu, pos: int, id: wCommandID) {.property.}
+proc enable*(self: wMenu, pos: int, flag = true)
+proc isEnabled*(self: wMenu, pos: int): bool
+proc check*(self: wMenu, pos: int, flag = true)
+proc isChecked*(self: wMenu, pos: int): bool
+proc toggle*(self: wMenu, pos: int)
+proc remove*(self: wMenu, pos: int)
 proc remove*(self: wMenu, submenu: wMenu)
-proc MenuItem*(id: wCommandID = 0, text = "", help = "", kind = wMenuItemNormal,
-    bitmap: wBitmap = nil, submenu: wMenu = nil): wMenuItem {.inline.}
+proc replace*(self: wMenu, pos: int, id: wCommandID = 0, text = "",
+    help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
+    kind = wMenuItemNormal): wMenuItem {.discardable.}
+
+import wMenuBase, wMenuBar, wMenuItem
+export wMenuBase, wMenuBar, wMenuItem
+
+# forward declarations
+proc Menu*(hMenu: HMENU): wMenu {.inline.}
 
 proc detach*(self: wMenu, menuBar: wMenuBar) {.validate.} =
   ## Detach a menu from a menubar.
@@ -32,11 +54,11 @@ proc detach*(self: wMenu, parentMenu: wMenu) {.validate.} =
 proc detach*(self: wMenu) {.validate.} =
   ## Detach a menu from all menubar and menu(as submenu).
   for menuBase in wAppMenuBase():
-    if menuBase of wMenuBar:
-      self.detach(wMenuBar(menuBase))
+    if menuBase of wBase.wMenuBar:
+      self.detach(wBase.wMenuBar(menuBase))
 
-    elif menuBase of wMenu:
-      self.detach(wMenu(menuBase))
+    elif menuBase of wBase.wMenu:
+      self.detach(wBase.wMenu(menuBase))
 
 proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
     help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
@@ -397,8 +419,8 @@ proc enable*(self: wMenu, pos: int, flag = true) {.validate.} =
 
     # it need to refresh if the menu in menubar
     for menuBase in wAppMenuBase():
-      if menuBase of wMenuBar:
-        let menuBar = wMenuBar(menuBase)
+      if menuBase of wBase.wMenuBar:
+        let menuBar = wBase.wMenuBar(menuBase)
         let pos = menuBar.find(self)
         if pos != wNotFound:
           menuBar.refresh()
@@ -415,13 +437,13 @@ proc isEnabled*(self: wMenu, pos: int): bool {.validate.} =
 proc enable*(self: wMenu, flag = true) {.validate.} =
   ## Enables or disables (greys out) this menu.
   for menuBase in wAppMenuBase():
-    if menuBase of wMenuBar:
-      let menuBar = wMenuBar(menuBase)
+    if menuBase of wBase.wMenuBar:
+      let menuBar = wBase.wMenuBar(menuBase)
       let pos = menuBar.find(self)
       if pos != wNotFound: menuBar.enable(pos, flag)
 
-    elif menuBase of wMenu:
-      let menu = wMenu(menuBase)
+    elif menuBase of wBase.wMenu:
+      let menu = wBase.wMenu(menuBase)
       let pos = menu.find(self)
       if pos != wNotFound: menu.enable(pos, flag)
 
@@ -431,21 +453,7 @@ proc disable*(self: wMenu) {.validate, inline.} =
 
 proc check*(self: wMenu, pos: int, flag = true) {.validate.} =
   ## Checks or unchecks the menu item.
-  if pos >= 0 and pos < self.mItemList.len:
-    if flag and self.mItemList[pos].mKind == wMenuItemRadio:
-      var first, last: int
-      for i in pos..<self.mItemList.len:
-        if self.mItemList[i].mKind != wMenuItemRadio: break
-        last = i
-
-      for i in countdown(pos, 0):
-        if self.mItemList[i].mKind != wMenuItemRadio: break
-        first = i
-
-      CheckMenuRadioItem(self.mHmenu, first, last, pos, MF_BYPOSITION)
-
-    else:
-      wCheckMenuItem(self.mHmenu, pos, flag)
+  wMenuCheck(self, pos, flag)
 
 proc isChecked*(self: wMenu, pos: int): bool {.validate.} =
   ## Determines whether a menu item is checked.
@@ -455,10 +463,7 @@ proc isChecked*(self: wMenu, pos: int): bool {.validate.} =
 
 proc toggle*(self: wMenu, pos: int) {.validate.} =
   ## Toggle the menu item.
-  if pos >= 0 and pos < self.mItemList.len:
-    var menuItemInfo = wGetMenuItemInfo(self.mHmenu, pos)
-    menuItemInfo.fState = menuItemInfo.fState xor MFS_CHECKED
-    SetMenuItemInfo(self.mHmenu, pos, true, menuItemInfo)
+  wMenuToggle(self, pos)
 
 proc getHandle*(self: wMenu): HMENU {.validate, property, inline.} =
   ## Get system handle of this menu.
@@ -468,13 +473,13 @@ proc getTitle*(self: wMenu): string {.validate, property.} =
   ## Returns the title of the menu, a title means it's label in menuBar or menu.
   ## (find fist match if a menu attach to more than one menuBar or menu).
   for menuBase in wAppMenuBase():
-    if menuBase of wMenuBar:
-      let menuBar = wMenuBar(menuBase)
+    if menuBase of wBase.wMenuBar:
+      let menuBar = wBase.wMenuBar(menuBase)
       let pos = menuBar.find(self)
       if pos != wNotFound: return menuBar.getLabel(pos)
 
-    elif menuBase of wMenu:
-      let menu = wMenu(menuBase)
+    elif menuBase of wBase.wMenu:
+      let menu = wBase.wMenu(menuBase)
       let pos = menu.find(self)
       if pos != wNotFound: return menu.getText(pos)
 
@@ -559,9 +564,6 @@ proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu
   wValidate(menuBar, text)
   new(result, final)
   result.init(menuBar, text, bitmap)
-
-# forward declarations
-proc Menu*(hMenu: HMENU): wMenu {.inline.}
 
 proc init*(self: wMenu, hMenu: HMENU) {.validate.} =
   ## Initializer.

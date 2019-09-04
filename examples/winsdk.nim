@@ -5,15 +5,20 @@
 #
 #====================================================================
 
-# This example demonstrates how wNim works with Win32 SDK via winim.
+# This example demonstrates how wNim works with Windows SDK via winim.
 
 import
   resource/resource,
-  wNim, winim
+  winim/lean
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wMessageDialog]
 
 let
   app = App()
-  frame = Frame(title="Win32 SDK via winim", size=(640, 480))
+  frame = Frame(title="Windows SDK via winim", size=(640, 480))
   statusBar = StatusBar(frame)
 
   # Loads a system icon
@@ -55,7 +60,7 @@ frame.wEvent_Menu do (event: wEvent):
 # Connect system message as an event.
 frame.connect(WM_SYSCOMMAND) do (event: wEvent):
   let msg = case int event.wParam:
-  of int wIdSystemMenu: "Windows GUI Framework + Win32 SDK"
+  of int wIdSystemMenu: "Windows GUI Framework + SDK"
   of SC_CLOSE: "SC_CLOSE"
   of SC_MAXIMIZE: "SC_MAXIMIZE"
   of SC_MINIMIZE: "SC_MINIMIZE"

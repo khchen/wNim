@@ -38,6 +38,11 @@
 ## :Events:
 ##   `wWebViewEvent <wWebViewEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   wWvNoSel* = 1
   wWvNoScroll* = 2

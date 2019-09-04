@@ -20,6 +20,11 @@
 ##   wDdXpCompatible                 Use the Windows XP compatible UI as the dialog.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wDialog
+export wDialog
+
 const
   wDdDirMustExist* = 1
   wDdChangeDir* = 2

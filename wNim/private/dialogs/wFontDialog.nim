@@ -22,6 +22,11 @@
 ##   wEvent_DialogHelp                When the Help button is pressed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../gdiobjects/wFont, wDialog
+export wDialog, wFont
+
 proc getChosenFont*(self: wFontDialog): wFont {.validate, property, inline.} =
   ## Gets the font chosen by the user if the user pressed OK.
   result = self.mChosenFont

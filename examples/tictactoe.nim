@@ -6,10 +6,15 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim,
   random, sets, strformat,
+  resource/resource,
   mcts/[gamebase, engine_tictactoe]
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wImage, wIcon, wBitmap, wBrush, wStatusBar, wUtils,
+    wMenuBar, wMenu, wMemoryDC, wPaintDC]
 
 type
   MenuId = enum idNew = 100, idExit, idAi1, idAi2

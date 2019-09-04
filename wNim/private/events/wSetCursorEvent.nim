@@ -24,10 +24,14 @@
 ##   wEvent_SetCursor                The mouse cursor is about to be set.
 ##   ==============================  =============================================================
 
-const
-  wEvent_SetCursor* = WM_APP + 3
+{.experimental, deadCodeElim: on.}
 
-proc isSetCursorEvent(msg: UINT): bool {.inline.} =
+import ../wBase
+
+DefineEvent:
+  wEvent_SetCursor
+
+proc isSetCursorEvent(msg: UINT): bool {.inline, shield.} =
   msg == wEvent_SetCursor
 
 method getCursor*(self: wSetCursorEvent): wCursor {.property, inline.} =

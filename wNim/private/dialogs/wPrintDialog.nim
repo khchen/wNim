@@ -29,6 +29,11 @@
 ##   wEvent_PrintChanged              When the selected printer is changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wPrintData, wDialog
+export wDialog, wPrintData
+
 type
   wPrintDialogError* = object of wError
     ## An error raised when wPrintDialog creation failed.

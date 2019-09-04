@@ -37,6 +37,11 @@
 ##   wEvent_ToolEnter                 The mouse cursor has moved into or moved off a tool.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../gdiobjects/wBitmap, wControl, wStatusBar
+export wControl
+
 const
   # ToolBar styles
   wTbFlat* = TBSTYLE_FLAT
@@ -288,7 +293,7 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
 method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of TTN_GETDISPINFO:
@@ -333,7 +338,7 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
     # Translate to wEvent_ToolRightClick but don't eat it, so that wEvent_CommandRightClick stil can work
     # If the mouse was clicked on a separator or white space in the toolbar, the dwItemSpec member will contain -1
     let lpnm = cast[LPNMMOUSE](lparam)
-    if lpnm.dwItemSpec != DWORD_PTR(-1):
+    if lpnm.dwItemSpec != not DWORD_PTR(0):
       return self.processMessage(wEvent_ToolRightClick, cast[WPARAM](lpnm.dwItemSpec), lparam)
     # fall to wControl's processNotify
 
@@ -343,7 +348,7 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 proc wToolBar_OnToolDropDown(event: wEvent) =
   # show the popupmenu is a default behavior, but can be overridden.
-  let self = wToolBar event.mWindow
+  let self = wBase.wToolBar event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 

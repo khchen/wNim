@@ -14,6 +14,20 @@
 ##   `wMenu <wMenu.html>`_
 ##   `wMenuItem <wMenuItem.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import sets, strutils
+import ../wBase
+
+# For recursive module dependencies
+proc remove*(self: wMenuBar, menu: wMenu)
+proc find*(self: wMenuBar, menu: wMenu): int
+proc refresh*(self: wMenuBar)
+proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil) {.inline.}
+
+import wMenuBase
+export wMenuBase
+
 proc refresh*(self: wMenuBar) {.validate.} =
   ## Redraw the menubar.
   for frame in self.mParentFrameSet:

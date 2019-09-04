@@ -37,6 +37,12 @@
 ##   wStayOnTop                      The message box will stay on top of all other windows.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import tables
+import ../wBase, ../wFrame, wDialog
+export wDialog, wFrame
+
 var gMessageDialog {.threadvar.}: wMessageDialog
 
 const
@@ -61,7 +67,7 @@ const
   wButton3_Default* = MB_DEFBUTTON3
   wButton4_Default* = MB_DEFBUTTON4
   # defined in wFrame.nim
-  # wStayOnTop* = int64 WS_EX_TOPMOST shl 32
+  # wStayOnTop* = WS_EX_TOPMOST.int64 shl 32
 
 proc final*(self: wMessageDialog) =
   ## Default finalizer for wMessageDialog.

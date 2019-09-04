@@ -19,7 +19,10 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
 
 type
   wGdiObjectError* = object of wError
@@ -38,3 +41,49 @@ method delete*(self: wGdiObject) {.base, inline.} =
   if self.mHandle != 0:
     DeleteObject(self.mHandle)
     self.mHandle = 0
+
+when not defined(Nimdoc):
+  template wGDIStock*(typ: typedesc, sn: int, obj: wGdiObject): untyped =
+    if sn > wAppGetCurrentApp.mGDIStockSeq.high:
+      wAppGetCurrentApp.mGDIStockSeq.setlen(sn+1)
+
+    if wAppGetCurrentApp.mGDIStockSeq[sn] == nil:
+      wAppGetCurrentApp.mGDIStockSeq[sn] = obj
+
+    typ(wAppGetCurrentApp.mGDIStockSeq[sn])
+
+DefineIncrement(0):
+  NormalFont
+  SmallFont
+  LargeFont
+  ItalicFont
+  BoldFont
+  BlackPen
+  WhitePen
+  TransparentPen
+  RedPen
+  CyanPen
+  GreenPen
+  GreyPen
+  MediumGreyPen
+  LightGreyPen
+  BlackDashedPen
+  BlackBrush
+  WhiteBrush
+  GreyBrush
+  TransparentBrush
+  LightGreyBrush
+  MediumGreyBrush
+  BlueBrush
+  GreenBrush
+  CyanBrush
+  RedBrush
+  NilBitmap
+  NilCursor
+  DefaultCursor
+  ArrorCursor
+  SizeAllCursor
+  SizeWeCursor
+  SizeNsCursor
+  HandCursor
+  NilRegion

@@ -19,12 +19,29 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../gdiobjects/wBitmap, wDC
+export wDC
+
+when not defined(Nimdoc):
+  type
+    wMemoryDC* = object of wDC
+      mBitmap*: wBitmap
+else:
+  type
+    wMemoryDC* = object of wDC
+
 proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   ## Selects the given bitmap into the device context, to use as the memory bitmap.
   wValidate(bitmap)
   self.mBitmap = bitmap
   let hBmp = SelectObject(self.mHdc, bitmap.mHandle)
   if self.mhOldBitmap == 0: self.mhOldBitmap = hBmp
+
+method getSize*(self: wMemoryDC): wSize {.property.} =
+  ## Gets the size of the device context.
+  result = self.mBitmap.getSize()
 
 proc MemoryDC*(): wMemoryDC =
   ## Constructs a new memory device context.

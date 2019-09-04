@@ -14,6 +14,11 @@
 ## :Events:
 ##   `wStatusBarEvent <wStatusBarEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 # statusbar's best size and default size are current size
 method getBestSize*(self: wStatusBar): wSize {.property, inline.} =
   ## Returns the best size for the status bar.
@@ -110,7 +115,9 @@ proc `[]`*(self: wStatusBar, index: int): string {.validate, inline.} =
   ## Returns the string associated with a status bar of the specified field.
   result = self.getStatusText(index)
 
-method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool {.shield.} =
+
   var eventKind: UINT
   case code
   of NM_CLICK: eventKind = wEvent_StatusBarLeftClick

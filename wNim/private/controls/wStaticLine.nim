@@ -22,6 +22,11 @@
 ##   wLiVertical                     Creates a vertical line.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   wLiHorizontal* = SS_LEFT # 0
   wLiVertical* = SS_RIGHT # 2

@@ -24,6 +24,10 @@
 ##   wEvent_SysKeyUp                 Releases a key that was pressed while the ALT key was held down.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
 const
   wEvent_Char* = WM_CHAR
   wEvent_KeyDown* = WM_KEYDOWN
@@ -33,7 +37,7 @@ const
   wEvent_KeyFirst = WM_KEYFIRST
   wEvent_KeyLast = WM_KEYLAST
 
-proc isKeyEvent(msg: UINT): bool {.inline.} =
+proc isKeyEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_KeyFirst..wEvent_KeyLast
 
 method getKeyCode*(self: wKeyEvent): int {.property, inline.} =

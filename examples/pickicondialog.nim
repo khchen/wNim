@@ -6,10 +6,15 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim,
   strutils, os,
-  winim/inc/[windef, winuser, shellapi]
+  resource/resource,
+  winim/[winstr, utils], winim/inc/[windef, winuser, shellapi]
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wPanel, wMenu, wWindowDC, wImageList, wIcon, wUtils,
+    wStaticText, wButton, wListCtrl, wComboBox, wButton, wFileDialog]
 
 import strformat except `&`
 
@@ -175,9 +180,8 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     let index = listCtrl.getNextItem(0, wListNextAll, wListStateSelected)
     pickAndClose(index)
 
-  listCtrl.wEvent_CommandLeftDoubleClick do (event: wEvent):
-    let index = listCtrl.hitTest(event.x, event.y)[0]
-    pickAndClose(index)
+  listCtrl.wEvent_ListItemActivated do (event: wEvent):
+    pickAndClose(event.index)
 
   dialog.shortcut(wAccelNormal, wKey_Esc) do ():
     dialog.close()
@@ -192,12 +196,25 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   return ret
 
 when isMainModule:
+  when defined(aio):
+    import wNim
+  else:
+    import wNim/[wTypes, wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu,
+      wPaintDC, wIcon]
+
   type
     MenuID = enum
       idOpen = wIdUser
       idExit
 
-  var backgroundIcons = newSeq[wIcon]()
+  when defined(aio):
+    # Use all-in-one module won't encounter the name clash.
+    var backgroundIcons = newSeq[wIcon]()
+  else:
+    # Nim compiler correctly recognizes wIcon as type in most time. However,
+    # sometimes (generic instantiation, etc) it confused wIcon type with wIcon module.
+    # We can specify wTypes.wIcon to avoid this problem.
+    var backgroundIcons = newSeq[wTypes.wIcon]()
 
   let app = App()
   let frame = Frame(title="wNim PickIconDialog", size=(650, 380))

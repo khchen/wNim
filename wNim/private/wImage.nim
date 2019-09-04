@@ -51,6 +51,19 @@
 ##   wImageRotate270FlipXY           Specifies a 270-degree rotation followed by a horizontal flip and then a vertical flip.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import wBase
+
+# For recursive module dependencies.
+proc Image*(iconImage: wIconImage): wImage {.inline.}
+proc delete*(self: wImage)
+proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): string
+proc Image*(data: pointer, length: int): wImage {.inline.}
+
+import wIconImage
+
 type
   wImageError* = object of wError
     ## An error raised when wImage creation or operation failure.

@@ -21,10 +21,14 @@
 ##   wEvent_IpChanged                When the user changes a field or moves from one field to another.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_IpFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
   wEvent_IpChanged
 
-proc isIpEvent(msg: UINT): bool {.inline.} =
+proc isIpEvent(msg: UINT): bool {.inline, shield.} =
   msg == wEvent_IpChanged
 
 method getIndex*(self: wIpEvent): int {.property, inline.} =

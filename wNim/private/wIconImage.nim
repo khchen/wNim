@@ -30,10 +30,25 @@
 ##   `wCursor <wCursor.html>`_
 
 # forward declarations
-proc Image*(iconImage: wIconImage): wImage {.inline.}
-proc Image*(data: pointer, length: int): wImage {.inline.}
-proc delete*(self: wImage)
-proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): string
+# proc Image*(iconImage: wIconImage): wImage {.inline.}
+# proc Image*(data: pointer, length: int): wImage {.inline.}
+# proc delete*(self: wImage)
+# proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): string
+
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import wBase
+
+# For recursive module dependencies.
+proc isPng*(self: wIconImage): bool {.inline.}
+proc getBitCount*(self: wIconImage): int
+proc getSize*(self: wIconImage): wSize {.inline.}
+proc save*(self: wIconImage, isIcon = true): string
+proc IconImage*(icon: wIcon): wIconImage {.inline.}
+proc IconImage*(cursor: wCursor): wIconImage {.inline.}
+
+import wImage
 
 type
   wIconImageError* = object of wError
@@ -85,8 +100,6 @@ const
   # 0.20 support it, but still use const size for compatibility
   IcondirSize = 6
   GrpIcondirSize = 6
-
-converter GpImageToGpBitmap(x: ptr GpBitmap): ptr GpImage = cast[ptr GpImage](x)
 
 when defined(gcc):
   proc bswap32(a: uint32): uint32 {.importc: "__builtin_bswap32", nodecl, nosideeffect.}
@@ -631,7 +644,7 @@ proc IconImages*(data: pointer, length: int): seq[wIconImage] =
     count = int iconDir.idCount
     isIcon = iconDir.idType == 1
 
-  result = newSeq[wIconImage](count)
+  result = newSeq[wBase.wIconImage](count)
 
   for i in 0..<count:
     let

@@ -48,6 +48,12 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase, wControl
+export wControl
+
 const
   # TextCtrl styles
   wTeMultiLine* = ES_MULTILINE
@@ -59,7 +65,7 @@ const
   wTeCenter* = ES_CENTER
   wTeRight* = ES_RIGHT
   wTeDontWrap* = WS_HSCROLL or ES_AUTOHSCROLL
-  wTeRich* = int64 0x10000000 shl 32
+  wTeRich* = 0x10000000.int64 shl 32
   wTeProcessTab* = 0x4000 # not used in ES_XXXX
 
 proc isMultiLine*(self: wTextCtrl): bool {.validate, inline.} =
@@ -438,7 +444,7 @@ method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
   procCall wWindow(self).setBackgroundColor(color)
 
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)

@@ -5,12 +5,16 @@
 #
 #====================================================================
 
-import
-  resource/resource,
-  wNim
+import resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel,
+    wMenu, wMenuBar, wButton, wStatusBar, wStaticText, wTextEntryDialog, wFontDialog]
 
 let app = App()
-let frame = Frame(title="Hello World")
+let frame = Frame(title="wNim Frame Demo")
 frame.icon = Icon("", 0) # load icon from exe file.
 
 frame.dpiAutoScale:
@@ -40,11 +44,11 @@ proc layout() =
   """
 
 staticText.wEvent_CommandLeftClick do ():
-  let TextEntryDialog = TextEntryDialog(frame, value=staticText.label,
+  let textEntryDialog = TextEntryDialog(frame, value=staticText.label,
     caption="Change The Text")
 
-  if TextEntryDialog.showModal() == wIdOk:
-    staticText.label = TextEntryDialog.value
+  if textEntryDialog.showModal() == wIdOk:
+    staticText.label = textEntryDialog.value
     staticText.fit()
     staticText.refresh()
 

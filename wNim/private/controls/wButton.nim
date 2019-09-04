@@ -35,6 +35,11 @@
 ##   wEvent_ButtonLeave               The mouse is leaving the button.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../gdiobjects/[wBitmap, wIcon], wControl
+export wControl
+
 const
   # Button styles
   wBuLeft* = BS_LEFT
@@ -192,8 +197,8 @@ proc setDefault*(self: wButton, flag = true) {.validate, property.} =
 
   if flag:
     for win in self.siblings:
-      if win of wButton:
-        wButton(win).mDefault = false
+      if win of wBase.wButton:
+        wBase.wButton(win).mDefault = false
 
 proc setDropdownMenu*(self: wButton, menu: wMenu = nil) {.validate, property.} =
   ## Sets a dropdown menu for a button, or nil to cancel it.
@@ -226,7 +231,7 @@ method release(self: wButton) =
     self.mImgData.himl = 0
 
 method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of BCN_DROPDOWN:

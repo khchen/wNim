@@ -22,12 +22,16 @@
 ##   wEvent_Dragging                 Window is dragging by user. This event can be vetoed.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
 const
   wEvent_Move* = WM_MOVE
   wEvent_Moving* = WM_MOVING
-  wEvent_Dragging* = WM_APP + 56
+  wEvent_Dragging* = wEventId()
 
-proc isMoveEvent(msg: UINT): bool {.inline.} =
+proc isMoveEvent(msg: UINT): bool {.inline, shield.} =
   msg in {wEvent_Move, wEvent_Moving, wEvent_Dragging}
 
 method getPosition*(self: wMoveEvent): wPoint {.property.} =

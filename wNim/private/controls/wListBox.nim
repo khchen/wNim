@@ -35,6 +35,11 @@
 ##   wEvent_ListBoxDoubleClick        When the listbox is double-clicked.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # ListBox styles
   wLbSingle* = 0

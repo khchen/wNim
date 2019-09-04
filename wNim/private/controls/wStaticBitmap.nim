@@ -31,6 +31,11 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../gdiobjects/wBitmap, wControl, wStaticText
+export wControl
+
 const
   # StaticBitmap styles
   wSbAuto* = 0

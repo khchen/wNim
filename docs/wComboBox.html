@@ -1298,6 +1298,8 @@ function main() {
     title="isListEmpty(self: wComboBox): bool"><wbr />is<wbr />List<wbr />Empty<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isTextEmpty%2CwComboBox"
     title="isTextEmpty(self: wComboBox): bool"><wbr />is<wbr />Text<wbr />Empty<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#isPopup%2CwComboBox"
+    title="isPopup(self: wComboBox): bool"><wbr />is<wbr />Popup<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#popup%2CwComboBox"
     title="popup(self: wComboBox)"><wbr />popup<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#dismiss%2CwComboBox"
@@ -1362,8 +1364,8 @@ function main() {
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a><table border="1" class="docutils"><tr><th>wCommandEvent</th><th>Description</th></tr>
 <tr><td>wEvent_ComboBox</td><td>When an item on the list is selected, calling getValue() returns the new value of selection.</td></tr>
-<tr><td>wEvent_ComboBoxCloseUp</td><td>When the list box of the combobox disappears.</td></tr>
-<tr><td>wEvent_ComboBoxDropDown</td><td>When the list box part of the combobox is shown.</td></tr>
+<tr><td>wEvent_ComboBoxCloseUp</td><td>When the listbox of the combobox disappears.</td></tr>
+<tr><td>wEvent_ComboBoxDropDown</td><td>When the listbox part of the combobox is shown.</td></tr>
 <tr><td>wEvent_Text</td><td>When the text changes.</td></tr>
 <tr><td>wEvent_TextUpdate</td><td>When the control is about to redraw itself.</td></tr>
 <tr><td>wEvent_TextMaxlen</td><td>When the user tries to enter more text into the control than the limit.</td></tr>
@@ -1442,7 +1444,8 @@ Returns the text of the item with the given index.
 
 </dd>
 <a id="[],wComboBox,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">`[]`</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IndexError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the text of the item with the given index. Raise error if index out of bounds.
 
@@ -1451,7 +1454,7 @@ Returns the text of the item with the given index. Raise error if index out of b
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Inserts the given string before the specified position. Notice that the inserted item won't be sorted even the list box has wCbSort style. If pos is -1, the string is added to the end of the list.
+Inserts the given string before the specified position. Notice that the inserted item won't be sorted even the listbox has wCbSort style. If pos is -1, the string is added to the end of the list.
 
 </dd>
 <a id="insert,wComboBox,int,openArray[string]"></a>
@@ -1557,16 +1560,22 @@ Returns true if the list of combobox choices is empty.
 Returns true if the text of the combobox is empty.
 
 </dd>
+<a id="isPopup,wComboBox"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isPopup</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns whether or not the listbox is popup.
+
+</dd>
 <a id="popup,wComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">popup</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Shows the list box portion of the combobox.
+Shows the listbox portion of the combobox.
 
 </dd>
 <a id="dismiss,wComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">dismiss</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Hides the list box portion of the combobox.
+Hides the listbox portion of the combobox.
 
 </dd>
 <a id="getEditControl,wComboBox"></a>
@@ -1657,7 +1666,7 @@ Iterates over each item in this control. Yields <tt class="docutils literal"><sp
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:54 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:09 UTC</small>
       </div>
     </div>
   </div>

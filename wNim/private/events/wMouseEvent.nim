@@ -52,6 +52,10 @@
 ##   wEvent_MouseHover               When the cursor hovers over the client area of the window for the period of time.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
 const
   # WM_MOUSEFIRST
   wEvent_Motion* = WM_MOUSEMOVE
@@ -84,9 +88,9 @@ const
 
   wEvent_MouseLeave* = WM_MOUSELEAVE # 0x02A3
   wEvent_MouseHover* = WM_MOUSEHOVER # 0x02A1
-  wEvent_MouseEnter* = WM_APP + 51
+  wEvent_MouseEnter* = wEventId()
 
-proc isMouseEvent(msg: UINT): bool {.inline.} =
+proc isMouseEvent(msg: UINT): bool {.inline, shield.} =
   (msg in WM_MOUSEFIRST..WM_MOUSELAST) or (msg in 0xA0..0xAD) or
     msg in {wEvent_MouseLeave, wEvent_MouseHover, wEvent_MouseEnter}
 

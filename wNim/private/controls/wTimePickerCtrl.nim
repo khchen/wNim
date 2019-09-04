@@ -21,6 +21,11 @@
 ##   wEvent_TimeChanged               The selected time changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl, wDatePickerCtrl
+export wControl
+
 proc getTime*(self: wTimePickerCtrl): tuple[hour, min, sec: int]
     {.validate, property.} =
   ## Returns the currently entered time as hours, minutes and seconds

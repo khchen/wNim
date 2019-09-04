@@ -45,12 +45,18 @@
 ##   wEvent_Splitter                  The position is dragging by user. This event can be vetoed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wPanel, ../gdiobjects/wCursor, ../dc/wPaintDC
+import wSpinButton, wControl
+export wSpinButton, wControl # export wSpinButton for wSpHorizontal/wSpVertical
+
 const
   # use the same define as wSpinButton
   # wSpHorizontal*
   # wSpVertical*
   wSpNoBorder* = 0
-  wSpButton* = int64 0x10000000 shl 32
+  wSpButton* = 0x10000000.int64 shl 32
   wSpBorder* = wBorderSimple
   wSp3dBorder* = wBorderStatic
 
@@ -282,7 +288,7 @@ proc setSplitMode*(self: wSplitter, mode: int) {.validate, property.} =
       self.splitterResetCursor()
 
 proc wSplitter_DoPaint(event: wEvent) =
-  let self = wSplitter event.window
+  let self = wBase.wSplitter event.window
   if not self.mIsDrawButton:
     event.skip
     return

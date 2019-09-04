@@ -29,7 +29,12 @@
 ##   wEvent_WebViewHistoryChanged    Generated when the history of visited pages changes.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_WebViewFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_WebViewFirst
   wEvent_WebViewNavigating
   wEvent_WebViewContextMenu
   wEvent_WebViewNewWindow
@@ -40,7 +45,7 @@ DefineIncrement(wEvent_WebViewFirst):
   wEvent_WebViewHistoryChanged
   wEvent_WebViewLast
 
-proc isWebViewEvent(msg: UINT): bool {.inline.} =
+proc isWebViewEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_WebViewFirst..wEvent_WebViewLast
 
 method getUrl*(self: wWebViewEvent): string {.property, inline.} =

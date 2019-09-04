@@ -29,6 +29,10 @@
 ##   wEvent_RadioButton               The radio button is clicked.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
 
 const
   # RadioButton styles

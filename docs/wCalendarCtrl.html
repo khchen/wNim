@@ -1262,6 +1262,8 @@ function main() {
     title="setDate(self: wCalendarCtrl; time: wTime)"><wbr />set<wbr />Date<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDates%2CwCalendarCtrl%2CwTime%2CwTime"
     title="setDates(self: wCalendarCtrl; time1: wTime; time2: wTime)"><wbr />set<wbr />Dates<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setDates%2CwCalendarCtrl%2C"
+    title="setDates(self: wCalendarCtrl; time: (wTime, wTime))"><wbr />set<wbr />Dates<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getToday%2CwCalendarCtrl"
     title="getToday(self: wCalendarCtrl): wTime"><wbr />get<wbr />Today<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setToday%2CwCalendarCtrl%2CwTime"
@@ -1270,6 +1272,8 @@ function main() {
     title="getDateRange(self: wCalendarCtrl): (wTime, wTime)"><wbr />get<wbr />Date<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDateRange%2CwCalendarCtrl"
     title="setDateRange(self: wCalendarCtrl; time1 = wDefaultTime; time2 = wDefaultTime)"><wbr />set<wbr />Date<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setDateRange%2CwCalendarCtrl%2C"
+    title="setDateRange(self: wCalendarCtrl; time: (wTime, wTime))"><wbr />set<wbr />Date<wbr />Range<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enableMonthChange%2CwCalendarCtrl"
     title="enableMonthChange(self: wCalendarCtrl; flag = true)"><wbr />enable<wbr />Month<wbr />Change<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMaxSelectCount%2CwCalendarCtrl%2Cint"
@@ -1290,9 +1294,7 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getBestSize.e%2CwCalendarCtrl"
-    title="getBestSize(self: wCalendarCtrl): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getDefaultSize.e%2CwCalendarCtrl"
+      <li><a class="reference" href="#getDefaultSize.e%2CwCalendarCtrl"
     title="getDefaultSize(self: wCalendarCtrl): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
@@ -1385,7 +1387,14 @@ Sets the current date.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDates</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">time1</span><span class="Other">:</span> <span class="Identifier">wTime</span><span class="Other">;</span> <span class="Identifier">time2</span><span class="Other">:</span> <span class="Identifier">wTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the selected date range. Sets the selected date range.
+Sets the selected date range.
+
+</dd>
+<a id="setDates,wCalendarCtrl,"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDates</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">time</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">wTime</span><span class="Other">,</span> <span class="Identifier">wTime</span><span class="Other">)</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the selected date range.
 
 </dd>
 <a id="getToday,wCalendarCtrl"></a>
@@ -1412,11 +1421,19 @@ If the control had been previously limited to a range of dates, returns the lowe
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDateRange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">time1</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">;</span> <span class="Identifier">time2</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the valid range for the date selection. Sets the valid range for the date selection.
+Sets the valid range for the date selection.
+
+</dd>
+<a id="setDateRange,wCalendarCtrl,"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDateRange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">time</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">wTime</span><span class="Other">,</span> <span class="Identifier">wTime</span><span class="Other">)</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the valid range for the date selection.
 
 </dd>
 <a id="enableMonthChange,wCalendarCtrl"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableMonthChange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">enableMonthChange</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Enable or Disable the month changing.
 
@@ -1444,7 +1461,7 @@ Default finalizer for wCalendarCtrl.
 <a id="init,wCalendarCtrl,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">date</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
@@ -1452,7 +1469,7 @@ Initializer.
 <a id="CalendarCtrl,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">CalendarCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">date</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">;</span>
                  <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Creates the control.<table border="1" class="docutils"><tr><th>Parameters</th><th>Description</th></tr>
 <tr><td>parent</td><td>Parent window.</td></tr>
@@ -1469,15 +1486,9 @@ Creates the control.<table border="1" class="docutils"><tr><th>Parameters</th><t
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<a id="getBestSize.e,wCalendarCtrl"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getBestSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the best acceptable minimal size for the control.
-
-</dd>
 <a id="getDefaultSize.e,wCalendarCtrl"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDefaultSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDefaultSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCalendarCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the default size for the control.
 
@@ -1492,7 +1503,7 @@ Returns the default size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:51 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:06 UTC</small>
       </div>
     </div>
   </div>

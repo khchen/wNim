@@ -12,19 +12,23 @@
 ##   `wMenuBar <wMenuBar.html>`_
 ##   `wMenu <wMenu.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wMenu
+
 proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int]
     {.validate.} =
   ## Return the tuple (menu, pos) indicate a item with the given id,
   ## (nil, wNotFound(-1)) if not found.
-  if self of wMenuBar:
-    let menuBar = wMenuBar(self)
+  if self of wBase.wMenuBar:
+    let menuBar = wBase.wMenuBar(self)
     for topMenu in menuBar.mMenuList:
       result = find(topMenu, id)
       if result.menu != nil: # found !!
         return
 
-  elif self of wMenu:
-    let menu = wMenu(self)
+  elif self of wBase.wMenu:
+    let menu = wBase.wMenu(self)
     for i, item in menu.mItemList: # level fist, deep later
       if item.mId == id: # found !!
         return (menu, i)

@@ -36,7 +36,13 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
-method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline.} =
+{.experimental, deadCodeElim: on.}
+
+import net
+import ../wBase, wControl, wTextCtrl
+export wControl, wTextCtrl
+
+method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield.} =
   # WC_IPADDRESS cannot change size after create, it's Windows's limitation.
   SetWindowPos(self.mHwnd, 0, x, y, 0, 0,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE or SWP_NOSIZE))
@@ -99,7 +105,7 @@ proc getTextCtrl*(self: wIpCtrl, index: range[0..3]): wTextCtrl
   result = self.getEditControl(index)
 
 method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   if code == IPN_FIELDCHANGED:
     let lpnmipa = cast[LPNMIPADDRESS](lparam)

@@ -1262,11 +1262,11 @@ function main() {
     title="setBitmapMargins(self: wButton; size: wSize)"><wbr />set<wbr />Bitmap<wbr />Margins<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBitmapMargins%2CwButton"
     title="getBitmapMargins(self: wButton): wSize"><wbr />get<wbr />Bitmap<wbr />Margins<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setBitmap4Margins%2CwButton%2Cint%2Cint%2Cint%2Cint"
-    title="setBitmap4Margins(self: wButton; left: int; top: int; right: int; bottom: int)"><wbr />set<wbr />Bitmap4Margins<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBitmap4Margins%2CwButton%2Ctuple%5Bint%2Cint%2Cint%2Cint%5D"
     title="setBitmap4Margins(self: wButton;
                   margins: tuple[left: int, top: int, right: int, bottom: int])"><wbr />set<wbr />Bitmap4Margins<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getBitmap4Margins%2CwButton"
+    title="getBitmap4Margins(self: wButton): tuple[left: int, top: int, right: int, bottom: int]"><wbr />get<wbr />Bitmap4Margins<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBitmap%2CwButton%2CwBitmap"
     title="setBitmap(self: wButton; bitmap: wBitmap; direction = -1)"><wbr />set<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBitmap%2CwButton"
@@ -1275,8 +1275,6 @@ function main() {
     title="setIcon(self: wButton; icon: wIcon; direction = -1)"><wbr />set<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getIcon%2CwButton"
     title="getIcon(self: wButton): wIcon"><wbr />get<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setDefault%2CwButton"
-    title="setDefault(self: wButton; flag = true)"><wbr />set<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDropdownMenu%2CwButton%2CwMenu"
     title="setDropdownMenu(self: wButton; menu: wMenu = nil)"><wbr />set<wbr />Dropdown<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showDropdownMenu%2CwButton"
@@ -1396,18 +1394,18 @@ Set the margins between the bitmap and the text of the button.
 Get the margins between the bitmap and the text of the button.
 
 </dd>
-<a id="setBitmap4Margins,wButton,int,int,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setBitmap4Margins</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wButton</span><span class="Other">;</span> <span class="Identifier">left</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">top</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">bottom</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Set the margins between the bitmap and the text of the button.
-
-</dd>
 <a id="setBitmap4Margins,wButton,tuple[int,int,int,int]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setBitmap4Margins</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wButton</span><span class="Other">;</span> <span class="Identifier">margins</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">left</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">top</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span>
     <span class="Identifier">bottom</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Set the margins between the bitmap and the text of the button. Get the margins between the bitmap and the text of the button.
+Set the margins between the bitmap and the text of the button.
+
+</dd>
+<a id="getBitmap4Margins,wButton"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBitmap4Margins</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wButton</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">left</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">top</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">right</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">bottom</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Get the margins between the bitmap and the text of the button.
 
 </dd>
 <a id="setBitmap,wButton,wBitmap"></a>
@@ -1434,12 +1432,6 @@ Sets the icon to display in the button.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getIcon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wButton</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wIcon</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Return the icon shown by the button. Notice: it create a copy of the icon.
-
-</dd>
-<a id="setDefault,wButton"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setDefault</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wButton</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-This sets the button to be the default item.
 
 </dd>
 <a id="setDropdownMenu,wButton,wMenu"></a>
@@ -1510,7 +1502,7 @@ Returns the best acceptable minimal size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:51 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:06 UTC</small>
       </div>
     </div>
   </div>

@@ -5,7 +5,10 @@
 #
 #====================================================================
 
-import wNim
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wMessageDialog]
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
@@ -40,6 +43,11 @@ proc MyFrame(title: string): wMyFrame {.inline.} =
 
 when isMainModule:
   import resource/resource
+
+  when defined(aio):
+    import wNim
+  else:
+    import wNim/[wApp, wIcon]
 
   let app = App()
   let frame = MyFrame("Hello World")

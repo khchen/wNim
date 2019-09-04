@@ -36,6 +36,12 @@
 ##   wEvent_HotkeyChanged             The hotkey was changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import tables, strutils
+import ../wBase, wControl
+export wControl
+
 const
   wHkLeft* = ES_LEFT
   wHkCentre* = ES_CENTER
@@ -328,12 +334,12 @@ proc init*(self: wHotkeyCtrl, parent: wWindow, id = wDefaultID,
   self.setValue(value)
 
   self.systemConnect(wEvent_SetFocus) do (event: wEvent):
-    let self = wHotkeyCtrl event.window
+    let self = wBase.wHotkeyCtrl event.window
     self.mHook = SetWindowsHookEx(WH_KEYBOARD_LL, keyProc, wAppGetInstance(), 0)
     currentHookedHotkeyCtrl = self
 
   self.systemConnect(wEvent_KillFocus) do (event: wEvent):
-    let self = wHotkeyCtrl event.window
+    let self = wBase.wHotkeyCtrl event.window
     self.final()
 
 proc HotkeyCtrl*(parent: wWindow, id = wDefaultID,

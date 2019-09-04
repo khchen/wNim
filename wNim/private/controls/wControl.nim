@@ -42,10 +42,11 @@
 ##   `wHotkeyCtrl <wHotkeyCtrl.html>`_
 ##   `wRebar <wRebar.html>`_  (experimental)
 
-# forward declaration
-proc click*(self: wButton) {.inline.}
-proc focusNext(self: wNoteBook): bool
-proc focusPrev(self: wNoteBook): bool
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase, ../wWindow, ../wEvent
+export wWindow, wEvent
 
 # GUI controls by default don't apply the window margin setting,
 # (except wStaticBox and wNoteBook, however they have their own override)
@@ -81,8 +82,8 @@ proc getNextGroup(self: wControl, previous: bool): wControl =
       break
 
     let win = wAppWindowFindByHwnd(hWnd)
-    if win != nil and win of wControl and win.isFocusable():
-      return wControl(win)
+    if win != nil and win of wBase.wControl and win.isFocusable():
+      return wBase.wControl(win)
 
 proc getNextTab(self: wControl, previous: bool): wControl =
   var hWnd = self.mHwnd
@@ -92,8 +93,8 @@ proc getNextTab(self: wControl, previous: bool): wControl =
       break
 
     let win = wAppWindowFindByHwnd(hWnd)
-    if win != nil and win of wControl and win.isFocusable():
-      return wControl(win)
+    if win != nil and win of wBase.wControl and win.isFocusable():
+      return wBase.wControl(win)
 
 proc getNextMnemonic(self: wControl, letter: char, onlyone: var bool): wControl =
   # return control with specified letter,
@@ -109,8 +110,8 @@ proc getNextMnemonic(self: wControl, letter: char, onlyone: var bool): wControl 
     index.inc
     if index >= siblings.len: index = 0
 
-    if siblings[index] of wControl:
-      let control = wControl(siblings[index])
+    if siblings[index] of wBase.wControl:
+      let control = wBase.wControl(siblings[index])
       if control.isFocusable():
         let text = toUpperAscii(control.getTitle())
         if text.find('&' & toUpperAscii(letter)) >= 0:
@@ -142,14 +143,14 @@ proc notControl(event: wEvent): bool {.inline.} =
   # only handle if the event is really from a control
   # it's false when the event is propagated from a subclassed window for controls
   # for example, edit of ComboBox, and let wKeyEvent propagate
-  if not (event.window of wControl):
+  if not (event.window of wBase.wControl):
     event.skip
     return true
 
 proc wControl_DoKillFocus(event: wEvent) =
   if event.notControl(): return
 
-  let self = wControl(event.mWindow)
+  let self = wBase.wControl(event.mWindow)
   if not self.isFocusable(): return
 
   # always save current focus to top level window
@@ -161,10 +162,10 @@ proc wControl_DoKillFocus(event: wEvent) =
   if winGotFocus == nil or winGotFocus.mParent != self.mParent:
     self.drawSiblingButtons() do (win: wWindow) -> bool: false
 
-proc wControl_DoSetFocus(event: wEvent) =
+proc wControl_DoSetFocus(event: wEvent) {.shield.} =
   if event.notControl(): return
 
-  let self = wControl(event.mWindow)
+  let self = wBase.wControl(event.mWindow)
   if not self.isFocusable(): return
 
   # some button get focus => set itself and clear all others
@@ -175,10 +176,9 @@ proc wControl_DoSetFocus(event: wEvent) =
   else:
     self.drawSiblingButtons() do (win: wWindow) -> bool: wButton(win).mDefault
 
-
 proc wControl_OnNavigation(event: wEvent) =
   if event.notControl(): return
-  let self = wControl(event.mWindow)
+  let self = wBase.wControl(event.mWindow)
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -198,6 +198,27 @@ proc wControl_OnNavigation(event: wEvent) =
       result = true
 
   proc notebookChangeTab(previous: bool) =
+    # todo: isAllowed for notebook?
+
+    proc focusNext(self: wNoteBook): bool =
+      if self.mPages.len >= 1:
+        var index = self.mSelection + 1
+        if index >= self.mPages.len: index = 0
+        self.setFocus()
+        # MSDN: Changing the focus also changes the selected tab.
+        # In this case, the tab control sends the TCN_SELCHANGING and TCN_SELCHANGE
+        # notification codes to its parent window.
+        SendMessage(self.mHwnd, TCM_SETCURFOCUS, index, 0)
+        return true
+
+    proc focusPrev(self: wNoteBook): bool =
+      if self.mPages.len >= 1:
+        var index = self.mSelection - 1
+        if index < 0: index = self.mPages.len - 1
+        self.setFocus()
+        SendMessage(self.mHwnd, TCM_SETCURFOCUS, index, 0)
+        return true
+
     # if self or any parent is a wNoteBook control, try to switch the tab
     var control: wWindow = self
     while control != nil:
@@ -224,13 +245,13 @@ proc wControl_OnNavigation(event: wEvent) =
       # except the focused control itself is a button
       if isAllowed():
         if self of wButton:
-          wButton(self).click
+          SendMessage(self.mHwnd, BM_CLICK, 0, 0)
           processed = true
 
         else:
           for win in self.siblings:
             if win of wButton and wButton(win).mDefault:
-              wButton(win).click
+              SendMessage(win.mHwnd, BM_CLICK, 0, 0)
               processed = true
               break
 
@@ -254,7 +275,7 @@ proc wControl_OnNavigation(event: wEvent) =
       # ctrl+pgup, ctrl+pgdn
       if isAllowed():
         # only works if there is a wNoteBook control
-        notebookChangeTab(previous=event.shiftDown)
+        notebookChangeTab(keyCode==VK_PRIOR)
 
     elif keyCode in {VK_LEFT, VK_UP}:
       # left, up
@@ -283,8 +304,9 @@ proc wControl_OnNavigation(event: wEvent) =
 
   else: discard
 
+method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
+    ret: var LRESULT): bool {.shield.} =
 
-method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
   var eventType: UINT
   case code
   of NM_CLICK: eventType = wEvent_CommandLeftClick
@@ -299,7 +321,7 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM, re
 
 proc init(self: wControl, className: string, parent: wWindow,
     id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) =
+    size = wDefaultSize, style: wStyle = 0) {.shield.} =
   # a global init for GUI controls, is this need to be public?
 
   var
@@ -309,7 +331,7 @@ proc init(self: wControl, className: string, parent: wWindow,
   var lastControl: wWindow = nil
   for i in countdown(parent.mChildren.len - 1, 0):
     let child = parent.mChildren[i]
-    if child of wControl:
+    if child of wBase.wControl:
       lastControl = child
       break
 

@@ -21,10 +21,14 @@
 ##   wEvent_Navigation               A navigation key was pressed.
 ##   ==============================  =============================================================
 
-const
-  wEvent_Navigation* = WM_APP + 2
+{.experimental, deadCodeElim: on.}
 
-proc isNavigationEvent(msg: UINT): bool {.inline.} =
+import ../wBase
+
+DefineEvent:
+  wEvent_Navigation
+
+proc isNavigationEvent(msg: UINT): bool {.inline, shield.} =
   msg == wEvent_Navigation
 
 method shouldPropagate*(event: wNavigationEvent): bool =

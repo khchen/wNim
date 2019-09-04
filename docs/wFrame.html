@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
@@ -1277,16 +1278,12 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#setMenuBar%2CwFrame%2CwMenuBar"
-    title="setMenuBar(self: wFrame; menuBar: wMenuBar)"><wbr />set<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMenuBar%2CwFrame"
+      <li><a class="reference" href="#getMenuBar%2CwFrame"
     title="getMenuBar(self: wFrame): wMenuBar"><wbr />get<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getStatusBar%2CwFrame"
     title="getStatusBar(self: wFrame): wStatusBar"><wbr />get<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTopMost%2CwFrame"
     title="setTopMost(self: wFrame; top = true)"><wbr />set<wbr />Top<wbr />Most<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#createStatusBar%2CwFrame%2Cint%2CwStyle%2CwCommandID"
-    title="createStatusBar(self: wFrame; number: int = 1; style: wStyle = 0; id: wCommandID = 0): wStatusBar"><wbr />create<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setIcon%2CwFrame%2CwIcon"
     title="setIcon(self: wFrame; icon: wIcon)"><wbr />set<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getIcon%2CwFrame"
@@ -1347,14 +1344,7 @@ function main() {
 
   </ul>
 </li>
-<li>
-  <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getDefaultSize.e%2CwFrame"
-    title="getDefaultSize(self: wFrame): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
 
-  </ul>
-</li>
 
 </ul>
 
@@ -1385,7 +1375,8 @@ function main() {
 </ul>
 </td></tr>
 </tbody></table></p>
-  <div class="section" id="10">
+  
+<div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
 <a id="wIconize"></a>
@@ -1496,13 +1487,6 @@ function main() {
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="setMenuBar,wFrame,wMenuBar"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">menuBar</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Tells the frame to show the given menu bar.
-
-</dd>
 <a id="getMenuBar,wFrame"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMenuBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1521,13 +1505,6 @@ Returns the status bar currently associated with the frame (if any).
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setTopMost</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">top</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets whether the frame top most to all windows.
-
-</dd>
-<a id="createStatusBar,wFrame,int,wStyle,wCommandID"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">createStatusBar</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">;</span> <span class="Identifier">number</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Creates a status bar at the bottom of the frame.
 
 </dd>
 <a id="setIcon,wFrame,wIcon"></a>
@@ -1702,17 +1679,7 @@ Constructor, creating the frame.
 </dd>
 
 </dl></div>
-<div class="section" id="14">
-<h1><a class="toc-backref" href="#14">Methods</a></h1>
-<dl class="item">
-<a id="getDefaultSize.e,wFrame"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getDefaultSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFrame</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the system suggested size of a window (usually used for GUI controls).
 
-</dd>
-
-</dl></div>
 
   </div>
 </div>
@@ -1721,7 +1688,7 @@ Returns the system suggested size of a window (usually used for GUI controls).
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:04 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:13:58 UTC</small>
       </div>
     </div>
   </div>

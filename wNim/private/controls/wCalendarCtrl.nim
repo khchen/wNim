@@ -34,11 +34,17 @@
 ##   wEvent_CalendarViewChanged       The control view changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import times
+import ../wBase, wControl
+export wControl
+
 const
   wCalSundayFirst* = 0
-  wCalMondayFirst* = int64 0x10000000 shl 32
+  wCalMondayFirst* = 0x10000000.int64 shl 32
   wCalNoToday* = MCS_NOTODAY
-  wCalNoMonthChange* = int64 0x20000000 shl 32
+  wCalNoMonthChange* = 0x20000000.int64 shl 32
   wCalShowWeekNumbers* = MCS_WEEKNUMBERS
   wCalMultiSelect* = MCS_MULTISELECT
 
@@ -143,7 +149,7 @@ proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   result = int SendMessage(self.mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
 method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of MCN_SELCHANGE:

@@ -121,7 +121,16 @@
 ##   wEvent_HotkeyChanged            The hotkey was changed.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_CommandFirst):
+import ../wBase
+
+import wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
+  wHyperlinkEvent, wIpEvent, wWebViewEvent
+
+export wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
+  wHyperlinkEvent, wIpEvent, wWebViewEvent
+
+DefineEvent:
+  wEvent_CommandFirst
   wEvent_Menu
   wEvent_MenuRightClick
   wEvent_Button
@@ -165,13 +174,22 @@ DefineIncrement(wEvent_CommandFirst):
   wEvent_CheckComboBox
   wEvent_CheckComboBoxCloseUp
   wEvent_CheckComboBoxDropDown
+  wEvent_CommandLast
 
 const
   wEvent_Tool* = wEvent_Menu
   wEvent_TimeChanged* = wEvent_DateChanged
 
-proc isCommandEvent(msg: UINT): bool {.inline.} =
-  msg in wEvent_CommandFirst..wEvent_CommandLast
+proc isCommandEvent(msg: UINT): bool {.inline, shield.} =
+  msg in wEvent_CommandFirst..wEvent_CommandLast or
+    msg.isStatusBarEvent or
+    msg.isScrollEvent or
+    msg.isListEvent or
+    msg.isTreeEvent or
+    msg.isSpinEvent or
+    msg.isHyperlinkEvent or
+    msg.isIpEvent or
+    msg.isWebViewEvent
 
 method getMenuItem*(self: wCommandEvent): wMenuItem {.property, inline.} =
   ## Returns the menu item (valid for wEvent_Menu and wEvent_MenuRightClick).

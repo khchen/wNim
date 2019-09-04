@@ -14,6 +14,11 @@
 ## :Superclass:
 ##   `wControl <wControl.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 proc getLabelSize(self: wStaticBox): wSize {.property.} =
   result = getTextFontSize(self.getLabel() & "  ", self.mFont.mHandle, self.mHwnd)
 

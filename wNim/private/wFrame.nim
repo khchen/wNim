@@ -47,6 +47,11 @@
 ##   - `wTrayEvent <wTrayEvent.html>`_
 ##   - `wCommandEvent <wCommandEvent.html>`_  - wEvent_Menu
 
+{.experimental, deadCodeElim: on.}
+
+import wBase, wWindow, wAcceleratorTable
+export wWindow, wAcceleratorTable
+
 const
   # frame styles
   wIconize* = WS_ICONIC
@@ -57,9 +62,9 @@ const
   wMaximizeBox* = WS_MAXIMIZEBOX
   wSystemMenu* = WS_SYSMENU
   wResizeBorder* = WS_SIZEBOX
-  wStayOnTop* = int64 WS_EX_TOPMOST shl 32
+  wStayOnTop* = WS_EX_TOPMOST.int64 shl 32
   wModalFrame* = DS_MODALFRAME
-  wFrameToolWindow* = int64 WS_EX_TOOLWINDOW shl 32
+  wFrameToolWindow* = WS_EX_TOOLWINDOW.int64 shl 32
   wDefaultFrameStyle* = wMinimizeBox or wMaximizeBox or wResizeBorder or
     wSystemMenu or wCaption
   wDefaultDialogStyle* = wBorderSimple or wBorderDouble or wBorderRaised or
@@ -75,10 +80,6 @@ method getDefaultSize*(self: wFrame): wSize {.validate.} =
   # a reasonable frame size
   result = (640, 480)
 
-proc setMenuBar*(self: wFrame, menuBar: wMenuBar) {.validate, property, inline.} =
-  ## Tells the frame to show the given menu bar.
-  menuBar.attach(self)
-
 proc getMenuBar*(self: wFrame): wMenuBar {.validate, property, inline.} =
   ## Returns the menubar currently associated with the frame (if any).
   result = self.mMenuBar
@@ -91,13 +92,6 @@ proc setTopMost*(self: wFrame, top = true) {.validate, property.} =
   ## Sets whether the frame top most to all windows.
   let flag = if top: HWND_TOPMOST else: HWND_NOTOPMOST
   SetWindowPos(self.mHwnd, flag, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE)
-
-proc createStatusBar*(self: wFrame, number: int = 1, style: wStyle = 0,
-    id: wCommandID = 0): wStatusBar {.validate, property, discardable.} =
-  ## Creates a status bar at the bottom of the frame.
-  result = StatusBar(parent=self)
-  if number != 1:
-    result.setFieldsCount(number)
 
 proc setIcon*(self: wFrame, icon: wIcon) {.validate, property.} =
   ## Sets the icon for this frame.
@@ -386,7 +380,7 @@ proc wFrame_OnSetFocus(event: wEvent) =
 proc wFrame_OnMenuHighlight(event: wEvent) =
   # The default handler for wEvent_MenuHighlight in wFrame displays help text
   # in the status bar.
-  let self = wFrame event.mWindow
+  let self = wBase.wFrame event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -412,7 +406,9 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
                 selectedItem = item
                 break loop
 
-    self.mStatusBar.setStatusText(if selectedItem != nil: selectedItem.mHelp else: "")
+    # self.mStatusBar.setStatusText(if selectedItem != nil: selectedItem.mHelp else: "")
+    let text = if selectedItem != nil: selectedItem.mHelp else: ""
+    SendMessage(self.mStatusBar.mHwnd, SB_SETTEXT, 0, &T(text))
     processed = true
 
 proc final*(self: wFrame) =

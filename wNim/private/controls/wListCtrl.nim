@@ -36,6 +36,11 @@
 ## :Events:
 ##   `wListEvent <wListEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl, wTextCtrl
+export wControl, wTextCtrl
+
 const
   # ListCtrl styles
   wLcList* = LVS_LIST
@@ -767,7 +772,7 @@ proc ListEvent(self: wListCtrl, msg: UINT, lParam: LPARAM): wListEvent =
   result = event
 
 method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   let msg = case code
   of LVN_BEGINDRAG: wEvent_ListBeginDrag
@@ -879,7 +884,7 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc wListCtrl_OnPaint(event: wEvent) =
-  let self = wListCtrl(event.window)
+  let self = wBase.wListCtrl(event.window)
   let hwnd = self.mHwnd
 
   if self.mAlternateRowColor == -1 or self.getView() != wLcReport:

@@ -1311,6 +1311,16 @@ function main() {
 
   </ul>
 </li>
+<li>
+  <a class="reference reference-toplevel" href="#16" id="66">Converters</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#tupleTowAcceleratorEntry1.c"
+    title="tupleTowAcceleratorEntry1[T: enum | wCommandID](x: (int, int, T)): wAcceleratorEntry"><wbr />tuple<wbr />Tow<wbr />Accelerator<wbr />Entry1<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#tupleTowAcceleratorEntry2.c"
+    title="tupleTowAcceleratorEntry2[T: enum | wCommandID](x: (char, T)): wAcceleratorEntry"><wbr />tuple<wbr />Tow<wbr />Accelerator<wbr />Entry2<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
 
 </ul>
 
@@ -1397,7 +1407,7 @@ Sets the virtual-key code accelerator. This proc exists for backward compatibili
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">set</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wAcceleratorEntry</span><span class="Other">;</span> <span class="Identifier">ch</span><span class="Other">:</span> <span class="Identifier">char</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the character code accelerator. This proc exists for backward compatibility. Convert tuple to virtual-key code accelerator object. Convert tuple to character code accelerator object.
+Sets the character code accelerator. This proc exists for backward compatibility.
 
 </dd>
 <a id="add,wAcceleratorTable,wAcceleratorEntry"></a>
@@ -1516,6 +1526,25 @@ Iterate each item in this table.
 </dd>
 
 </dl></div>
+<div class="section" id="16">
+<h1><a class="toc-backref" href="#16">Converters</a></h1>
+<dl class="item">
+<a id="tupleTowAcceleratorEntry1.c"></a>
+<dt><pre><span class="Keyword">converter</span> <span class="Identifier">tupleTowAcceleratorEntry1</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span> <span class="Operator">|</span> <span class="Identifier">wCommandID</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wAcceleratorEntry</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Convert tuple to virtual-key code accelerator object.
+
+</dd>
+<a id="tupleTowAcceleratorEntry2.c"></a>
+<dt><pre><span class="Keyword">converter</span> <span class="Identifier">tupleTowAcceleratorEntry2</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">enum</span> <span class="Operator">|</span> <span class="Identifier">wCommandID</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Other">(</span><span class="Identifier">char</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wAcceleratorEntry</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Convert tuple to character code accelerator object.
+
+</dd>
+
+</dl></div>
 
   </div>
 </div>
@@ -1524,7 +1553,7 @@ Iterate each item in this table.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:02 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:13:53 UTC</small>
       </div>
     </div>
   </div>

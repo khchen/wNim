@@ -6,15 +6,19 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim
+  resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wIcon, wMenuBar, wMenu, wStatusBar, wSplitter, wButton]
 
 type
   MenuID = enum
     idLayout1 = wIdUser, idLayout2, idEnable, idExit
 
 let app = App()
-let frame = Frame()
+let frame = Frame(title="Draggable GUI Demo")
 let statusBar = StatusBar(frame)
 let menuBar = MenuBar(frame)
 frame.margin = 10
@@ -99,5 +103,6 @@ frame.idEnable do ():
   splitter2.enable(menuBar.isChecked(idEnable))
 
 layout()
+frame.center()
 frame.show()
 app.mainLoop()

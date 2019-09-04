@@ -33,6 +33,11 @@
 ## :Events:
 ##   `wScrollEvent <wScrollEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # Slider styles
   wSlHorizontal* = TBS_HORZ
@@ -180,7 +185,7 @@ proc clearSel*(self: wSlider) {.validate, property, inline.} =
   ## Clears the selection, for a slider with the wSlSelRange style.
   SendMessage(self.mHwnd, TBM_CLEARSEL, TRUE, 0)
 
-proc clearTicks*(self: wSlider, ) {.validate, property, inline.} =
+proc clearTicks*(self: wSlider) {.validate, property, inline.} =
   ## Clears the ticks.
   SendMessage(self.mHwnd, TBM_CLEARTICS, TRUE, 0)
 
@@ -238,7 +243,10 @@ proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
         dataPtr = cast[LPARAM](&scrollData)
 
       # sent wEvent_Slider first, if this is processed, skip other event
-      if not self.processMessage(wEvent_Slider, event.mWparam, dataPtr):
+      let event = wScrollEvent Event(self, wEvent_Slider, event.mWparam, dataPtr)
+      event.mScrollPos = self.getValue()
+
+      if not self.processEvent(event):
         self.processMessage(eventKind, event.mWparam, dataPtr)
 
   self.mHScrollConn = parent.systemConnect(WM_HSCROLL, scrollEventHandler)

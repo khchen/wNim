@@ -12,7 +12,11 @@
 #
 ## :Seealso:
 ##    `wDC <wDC.html>`_
-##    `wPredefined <wPredefined.html>`_
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wImage, wGdiObject
+export wGdiObject
 
 type
   wRegionOp* = enum
@@ -262,3 +266,8 @@ proc `==`*(region1, region2: wRegion): bool {.inline.} =
   ## == operator for regions.
   wValidate(region1, region2)
   result = region1.isEqual(region2)
+
+template wNilRegion*(): untyped =
+  ## Predefined empty regin. **Don't delete**.
+  wGDIStock(wRegion, NilRegion):
+    Region()

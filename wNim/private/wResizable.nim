@@ -68,6 +68,11 @@
 ##   `wResizer <wResizer.html>`_
 ##   `autolayout <autolayout.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import macros, math, strutils
+import wBase, autolayout, kiwi/kiwi
+
 proc getLayoutSize*(self: wResizable): wSize {.validate, property.} =
   ## Returns the current layout size.
   result.width = int round(self.mWidth.value)

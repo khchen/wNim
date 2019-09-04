@@ -6,6 +6,9 @@
 #====================================================================
 
 ## This control shows a static text which links to one or more link.
+## The label of this control can be marked-up text. For example:
+## "<a href=\\"https\://github.com/khchen/wNim\\">click here</A> and
+## <a id=\\"linkId\\">here</a>".
 #
 ## :Appearance:
 ##   .. image:: images/wHyperlinkCtrl.png
@@ -23,6 +26,11 @@
 #
 ## :Events:
 ##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
 
 const
   wHlAlignLeft* = 0
@@ -138,11 +146,14 @@ proc setVisited*(self: wHyperlinkCtrl, flag = true, index = -1) {.validate, prop
     state: LIS_VISITED)
   SendMessage(self.mHwnd, LM_SETITEM, 0, &item)
 
-method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR, lParam: LPARAM, ret: var LRESULT): bool =
+method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR,
+    lParam: LPARAM, ret: var LRESULT): bool {.shield.} =
+
   if code == NM_CLICK or code == NM_RETURN:
-    var processed = self.processMessage(wEvent_Hyperlink, cast[WPARAM](id), lParam)
-    let pnmLink = cast[PNMLINK](lParam)
-    self.setVisited(true, pnmLink.item.iLink)
+    var event = wHyperlinkEvent Event(self, wEvent_Hyperlink, cast[WPARAM](id), lParam)
+    event.mVisited = self.getVisited(event.index)
+    var processed = self.processEvent(event)
+    self.setVisited(true, event.index)
     return processed
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
@@ -152,15 +163,12 @@ proc final*(self: wHyperlinkCtrl) =
   discard
 
 proc init*(self: wHyperlinkCtrl, parent: wWindow, id = wDefaultID,
-    label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0) {.validate.} =
   ## Initializer.
   wValidate(parent)
   self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label,
     pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
-
-  # if url != nil and url.len != 0:
-  #   setUrl(url, 0)
 
   self.hardConnect(wEvent_Navigation) do (event: wEvent):
     # use arrow key to navigate between links in control.
@@ -183,9 +191,9 @@ proc init*(self: wHyperlinkCtrl, parent: wWindow, id = wDefaultID,
         event.veto
 
 proc HyperlinkCtrl*(parent: wWindow, id = wDefaultID,
-    label: string = "", url = "", pos = wDefaultPoint, size = wDefaultSize,
+    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
     style: wStyle = 0): wHyperlinkCtrl {.inline, discardable.} =
   ##　Constructor, creating and showing a hyperlink control.
   wValidate(parent)
   new(result, final)
-  result.init(parent, id, label, url, pos, size, style)
+  result.init(parent, id, label, pos, size, style)

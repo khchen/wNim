@@ -23,6 +23,17 @@
 ##   wEvent_DialogClosed              When the dialog is being closed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wFrame, ../wPanel, ../wAcceleratorTable, wDialog,
+  ../controls/[wTextCtrl, wStaticText, wButton, wStaticLine]
+
+# wResizer should already export by wWindow, and wWindow export by wDialog
+# However, maybe due to unknow bug? the compiler cannot find wResizer sometimes.
+import ../wResizer
+
+export wDialog
+
 proc getValue*(self: wTextEntryDialog): string {.validate, property, inline.} =
   ## Returns the text that the user has entered if the user has pressed OK,
   ## or the original value if the user has pressed Cancel.

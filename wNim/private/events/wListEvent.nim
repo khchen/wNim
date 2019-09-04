@@ -40,7 +40,12 @@
 ##   wEvent_ListitemUnchecked        The item has been unchecked.
 ##   ==============================  =============================================================
 
-DefineIncrement(wEvent_ListFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
+  wEvent_ListFirst
   wEvent_ListBeginDrag
   wEvent_ListBeginRightDrag
   wEvent_ListBeginLabelEdit
@@ -64,7 +69,7 @@ DefineIncrement(wEvent_ListFirst):
   wEvent_ListColEndMove
   wEvent_ListLast
 
-proc isListEvent(msg: UINT): bool {.inline.} =
+proc isListEvent(msg: UINT): bool {.inline, shield.} =
   msg in wEvent_ListFirst..wEvent_ListLast
 
 method getIndex*(self: wListEvent): int {.property, inline.} =

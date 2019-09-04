@@ -7,12 +7,9 @@
 
 ## Some macros used in wNim.
 
-macro DefineIncrement(start: int, x: untyped): untyped =
-  var index = int start.intVal
-  result = newStmtList()
-  for name in x:
-    result.add newConstStmt(postfix(name, "*"), newLit(index))
-    index.inc
+{.experimental, deadCodeElim: on.}
+
+import macros, strutils
 
 macro property*(x: untyped): untyped =
   ## Add property macro to proc as pragma so that getters/setters can access
@@ -77,25 +74,57 @@ macro validate*(x: untyped): untyped =
 # method don't need self check becasue it's checked by dispatcher
 # not nil don't work will on 0.18.0 and 0.18.1
 
-when not defined(release):
-  import typetraits
+when not defined(Nimdoc):
 
-  proc wValidateToPointer*(x: ref): (pointer, string) =
-    (cast[pointer](unsafeaddr x[]), x.type.name)
-  proc wValidateToPointer*(x: pointer): (pointer, string) =
-    (x, x.type.name)
-  proc wValidateToPointer*(x: string): (pointer, string) =
-    # don't check string isnil anymore (for v0.19)
-    (cast[pointer](1), x.type.name)
-  proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
-    # don't check seq isnil anymore (for v0.19)
-    (cast[pointer](1), x.type.name)
+  macro shield*(x: untyped): untyped =
+    ## Add export marker to a proc. Use internally.
+    x[0] = postfix(x[0], "*")
+    x
 
-  template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
-    for tup in vargs:
-      if tup[0] == nil:
-        raise newException(NilAccessError, " not allow nil " & tup[1])
+  proc wEventId(initId: cint = -1): cint {.discardable, shield.} =
+    var id {.global.}: cint
 
-else:
-  proc wValidateToPointer*[T](x: T): pointer = nil
-  template wValidate*(vargs: varargs[pointer, wValidateToPointer]): untyped = discard
+    if initId != -1:
+      id = initId
+      result = id
+    else:
+      id.inc
+      result = id
+
+  macro DefineEvent(x: untyped): untyped {.shield.} =
+    result = newStmtList()
+    for name in x:
+      result.add newConstStmt(postfix(name, "*"), newCall("wEventId"))
+
+  macro DefineIncrement(start: int, x: untyped): untyped {.shield.} =
+    var index = int start.intVal
+    result = newStmtList()
+    for name in x:
+      result.add newConstStmt(postfix(name, "*"), newLit(index))
+      index.inc
+
+  when not defined(release):
+    import typetraits
+
+    proc wValidateToPointer*(x: ref): (pointer, string) =
+      (cast[pointer](unsafeaddr x[]), x.type.name)
+    proc wValidateToPointer*(x: pointer): (pointer, string) =
+      (x, x.type.name)
+    proc wValidateToPointer*(x: string): (pointer, string) =
+      # don't check string isnil anymore (for v0.19)
+      (cast[pointer](1), x.type.name)
+    proc wValidateToPointer*[T](x: seq[T]): (pointer, string) =
+      # don't check seq isnil anymore (for v0.19)
+      (cast[pointer](1), x.type.name)
+
+    template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
+      for tup in vargs:
+        if tup[0] == nil:
+          raise newException(NilAccessError, " not allow nil " & tup[1])
+
+  else:
+    proc wValidateToPointer*[T](x: T): pointer = nil
+    template wValidate*(vargs: varargs[pointer, wValidateToPointer]): untyped = discard
+
+  static:
+    wEventId(0x8000) # WM_APP

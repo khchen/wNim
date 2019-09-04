@@ -13,6 +13,23 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wWindow, wDC
+export wDC
+
+when not defined(Nimdoc):
+  type
+    wWindowDC* = object of wDC
+      mCanvas*: wWindow
+else:
+  type
+    wWindowDC* = object of wDC
+
+method getSize*(self: wWindowDC): wSize {.property.} =
+  ## Gets the size of the device context.
+  result = self.mCanvas.getSize()
+
 proc WindowDC*(canvas: wWindow): wWindowDC =
   ## Constructor.
   wValidate(canvas)

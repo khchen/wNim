@@ -37,6 +37,13 @@
 ##   wEvent_CommandKillFocus          When the control loses the keyboard focus.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase, ../gdiobjects/wCursor, ../dc/[wPaintDC, wClientDC], wControl, wComboBox
+# import ../wEvent # compiler bug?
+export wControl
+
 const
   wCcSort* = CBS_SORT
   wCcNeededScroll* = WS_VSCROLL
@@ -465,7 +472,7 @@ proc paintItem(self: wCheckComboBox, hdc: HDC, text: string, rect: var RECT,
     DrawFocusRect(hdc, rect)
 
 proc onPaint(event: wEvent) =
-  let self = wCheckComboBox event.mWindow
+  let self = wBase.wCheckComboBox event.mWindow
   # There is a system bug here: When STATE_SYSTEM_PRESSED occur, the update area
   # is smaller then it should be. So we always repaint all the clinet area by
   # add this line before creating PaintDC.
@@ -497,7 +504,7 @@ proc onPaint(event: wEvent) =
     self.paint(hdc, stateId, isFocused, clientRect, cbi)
 
 proc onDrawItem(event: wEvent) =
-  let self = wCheckComboBox event.mWindow
+  let self = wBase.wCheckComboBox event.mWindow
 
   var drawItem = cast[ptr DRAWITEMSTRUCT](event.lParam)
   if drawItem.CtlType != ODT_COMBOBOX or drawItem.hwndItem != self.mHwnd:
@@ -534,7 +541,7 @@ proc onDrawItem(event: wEvent) =
       self.paintItem(hdc, text, drawItem.rcItem, isHot, isChecked, isDisabled)
 
 proc onKeyDown(event: wEvent) =
-  let self = wCheckComboBox event.mWindow
+  let self = wBase.wCheckComboBox event.mWindow
 
   case event.keyCode
   of VK_RETURN:

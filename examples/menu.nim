@@ -6,9 +6,13 @@
 #====================================================================
 
 import
-  resource/resource,
-  wNim,
-  strformat
+  strformat,
+  resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage]
 
 type
   # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.
@@ -91,5 +95,6 @@ frame.connect(wEvent_ContextMenu) do (event: wEvent):
   # Or just frame.popupMenu(menuTest) in order to use the current
   # mouse pointer position.
 
+frame.center()
 frame.show()
 app.mainLoop()

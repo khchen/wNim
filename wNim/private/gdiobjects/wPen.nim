@@ -12,7 +12,6 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
 #
 ## :Consts:
 ##   ==============================  =============================================================
@@ -40,6 +39,11 @@
 ##   wPenStyleVerticalHatch          Vertical hatch.
 ##   wPenStyleMaskHatch              Hatch style mask.
 ##   ==============================  =============================================================
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wGdiObject
+export wGdiObject
 
 type
   wPenError* = object of wGdiObjectError
@@ -164,3 +168,57 @@ proc setWidth*(self: wPen, width: int) {.validate, property.} =
   ## Sets the pen width.
   DeleteObject(self.mHandle)
   self.init(color=self.mColor, style=self.mStyle, width=width)
+
+template wBlackPen*(): untyped =
+  ## Predefined black pen. **Don't delete**.
+  wGDIStock(wPen, BlackPen):
+    Pen(color=wBLACK)
+
+template wWhitePen*(): untyped =
+  ## Predefined white pen. **Don't delete**.
+  wGDIStock(wPen, WhitePen):
+    Pen(color=wWHITE)
+
+template wTransparentPen*(): untyped =
+  ## Predefined transparent pen. **Don't delete**.
+  wGDIStock(wPen, TransparentPen):
+    Pen(style=wPenStyleTransparent)
+
+template wRedPen*(): untyped =
+  ## Predefined red pen. **Don't delete**.
+  wGDIStock(wPen, RedPen):
+    Pen(color=wRED)
+
+template wCyanPen*(): untyped =
+  ## Predefined cyan pen. **Don't delete**.
+  wGDIStock(wPen, CyanPen):
+    Pen(color=wCYAN)
+
+template wGreenPen*(): untyped =
+  ## Predefined green pen. **Don't delete**.
+  wGDIStock(wPen, GreenPen):
+    Pen(color=wGREEN)
+
+template wGreyPen*(): untyped =
+  ## Predefined grey pen. **Don't delete**.
+  wGDIStock(wPen, GreyPen):
+    Pen(color=wGREY)
+
+template wMediumGreyPen*(): untyped =
+  ## Predefined medium grey pen. **Don't delete**.
+  wGDIStock(wPen, MediumGreyPen):
+    Pen(color=wMEDIUMGREY)
+
+template wLightGreyPen*(): untyped =
+  ## Predefined light grey pen. **Don't delete**.
+  wGDIStock(wPen, LightGreyPen):
+    Pen(color=wLIGHTGREY)
+
+template wBlackDashedPen*(): untyped =
+  ## Predefined black dashed pen. **Don't delete**.
+  wGDIStock(wPen, BlackDashedPen):
+    Pen(color=wBLACK, style=wPENSTYLE_SHORT_DASH)
+
+template wDefaultPen*(): untyped =
+  ## Predefined default (black) pen. **Don't delete**.
+  wBlackPen()

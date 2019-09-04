@@ -34,6 +34,11 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   wAlignLeft* = SS_LEFT
   wAlignRight* = SS_RIGHT
@@ -53,7 +58,7 @@ method getDefaultSize*(self: wStaticText): wSize {.property.} =
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-proc wStaticText_DoCommand(event: wEvent) =
+proc wStaticText_DoCommand(event: wEvent) {.shield.} =
   # also used in wStaticBitmap
   let self = wAppWindowFindByHwnd(HWND event.mLparam)
   if self != nil:

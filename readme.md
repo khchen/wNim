@@ -76,6 +76,25 @@ Without git:
        (for example: C:\wNim-master\wNim-master>)
     3. Run "nimble install"
 
+## Import
+The easiest way to use wNim is to import the whole package.
+
+```nimrod
+    import wNim
+```
+
+However, the modules of wNim can be aslo imported one by one  to speed up compilation time.
+
+```nimrod
+    import wNim/[wApp, wFrame]
+```
+
+There are some simple rules:
+    1. For every constructor, there is a correspond module to import.
+    2. wApp module must be imported by every wNim program.
+    3. Sometimes you need import wTypes module. [Explanation](https://khchen.github.io/wNim/wTypes.html).
+
+
 ## Compile
 To compile the examples, try following command:
 

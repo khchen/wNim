@@ -7,6 +7,11 @@
 
 ## wNim's utilities and convenience functions.
 
+{.experimental, deadCodeElim: on.}
+
+import dynlib
+import wBase, wApp, wDataObject
+
 const
   wSysBorderX* = SM_CXBORDER ## Width of single border.
   wSysBorderY* = SM_CYBORDER ## Height of single border.
@@ -43,8 +48,6 @@ const
   wSysShowSounds* = SM_SHOWSOUNDS ## Non-zero if the user requires an application to present information visually in situations where it would otherwise present the information only in audible form; zero otherwise.
   wSysSwapButtons* = SM_SWAPBUTTON  ## Non-zero if the meanings of the left and right mouse buttons are swapped; zero otherwise.
 
-proc DataObject*(dataObj: ptr IDataObject): wDataObject {.inline.}
-
 proc wGetMousePosition*(): wPoint =
   ## Returns the mouse position in screen coordinates.
   var mousePos: POINT
@@ -55,12 +58,6 @@ proc wGetMousePosition*(): wPoint =
 proc wSetMousePosition*(pos: wPoint) =
   ## Sets the mouse position
   SetCursorPos(int32 pos.x, int32 pos.y)
-
-proc wGetMessagePosition*(): wPoint =
-  ## Returns the mouse position in screen coordinates.
-  var val = GetMessagePos()
-  result.x = GET_X_LPARAM(val)
-  result.y = GET_Y_LPARAM(val)
 
 proc wGetKeyState*(key: int): bool =
   ## For normal keys, returns true if the specified key is currently down.
@@ -197,16 +194,4 @@ proc wGetWinVersion*(): float =
   ## Windows Vista                     6.0
   ## Windows XP                        5.1
   ## ================================  =============================================================
-  type RtlGetVersion = proc (lp: ptr OSVERSIONINFO) {.stdcall.}
-  var osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
-  let hDll = LoadLibrary("ntdll.dll")
-  if hDll != 0:
-    defer: FreeLibrary(hDll)
-
-    var rtlGetVersion = cast[RtlGetVersion](GetProcAddress(hDll, "RtlGetVersion"))
-    if not rtlGetVersion.isNil:
-      rtlGetVersion(osv)
-      return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
-
-  GetVersionEx(osv)
-  return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
+  result = wGetWinVersionImpl()

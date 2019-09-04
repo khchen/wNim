@@ -24,9 +24,15 @@
 ##   wFdMultiple                     Allows selecting multiple files.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase, wDialog
+export wDialog
+
 const
   wFdOpen* = 0
-  wFdSave* = int64 0x1 shl 32
+  wFdSave* = 0x1.int64 shl 32
   wFdOverwritePrompt* = OFN_OVERWRITEPROMPT
   wFdCreatePrompt* = OFN_CREATEPROMPT
   wFdNoFollow* = OFN_NODEREFERENCELINKS

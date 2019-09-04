@@ -25,10 +25,12 @@
 ##   WEAKEST                         createStrength(0.0, 0.0, 0.01)
 ##   ==============================  =============================================================
 
-# forward declarations
-proc setSize*(self: wWindow, x, y, width, height: int)
-proc getRect*(self: wWindow): wRect
-method getClientSize*(self: wResizable): wSize {.base.}
+{.experimental, deadCodeElim: on.}
+
+import sets, math
+import wBase, wWindow, kiwi/kiwi
+
+export kiwi
 
 # const REQUIRED* = createStrength(1000.0, 1000.0, 1000.0)
 # const STRONG* = createStrength(1.0, 0.0, 0.0)
@@ -53,7 +55,7 @@ proc addObject*(self: wResizer, obj: wResizable) {.validate, inline.} =
   ## Add an associated resizable object to the solver.
   self.mObjects.incl obj
 
-  if obj of wWindow:
+  if obj of wBase.wWindow:
     # Window's current layout as default, size should stronger than position
     if not self.mSolver.hasEditVariable(obj.mLeft):
       self.mSolver.addEditVariable(obj.mLeft, WEAKEST)
@@ -70,7 +72,7 @@ proc addObject*(self: wResizer, obj: wResizable) {.validate, inline.} =
 proc resolve*(self: wResizer) {.validate.} =
   ## Count the layout of the associated object.
   let panel = self.mParent
-  if panel of wWindow:
+  if panel of wBase.wWindow:
     let size = panel.wWindow.getClientSize()
     self.mSolver.suggestValue(panel.mLeft, 0)
     self.mSolver.suggestValue(panel.mTop, 0)
@@ -79,7 +81,7 @@ proc resolve*(self: wResizer) {.validate.} =
 
   # Window's current layout as default, size should stronger than position
   for child in self.mObjects:
-    if child of wWindow:
+    if child of wBase.wWindow:
       let rect = child.wWindow.getRect()
       self.mSolver.suggestValue(child.mLeft, float rect.x)
       self.mSolver.suggestValue(child.mTop, float rect.y)
@@ -91,7 +93,7 @@ proc resolve*(self: wResizer) {.validate.} =
 proc rearrange*(self: wResizer) {.validate.} =
   ## Rearrange the layout of the associated window.
   for obj in self.mObjects:
-    if obj of wWindow:
+    if obj of wBase.wWindow:
       let x = int round(obj.mLeft.value)
       let y = int round(obj.mTop.value)
       let width = int round(obj.mWidth.value)

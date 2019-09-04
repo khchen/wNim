@@ -6,14 +6,19 @@
 #====================================================================
 
 ## The wApp object represents the application itself. It allow only one instance
-## for a thread.
+## for a thread. Because every wNim app needs to import this module. So wTypes,
+## wColors, and wKeyCodes are exported by this module for convenience.
 
-# forward declarations
-proc wGetWinVersion*(): float
+{.experimental, deadCodeElim: on.}
 
-const
-  wEvent_AppQuit = WM_APP + 1
+import tables, sets
+import winim/[utils], winim/inc/windef, winimx
+import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]
 
+# Every wNim app needs wTypes, so export these in wApp to the user for convenience.
+export wTypes, wColors, wKeyCodes
+
+const wEvent_AppQuit* = wEventId()
 var wTheApp {.threadvar.}: wApp
 
 proc App*(): wApp {.discardable.} =
@@ -38,7 +43,7 @@ proc App*(): wApp {.discardable.} =
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initCountTable[UINT]()
   {.gcsafe.}:
-    result.mWinVersion = wGetWinVersion()
+    result.mWinVersion = wGetWinVersionImpl()
     result.mUseTheme = useTheme()
 
   # initSet is deprecated since v0.20
@@ -49,20 +54,20 @@ proc App*(): wApp {.discardable.} =
 
   wTheApp = result
 
-proc wAppGetCurrentApp*(): wApp {.inline.} =
+template wAppGetCurrentApp*(): wApp =
   ## Gets the current wApp instance.
-  result = wTheApp
+  wTheApp
 
-proc wAppGetInstance(): HANDLE {.inline.} =
+proc wAppGetInstance(): HANDLE {.inline, shield.} =
   result = wTheApp.mInstance
 
-proc wAppWinVersion(): float {.inline.} =
+proc wAppWinVersion(): float {.inline, shield.} =
   result = wTheApp.mWinVersion
 
-proc wUseTheme(): bool {.inline.} =
+proc wUseTheme(): bool {.inline, shield.} =
   result = wTheApp.mUseTheme
 
-proc wAppGetDpi(): int =
+proc wAppGetDpi(): int {.shield.} =
   if wTheApp.mDpi == 0:
     var hdc = GetDC(0)
     wTheApp.mDpi = GetDeviceCaps(hdc, LOGPIXELSY)
@@ -70,78 +75,78 @@ proc wAppGetDpi(): int =
 
   result = wTheApp.mDpi
 
-proc wAppHasTopLevelWindow(): bool {.inline.} =
+proc wAppHasTopLevelWindow(): bool {.inline, shield.} =
   result = (wTheApp.mTopLevelWindowTable.len != 0)
 
-proc wAppWindowAdd(win: wWindow) {.inline.} =
+proc wAppWindowAdd(win: wWindow) {.inline, shield.} =
   wTheApp.mWindowTable[win.mHwnd] = win
 
-proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline.} =
+proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline, shield.} =
   result = wTheApp.mWindowTable.getOrDefault(hwnd)
 
-proc wAppTopLevelWindowAdd(win: wWindow) {.inline.} =
+proc wAppTopLevelWindowAdd(win: wWindow) {.inline, shield.} =
   wTheApp.mTopLevelWindowTable[win.mHwnd] = win
 
-proc wAppTopLevelWindowAdd(hwnd: HWND) {.inline.} =
+proc wAppTopLevelWindowAdd(hwnd: HWND) {.inline, shield.} =
   wTheApp.mTopLevelWindowTable[hwnd] = nil
 
-iterator wAppTopLevelHwnd(): HWND {.inline.} =
+iterator wAppTopLevelHwnd(): HWND {.inline, shield.} =
   for hwnd in wTheApp.mTopLevelWindowTable.keys:
     yield hwnd
 
-proc wAppWindowDelete(win: wWindow) {.inline.} =
+proc wAppWindowDelete(win: wWindow) {.inline, shield.} =
   wTheApp.mWindowTable.del(win.mHwnd)
   wTheApp.mTopLevelWindowTable.del(win.mHwnd)
 
-proc wAppWindowDelete(hwnd: HWND) {.inline.} =
+proc wAppWindowDelete(hwnd: HWND) {.inline, shield.} =
   wTheApp.mWindowTable.del(hwnd)
   wTheApp.mTopLevelWindowTable.del(hwnd)
 
-proc wAppIsMessagePropagation(msg: UINT): bool {.inline.} =
+proc wAppIsMessagePropagation(msg: UINT): bool {.inline, shield.} =
   result = msg in wTheApp.mPropagationSet
 
-proc wAppIncMessage(msg: UINT) {.inline.} =
+proc wAppIncMessage(msg: UINT) {.inline, shield.} =
   wTheApp.mMessageCountTable.inc(msg, 1)
 
-proc wAppDecMessage(msg: UINT) {.inline.} =
+proc wAppDecMessage(msg: UINT) {.inline, shield.} =
   wTheApp.mMessageCountTable.inc(msg, -1)
 
-proc wAppHasMessage(msg: UINT): bool {.inline.} =
+proc wAppHasMessage(msg: UINT): bool {.inline, shield.} =
   msg in wTheApp.mMessageCountTable
 
-proc wAppAccelOn() {.inline.} =
+proc wAppAccelOn() {.inline, shield.} =
   wTheApp.mAccelExists = true
 
-proc wAppMenuBaseAdd(menu: wMenuBase) {.inline.} =
+proc wAppMenuBaseAdd(menu: wMenuBase) {.inline, shield.} =
   wTheApp.mMenuBaseTable[menu.mHmenu] = cast[pointer](menu)
 
-proc wAppMenuBaseDelete(menu: wMenuBase) {.inline.} =
+proc wAppMenuBaseDelete(menu: wMenuBase) {.inline, shield.} =
   wTheApp.mMenuBaseTable.del(menu.mHmenu)
 
-template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
-  if sn > wTheApp.mGDIStockSeq.high:
-    wTheApp.mGDIStockSeq.setlen(sn+1)
+# template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
+#   if sn > wTheApp.mGDIStockSeq.high:
+#     wTheApp.mGDIStockSeq.setlen(sn+1)
 
-  if wTheApp.mGDIStockSeq[sn] == nil:
-    wTheApp.mGDIStockSeq[sn] = obj
+#   if wTheApp.mGDIStockSeq[sn] == nil:
+#     wTheApp.mGDIStockSeq[sn] = obj
 
-  typ(wTheApp.mGDIStockSeq[sn])
+#   typ(wTheApp.mGDIStockSeq[sn])
 
-iterator wAppWindows(): wWindow {.inline.} =
+iterator wAppWindows(): wWindow {.inline, shield.} =
   for hwnd, win in wTheApp.mWindowTable:
     yield win
 
-iterator wAppMenuBase(): wMenuBase =
+iterator wAppMenuBase(): wMenuBase {.shield.} =
   for hMenu in wTheApp.mMenuBaseTable.keys:
     if IsMenu(hMenu):
       let menuBase = cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
       yield menuBase
 
-proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline.} =
+proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline, shield.} =
   if hMenu in wTheApp.mMenuBaseTable:
     return cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
 
-proc wAppProcessDialogMessage(msg: var MSG): bool =
+proc wAppProcessDialogMessage(msg: var MSG): bool {.shield.} =
   # find the top-level non-child window.
   var hwnd = GetAncestor(msg.hwnd, GA_ROOT)
 
@@ -151,7 +156,7 @@ proc wAppProcessDialogMessage(msg: var MSG): bool =
     # but is it necessary?
     return IsDialogMessage(hwnd, msg)
 
-proc wAppProcessAcceleratorMessage(msg: var MSG): bool =
+proc wAppProcessAcceleratorMessage(msg: var MSG): bool {.shield.}=
   if wTheApp.mAccelExists:
     var win = wAppWindowFindByHwnd(msg.hwnd)
     while win != nil:
@@ -163,7 +168,7 @@ proc wAppProcessAcceleratorMessage(msg: var MSG): bool =
       win = win.mParent
   return false
 
-proc messageLoop(modalWin: HWND = 0): int =
+proc messageLoop(modalWin: HWND = 0): int {.shield.} =
   var msg: MSG
   while true:
     if GetMessage(msg, 0, 0, 0) == 0 or msg.message == wEvent_AppQuit:

@@ -27,6 +27,11 @@
 ##   wEvent_DialogHelp                When the Help button is pressed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wPrintData, wDialog
+export wDialog, wPrintData
+
 type
   wPageSetupDialogError* = object of wError
     ## An error raised when wPageSetupDialog creation failed.

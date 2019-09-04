@@ -1,6 +1,16 @@
-import
-  resource/resource,
-  wNim
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                (c) Copyright 2017-2019 Ward
+#
+#====================================================================
+
+import resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC]
 
 let app = App()
 

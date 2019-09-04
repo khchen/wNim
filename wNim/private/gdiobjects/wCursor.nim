@@ -14,7 +14,6 @@
 #
 ## :Seealso:
 ##    `wDC <wDC.html>`_
-##    `wPredefined <wPredefined.html>`_
 ##    `wIconImage <wIconImage.html>`_
 #
 ## :Enum:
@@ -36,6 +35,9 @@
 ##    wCursorAppStarting              Standard arrow and small hourglass
 ##    wCursorHelp                     Arrow and question mark
 ##    ==============================  =============================================================
+
+import ../wBase, ../wIconImage, wGdiObject
+export wGdiObject
 
 type
   wStockCursor* = enum
@@ -63,10 +65,10 @@ type
 proc error(self: wCursor) {.inline.} =
   raise newException(wCursorError, "wCursor creation failed")
 
-proc isNilCursor(self: wCursor): bool {.inline.} =
+proc isNilCursor(self: wCursor): bool {.inline, shield.} =
   result = self.mHandle == 0
 
-proc isCustomCursor(self: wCursor): bool {.inline.} =
+proc isCustomCursor(self: wCursor): bool {.inline, shield.} =
   result = self.mHandle != -1 and self.mHandle != 0
 
 proc getHotspot*(self: wCursor): wPoint {.validate, property.} =
@@ -326,3 +328,38 @@ proc Cursor*(str: string, size = wDefaultSize, hotspot = wDefaultPoint): wCursor
   wValidate(str)
   new(result, final)
   result.init(str, size, hotspot)
+
+template wNilCursor*(): untyped =
+  ## Predefined nil cursor. **Don't delete**.
+  wGDIStock(wCursor, NilCursor):
+    Cursor(0)
+
+template wDefaultCursor*(): untyped =
+  ## Predefined default cursor. **Don't delete**.
+  wGDIStock(wCursor, DefaultCursor):
+    Cursor(-1)
+
+template wArrorCursor*(): untyped =
+  ## Predefined arror cursor. **Don't delete**.
+  wGDIStock(wCursor, ArrorCursor):
+    Cursor(wCursorArrow)
+
+template wSizeAllCursor*(): untyped =
+  ## Predefined size all cursor. **Don't delete**.
+  wGDIStock(wCursor, SizeAllCursor):
+    Cursor(wCursorSizeAll)
+
+template wSizeWeCursor*(): untyped =
+  ## Predefined size west east cursor. **Don't delete**.
+  wGDIStock(wCursor, SizeWeCursor):
+    Cursor(wCursorSizeWe)
+
+template wSizeNsCursor*(): untyped =
+  ## Predefined north south cursor. **Don't delete**.
+  wGDIStock(wCursor, SizeNsCursor):
+    Cursor(wCursorSizeNs)
+
+template wHandCursor*(): untyped =
+  ## Predefined hand cursor. **Don't delete**.
+  wGDIStock(wCursor, HandCursor):
+    Cursor(wCursorHand)

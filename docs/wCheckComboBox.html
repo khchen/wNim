@@ -1244,6 +1244,8 @@ function main() {
     title="wCcAlwaysScroll = 2099200"><wbr />w<wbr />Cc<wbr />Always<wbr />Scroll<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wCcEndEllipsis"
     title="wCcEndEllipsis = 1"><wbr />w<wbr />Cc<wbr />End<wbr />Ellipsis<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCcNormalColor"
+    title="wCcNormalColor = 2"><wbr />w<wbr />Cc<wbr />Normal<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1270,8 +1272,6 @@ function main() {
     title="delete(self: wCheckComboBox; index: int)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delete%2CwCheckComboBox%2Cstring"
     title="delete(self: wCheckComboBox; text: string)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#clear%2CwCheckComboBox"
-    title="clear(self: wCheckComboBox)"><wbr />clear<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#findText%2CwCheckComboBox%2Cstring"
     title="findText(self: wCheckComboBox; text: string): int"><wbr />find<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isSelected%2CwCheckComboBox%2Cint"
@@ -1316,6 +1316,10 @@ function main() {
     title="setValue(self: wCheckComboBox; text: string)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getValue%2CwCheckComboBox"
     title="getValue(self: wCheckComboBox): string"><wbr />get<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#clear%2CwCheckComboBox"
+    title="clear(self: wCheckComboBox)"><wbr />clear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#isPopup%2CwCheckComboBox"
+    title="isPopup(self: wCheckComboBox): bool"><wbr />is<wbr />Popup<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#popup%2CwCheckComboBox"
     title="popup(self: wCheckComboBox)"><wbr />popup<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#dismiss%2CwCheckComboBox"
@@ -1324,6 +1328,8 @@ function main() {
     title="getEmpty(self: wCheckComboBox): string"><wbr />get<wbr />Empty<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setEmpty%2CwCheckComboBox%2Cstring"
     title="setEmpty(self: wCheckComboBox; text: string)"><wbr />set<wbr />Empty<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#changeStyle%2CwCheckComboBox%2CwStyle"
+    title="changeStyle(self: wCheckComboBox; style: wStyle)"><wbr />change<wbr />Style<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getListControl%2CwCheckComboBox"
     title="getListControl(self: wCheckComboBox): wListBox"><wbr />get<wbr />List<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#selections%2CwCheckComboBox"
@@ -1378,11 +1384,12 @@ function main() {
 <tr><td>wCcNeededScroll</td><td>Only create a vertical scrollbar if needed.</td></tr>
 <tr><td>wCcAlwaysScroll</td><td>Always show a vertical scrollbar.</td></tr>
 <tr><td>wCcEndEllipsis</td><td>If the text value is too long, it is truncated and ellipses are added.</td></tr>
+<tr><td>wCcNormalColor</td><td>Use normal color to draw the control instead of read-only color.</td></tr>
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wCommandEvent.html">wCommandEvent</a><table border="1" class="docutils"><tr><th>wCommandEvent</th><th>Description</th></tr>
-<tr><td>wEvent_CheckComboBox</td><td>When the value of the checkcombobox changed.</td></tr>
-<tr><td>wEvent_CheckComboBoxCloseUp</td><td>When the list box of the checkcombobox disappears.</td></tr>
-<tr><td>wEvent_CheckComboBoxDropDown</td><td>When the list box part of the checkcombobox is shown.</td></tr>
+<tr><td>wEvent_CheckComboBox</td><td>When the value of the checkcombobox changed by user.</td></tr>
+<tr><td>wEvent_CheckComboBoxCloseUp</td><td>When the listbox of the checkcombobox disappears.</td></tr>
+<tr><td>wEvent_CheckComboBoxDropDown</td><td>When the listbox part of the checkcombobox is shown.</td></tr>
 <tr><td>wEvent_CommandSetFocus</td><td>When the control receives the keyboard focus.</td></tr>
 <tr><td>wEvent_CommandKillFocus</td><td>When the control loses the keyboard focus.</td></tr>
 </table></td></tr>
@@ -1410,6 +1417,12 @@ function main() {
 </dd>
 <a id="wCcEndEllipsis"></a>
 <dt><pre><span class="Identifier">wCcEndEllipsis</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="wCcNormalColor"></a>
+<dt><pre><span class="Identifier">wCcNormalColor</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
 <dd>
 
 
@@ -1450,7 +1463,7 @@ Returns the text of the item with the given index. Raise error if index out of b
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">insert</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Inserts the given string before the specified position. Notice that the inserted item won't be sorted even the list box has wCbSort style. If pos is -1, the string is added to the end of the list.
+Inserts the given string before the specified position. Notice that the inserted item won't be sorted even the listbox has wCbSort style. If pos is -1, the string is added to the end of the list.
 
 </dd>
 <a id="insert,wCheckComboBox,int,openArray[string]"></a>
@@ -1483,12 +1496,6 @@ Delete a string in the checkcombobox.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Search and delete the specified string in the checkcombobox.
-
-</dd>
-<a id="clear,wCheckComboBox"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">clear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Remove all items from a checkcombobox.
 
 </dd>
 <a id="findText,wCheckComboBox,string"></a>
@@ -1631,16 +1638,29 @@ Sets the text for the checkcombobox text field. This function will split the inp
 Gets the text for the checkcombobox text field.
 
 </dd>
+<a id="clear,wCheckComboBox"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">clear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Remove all items from a checkcombobox.
+
+</dd>
+<a id="isPopup,wCheckComboBox"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">isPopup</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Returns whether or not the listbox is popup.
+
+</dd>
 <a id="popup,wCheckComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">popup</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Shows the list box portion of the checkcombobox.
+Shows the listbox portion of the checkcombobox.
 
 </dd>
 <a id="dismiss,wCheckComboBox"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">dismiss</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Hides the list box portion of the checkcombobox.
+Hides the listbox portion of the checkcombobox.
 
 </dd>
 <a id="getEmpty,wCheckComboBox"></a>
@@ -1655,6 +1675,13 @@ Gets the displayed text if the value is empty .
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the displayed text if the value is empty.
+
+</dd>
+<a id="changeStyle,wCheckComboBox,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">changeStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Change the style of the contorl. Only wCcEndEllipsis or wCcNormalColor can be changed.
 
 </dd>
 <a id="getListControl,wCheckComboBox"></a>
@@ -1681,7 +1708,7 @@ Default finalizer for wCheckComboBox.
 <a id="init,wCheckComboBox,wWindow,openArray[string],wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
          <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">choices</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Error Type</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
@@ -1689,8 +1716,8 @@ Initializer.
 <a id="CheckComboBox,wWindow,openArray[string],wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">CheckComboBox</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
                   <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">choices</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">;</span>
-                  <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+                  <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Error Type</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor, creating and showing a checkcombobox.
 
@@ -1713,8 +1740,8 @@ Returns the best acceptable minimal size for the control.
 
 </dd>
 <a id="setFont.e,wCheckComboBox,wFont"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">setFont</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setFont</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckComboBox</span><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <span class="Identifier">wFont</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the font for this text control.
 
@@ -1759,7 +1786,7 @@ Iterates over each item of the selected items. Yields <tt class="docutils litera
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 12:01:15 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:09 UTC</small>
       </div>
     </div>
   </div>

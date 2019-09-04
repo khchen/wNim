@@ -11,6 +11,19 @@
 ##   `wMenu <wMenu.html>`_
 ##   `wMenuBar <wMenuBar.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import strutils
+import ../wBase
+
+# For recursive module dependencies
+proc MenuItem*(id: wCommandID = 0, text = "", help = "",
+    kind = wMenuItemNormal, bitmap: wBitmap = nil,
+    submenu: wMenu = nil): wMenuItem {.inline.}
+
+import wMenu
+export wMenu
+
 template withPosAtParentMenu(body: untyped) =
   mixin self
   for menuBase in wAppMenuBase():

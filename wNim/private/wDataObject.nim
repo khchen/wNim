@@ -23,6 +23,10 @@
 ##   wDragLink                       Drag source should create a link to the original data.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import wBase, gdiobjects/wBitmap
+
 const
   wDragNone* = DROPEFFECT_NONE # 0
   wDragCopy* = DROPEFFECT_COPY # 1
@@ -375,7 +379,7 @@ proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
   ## Initializer.
   wValidate(bmp)
 
-  self.mObj = newBmpDataObject(bmp.handle)
+  self.mObj = newBmpDataObject(bmp.mHandle)
   if self.mObj == nil: self.error()
   self.mReleasable = true
 

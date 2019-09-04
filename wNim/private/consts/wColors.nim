@@ -5,6 +5,8 @@
 #
 #====================================================================
 
+import ../wTypes
+
 ## The commonly used color value.
 
 const

@@ -31,6 +31,11 @@
 ##   wEvent_CheckBox                  The check box is clicked.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl
+export wControl
+
 const
   # CheckBox styles and state
   wChk2State* = 0

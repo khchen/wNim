@@ -12,6 +12,14 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wDC
+export wDC
+
+type
+  wScreenDC* = object of wDC
+
 proc ScreenDC*(): wScreenDC =
   ## Constructor.
   result.mHdc = GetDC(0)

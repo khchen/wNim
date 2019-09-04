@@ -40,6 +40,12 @@
 ## :Events:
 ##   `wTreeEvent <wTreeEvent.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import tables
+import ../wBase, ../wImageList, wControl, wListCtrl
+export wControl, wListCtrl
+
 const
   # TreeCtrl styles and consts
   wTrNoButtons* = 0
@@ -49,7 +55,7 @@ const
   wTrFullRowHighLight* = TVS_FULLROWSELECT
   wTrLinesAtRoot* = TVS_LINESATROOT
   wTrCheckBox* = TVS_CHECKBOXES
-  wTrTwistButtons* = int64 0x10000000 shl 32
+  wTrTwistButtons* = 0x10000000.int64 shl 32
   wTrNoHScroll* = TVS_NOHSCROLL
   wTrNoScroll* = TVS_NOSCROLL
   wTrSingleExpand* = TVS_SINGLEEXPAND
@@ -88,7 +94,6 @@ const
 
 #   setSelection(): set select state for an item, this may broken "single selection"
 #   getSelections(): get the selected items
-
 
 # wTreeItem procs
 
@@ -1014,7 +1019,7 @@ proc endDrag*(self: wTreeCtrl) {.validate.} =
     self.processEvent(event)
 
 method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code:
   of TVN_SELCHANGED:
@@ -1116,7 +1121,7 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 proc wTreeCtrl_OnChar(event: wEvent) =
   # Tree control don't have an activate notification code.
   # we need to generate it by ourself.
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1130,7 +1135,7 @@ proc wTreeCtrl_OnChar(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_OnContextMenu(event: wEvent) =
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1157,7 +1162,7 @@ proc wTreeCtrl_OnContextMenu(event: wEvent) =
   processed =  self.processEvent(event)
 
 proc wTreeCtrl_OnMouseMove(event: wEvent) =
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1166,7 +1171,7 @@ proc wTreeCtrl_OnMouseMove(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_LeftUp(event: wEvent) =
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1175,7 +1180,7 @@ proc wTreeCtrl_LeftUp(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_RightUp(event: wEvent) =
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1189,7 +1194,7 @@ proc wTreeCtrl_RightUp(event: wEvent) =
 proc wTreeCtrl_RightDown(event: wEvent) =
   # here we block the right down event if it's not click on item
   # becasue the default behavior will change focus even click on right space area
-  var self = wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.window
   let (item, flag) = self.hitTest(event.getMousePos())
   if item.isOk() and self.isReallyOnItem(flag):
     item.select()
@@ -1219,11 +1224,7 @@ proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
   self.setBackgroundColor(wWhite)
 
   if (style and wTrTwistButtons) != 0:
-    type SetWindowTheme = proc (hwnd: HWND, pszSubAppName: LPCWSTR,
-      pszSubIdList: LPCWSTR): HRESULT {.stdcall.}
-    let themeLib = loadLib("uxtheme.dll")
-    let setWindowTheme = cast[SetWindowTheme](themeLib.checkedSymAddr("SetWindowTheme"))
-    discard setWindowTheme(self.mHwnd, "Explorer", nil)
+    SetWindowTheme(self.mHwnd, "Explorer", nil)
 
   self.hardConnect(wEvent_Char, wTreeCtrl_OnChar)
   self.hardConnect(wEvent_ContextMenu, wTreeCtrl_OnContextMenu)

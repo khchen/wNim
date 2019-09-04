@@ -9,9 +9,15 @@ when compileOption("threads"):
   import threadpool
 
 import
-  resource/resource,  os,
-  strutils, math, strformat,
-  wNim
+  os, strutils, math, strformat,
+  resource/resource
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wFrame, wPanel, wStatusBar, wToolBar, wSlider, wStaticText, wButton,
+    wScreenDC, wPrinterDC, wMemoryDC, wPaintDC, wRegion, wBitmap, wIcon, wFont, wImage,
+    wPageSetupDialog, wPrintDialog]
 
 const
   border = 20
@@ -615,6 +621,11 @@ proc PreviewFrame(title: string, size: wSize = (1024, 768)): wPreviewFrame {.inl
 
 
 when isMainModule:
+  when defined(aio):
+    import wNim
+  else:
+    import wNim/[wApp, wAcceleratorTable, wMenuBar, wMenu,
+      wFileDialog, wFontDialog, wPageSetupDialog, wPrintDialog, wMessageDialog]
 
   type
     # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.

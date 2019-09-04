@@ -14,8 +14,13 @@
 # 3. Provides an Object() proc to quickly get the ref object.
 
 import
-  wNim,
+  winim/[winstr, utils],
   winim/inc/[winuser, shellapi]
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wMacros, wStaticText, wFont, wCursor]
 
 # Define event message starting from wEvent_App.
 const
@@ -169,8 +174,13 @@ proc Hyperlink*(parent: wWindow, id = wDefaultID, label: string, url: string,
 when isMainModule:
   import resource/resource
 
+  when defined(aio):
+    import wNim
+  else:
+    import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont]
+
   let app = App()
-  let frame = Frame()
+  let frame = Frame(title="wHyperlink custom control")
   frame.icon = Icon("", 0) # load icon from exe file.
 
   let statusBar = StatusBar(frame)

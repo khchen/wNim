@@ -1,11 +1,6 @@
-#====================================================================
-#
-#               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
-#
-#====================================================================
-
 # Let kiwi deal with int expression
+
+import term, variable, expression, constraint
 
 template `*`*(variable: Variable, coefficient: int): Term = `*`(variable, float coefficient)
 template `/`*(variable: Variable, denominator: int): Term = `/`(variable, float denominator)

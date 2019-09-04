@@ -8,8 +8,13 @@
 import
   strutils, os, random,
   resource/resource2,
-  winim/com,
-  wNim
+  winim/com
+
+when defined(aio):
+  import wNim
+else:
+  import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
+    wRebar, wWebView, wTextCtrl, wMessageDialog]
 
 # block:
 #   var hkey: HKEY

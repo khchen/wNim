@@ -12,7 +12,6 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
 #
 ## :Consts:
 ##   ==============================  =============================================================
@@ -29,6 +28,11 @@
 ##   wBrushStyleVerticalHatch        Vertical hatch.
 ##   wBrushStyleMaskHatch            Brush hatch style mask.
 ##   ==============================  =============================================================
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wGdiObject
+export wGdiObject
 
 type
   wBrushError* = object of wGdiObjectError
@@ -119,3 +123,57 @@ proc setStyle*(self: wBrush, style: DWORD) {.validate, property.} =
   ## Sets the brush style.
   DeleteObject(self.mHandle)
   self.init(color=self.mColor, style=style)
+
+template wBlackBrush*(): untyped =
+  ## Predefined black brush. **Don't delete**.
+  wGDIStock(wBrush, BlackBrush):
+    Brush(color=wBLACK)
+
+template wWhiteBrush*(): untyped =
+  ## Predefined white brush. **Don't delete**.
+  wGDIStock(wBrush, WhiteBrush):
+    Brush(color=wWHITE)
+
+template wGreyBrush*(): untyped =
+  ## Predefined grey brush. **Don't delete**.
+  wGDIStock(wBrush, GreyBrush):
+    Brush(color=wGREY)
+
+template wTransparentBrush*(): untyped =
+  ## Predefined transparent brush. **Don't delete**.
+  wGDIStock(wBrush, TransparentBrush):
+    Brush(style=wBrushStyleTransparent)
+
+template wLightGreyBrush*(): untyped =
+  ## Predefined light grey brush. **Don't delete**.
+  wGDIStock(wBrush, LightGreyBrush):
+    Brush(color=wLIGHTGREY)
+
+template wMediumGreyBrush*(): untyped =
+  ## Predefined medium grey brush. **Don't delete**.
+  wGDIStock(wBrush, MediumGreyBrush):
+    Brush(color=wMEDIUMGREY)
+
+template wBlueBrush*(): untyped =
+  ## Predefined blue brush. **Don't delete**.
+  wGDIStock(wBrush, BlueBrush):
+    Brush(color=wBLUE)
+
+template wGreenBrush*(): untyped =
+  ## Predefined green brush. **Don't delete**.
+  wGDIStock(wBrush, GreenBrush):
+    Brush(color=wGREEN)
+
+template wCyanBrush*(): untyped =
+  ## Predefined cyan brush. **Don't delete**.
+  wGDIStock(wBrush, CyanBrush):
+    Brush(color=wCYAN)
+
+template wRedBrush*(): untyped =
+  ## Predefined red brush. **Don't delete**.
+  wGDIStock(wBrush, RedBrush):
+    Brush(color=wRED)
+
+template wDefaultBrush*(): untyped =
+  ## Predefined default (white) brush. **Don't delete**.
+  wWhiteBrush()

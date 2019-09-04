@@ -1234,58 +1234,17 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
-  <a class="reference reference-toplevel" href="#7" id="57">Types</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wWparam"
-    title="wWparam = WPARAM"><wbr />w<wbr />Wparam<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wLparam"
-    title="wLparam = LPARAM"><wbr />w<wbr />Lparam<span class="attachedType" style="visibility:hidden"></span></a></li>
-
-  </ul>
-</li>
-<li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wEvent_PropagateMax"
-    title="wEvent_PropagateMax = high(INT_PTR)"><wbr />w<wbr />Event_<wbr />Propagate<wbr />Max<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_PropagateNone"
-    title="wEvent_PropagateNone = 0"><wbr />w<wbr />Event_<wbr />Propagate<wbr />None<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_SetFocus"
-    title="wEvent_SetFocus = 0x00000007"><wbr />w<wbr />Event_<wbr />Set<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_KillFocus"
-    title="wEvent_KillFocus = 0x00000008"><wbr />w<wbr />Event_<wbr />Kill<wbr />Focus<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Show"
-    title="wEvent_Show = 0x00000018"><wbr />w<wbr />Event_<wbr />Show<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Activate"
-    title="wEvent_Activate = 0x00000006"><wbr />w<wbr />Event_<wbr />Activate<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Timer"
-    title="wEvent_Timer = 0x00000113"><wbr />w<wbr />Event_<wbr />Timer<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_MenuHighlight"
-    title="wEvent_MenuHighlight = 0x0000011F"><wbr />w<wbr />Event_<wbr />Menu<wbr />Highlight<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Paint"
-    title="wEvent_Paint = 0x0000000F"><wbr />w<wbr />Event_<wbr />Paint<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_NcPaint"
-    title="wEvent_NcPaint = 0x00000085"><wbr />w<wbr />Event_<wbr />Nc<wbr />Paint<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_HotKey"
-    title="wEvent_HotKey = 0x00000312"><wbr />w<wbr />Event_<wbr />Hot<wbr />Key<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_DpiChanged"
-    title="wEvent_DpiChanged = 0x000002E0"><wbr />w<wbr />Event_<wbr />Dpi<wbr />Changed<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Close"
-    title="wEvent_Close = 32772"><wbr />w<wbr />Event_<wbr />Close<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_Destroy"
-    title="wEvent_Destroy = 32773"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wEvent_App"
-    title="wEvent_App = 33869"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#wEvent_App"
+    title="wEvent_App = wEvent_CommandLast + 1"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#Event%2CwWindow%2CUINT%2CwWparam%2CwLparam%2CHWND%2Cint"
-    title="Event(window: wWindow = nil; msg: UINT = 0; wParam: wWparam = 0; lParam: wLparam = 0;
-      origin: HWND = 0; userData: int = 0): wEvent"><wbr />Event<span class="attachedType" style="visibility:hidden">wWparam</span></a></li>
-  <li><a class="reference" href="#getEventObject%2CwEvent"
+      <li><a class="reference" href="#getEventObject%2CwEvent"
     title="getEventObject(self: wEvent): wWindow"><wbr />get<wbr />Event<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getWindow%2CwEvent"
     title="getWindow(self: wEvent): wWindow"><wbr />get<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1335,14 +1294,6 @@ function main() {
     title="getPropagationLevel(self: wEvent): int"><wbr />get<wbr />Propagation<wbr />Level<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setPropagationLevel%2CwEvent%2Cint"
     title="setPropagationLevel(self: wEvent; propagationLevel: int)"><wbr />set<wbr />Propagation<wbr />Level<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMouseScreenPos%2CwEvent"
-    title="getMouseScreenPos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Screen<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getMousePos%2CwEvent"
-    title="getMousePos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getX%2CwEvent"
-    title="getX(self: wEvent): int"><wbr />get<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getY%2CwEvent"
-    title="getY(self: wEvent): int"><wbr />get<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#lCtrlDown%2CwEvent"
     title="lCtrlDown(self: wEvent): bool"><wbr />l<wbr />Ctrl<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#lShiftDown%2CwEvent"
@@ -1375,15 +1326,21 @@ function main() {
     title="middleDown(self: wEvent): bool"><wbr />middle<wbr />Down<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getKeyStatus%2CwEvent"
     title="getKeyStatus(self: wEvent): array[256, bool]"><wbr />get<wbr />Key<wbr />Status<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getMouseScreenPos%2CwEvent"
+    title="getMouseScreenPos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Screen<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getMousePos%2CwEvent"
+    title="getMousePos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Pos<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getX%2CwEvent"
+    title="getX(self: wEvent): int"><wbr />get<wbr />X<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getY%2CwEvent"
+    title="getY(self: wEvent): int"><wbr />get<wbr />Y<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#shouldPropagate.e%2CwEvent"
-    title="shouldPropagate(self: wEvent): bool"><wbr />should<wbr />Propagate<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getIndex.e%2CwEvent"
+      <li><a class="reference" href="#getIndex.e%2CwEvent"
     title="getIndex(self: wEvent): int"><wbr />get<wbr />Index<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getPosition.e%2CwEvent"
     title="getPosition(self: wEvent): wPoint"><wbr />get<wbr />Position<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1447,6 +1404,8 @@ function main() {
     title="getMenuItem(self: wEvent): wMenuItem"><wbr />get<wbr />Menu<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getErrorCode.e%2CwEvent"
     title="getErrorCode(self: wEvent): int"><wbr />get<wbr />Error<wbr />Code<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#shouldPropagate.e%2CwEvent"
+    title="shouldPropagate(self: wEvent): bool"><wbr />should<wbr />Propagate<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1485,112 +1444,11 @@ function main() {
 <tr><td>wEvent_App</td><td>Used to define private event type, usually of the form wEvent_App+x.</td></tr>
 </table></td></tr>
 </tbody></table></p>
-  <div class="section" id="7">
-<h1><a class="toc-backref" href="#7">Types</a></h1>
-<dl class="item">
-<a id="wWparam"></a>
-<dt><pre><span class="Identifier">wWparam</span> <span class="Other">=</span> <span class="Identifier">WPARAM</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wLparam"></a>
-<dt><pre><span class="Identifier">wLparam</span> <span class="Other">=</span> <span class="Identifier">LPARAM</span></pre></dt>
-<dd>
-
-
-</dd>
-
-</dl></div>
-<div class="section" id="10">
+  <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
-<a id="wEvent_PropagateMax"></a>
-<dt><pre><span class="Identifier">wEvent_PropagateMax</span> <span class="Other">=</span> <span class="Identifier">high</span><span class="Other">(</span><span class="Identifier">INT_PTR</span><span class="Other">)</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_PropagateNone"></a>
-<dt><pre><span class="Identifier">wEvent_PropagateNone</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_SetFocus"></a>
-<dt><pre><span class="Identifier">wEvent_SetFocus</span> <span class="Other">=</span> <span class="DecNumber">0x00000007</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_KillFocus"></a>
-<dt><pre><span class="Identifier">wEvent_KillFocus</span> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Show"></a>
-<dt><pre><span class="Identifier">wEvent_Show</span> <span class="Other">=</span> <span class="DecNumber">0x00000018</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Activate"></a>
-<dt><pre><span class="Identifier">wEvent_Activate</span> <span class="Other">=</span> <span class="DecNumber">0x00000006</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Timer"></a>
-<dt><pre><span class="Identifier">wEvent_Timer</span> <span class="Other">=</span> <span class="DecNumber">0x00000113</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_MenuHighlight"></a>
-<dt><pre><span class="Identifier">wEvent_MenuHighlight</span> <span class="Other">=</span> <span class="DecNumber">0x0000011F</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Paint"></a>
-<dt><pre><span class="Identifier">wEvent_Paint</span> <span class="Other">=</span> <span class="DecNumber">0x0000000F</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_NcPaint"></a>
-<dt><pre><span class="Identifier">wEvent_NcPaint</span> <span class="Other">=</span> <span class="DecNumber">0x00000085</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_HotKey"></a>
-<dt><pre><span class="Identifier">wEvent_HotKey</span> <span class="Other">=</span> <span class="DecNumber">0x00000312</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_DpiChanged"></a>
-<dt><pre><span class="Identifier">wEvent_DpiChanged</span> <span class="Other">=</span> <span class="DecNumber">0x000002E0</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Close"></a>
-<dt><pre><span class="Identifier">wEvent_Close</span> <span class="Other">=</span> <span class="DecNumber">32772</span></pre></dt>
-<dd>
-
-
-</dd>
-<a id="wEvent_Destroy"></a>
-<dt><pre><span class="Identifier">wEvent_Destroy</span> <span class="Other">=</span> <span class="DecNumber">32773</span></pre></dt>
-<dd>
-
-
-</dd>
 <a id="wEvent_App"></a>
-<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">33869</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="Identifier">wEvent_CommandLast</span> <span class="Operator">+</span> <span class="DecNumber">1</span></pre></dt>
 <dd>
 
 
@@ -1600,13 +1458,6 @@ function main() {
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="Event,wWindow,UINT,wWparam,wLparam,HWND,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Event</span><span class="Other">(</span><span class="Identifier">window</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">wWparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">wLparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-          <span class="Identifier">origin</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEvent</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Constructor.
-
-</dd>
 <a id="getEventObject,wEvent"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getEventObject</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1766,31 +1617,6 @@ Get how many levels the event can propagate.
 Set how many levels the event can propagate.
 
 </dd>
-<a id="getMouseScreenPos,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMouseScreenPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Get coordinate of the cursor. The coordinate is relative to the screen.
-
-</dd>
-<a id="getMousePos,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMousePos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Get coordinate of the cursor. The coordinate is relative to the origin of the client area.
-
-</dd>
-<a id="getX,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getX</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Get x-coordinate of the cursor. The coordinate is relative to the origin of the client area.
-
-</dd>
-<a id="getY,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getY</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Get y-coordinate of the cursor. The coordinate is relative to the origin of the client area.
-
-</dd>
 <a id="lCtrlDown,wEvent"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">lCtrlDown</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1888,21 +1714,36 @@ Returns true if the middle mouse button is currently down.
 Return an bool array with all the pressed keys. Using const defined in wKeyCodes.nim as the index. For example:<pre class="listing"><span class="Identifier">echo</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">keyStauts</span><span class="Punctuation">[</span><span class="Identifier">wKeyCtrl</span><span class="Punctuation">]</span></pre>
 
 </dd>
+<a id="getMouseScreenPos,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMouseScreenPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Get coordinate of the cursor. The coordinate is relative to the screen.
+
+</dd>
+<a id="getMousePos,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getMousePos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Get coordinate of the cursor. The coordinate is relative to the origin of the client area.
+
+</dd>
+<a id="getX,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getX</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Get x-coordinate of the cursor. The coordinate is relative to the origin of the client area.
+
+</dd>
+<a id="getY,wEvent"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getY</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Get y-coordinate of the cursor. The coordinate is relative to the origin of the client area.
+
+</dd>
 
 </dl></div>
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
-<a id="shouldPropagate.e,wEvent"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
-  <span class="Keyword">if</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">eventType</span> <span class="Operator">==</span> <span class="Identifier">wEvent_Char</span><span class="Punctuation">:</span>
-    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">true</span>
-  <span class="Keyword">else</span><span class="Punctuation">:</span>
-    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">procCall</span> <span class="Identifier">wEvent</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
-
-</dd>
 <a id="getIndex.e,wEvent"></a>
 <dt><pre><span class="Keyword">method</span> <span class="Identifier">getIndex</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1946,8 +1787,7 @@ Method needs to be overridden.
 
 </dd>
 <a id="getScrollPos.e,wEvent"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getScrollPos</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
@@ -2001,8 +1841,7 @@ Method needs to be overridden.
 
 </dd>
 <a id="getVisited.e,wEvent"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-                                    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getVisited</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Method needs to be overridden.
 
@@ -2097,6 +1936,16 @@ Method needs to be overridden.
 Method needs to be overridden.
 
 </dd>
+<a id="shouldPropagate.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
+  <span class="Keyword">if</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">eventType</span> <span class="Operator">==</span> <span class="Identifier">wEvent_Char</span><span class="Punctuation">:</span>
+    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">true</span>
+  <span class="Keyword">else</span><span class="Punctuation">:</span>
+    <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">procCall</span> <span class="Identifier">wEvent</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">)</span><span class="Operator">.</span><span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+
+</dd>
 
 </dl></div>
 
@@ -2107,7 +1956,7 @@ Method needs to be overridden.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:26 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:13:57 UTC</small>
       </div>
     </div>
   </div>

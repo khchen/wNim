@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
@@ -1270,8 +1271,6 @@ function main() {
     title="setCurrentPage(self: wPrintDialog; flag: bool)"><wbr />set<wbr />Current<wbr />Page<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enableCurrentPage%2CwPrintDialog"
     title="enableCurrentPage(self: wPrintDialog; flag = true)"><wbr />enable<wbr />Current<wbr />Page<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPageRanges%2CwPrintDialog"
-    title="getPageRanges(self: wPrintDialog): seq[Slice[int]]"><wbr />get<wbr />Page<wbr />Ranges<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setPageRanges%2CwPrintDialog%2CopenArray%5BSlice%5Bint%5D%5D"
     title="setPageRanges(self: wPrintDialog; ranges: openArray[Slice[int]])"><wbr />set<wbr />Page<wbr />Ranges<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enablePageRanges%2CwPrintDialog"
@@ -1286,8 +1285,6 @@ function main() {
     title="setCollate(self: wPrintDialog; flag: bool)"><wbr />set<wbr />Collate<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#final%2CwPrintDialog"
     title="final(self: wPrintDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwPrintDialog%2CwWindow"
-    title="init(self: wPrintDialog; owner: wWindow; initDefault = false)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PrintDialog%2CwWindow"
     title="PrintDialog(owner: wWindow; initDefault = false): wPrintDialog"><wbr />Print<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwPrintDialog%2CwWindow%2CwPrintData"
@@ -1299,6 +1296,7 @@ function main() {
 
   </ul>
 </li>
+
 
 </ul>
 
@@ -1314,7 +1312,8 @@ function main() {
 <tr><td>wEvent_PrintChanged</td><td>When the selected printer is changed.</td></tr>
 </table></td></tr>
 </tbody></table></p>
-  <div class="section" id="7">
+  
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="wPrintDialogError"></a>
@@ -1420,13 +1419,6 @@ Selects the &quot;Current Page&quot; radio button.
 Enables or disables the &quot;Current Page&quot; radio button.
 
 </dd>
-<a id="getPageRanges,wPrintDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPageRanges</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPrintDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns page ranges specified by the user.
-
-</dd>
 <a id="setPageRanges,wPrintDialog,openArray[Slice[int]]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setPageRanges</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPrintDialog</span><span class="Other">;</span> <span class="Identifier">ranges</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">Slice</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
     <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1475,13 +1467,6 @@ Sets the &quot;Collate&quot; checkbox to true or false.
 Default finalizer for wPrintDialog.
 
 </dd>
-<a id="init,wPrintDialog,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPrintDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">initDefault</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Initializer.
-
-</dd>
 <a id="PrintDialog,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">PrintDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">initDefault</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPrintDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1512,6 +1497,7 @@ Shows the dialog, returning wIdOk if the user pressed Print, wIdApply if the use
 
 </dl></div>
 
+
   </div>
 </div>
 
@@ -1519,7 +1505,7 @@ Shows the dialog, returning wIdOk if the user pressed Print, wIdApply if the use
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:18:44 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:14:55 UTC</small>
       </div>
     </div>
   </div>

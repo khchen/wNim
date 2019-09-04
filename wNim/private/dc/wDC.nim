@@ -58,6 +58,31 @@
 ##   wWindingRule                   fills any region that has a nonzero winding value
 ##   ============================== =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import strutils, math
+import ../wBase, ../gdiobjects/[wPen, wBrush, wBitmap, wFont, wRegion]
+
+when not defined(Nimdoc):
+  type
+    wDC* = object of RootObj
+      mHdc*: HDC
+      mTextBackgroundColor*: wColor
+      mTextForegroundColor*: wColor
+      mFont*: wFont
+      mPen*: wPen
+      mBrush*: wBrush
+      mBackground*: wBrush
+      mRegion*: wRegion
+      mScale*: tuple[x, y: float]
+      mhOldFont*: HANDLE
+      mhOldPen*: HANDLE
+      mhOldBrush*: HANDLE
+      mhOldBitmap*: HANDLE
+else:
+  type
+    wDC* = object of RootObj
+
 const
   # for logicalFunction and blit, use logicalFunction value as default
   wClear* = R2_BLACK
@@ -572,18 +597,10 @@ proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} =
   ## Gets the current scale factor.
   result = self.mScale
 
-proc getSize*(self: wDC): wSize {.property.} =
+method getSize*(self: wDC): wSize {.base, property.} =
   ## Gets the size of the device context.
-  if self.mCanvas != nil:
-    if self of wWindowDC:
-      result = self.mCanvas.getSize()
-    else:
-      result = self.mCanvas.getClientSize()
-  elif self.mBitmap != nil:
-    result = self.mBitmap.getSize()
-  else:
-    result.width = GetDeviceCaps(self.mHdc, HORZRES)
-    result.height = GetDeviceCaps(self.mHdc, VERTRES)
+  result.width = GetDeviceCaps(self.mHdc, HORZRES)
+  result.height = GetDeviceCaps(self.mHdc, VERTRES)
 
 proc setLogicalFunction*(self: var wDC, mode: int) {.inline, property.} =
   ## Sets the current logical function for the device context.

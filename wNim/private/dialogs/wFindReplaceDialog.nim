@@ -43,6 +43,11 @@
 ##   wEvent_ReplaceAll                When replace all button was pressed .
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wDialog
+export wDialog
+
 const
   wFrReplace* = 0x20000
   wFrNoUpdown* = FR_NOUPDOWN

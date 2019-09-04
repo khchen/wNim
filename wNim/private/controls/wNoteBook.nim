@@ -29,12 +29,17 @@
 ##   wEvent_NoteBookPageChanged       The page selection was changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wImageList, ../wImage, ../wPanel, ../dc/wPaintDC, wControl
+export wControl
+
 const
   wNbIconLeft* = TCS_FORCEICONLEFT
 
 proc notebookPageOnPaint(event: wEvent) =
   let page = event.window
-  let self = wNoteBook page.mParent
+  let self = wBase.wNoteBook page.mParent
 
   var clipRect, clientRect: RECT
   GetUpdateRect(page.mHwnd, clipRect, FALSE)
@@ -302,25 +307,6 @@ proc setPadding*(self: wNoteBook, size: wSize) {.validate, property, inline.} =
   ## Sets the amount of space around each page's icon and label, in pixels.
   SendMessage(self.mHwnd, TCM_SETPADDING, 0, MAKELPARAM(size.width, size.height))
 
-proc focusNext(self: wNoteBook): bool =
-  if self.mPages.len >= 1:
-    var index = self.mSelection + 1
-    if index >= self.mPages.len: index = 0
-    self.setFocus()
-    # MSDN: Changing the focus also changes the selected tab.
-    # In this case, the tab control sends the TCN_SELCHANGING and TCN_SELCHANGE
-    # notification codes to its parent window.
-    SendMessage(self.mHwnd, TCM_SETCURFOCUS, index, 0)
-    return true
-
-proc focusPrev(self: wNoteBook): bool =
-  if self.mPages.len >= 1:
-    var index = self.mSelection - 1
-    if index < 0: index = self.mPages.len - 1
-    self.setFocus()
-    SendMessage(self.mHwnd, TCM_SETCURFOCUS, index, 0)
-    return true
-
 method release(self: wNoteBook) {.locks: "unknown".} =
   # Don't need to delete self.mImageList
   # let GC to delete it is ok.
@@ -333,7 +319,7 @@ method release(self: wNoteBook) {.locks: "unknown".} =
     self.mTheme = 0
 
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of TCN_SELCHANGE:
@@ -369,7 +355,7 @@ proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
     size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or
     TCS_FIXEDWIDTH or WS_TABSTOP)
 
-  self.mPages = newSeq[wPanel]()
+  self.mPages = newSeq[wBase.wPanel]()
   self.mSelection = -1
 
   self.mImageList = ImageList(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))
@@ -390,7 +376,7 @@ proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
     defer: event.skip(if processed: false else: true)
 
     proc trySetFocus(win: wWindow): bool =
-      if win of wControl and win.isFocusable():
+      if win of wBase.wControl and win.isFocusable():
         win.setFocus()
         processed = true
         return true

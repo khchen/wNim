@@ -21,12 +21,16 @@
 ##   ==============================  =============================================================
 
 # forward declaration
-proc getVisited*(self: wHyperlinkCtrl, index = -1): bool {.inline.}
+# method getEventVisited(self: wWindow, index: int): bool {.base.}
 
-DefineIncrement(wEvent_HyperlinkFirst):
+{.experimental, deadCodeElim: on.}
+
+import ../wBase
+
+DefineEvent:
   wEvent_Hyperlink
 
-proc isHyperlinkEvent(msg: UINT): bool {.inline.} =
+proc isHyperlinkEvent(msg: UINT): bool {.inline, shield.} =
   msg == wEvent_Hyperlink
 
 method getIndex*(self: wHyperlinkEvent): int {.property, inline.} =
@@ -46,5 +50,4 @@ method getLinkId*(self: wHyperlinkEvent): string {.property, inline.} =
 
 method getVisited*(self: wHyperlinkEvent): bool {.property, inline.} =
   ## Returns the visited state of the hyperlink.
-  # visted state returned from PNMLINK always false?
-  result = wHyperlinkCtrl(self.mWindow).getVisited(self.getIndex())
+  result = self.mVisited

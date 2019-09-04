@@ -14,6 +14,11 @@
 ## :Seealso:
 ##   `wControl <wControl.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import wBase, wWindow
+export wWindow
+
 proc final*(self: wPanel) =
   ## Default finalizer for wPanel.
   discard

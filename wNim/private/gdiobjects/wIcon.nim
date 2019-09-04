@@ -13,8 +13,12 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
 ##   `wIconImage <wIconImage.html>`_
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wIconImage, ../wImage, wGdiObject
+export wGdiObject
 
 type
   wIconError* = object of wGdiObjectError

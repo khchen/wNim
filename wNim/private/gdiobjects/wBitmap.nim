@@ -14,8 +14,12 @@
 #
 ## :Seealso:
 ##   `wDC <wDC.html>`_
-##   `wPredefined <wPredefined.html>`_
 ##   `wIconImage <wIconImage.html>`_
+
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wImage, wGdiObject
+export wGdiObject
 
 type
   wBitmapError* = object of wGdiObjectError
@@ -224,3 +228,8 @@ proc getHeight*(self: wBitmap): int {.validate, property, inline.} =
 proc getDepth*(self: wBitmap): int {.validate, property, inline.} =
   ## Gets the color depth of the bitmap.
   result = self.mDepth
+
+template wNilBitmap*(): untyped =
+  ## Predefined empty bitmap. **Don't delete**.
+  wGDIStock(wBitmap, NilBitmap):
+    Bmp(0, 0)

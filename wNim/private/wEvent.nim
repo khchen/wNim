@@ -82,28 +82,9 @@
 ##   wEvent_App                        Used to define private event type, usually of the form wEvent_App+x.
 ##   ================================  =============================================================
 
-# forward declaration
-proc isMouseEvent(msg: UINT): bool {.inline.}
-proc isKeyEvent(msg: UINT): bool {.inline.}
-proc isSizeEvent(msg: UINT): bool {.inline.}
-proc isMoveEvent(msg: UINT): bool {.inline.}
-proc isContextMenuEvent(msg: UINT): bool {.inline.}
-proc isScrollWinEvent(msg: UINT): bool {.inline.}
-proc isTrayEvent(msg: UINT): bool {.inline.}
-proc isDragDropEvent(msg: UINT): bool {.inline.}
-proc isDialogEvent(msg: UINT): bool {.inline.}
-proc isNavigationEvent(msg: UINT): bool {.inline.}
-proc isSetCursorEvent(msg: UINT): bool {.inline.}
-proc isCommandEvent(msg: UINT): bool {.inline.}
-proc isScrollEvent(msg: UINT): bool {.inline.}
-proc isListEvent(msg: UINT): bool {.inline.}
-proc isTreeEvent(msg: UINT): bool {.inline.}
-proc isStatusBarEvent(msg: UINT): bool {.inline.}
-proc isSpinEvent(msg: UINT): bool {.inline.}
-proc isHyperlinkEvent(msg: UINT): bool {.inline.}
-proc isIpEvent(msg: UINT): bool {.inline.}
-proc isWebViewEvent(msg: UINT): bool {.inline.}
-proc screenToClient*(self: wWindow, pos: wPoint): wPoint
+{.experimental, deadCodeElim: on.}
+
+import wBase
 
 const
   WM_DPICHANGED = 0x02E0
@@ -122,124 +103,9 @@ const
   wEvent_HotKey* = WM_HOTKEY
   wEvent_DpiChanged* = WM_DPICHANGED
 
-  # wEvent_AppQuit = WM_APP + 1
-  # wEvent_Navigation* = WM_APP + 2
-  # wEvent_SetCursor* = WM_APP + 3
-
-  wEvent_Close* = WM_APP + 4
-  wEvent_Destroy* = WM_APP + 5
-
-  # wEvent_MouseEnter* = WM_APP + 51
-  # wEvent_Size* = WM_APP + 52
-  # wEvent_Iconize* = WM_APP + 53
-  # wEvent_Minimize* = WM_APP + 53
-  # wEvent_Maximize* = WM_APP + 54
-  # wEvent_Sizing* = WM_APP + 55
-  # wEvent_Dragging* = WM_APP + 56
-
-  wEvent_ScrollWinFirst = WM_APP + 100
-  wEvent_TrayFirst = WM_APP + 150
-  wEvent_DragDropFirst = WM_APP + 200
-  wEvent_DialogFirst = WM_APP + 300
-
-  wEvent_CommandFirst = WM_APP + 500
-  wEvent_StatusBarFirst = WM_APP + 600
-  wEvent_ScrollFirst = WM_APP + 650
-  wEvent_ListFirst = WM_APP + 700
-  wEvent_TreeFirst = WM_APP + 750
-  wEvent_SpinFirst = WM_APP + 800
-  wEvent_HyperlinkFirst = WM_APP + 850
-  wEvent_IpFirst = WM_APP + 900
-  wEvent_WebViewFirst = WM_APP + 1000
-  wEvent_CommandLast = WM_APP + 1100
-  wEvent_App* = wEvent_CommandLast + 1
-
-proc defaultPropagationLevel(msg: UINT): int =
-  if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
-    result = wEvent_PropagateMax
-  else:
-    result = 0
-
-proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
-    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent =
-  ## Constructor.
-
-  template CreateEvent(Constructor: untyped): untyped =
-    Constructor(mWindow: window, mMsg: msg, mWparam: wParam, mLparam: lParam,
-      mOrigin: origin, mUserData: userData)
-
-  if msg.isMouseEvent():
-    result = CreateEvent(wMouseEvent)
-
-  elif msg.isKeyEvent():
-    result = CreateEvent(wKeyEvent)
-
-  elif msg.isSizeEvent():
-    result = CreateEvent(wSizeEvent)
-
-  elif msg.isMoveEvent():
-    result = CreateEvent(wMoveEvent)
-
-  elif msg.isContextMenuEvent():
-    result = CreateEvent(wContextMenuEvent)
-
-  elif msg.isScrollWinEvent():
-    result = CreateEvent(wScrollWinEvent)
-
-  elif msg.isTrayEvent():
-    result = CreateEvent(wTrayEvent)
-
-  elif msg.isDragDropEvent():
-    result = CreateEvent(wDragDropEvent)
-
-  elif msg.isDialogEvent():
-    result = CreateEvent(wDialogEvent)
-
-  elif msg.isNavigationEvent():
-    result = CreateEvent(wNavigationEvent)
-
-  elif msg.isSetCursorEvent():
-    result = CreateEvent(wSetCursorEvent)
-
-  elif msg.isScrollEvent():
-    result = CreateEvent(wScrollEvent)
-
-  elif msg.isSpinEvent():
-    result = CreateEvent(wSpinEvent)
-
-  elif msg.isHyperlinkEvent():
-    result = CreateEvent(wHyperlinkEvent)
-
-  elif msg.isIpEvent():
-    result = CreateEvent(wIpEvent)
-
-  elif msg.isWebViewEvent():
-    result = CreateEvent(wWebViewEvent)
-
-  elif msg.isListEvent():
-    result = CreateEvent(wListEvent)
-
-  elif msg.isTreeEvent():
-    result = CreateEvent(wTreeEvent)
-
-  elif msg.isStatusBarEvent():
-    result = CreateEvent(wStatusBarEvent)
-
-  elif msg.isCommandEvent(): # must last check
-    result = CreateEvent(wCommandEvent)
-
-  else:
-    result = CreateEvent(wOtherEvent)
-
-  if result of wCommandEvent:
-    result.mId = wCommandID LOWORD(wParam)
-
-  result.mPropagationLevel = msg.defaultPropagationLevel()
-
-  # save the status for the last message occured
-  GetKeyboardState(cast[PBYTE](&result.mKeyStatus[0]))
-  result.mMousePos = wGetMessagePosition()
-  result.mClientPos = wDefaultPoint
+DefineEvent:
+  wEvent_Close
+  wEvent_Destroy
 
 proc getEventObject*(self: wEvent): wWindow {.validate, property, inline.} =
   ## Returns the object (usually a window) associated with the event
@@ -343,18 +209,6 @@ proc resumePropagation*(self: wEvent, propagationLevel = wEvent_PropagateMax)
   ## Sets the propagation level to the given value.
   self.mPropagationLevel = propagationLevel
 
-method shouldPropagate*(self: wEvent): bool {.base.} = self.mPropagationLevel > 0
-  ## Test if this event should be propagated or not, i.e. if the propagation
-  ## level is currently greater than 0.This method can be override, for example:
-  ##
-  ## .. code-block:: Nim
-  ##   method shouldPropagate(event: wKeyEvent): bool =
-  ##     if event.eventType == wEvent_Char:
-  ##       result = true
-  ##     else:
-  ##       result = procCall wEvent(event).shouldPropagate()
-
-
 proc getPropagationLevel*(self: wEvent): int {.validate, property, inline.} =
   ## Get how many levels the event can propagate.
   result = self.mPropagationLevel
@@ -364,60 +218,37 @@ proc setPropagationLevel*(self: wEvent, propagationLevel: int)
   ## Set how many levels the event can propagate.
   self.mPropagationLevel = propagationLevel
 
-proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
-  ## Get coordinate of the cursor.
-  ## The coordinate is relative to the screen.
-  result = self.mMousePos
-
-proc getMousePos*(self: wEvent): wPoint {.validate, property.} =
-  ## Get coordinate of the cursor.
-  ## The coordinate is relative to the origin of the client area.
-  if self.mClientPos == wDefaultPoint:
-    self.mClientPos = self.mWindow.screenToClient(self.mMousePos)
-
-  result = self.mClientPos
-
-proc getX*(self: wEvent): int {.validate, property, inline.} =
-  ## Get x-coordinate of the cursor.
-  ## The coordinate is relative to the origin of the client area.
-  result = self.getMousePos().x
-
-proc getY*(self: wEvent): int {.validate, property, inline.} =
-  ## Get y-coordinate of the cursor.
-  ## The coordinate is relative to the origin of the client area.
-  result = self.getMousePos().y
-
 proc lCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left ctrl key is pressed.
-  result = self.mKeyStatus[wKeyLCtrl] < 0
+  result = self.mKeyStatus[wKey_LCtrl] < 0
 
 proc lShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left shift key is pressed.
-  result = self.mKeyStatus[wKeyLShift] < 0
+  result = self.mKeyStatus[wKey_LShift] < 0
 
 proc lAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left alt key is pressed.
-  result = self.mKeyStatus[wKeyLAlt] < 0
+  result = self.mKeyStatus[wKey_LAlt] < 0
 
 proc lWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the left win key is pressed.
-  result = self.mKeyStatus[wKeyLWin] < 0
+  result = self.mKeyStatus[wKey_LWin] < 0
 
 proc rCtrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right ctrl key is pressed.
-  result = self.mKeyStatus[wKeyRCtrl] < 0
+  result = self.mKeyStatus[wKey_RCtrl] < 0
 
 proc rShiftDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right shift key is pressed.
-  result = self.mKeyStatus[wKeyRShift] < 0
+  result = self.mKeyStatus[wKey_RShift] < 0
 
 proc rAltDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right alt key is pressed.
-  result = self.mKeyStatus[wKeyRAlt] < 0
+  result = self.mKeyStatus[wKey_RAlt] < 0
 
 proc rWinDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if the right win key is pressed.
-  result = self.mKeyStatus[wKeyRWin] < 0
+  result = self.mKeyStatus[wKey_RWin] < 0
 
 proc ctrlDown*(self: wEvent): bool {.validate, inline.} =
   ## Returns true if any ctrl key is pressed.
@@ -457,6 +288,11 @@ proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.
   for key, val in self.mKeyStatus:
     result[key] = val < 0
 
+proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
+  ## Get coordinate of the cursor.
+  ## The coordinate is relative to the screen.
+  result = self.mMousePos
+
 method getIndex*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getPosition*(self: wEvent): wPoint {.base, property.} = discard
@@ -471,7 +307,7 @@ method setPosition*(self: wEvent, pos: wPoint) {.base, property.} = discard
   ## Method needs to be overridden.
 method getOrientation*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
-method getScrollPos*(self: wEvent): int {.base, property, locks: "unknown".} = discard
+method getScrollPos*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getKind*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
@@ -489,7 +325,7 @@ method getUrl*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
 method getLinkId*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
-method getVisited*(self: wEvent): bool {.base, property, locks: "unknown".} = discard
+method getVisited*(self: wEvent): bool {.base, property.} = discard
   ## Method needs to be overridden.
 method getCursor*(self: wEvent): wCursor {.base, property.} = discard
   ## Method needs to be overridden.
@@ -521,3 +357,138 @@ method getMenuItem*(self: wEvent): wMenuItem {.base, property.} = discard
   ## Method needs to be overridden.
 method getErrorCode*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
+
+method shouldPropagate*(self: wEvent): bool {.base.} = self.mPropagationLevel > 0
+  ## Test if this event should be propagated or not, i.e. if the propagation
+  ## level is currently greater than 0.This method can be override, for example:
+  ##
+  ## .. code-block:: Nim
+  ##   method shouldPropagate(event: wKeyEvent): bool =
+  ##     if event.eventType == wEvent_Char:
+  ##       result = true
+  ##     else:
+  ##       result = procCall wEvent(event).shouldPropagate()
+
+# Importing wEvent will also import (and export) all the subclasses automatically.
+
+import events/[wMouseEvent, wKeyEvent, wSizeEvent, wMoveEvent, wContextMenuEvent,
+  wScrollWinEvent, wTrayEvent, wDragDropEvent, wDialogEvent, wNavigationEvent,
+  wSetCursorEvent, wCommandEvent]
+
+export wMouseEvent, wKeyEvent, wSizeEvent, wMoveEvent, wContextMenuEvent,
+  wScrollWinEvent, wTrayEvent, wDragDropEvent, wDialogEvent, wNavigationEvent,
+  wSetCursorEvent, wCommandEvent
+
+const
+  wEvent_App* = wEvent_CommandLast + 1
+
+# For recursive module dependencies.
+proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
+    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent
+
+import wWindow
+
+proc defaultPropagationLevel(msg: UINT): int =
+  if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
+    result = wEvent_PropagateMax
+  else:
+    result = 0
+
+proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
+    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent =
+  ## Constructor.
+
+  template CreateEvent(Constructor: untyped): untyped =
+    Constructor(mWindow: window, mMsg: msg, mWparam: wParam, mLparam: lParam,
+      mOrigin: origin, mUserData: userData)
+
+  if msg.isMouseEvent():
+    result = CreateEvent(wMouseEvent)
+
+  elif msg.isKeyEvent():
+    result = CreateEvent(wKeyEvent)
+
+  elif msg.isSizeEvent():
+    result = CreateEvent(wSizeEvent)
+
+  elif msg.isMoveEvent():
+    result = CreateEvent(wMoveEvent)
+
+  elif msg.isContextMenuEvent():
+    result = CreateEvent(wContextMenuEvent)
+
+  elif msg.isScrollWinEvent():
+    result = CreateEvent(wScrollWinEvent)
+
+  elif msg.isTrayEvent():
+    result = CreateEvent(wTrayEvent)
+
+  elif msg.isDragDropEvent():
+    result = CreateEvent(wDragDropEvent)
+
+  elif msg.isDialogEvent():
+    result = CreateEvent(wDialogEvent)
+
+  elif msg.isNavigationEvent():
+    result = CreateEvent(wNavigationEvent)
+
+  elif msg.isSetCursorEvent():
+    result = CreateEvent(wSetCursorEvent)
+
+  elif msg.isScrollEvent():
+    result = CreateEvent(wScrollEvent)
+
+  elif msg.isSpinEvent():
+    result = CreateEvent(wSpinEvent)
+
+  elif msg.isHyperlinkEvent():
+    result = CreateEvent(wHyperlinkEvent)
+
+  elif msg.isIpEvent():
+    result = CreateEvent(wIpEvent)
+
+  elif msg.isWebViewEvent():
+    result = CreateEvent(wWebViewEvent)
+
+  elif msg.isListEvent():
+    result = CreateEvent(wListEvent)
+
+  elif msg.isTreeEvent():
+    result = CreateEvent(wTreeEvent)
+
+  elif msg.isStatusBarEvent():
+    result = CreateEvent(wStatusBarEvent)
+
+  elif msg.isCommandEvent(): # must last check
+    result = CreateEvent(wCommandEvent)
+
+  else:
+    result = CreateEvent(wOtherEvent)
+
+  if result of wBase.wCommandEvent:
+    result.mId = wCommandID LOWORD(wParam)
+
+  result.mPropagationLevel = msg.defaultPropagationLevel()
+
+  # save the status for the last message occured
+  GetKeyboardState(cast[PBYTE](&result.mKeyStatus[0]))
+  result.mMousePos = wGetMessagePosition()
+  result.mClientPos = wDefaultPoint
+
+proc getMousePos*(self: wEvent): wPoint {.validate, property.} =
+  ## Get coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  if self.mClientPos == wDefaultPoint:
+    self.mClientPos = self.mWindow.screenToClient(self.mMousePos)
+
+  result = self.mClientPos
+
+proc getX*(self: wEvent): int {.validate, property, inline.} =
+  ## Get x-coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  result = self.getMousePos().x
+
+proc getY*(self: wEvent): int {.validate, property, inline.} =
+  ## Get y-coordinate of the cursor.
+  ## The coordinate is relative to the origin of the client area.
+  result = self.getMousePos().y

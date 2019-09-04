@@ -1497,27 +1497,18 @@ const
   SC_MOVE* = 0xF010
   SC_MINIMIZE* = 0xF020
   SC_MAXIMIZE* = 0xF030
-  SC_NEXTWINDOW* = 0xF040
-  SC_PREVWINDOW* = 0xF050
   SC_CLOSE* = 0xF060
-  SC_VSCROLL* = 0xF070
-  SC_HSCROLL* = 0xF080
-  SC_MOUSEMENU* = 0xF090
-  SC_KEYMENU* = 0xF100
   SC_RESTORE* = 0xF120
-  SC_TASKLIST* = 0xF130
-  SC_SCREENSAVE* = 0xF140
-  SC_HOTKEY* = 0xF150
-  SC_DEFAULT* = 0xF160
-  SC_MONITORPOWER* = 0xF170
-  SC_CONTEXTHELP* = 0xF180
-  SCF_ISSECURE* = 0x00000001
   IDC_ARROW* = MAKEINTRESOURCE(32512)
   IMAGE_BITMAP* = 0
+  IMAGE_ICON* = 1
   LR_COPYDELETEORG* = 0x0008
   LR_DEFAULTSIZE* = 0x0040
   LR_CREATEDIBSECTION* = 0x2000
+  LR_SHARED* = 0x8000
   DI_NORMAL* = 0x0003
+  IDI_ASTERISK* = MAKEINTRESOURCE(32516)
+  IDI_INFORMATION* = IDI_ASTERISK
   IDOK* = 1
   IDCANCEL* = 2
   IDABORT* = 3
@@ -1726,6 +1717,7 @@ proc TrackPopupMenu*(hMenu: HMENU, uFlags: UINT, x: int32, y: int32, nReserved: 
 proc TrackPopupMenuEx*(P1: HMENU, P2: UINT, P3: int32, P4: int32, P5: HWND, P6: LPTPMPARAMS): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMenuInfo*(P1: HMENU, P2: LPMENUINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetMenuInfo*(P1: HMENU, P2: LPCMENUINFO): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc DrawIcon*(hDC: HDC, X: int32, Y: int32, hIcon: HICON): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc UpdateWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetForegroundWindow*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetForegroundWindow*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1810,6 +1802,7 @@ when winimUnicode:
   proc GetClassName*(hWnd: HWND, lpClassName: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameW".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExW".}
   proc LoadCursor*(hInstance: HINSTANCE, lpCursorName: LPCWSTR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc: "LoadCursorW".}
+  proc LoadImage*(hInst: HINSTANCE, name: LPCWSTR, `type`: UINT, cx: int32, cy: int32, fuLoad: UINT): HANDLE {.winapi, stdcall, dynlib: "user32", importc: "LoadImageW".}
   proc IsDialogMessage*(hDlg: HWND, lpMsg: LPMSG): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "IsDialogMessageW".}
   proc SystemParametersInfo*(uiAction: UINT, uiParam: UINT, pvParam: PVOID, fWinIni: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SystemParametersInfoW".}
 when winimAnsi:
@@ -1840,6 +1833,7 @@ when winimAnsi:
   proc GetClassName*(hWnd: HWND, lpClassName: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameA".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExA".}
   proc LoadCursor*(hInstance: HINSTANCE, lpCursorName: LPCSTR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc: "LoadCursorA".}
+  proc LoadImage*(hInst: HINSTANCE, name: LPCSTR, `type`: UINT, cx: int32, cy: int32, fuLoad: UINT): HANDLE {.winapi, stdcall, dynlib: "user32", importc: "LoadImageA".}
   proc IsDialogMessage*(hDlg: HWND, lpMsg: LPMSG): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "IsDialogMessageA".}
   proc SystemParametersInfo*(uiAction: UINT, uiParam: UINT, pvParam: PVOID, fWinIni: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "SystemParametersInfoA".}
 when winimUnicode and winimCpu64:

@@ -13,6 +13,7 @@
 ##  Basic Elements
 ##  --------------
 ##  - `wTypes <wTypes.html>`_
+##  - `wMacros <wMacros.html>`_
 ##  - `wApp <wApp.html>`_
 ##  - `wImage <wImage.html>`_
 ##  - `wImageList <wImageList.html>`_
@@ -91,7 +92,6 @@
 ##  - `wIcon <wIcon.html>`_
 ##  - `wCursor <wCursor.html>`_
 ##  - `wRegion <wRegion.html>`_
-##  - `wPredefined <wPredefined.html>`_
 ##
 ##  Dialogs
 ##  -------
@@ -142,119 +142,51 @@
 
 {.experimental, deadCodeElim: on.}
 
-import
-  tables, lists, math, strutils, dynlib, hashes, macros, times, sets, net,
-  winim/[winstr, utils], wNim/autolayout, winim/inc/windef, wNim/private/wWinimx,
-  wNim/private/kiwi/[variable, constraint, term, expression, symbolics,
-  solver, strength]
-  # winim/inc/[winbase, winerror, winuser, wingdi, commctrl, commdlg,
-  #   objbase, shellapi, gdiplus, richedit, uxtheme, mshtml]
+when not defined(Nimdoc):
+  import
+    wNim/private/[wTypes, wMacros, wApp, wAcceleratorTable, wDataObject, wPrintData,
+      wIconImage, wImage, wImageList, wEvent, wResizable, wResizer, wWindow,
+      wPanel, wFrame, wUtils, autolayout],
 
-export
-  winstr, utils, autolayout, variable, constraint, term, expression, symbolics,
-  solver, strength
+    wNim/private/gdiobjects/[wBitmap, wBrush, wCursor, wFont, wGdiObject, wIcon, wPen, wRegion],
 
-include
-  wNim/private/wSymbolics,
-  wNim/private/wMacro,
-  wNim/private/wTypes,
-  wNim/private/consts/wKeyCodes,
-  wNim/private/consts/wColors,
-  wNim/private/wHelper,
-  wNim/private/wAcceleratorTable,
-  wNim/private/wApp,
-  wNim/private/wUtils,
-  wNim/private/events/wEvent,
-  wNim/private/events/wMouseEvent,
-  wNim/private/events/wKeyEvent,
-  wNim/private/events/wSizeEvent,
-  wNim/private/events/wMoveEvent,
-  wNim/private/events/wContextMenuEvent,
-  wNim/private/events/wScrollWinEvent,
-  wNim/private/events/wTrayEvent,
-  wNim/private/events/wNavigationEvent,
-  wNim/private/events/wSetCursorEvent,
-  wNim/private/events/wStatusBarEvent,
-  wNim/private/events/wCommandEvent,
-  wNim/private/events/wScrollEvent,
-  wNim/private/events/wSpinEvent,
-  wNim/private/events/wHyperlinkEvent,
-  wNim/private/events/wIpEvent,
-  wNim/private/events/wListEvent,
-  wNim/private/events/wTreeEvent,
-  wNim/private/events/wDragDropEvent,
-  wNim/private/events/wDialogEvent,
-  wNim/private/events/wWebViewEvent,
-  wNim/private/wIconImage,
-  wNim/private/wImage,
-  wNim/private/gdiobjects/wGdiObject,
-  wNim/private/gdiobjects/wFont,
-  wNim/private/gdiobjects/wPen,
-  wNim/private/gdiobjects/wBrush,
-  wNim/private/gdiobjects/wBitmap,
-  wNim/private/gdiobjects/wIcon,
-  wNim/private/gdiobjects/wCursor,
-  wNim/private/gdiobjects/wRegion,
-  wNim/private/gdiobjects/wPredefined,
-  wNim/private/wImageList,
-  wNim/private/wDataObject,
-  wNim/private/wPrintData,
-  wNim/private/wResizer,
-  wNim/private/wResizable,
-  wNim/private/wWindow,
-  wNim/private/wPanel,
-  wNim/private/dc/wDC,
-  wNim/private/dc/wMemoryDC,
-  wNim/private/dc/wClientDC,
-  wNim/private/dc/wWindowDC,
-  wNim/private/dc/wScreenDC,
-  wNim/private/dc/wPaintDC,
-  wNim/private/dc/wPrinterDC,
-  wNim/private/dc/hotfix,
-  wNim/private/menu/wMenuBar,
-  wNim/private/menu/wMenu,
-  wNim/private/menu/wMenuItem,
-  wNim/private/menu/wMenuBase,
-  wNim/private/controls/wControl,
-  wNim/private/controls/wStatusBar,
-  wNim/private/controls/wToolBar,
-  wNim/private/controls/wRebar,
-  wNim/private/controls/wButton,
-  wNim/private/controls/wCheckBox,
-  wNim/private/controls/wRadioButton,
-  wNim/private/controls/wStaticBox,
-  wNim/private/controls/wTextCtrl,
-  wNim/private/controls/wListBox,
-  wNim/private/controls/wComboBox,
-  wNim/private/controls/wCheckComboBox,
-  wNim/private/controls/wStaticText,
-  wNim/private/controls/wStaticBitmap,
-  wNim/private/controls/wStaticLine,
-  wNim/private/controls/wNoteBook,
-  wNim/private/controls/wSpinCtrl,
-  wNim/private/controls/wSpinButton,
-  wNim/private/controls/wSlider,
-  wNim/private/controls/wScrollBar,
-  wNim/private/controls/wGauge,
-  wNim/private/controls/wCalendarCtrl,
-  wNim/private/controls/wDatePickerCtrl,
-  wNim/private/controls/wTimePickerCtrl,
-  wNim/private/controls/wListCtrl,
-  wNim/private/controls/wTreeCtrl,
-  wNim/private/controls/wHyperlinkCtrl,
-  wNim/private/controls/wSplitter,
-  wNim/private/controls/wIpCtrl,
-  wNim/private/controls/wWebView,
-  wNim/private/controls/wHotkeyCtrl,
-  wNim/private/wFrame,
-  wNim/private/dialogs/wDialog,
-  wNim/private/dialogs/wMessageDialog,
-  wNim/private/dialogs/wDirDialog,
-  wNim/private/dialogs/wFileDialog,
-  wNim/private/dialogs/wColorDialog,
-  wNim/private/dialogs/wFontDialog,
-  wNim/private/dialogs/wTextEntryDialog,
-  wNim/private/dialogs/wPasswordEntryDialog,
-  wNim/private/dialogs/wFindReplaceDialog,
-  wNim/private/dialogs/wPageSetupDialog,
-  wNim/private/dialogs/wPrintDialog
+    wNim/private/dc/[wDC, wClientDC, wMemoryDC, wPaintDC, wPrinterDC, wScreenDC, wWindowDC],
+
+    wNim/private/menu/[wMenu, wMenuBar, wMenuBase, wMenuItem],
+
+    wNim/private/controls/[wControl, wButton, wCalendarCtrl, wCheckBox, wCheckComboBox,
+      wComboBox, wDatePickerCtrl, wGauge, wHotkeyCtrl, wHyperlinkCtrl, wIpCtrl,
+      wListBox, wListCtrl, wNoteBook, wRadioButton, wRebar, wScrollBar, wSlider,
+      wSpinButton, wSpinCtrl, wSplitter, wStaticBitmap, wStaticBox, wStaticLine,
+      wStaticText, wStatusBar, wTextCtrl, wTimePickerCtrl, wToolBar, wTreeCtrl,
+      wWebView],
+
+    wNim/private/dialogs/[wColorDialog, wDialog, wDirDialog, wFileDialog, wFindReplaceDialog,
+      wFontDialog, wMessageDialog, wPageSetupDialog, wPasswordEntryDialog,
+      wPrintDialog, wTextEntryDialog],
+
+    wNim/private/consts/[wColors, wKeyCodes]
+
+  export
+    wTypes, wMacros, wApp, wAcceleratorTable, wDataObject, wPrintData,
+    wIconImage, wImage, wImageList, wEvent, wResizable, wResizer, wWindow,
+    wPanel, wFrame, wUtils, autolayout,
+
+    wBitmap, wBrush, wCursor, wFont, wGdiObject, wIcon, wPen, wRegion,
+
+    wDC, wClientDC, wMemoryDC, wPaintDC, wPrinterDC, wScreenDC, wWindowDC,
+
+    wMenu, wMenuBar, wMenuBase, wMenuItem,
+
+    wControl, wButton, wCalendarCtrl, wCheckBox, wCheckComboBox,
+    wComboBox, wDatePickerCtrl, wGauge, wHotkeyCtrl, wHyperlinkCtrl, wIpCtrl,
+    wListBox, wListCtrl, wNoteBook, wRadioButton, wRebar, wScrollBar, wSlider,
+    wSpinButton, wSpinCtrl, wSplitter, wStaticBitmap, wStaticBox, wStaticLine,
+    wStaticText, wStatusBar, wTextCtrl, wTimePickerCtrl, wToolBar, wTreeCtrl,
+    wWebView,
+
+    wColorDialog, wDialog, wDirDialog, wFileDialog, wFindReplaceDialog,
+    wFontDialog, wMessageDialog, wPageSetupDialog, wPasswordEntryDialog,
+    wPrintDialog, wTextEntryDialog,
+
+    wColors, wKeyCodes

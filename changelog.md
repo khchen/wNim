@@ -1,11 +1,18 @@
-Version 0.8.1
+Version 0.9.0
 -------------
-* wCheckComboBox: add changeStyle(), isPopup(), and wCcNormalColor style.
-* wComboBox: add isPopup().
-* wWindow: add isMouseInWindow(), setRedraw(), and queueMessage().
-* wMenu: add Menu(hMenu: HMENU) constructor for wrap system menu handle.
+* wNim sub-modules can be imported one by one to speed up compilation.
+* wNim don't export symbols in winim/[winstr, utils] anymore **(Breaking Change)**.
 * wApp: add broadcastTopLevelMessage() and broadcastMessage().
-* Rename/Rewrite examples/lowlevel.nim to win32sdk.nim.
+* wWindow: add activate(), isMouseInWindow(), setRedraw(), and queueMessage().
+* wFrame: remove setMenuBar(). Use MenuBar(frame) constructor or MenuBar.attach(frame) instead.
+* wFrame: remove createStatusBar(). Use StatusBar(frame) constructor instead.
+* wMenu: add Menu(hMenu: HMENU) constructor for wrap system menu handle.
+* wComboBox: add isPopup().
+* wCheckComboBox: add changeStyle(), isPopup(), and wCcNormalColor style.
+* wHyperlinkCtrl: remove the *url* parameter from constructor. Use setUrl() instead.
+* wUtils: remove wGetMessagePosition(). Use wGetMousePosition() instead.
+* Rename and rewrite examples/lowlevel.nim to winsdk.nim.
+* Remove wPredefined.nim. Predefined objects are moved into sub-modules.
 * Fix bugs.
 
 Version 0.8.0

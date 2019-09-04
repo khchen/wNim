@@ -48,6 +48,11 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, wControl, wTextCtrl, wListBox
+export wControl, wTextCtrl, wListBox
+
 const
   # ComboBox styles
   wCbSimple* = CBS_SIMPLE # 01
@@ -211,7 +216,7 @@ proc getListControl*(self: wComboBox): wListBox {.validate, property, inline.} =
   ## Returns the list control part of this combobox, or nil if no such control.
   result = self.mList
 
-proc countSize(self: wComboBox, minItem: int, rate: float): wSize =
+proc countSize(self: wComboBox, minItem: int, rate: float): wSize {.shield.} =
   const maxItem = 10
   let
     lineHeight = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -285,7 +290,6 @@ proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
     style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD)
 
   # subclass child windows (edit and listbox) to handle the message in wNim's way
-  # todo: the returned subclassed object is wWindow. let it become wTextCtrl and wListBox?
   # for wCbReadOnly, self.mHwnd == cbi.hwndItem, there is no child edit control
   var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
   GetComboBoxInfo(self.mHwnd, cbi)

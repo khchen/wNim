@@ -31,6 +31,12 @@
 ##   wEvent_DateChanged               The selected date changed.
 ##   ===============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+
+import times # this line only for nim 0.19.0
+import ../wBase, wControl
+export wControl
+
 const
   wDpDropDown*: wStyle = 0
   wDpSpin*: wStyle = DTS_UPDOWN
@@ -87,7 +93,7 @@ proc setRange*(self: wDatePickerCtrl, time: (wTime, wTime)) {.validate, property
   self.setRange(time[0], time[1])
 
 method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool =
+    ret: var LRESULT): bool {.shield.} =
 
   if code == DTN_DATETIMECHANGE:
     return self.processMessage(wEvent_DateChanged, id, lparam, ret)

@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
@@ -1330,16 +1331,6 @@ function main() {
     title="getHandle(self: wTreeItem): HTREEITEM"><wbr />get<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTreeCtrl%2CwTreeItem"
     title="getTreeCtrl(self: wTreeItem): wTreeCtrl"><wbr />get<wbr />Tree<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getParent%2CwTreeItem"
-    title="getParent(self: wTreeItem): wTreeItem"><wbr />get<wbr />Parent<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getFirstChild%2CwTreeItem"
-    title="getFirstChild(self: wTreeItem): wTreeItem"><wbr />get<wbr />First<wbr />Child<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPrevSibling%2CwTreeItem"
-    title="getPrevSibling(self: wTreeItem): wTreeItem"><wbr />get<wbr />Prev<wbr />Sibling<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getNextSibling%2CwTreeItem"
-    title="getNextSibling(self: wTreeItem): wTreeItem"><wbr />get<wbr />Next<wbr />Sibling<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getLastChild%2CwTreeItem"
-    title="getLastChild(self: wTreeItem): wTreeItem"><wbr />get<wbr />Last<wbr />Child<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getChildrenCount%2CwTreeItem"
     title="getChildrenCount(self: wTreeItem; recursively = true): int"><wbr />get<wbr />Children<wbr />Count<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#len%2CwTreeItem"
@@ -1348,9 +1339,6 @@ function main() {
     title="getChildren(self: wTreeItem): seq[wTreeItem]"><wbr />get<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getAllChildren%2CwTreeItem"
     title="getAllChildren(self: wTreeItem): seq[wTreeItem]"><wbr />get<wbr />All<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#set%2CwTreeItem%2Cstring%2Cint"
-    title="set(self: wTreeItem; text = &quot;&quot;; image = wTreeIgnore; selImage = wTreeIgnore; state = 0;
-    flag = true)"><wbr />set<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setText%2CwTreeItem%2Cstring"
     title="setText(self: wTreeItem; text: string)"><wbr />set<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBold%2CwTreeItem"
@@ -1361,30 +1349,10 @@ function main() {
     title="setSelection(self: wTreeItem; flag = true)"><wbr />set<wbr />Selection<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setDropHighlight%2CwTreeItem"
     title="setDropHighlight(self: wTreeItem; flag = true)"><wbr />set<wbr />Drop<wbr />Highlight<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#select%2CwTreeItem"
-    title="select(self: wTreeItem)"><wbr />select<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#scrollTo%2CwTreeItem"
-    title="scrollTo(self: wTreeItem)"><wbr />scroll<wbr />To<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#unselect%2CwTreeItem"
     title="unselect(self: wTreeItem)"><wbr />unselect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setImage%2CwTreeItem"
     title="setImage(self: wTreeItem; image = wTreeIgnore; selImage = wTreeIgnore)"><wbr />set<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setData%2CwTreeItem%2Cint"
-    title="setData(self: wTreeItem; data: int)"><wbr />set<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setState%2CwTreeItem%2Crange%5B%5D"
-    title="setState(self: wTreeItem; state: range[0 .. 15])"><wbr />set<wbr />State<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setHasChildren%2CwTreeItem"
-    title="setHasChildren(self: wTreeItem; flag = true)"><wbr />set<wbr />Has<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#expand%2CwTreeItem"
-    title="expand(self: wTreeItem)"><wbr />expand<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#collapse%2CwTreeItem"
-    title="collapse(self: wTreeItem)"><wbr />collapse<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#collapseAndReset%2CwTreeItem"
-    title="collapseAndReset(self: wTreeItem)"><wbr />collapse<wbr />And<wbr />Reset<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#toggle%2CwTreeItem"
-    title="toggle(self: wTreeItem)"><wbr />toggle<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getText%2CwTreeItem"
-    title="getText(self: wTreeItem): string"><wbr />get<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isBold%2CwTreeItem"
     title="isBold(self: wTreeItem): bool"><wbr />is<wbr />Bold<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isCut%2CwTreeItem"
@@ -1415,30 +1383,12 @@ function main() {
     title="getBoundingRect(self: wTreeItem; textOnly = false): wRect"><wbr />get<wbr />Bounding<wbr />Rect<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#isVisible%2CwTreeItem"
     title="isVisible(self: wTreeItem): bool"><wbr />is<wbr />Visible<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getNextVisible%2CwTreeItem"
-    title="getNextVisible(self: wTreeItem): wTreeItem"><wbr />get<wbr />Next<wbr />Visible<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#getPrevVisible%2CwTreeItem"
-    title="getPrevVisible(self: wTreeItem): wTreeItem"><wbr />get<wbr />Prev<wbr />Visible<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#ensureVisible%2CwTreeItem"
-    title="ensureVisible(self: wTreeItem)"><wbr />ensure<wbr />Visible<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#delete%2CwTreeItem"
-    title="delete(self: wTreeItem)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#deleteChildren%2CwTreeItem"
     title="deleteChildren(self: wTreeItem)"><wbr />delete<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#toggleSelection%2CwTreeItem"
     title="toggleSelection(self: wTreeItem)"><wbr />toggle<wbr />Selection<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#selectChildren%2CwTreeItem"
     title="selectChildren(self: wTreeItem)"><wbr />select<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#editLabel%2CwTreeItem"
-    title="editLabel(self: wTreeItem): wTextCtrl"><wbr />edit<wbr />Label<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#sortChildren%2CwTreeItem"
-    title="sortChildren(self: wTreeItem; recursively = false)"><wbr />sort<wbr />Children<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#sortChildren%2CwTreeItem%2CwTreeCtrl_Compare%2Cint"
-    title="sortChildren(self: wTreeItem; callback: wTreeCtrl_Compare; data: int = 0;
-             recursively = false)"><wbr />sort<wbr />Children<span class="attachedType" style="visibility:hidden">wTreeCtrl_Compare</span></a></li>
-  <li><a class="reference" href="#sortChildren%2CwTreeItem%2CwTreeCtrl_ItemCompare%2Cint"
-    title="sortChildren(self: wTreeItem; callback: wTreeCtrl_ItemCompare; data: int = 0;
-             recursively = false)"><wbr />sort<wbr />Children<span class="attachedType" style="visibility:hidden">wTreeCtrl_ItemCompare</span></a></li>
   <li><a class="reference" href="#setFocused%2CwTreeItem"
     title="setFocused(self: wTreeItem)"><wbr />set<wbr />Focused<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getFirstRoot%2CwTreeCtrl"
@@ -1451,8 +1401,6 @@ function main() {
     title="getFocusedItem(self: wTreeCtrl): wTreeItem"><wbr />get<wbr />Focused<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getSelections%2CwTreeCtrl"
     title="getSelections(self: wTreeCtrl): seq[wTreeItem]"><wbr />get<wbr />Selections<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#hitTest%2CwTreeCtrl%2Cint%2Cint"
-    title="hitTest(self: wTreeCtrl; x: int; y: int): tuple[item: wTreeItem, flag: int]"><wbr />hit<wbr />Test<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#hitTest%2CwTreeCtrl%2CwPoint"
     title="hitTest(self: wTreeCtrl; pos: wPoint): tuple[item: wTreeItem, flag: int]"><wbr />hit<wbr />Test<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#unselectAll%2CwTreeCtrl"
@@ -1472,18 +1420,6 @@ function main() {
   <li><a class="reference" href="#addRoot%2CwTreeCtrl%2Cstring%2Cint"
     title="addRoot(self: wTreeCtrl; text: string; image = wTreeImageNone; selImage = wTreeIgnore;
         data: int = 0): wTreeItem"><wbr />add<wbr />Root<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#appendItem%2CwTreeCtrl%2CwTreeItem%2Cstring%2Cint"
-    title="appendItem(self: wTreeCtrl; parent: wTreeItem; text: string; image = wTreeImageNone;
-           selImage = wTreeIgnore; data: int = 0): wTreeItem"><wbr />append<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#prependItem%2CwTreeCtrl%2CwTreeItem%2Cstring%2Cint"
-    title="prependItem(self: wTreeCtrl; parent: wTreeItem; text: string; image = wTreeImageNone;
-            selImage = wTreeIgnore; data: int = 0): wTreeItem"><wbr />prepend<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#insertItem%2CwTreeCtrl%2CwTreeItem%2CwTreeItem%2Cstring%2Cint"
-    title="insertItem(self: wTreeCtrl; parent: wTreeItem; prev: wTreeItem; text: string;
-           image = wTreeImageNone; selImage = wTreeIgnore; data: int = 0): wTreeItem"><wbr />insert<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#insertItem%2CwTreeCtrl%2CwTreeItem%2Cint%2Cstring%2Cint"
-    title="insertItem(self: wTreeCtrl; parent: wTreeItem; pos: int; text: string;
-           image = wTreeImageNone; selImage = wTreeIgnore; data: int = 0): wTreeItem"><wbr />insert<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setImageList%2CwTreeCtrl%2CwImageList"
     title="setImageList(self: wTreeCtrl; imageList: wImageList; which = wImageListNormal)"><wbr />set<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getImageList%2CwTreeCtrl"
@@ -1516,6 +1452,8 @@ function main() {
     title="setBackgroundColor(self: wTreeCtrl; color: wColor)"><wbr />set<wbr />Background<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setForegroundColor.e%2CwTreeCtrl%2CwColor"
     title="setForegroundColor(self: wTreeCtrl; color: wColor)"><wbr />set<wbr />Foreground<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getBestSize.e%2CwTreeCtrl"
+    title="getBestSize(self: wTreeCtrl): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1529,6 +1467,7 @@ function main() {
 
   </ul>
 </li>
+
 
 </ul>
 
@@ -1552,7 +1491,8 @@ function main() {
 </table></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><a class="reference external" href="wTreeEvent.html">wTreeEvent</a></td></tr>
 </tbody></table></p>
-  <div class="section" id="7">
+  
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="wTreeCtrl_Compare"></a>
@@ -1812,36 +1752,6 @@ Gets the real tree item handle.
 Gets the tree control this item associated to.
 
 </dd>
-<a id="getParent,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getParent</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the parent of this item.
-
-</dd>
-<a id="getFirstChild,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getFirstChild</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the first child of the item.
-
-</dd>
-<a id="getPrevSibling,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPrevSibling</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the previous slbling of the item.
-
-</dd>
-<a id="getNextSibling,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getNextSibling</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the next slbling of the item.
-
-</dd>
-<a id="getLastChild,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getLastChild</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Gets the last child of the item.
-
-</dd>
 <a id="getChildrenCount,wTreeItem"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getChildrenCount</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">recursively</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -1865,13 +1775,6 @@ Returns all children as a seq.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getAllChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wTreeItem</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns all children including descendants as a seq.
-
-</dd>
-<a id="set,wTreeItem,string,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">set</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">state</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-        <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the item attributes.
 
 </dd>
 <a id="setText,wTreeItem,string"></a>
@@ -1905,18 +1808,6 @@ Makes the item appear in selected or not. Notice: this will broken single select
 Makes the item appear in Drag'n'Drop actions or not.
 
 </dd>
-<a id="select,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">select</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Select, focus, and ensure visible of the item, also unselect others.
-
-</dd>
-<a id="scrollTo,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">scrollTo</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Scrolls the specified item into view.
-
-</dd>
 <a id="unselect,wTreeItem"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">unselect</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1928,54 +1819,6 @@ Unselects this item. Notice: this will broken single selection states, don't use
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the specified item's image.
-
-</dd>
-<a id="setData,wTreeItem,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the item associated data.
-
-</dd>
-<a id="setState,wTreeItem,range[]"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setState</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">state</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="DecNumber">15</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the item state image. If <em>state</em> &gt; 0, the 1-based state image will be displayed. <em>state</em> = 0 to disable the state image. PS. State image stored in the imagelist specified by setImageList(which=wImageListState).
-
-</dd>
-<a id="setHasChildren,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setHasChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Force appearance of the button next to the item.
-
-</dd>
-<a id="expand,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">expand</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Expands the item.
-
-</dd>
-<a id="collapse,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">collapse</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Collapses the item.
-
-</dd>
-<a id="collapseAndReset,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">collapseAndReset</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Collapses the given item and removes all children.
-
-</dd>
-<a id="toggle,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">toggle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Toggles the item between collapsed and expanded states.
-
-</dd>
-<a id="getText,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getText</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the item text.
 
 </dd>
 <a id="isBold,wTreeItem"></a>
@@ -2069,30 +1912,6 @@ Retrieves the rectangle bounding the item. If textOnly is true, only the rectang
 Returns true if the item is visible on the screen.
 
 </dd>
-<a id="getNextVisible,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getNextVisible</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the next visible item or an invalid item if this item is the last visible one. Notice: The item itself must be visible.
-
-</dd>
-<a id="getPrevVisible,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPrevVisible</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Returns the previous visible item or an invalid item if this item is the first visible one. Notice: The item itself must be visible.
-
-</dd>
-<a id="ensureVisible,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">ensureVisible</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Scrolls and/or expands items to ensure that the item is visible.
-
-</dd>
-<a id="delete,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">delete</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Deletes the specified item.
-
-</dd>
 <a id="deleteChildren,wTreeItem"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">deleteChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2109,32 +1928,6 @@ Toggles the item between selected and unselected states.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">selectChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Select all the immediate children of the given parent.
-
-</dd>
-<a id="editLabel,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">editLabel</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Starts editing the label of the item.
-
-</dd>
-<a id="sortChildren,wTreeItem"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">sortChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">recursively</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sorts the children of the item by text (alphabetically).
-
-</dd>
-<a id="sortChildren,wTreeItem,wTreeCtrl_Compare,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">sortChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">callback</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl_Compare</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                 <span class="Identifier">recursively</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sorts the children of the item. The value passed into callback function is the data associated with the item
-
-</dd>
-<a id="sortChildren,wTreeItem,wTreeCtrl_ItemCompare,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">sortChildren</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">callback</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl_ItemCompare</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-                 <span class="Identifier">recursively</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sorts the children of the item. The value passed into callback function is the wTreeItem object.
 
 </dd>
 <a id="setFocused,wTreeItem"></a>
@@ -2175,26 +1968,6 @@ Returns the item last clicked or otherwise selected.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns currently selected items.
-
-</dd>
-<a id="hitTest,wTreeCtrl,int,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">hitTest</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">item</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">,</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Calculates which (if any) item is under the given point, returning the tree item at this point plus extra information flags. <em>flags</em> is a bitlist of the following:<table border="1" class="docutils"><tr><th>Flag</th><th>Description</th></tr>
-<tr><td>wTreeHittestAbove</td><td>Above the client area.</td></tr>
-<tr><td>wTreeHittestBelow</td><td>Below the client area.</td></tr>
-<tr><td>wTreeHittestNoWhere</td><td>In the client area but below the last item.</td></tr>
-<tr><td>wTreeHittestOnItemButton</td><td>On the button associated with an item.</td></tr>
-<tr><td>wTreeHittestOnItemIcon</td><td>On the bitmap associated with an item.</td></tr>
-<tr><td>wTreeHittestOnItemIndent</td><td>In the indentation associated with an item.</td></tr>
-<tr><td>wTreeHittestOnItemLabel</td><td>On the label (string) associated with an item.</td></tr>
-<tr><td>wTreeHittestOnItemRight</td><td>In the area to the right of an item.</td></tr>
-<tr><td>wTreeHittestOnItemStateIcon</td><td>On the state icon for a tree view item that is in a user-defined state.</td></tr>
-<tr><td>wTreeHittestOnItem</td><td>OnItemIcon or OnItemLabel or OnItemStateIcon.</td></tr>
-<tr><td>wTreeHittestToLeft</td><td>To the right of the client area.</td></tr>
-<tr><td>wTreeHittestToRight</td><td>To the left of the client area.</td></tr>
-</table>
 
 </dd>
 <a id="hitTest,wTreeCtrl,wPoint"></a>
@@ -2254,38 +2027,6 @@ Returns true if the control is empty.
 Adds the root node to the tree, returning the new item.
 
 </dd>
-<a id="appendItem,wTreeCtrl,wTreeItem,string,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">appendItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-               <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeImageNone</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Appends an item to the end of the branch identified by parent, return a new item.
-
-</dd>
-<a id="prependItem,wTreeCtrl,wTreeItem,string,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">prependItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeImageNone</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Appends an item as the first child of parent, return a new item.
-
-</dd>
-<a id="insertItem,wTreeCtrl,wTreeItem,wTreeItem,string,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">insertItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">prev</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-               <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeImageNone</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Inserts an item after a given one (<em>previous</em>).
-
-</dd>
-<a id="insertItem,wTreeCtrl,wTreeItem,int,string,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">insertItem</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-               <span class="Identifier">image</span> <span class="Other">=</span> <span class="Identifier">wTreeImageNone</span><span class="Other">;</span> <span class="Identifier">selImage</span> <span class="Other">=</span> <span class="Identifier">wTreeIgnore</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeItem</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Inserts an item before one identified by its position (<em>pos</em>).
-
-</dd>
 <a id="setImageList,wTreeCtrl,wImageList"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setImageList</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">imageList</span><span class="Other">:</span> <span class="Identifier">wImageList</span><span class="Other">;</span> <span class="Identifier">which</span> <span class="Other">=</span> <span class="Identifier">wImageListNormal</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -2340,7 +2081,7 @@ Default finalizer for wTreeCtrl.
 <a id="init,wTreeCtrl,wWindow,wCommandID,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wTrNoButtons</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
@@ -2348,7 +2089,7 @@ Initializer.
 <a id="TreeCtrl,wWindow,wCommandID,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">TreeCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
              <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wTrNoButtons</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor, creating and showing a tree control.
 
@@ -2359,17 +2100,23 @@ Constructor, creating and showing a tree control.
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
 <a id="setBackgroundColor.e,wTreeCtrl,wColor"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">setBackgroundColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setBackgroundColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the background color of the control.
 
 </dd>
 <a id="setForegroundColor.e,wTreeCtrl,wColor"></a>
-<dt><pre><span class="Keyword">method</span> <span class="Identifier">setForegroundColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">setForegroundColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the foreground color of the control.
+
+</dd>
+<a id="getBestSize.e,wTreeCtrl"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">getBestSize</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSize</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
 
 </dd>
 
@@ -2392,6 +2139,7 @@ Iterate each child in this item, including all descendants.
 
 </dl></div>
 
+
   </div>
 </div>
 
@@ -2399,7 +2147,7 @@ Iterate each child in this item, including all descendants.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-28 04:19:12 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-07 05:15:46 UTC</small>
       </div>
     </div>
   </div>

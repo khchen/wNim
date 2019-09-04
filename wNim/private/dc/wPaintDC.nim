@@ -17,6 +17,24 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
+{.experimental, deadCodeElim: on.}
+
+import ../wBase, ../wWindow, wDC
+export wDC
+
+when not defined(Nimdoc):
+  type
+    wPaintDC* = object of wDC
+      mPs*: PAINTSTRUCT
+      mCanvas*: wWindow
+else:
+  type
+    wPaintDC* = object of wDC
+
+method getSize*(self: wPaintDC): wSize {.property.} =
+  ## Gets the size of the device context.
+  result = self.mCanvas.getClientSize()
+
 proc PaintDC*(canvas: wWindow): wPaintDC =
   ## Constructor. In wEvent_Paint event handler the wWindow object usually is
   ## event.window. For example:
