@@ -17,7 +17,7 @@ import strutils
 import ../wBase
 
 # For recursive module dependencies
-proc MenuItem*(id: wCommandID = 0, text = "", help = "",
+proc MenuItem*(id: wCommandID = wIdAny, text = "", help = "",
     kind = wMenuItemNormal, bitmap: wBitmap = nil,
     submenu: wMenu = nil): wMenuItem {.inline.}
 
@@ -59,13 +59,12 @@ proc getLabel*(self: wMenuItem): string {.validate, property, inline.} =
 
 proc setText*(self: wMenuItem, text: string) {.validate, property.} =
   ## Sets the text for the menu item.
-  wValidate(text)
+  self.mText = text
   withPosAtParentMenu:
     parent.setText(pos, text)
 
 proc setLabel*(self: wMenuItem, text: string) {.validate, property.} =
   ## Sets the text for the menu item.
-  wValidate(text)
   self.setText(text)
 
 proc getLabelText*(self: wMenuItem): string {.validate, property, inline.} =
@@ -86,6 +85,7 @@ proc getBitmap*(self: wMenuItem): wBitmap {.validate, property, inline.} =
 
 proc setBitmap*(self: wMenuItem, bitmap: wBitmap = nil) {.validate, property.} =
   ## Sets the bitmap for the menu item, nil for clear the bitmap.
+  self.mBitmap = bitmap
   withPosAtParentMenu:
     parent.setBitmap(pos, bitmap)
 
@@ -95,6 +95,7 @@ proc getId*(self: wMenuItem): wCommandID {.validate, property, inline.} =
 
 proc setId*(self: wMenuItem, id: wCommandID) {.validate, property.} =
   ## Sets the id for the menu item.
+  self.mId = id
   withPosAtParentMenu:
     parent.setId(pos, id)
 
@@ -156,24 +157,23 @@ proc detach*(self: wMenuItem) {.validate.} =
   withPosAtParentMenu:
     parent.remove(pos)
 
-proc final*(self: wMenuItem) =
-  ## Default finalizer for wMenuItem.
-  discard
+wClass(wMenuItem):
 
-proc init*(self: wMenuItem, id: wCommandID = 0, text = "", help = "",
-    kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil)
-    {.validate.} =
-  ## Initializer.
-  self.mId = id
-  self.mText = text
-  self.mHelp = help
-  self.mKind = kind
-  self.mBitmap = bitmap
-  self.mSubmenu = submenu
+  proc final*(self: wMenuItem) =
+    ## Default finalizer for wMenuItem.
+    wAppExclMenuId(uint16 self.mId)
 
-proc MenuItem*(id: wCommandID = 0, text = "", help = "",
-    kind = wMenuItemNormal, bitmap: wBitmap = nil,
-    submenu: wMenu = nil): wMenuItem {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(id, text, help, kind, bitmap, submenu)
+  proc init*(self: wMenuItem, id: wCommandID = wIdAny, text = "", help = "",
+      kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil)
+      {.validate.} =
+    ## Initializer.
+    if id.int notin 0..0xffff and id != wIdAny:
+      raise newException(wError, "Menu ID out of range")
+
+    self.mId = if id == wIdAny: wCommandID wAppNextMenuId() else: id
+    self.mText = text
+    self.mHelp = help
+    self.mKind = kind
+    self.mBitmap = bitmap
+    self.mSubmenu = submenu
+    wAppInclMenuId(uint16 self.mId)

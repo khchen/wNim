@@ -22,18 +22,18 @@ export wControl
 proc getLabelSize(self: wStaticBox): wSize {.property.} =
   result = getTextFontSize(self.getLabel() & "  ", self.mFont.mHandle, self.mHwnd)
 
-method getBestSize*(self: wStaticBox): wSize {.property.} =
+method getBestSize*(self: wStaticBox): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getLabelSize()
   result.width += 2
   result.height += 2
 
-method getDefaultSize*(self: wStaticBox): wSize {.property.} =
+method getDefaultSize*(self: wStaticBox): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-method getClientAreaOrigin*(self: wStaticBox): wPoint {.property.} =
+method getClientAreaOrigin*(self: wStaticBox): wPoint {.property, uknlock.} =
   ## Get the origin of the client area of the window relative to the window top
   ## left corner.
   result.x = self.mMargin.left
@@ -41,32 +41,26 @@ method getClientAreaOrigin*(self: wStaticBox): wPoint {.property.} =
   let labelSize = self.getLabelSize()
   result.y += labelSize.height div 2
 
-method getClientSize*(self: wStaticBox): wSize {.property.} =
+method getClientSize*(self: wStaticBox): wSize {.property, uknlock.} =
   ## Returns the size of the window 'client area' in pixels.
   result = procCall wWindow(self).getClientSize()
   let labelSize = self.getLabelSize()
   result.height -= labelSize.height div 2
 
-proc final*(self: wStaticBox) =
-  ## Default finalizer for wStaticBox.
-  discard
+wClass(wStaticBox of wControl):
 
-proc init*(self: wStaticBox, parent: wWindow, id = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent, label)
-  # staticbox need WS_CLIPSIBLINGS
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or
-    WS_CLIPSIBLINGS)
+  proc final*(self: wStaticBox) =
+    ## Default finalizer for wStaticBox.
+    self.wControl.final()
 
-  self.mFocusable = false
-  self.setMargin(12)
+  proc init*(self: wStaticBox, parent: wWindow, id = wDefaultID, label: string = "",
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    ## Initializes a static box.
+    wValidate(parent, label)
+    # staticbox need WS_CLIPSIBLINGS
+    self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or BS_GROUPBOX or
+      WS_CLIPSIBLINGS)
 
-proc StaticBox*(parent: wWindow, id = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wStaticBox {.inline, discardable.} =
-  ## Constructor, creating and showing a static box.
-  wValidate(parent, label)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+    self.mFocusable = false
+    self.setMargin(12)

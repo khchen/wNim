@@ -31,7 +31,7 @@ proc isChecked*(self: wMenu, pos: int): bool
 proc toggle*(self: wMenu, pos: int)
 proc remove*(self: wMenu, pos: int)
 proc remove*(self: wMenu, submenu: wMenu)
-proc replace*(self: wMenu, pos: int, id: wCommandID = 0, text = "",
+proc replace*(self: wMenu, pos: int, id: wCommandID = wIdAny, text = "",
     help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
     kind = wMenuItemNormal): wMenuItem {.discardable.}
 
@@ -60,7 +60,7 @@ proc detach*(self: wMenu) {.validate.} =
     elif menuBase of wBase.wMenu:
       self.detach(wBase.wMenu(menuBase))
 
-proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
+proc insert*(self: wMenu, pos: int = -1, id: wCommandID = wIdAny, text = "",
     help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
     kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Inserts the given item before the position.
@@ -79,7 +79,7 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = 0, text = "",
     cbSize: sizeof(MENUITEMINFO),
     fMask: MIIM_DATA or MIIM_FTYPE or MIIM_ID,
     dwItemData: cast[ULONG_PTR](item),
-    wID: UINT id)
+    wID: UINT item.mId) # for wIdAny, item.mId != id
 
   if kind == wMenuItemSeparator or text.len == 0:
     item.mKind = wMenuItemSeparator
@@ -121,10 +121,10 @@ proc insert*(self: wMenu, pos: int = -1, item: wMenuItem): wMenuItem
       kind=item.mKind, bitmap=item.mBitmap, submenu=item.mSubmenu)
 
 proc insertSubMenu*(self: wMenu, pos: int = -1, submenu: wMenu, text: string,
-    help = "", bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem
+    help = "", bitmap: wBitmap = nil, id: wCommandID = wIdAny): wMenuItem
     {.validate, inline, discardable.} =
   ## Inserts the given submenu before the position.
-  wValidate(submenu, text)
+  wValidate(submenu)
   result = self.insert(pos=pos, submenu=submenu, text=text, help=help, bitmap=bitmap)
 
 proc insertSeparator*(self: wMenu, pos: int = -1): wMenuItem
@@ -132,27 +132,24 @@ proc insertSeparator*(self: wMenu, pos: int = -1): wMenuItem
   ## Inserts a separator at the given position.
   result = self.insert(pos=pos)
 
-proc insertCheckItem*(self: wMenu, pos: int = -1, id: wCommandID = 0,
+proc insertCheckItem*(self: wMenu, pos: int = -1, id: wCommandID = wIdAny,
     text: string, help = "", bitmap: wBitmap = nil): wMenuItem
     {.validate, inline, discardable.} =
   ## Inserts a checkable item at the given position.
-  wValidate(text)
   result = self.insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap,
     kind=wMenuItemCheck)
 
-proc insertRadioItem*(self: wMenu, pos: int = -1, id: wCommandID = 0,
+proc insertRadioItem*(self: wMenu, pos: int = -1, id: wCommandID = wIdAny,
     text: string, help = "", bitmap: wBitmap = nil): wMenuItem
     {.validate, inline, discardable.} =
   ## Inserts a radio item at the given position.
-  wValidate(text)
   result = self.insert(pos=pos, id=id, text=text, help=help, bitmap=bitmap,
     kind=wMenuItemRadio)
 
-proc append*(self: wMenu, id: wCommandID = 0, text: string, help = "",
+proc append*(self: wMenu, id: wCommandID = wIdAny, text: string, help = "",
   bitmap: wBitmap = nil, submenu: wMenu = nil, kind = wMenuItemNormal): wMenuItem
   {.validate, inline, discardable.} =
   ## Adds a menu item.
-  wValidate(text)
   result = self.insert(id=id, text=text, help=help, bitmap=bitmap, submenu=submenu,
     kind=kind)
 
@@ -163,10 +160,9 @@ proc append*(self: wMenu, item: wMenuItem): wMenuItem
   result = self.insert(item=item)
 
 proc appendSubMenu*(self: wMenu, submenu: wMenu, text: string,
-    help = "", bitmap: wBitmap = nil, id: wCommandID = 0): wMenuItem
+    help = "", bitmap: wBitmap = nil, id: wCommandID = wIdAny): wMenuItem
     {.validate, inline, discardable.} =
   ## Adds a submenu.
-  wValidate(text)
   result = self.insert(submenu=submenu, text=text, help=help, bitmap=bitmap)
 
 proc appendSeparator*(self: wMenu): wMenuItem
@@ -174,18 +170,16 @@ proc appendSeparator*(self: wMenu): wMenuItem
   ## Adds a separator.
   result = self.insert()
 
-proc appendCheckItem*(self: wMenu, id: wCommandID = 0, text: string,
+proc appendCheckItem*(self: wMenu, id: wCommandID = wIdAny, text: string,
     help = "", bitmap: wBitmap = nil): wMenuItem
     {.validate, inline, discardable.} =
   ## Adds a checkable item.
-  wValidate(text)
   result = self.insert(id=id, text=text, help=help, bitmap=bitmap, kind=wMenuItemCheck)
 
-proc appendRadioItem*(self: wMenu, id: wCommandID = 0, text: string,
+proc appendRadioItem*(self: wMenu, id: wCommandID = wIdAny, text: string,
     help = "", bitmap: wBitmap = nil): wMenuItem
     {.validate, inline, discardable.} =
   ## Adds a radio item.
-  wValidate(text)
   result = self.insert(id=id, text=text, help=help, bitmap=bitmap, kind=wMenuItemRadio)
 
 proc find*(self: wMenu, item: wMenuItem): int {.validate.} =
@@ -213,34 +207,29 @@ proc find*(self: wMenu, submenu: wMenu): int {.validate.} =
 
 iterator find*(self: wMenu, text: string): int {.validate.} =
   ## Iterates over each index with the given text.
-  wValidate(text)
   for i, item in self.mItemList:
     if item.mText == text:
       yield i
 
 proc find*(self: wMenu, text: string): int {.validate.} =
   ## Find the first index with the given text or wNotFound(-1) if not found.
-  wValidate(text)
   for i in self.find(text):
     return i
   result = wNotFound
 
 iterator findItem*(self: wMenu, text: string): wMenuItem {.validate.} =
   ## Iterates over each wMenuItem object with the given text.
-  wValidate(text)
   for i in self.find(text):
     yield self.mItemList[i]
 
 proc findItem*(self: wMenu, text: string): wMenuItem {.validate.} =
   ## Find the first wMenuItem object with the given text or nil if not found.
-  wValidate(text)
   for item in self.findItem(text):
     return item
 
 iterator findText*(self: wMenu, text: string): int {.validate.} =
   ## Iterates over each index with the given text (not include any accelerator
   ## characters),
-  wValidate(text)
   for i, item in self.mItemList:
     if item.mText.len != 0 and item.mText.replace("&", "") == text:
       yield i
@@ -248,7 +237,6 @@ iterator findText*(self: wMenu, text: string): int {.validate.} =
 proc findText*(self: wMenu, text: string): int {.validate.} =
   ## Find the first index with the given text (not include any accelerator
   ## characters), wNotFound(-1) if not found.
-  wValidate(text)
   for i in self.findText(text):
     return i
   result = wNotFound
@@ -256,14 +244,12 @@ proc findText*(self: wMenu, text: string): int {.validate.} =
 iterator findItemText*(self: wMenu, text: string): wMenuItem {.validate.} =
   ## Iterates over each wMenuItem object with the given text (not include any
   ## accelerator characters).
-  wValidate(text)
   for i in self.findText(text):
     yield self.mItemList[i]
 
 proc findItemText*(self: wMenu, text: string): wMenuItem {.validate.} =
   ## Find the first wMenuItem object with the given text (not include any
   ## accelerator characters), nil if not found.
-  wValidate(text)
   for item in self.findItemText(text):
     return item
 
@@ -309,7 +295,6 @@ proc getLabel*(self: wMenu, pos: int): string {.validate, property, inline.} =
 
 proc setText*(self: wMenu, pos: int, text: string) {.validate, property.} =
   ## Sets the text for the menu item at the position.
-  wValidate(text)
   if pos >= 0 and pos < self.mItemList.len and text.len != 0:
     let item = self.mItemList[pos]
     if item.mKind != wMenuItemSeparator:
@@ -322,7 +307,6 @@ proc setText*(self: wMenu, pos: int, text: string) {.validate, property.} =
 
 proc setLabel*(self: wMenu, pos: int, text: string) {.validate, property, inline.} =
   ## Sets the text for the menu item at the position.
-  wValidate(text)
   self.setText(pos, text)
 
 proc getLabelText*(self: wMenu, pos: int): string {.validate, property, inline.} =
@@ -373,7 +357,7 @@ proc setId*(self: wMenu, pos: int, id: wCommandID) {.validate, property.} =
       if SetMenuItemInfo(self.mHmenu, pos, true, menuItemInfo) != 0:
         item.mId = id
 
-proc replace*(self: wMenu, pos: int, id: wCommandID = 0, text = "",
+proc replace*(self: wMenu, pos: int, id: wCommandID = wIdAny, text = "",
     help = "", bitmap: wBitmap = nil, submenu: wMenu = nil,
     kind = wMenuItemNormal): wMenuItem {.validate, discardable.} =
   ## Replaces the menu item at the given position with another one.
@@ -529,77 +513,62 @@ proc destroy*(self: wMenu, pos: int) {.validate.} =
       self.mItemList[pos].mSubmenu.delete()
     self.mItemList.delete(pos)
 
-proc final*(self: wMenu) =
-  ## Default finalizer for wMenu.
-  self.deleteImpl()
+wClass(wMenu of wMenuBase):
 
-proc init*(self: wMenu) {.validate.} =
-  ## Initializer.
-  self.mHmenu = CreatePopupMenu()
-  var menuInfo = MENUINFO(
-    cbSize: sizeof(MENUINFO),
-    fMask: MIM_MENUDATA or MIM_STYLE,
-    dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS,
-    dwMenuData: cast[ULONG_PTR](self))
-  SetMenuInfo(self.mHmenu, menuInfo)
-  self.mItemList = @[]
-  self.mDeletable = true
-  self.wAppMenuBaseAdd()
+  proc final*(self: wMenu) =
+    ## Default finalizer for wMenu.
+    self.deleteImpl()
 
-proc Menu*(): wMenu {.inline.} =
-  ## Construct an empty menu.
-  new(result, final)
-  result.init()
+  proc init*(self: wMenu) {.validate.} =
+    ## Initializes an empty menu.
+    self.mHmenu = CreatePopupMenu()
+    var menuInfo = MENUINFO(
+      cbSize: sizeof(MENUINFO),
+      fMask: MIM_MENUDATA or MIM_STYLE,
+      dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS,
+      dwMenuData: cast[ULONG_PTR](self))
+    SetMenuInfo(self.mHmenu, menuInfo)
+    self.mItemList = @[]
+    self.mDeletable = true
+    self.wAppMenuBaseAdd()
 
-proc init*(self: wMenu, menuBar: wMenuBar, text: string,
-    bitmap: wBitmap = nil) {.validate.} =
-  ## Initializer.
-  wValidate(menuBar, text)
-  self.init()
-  menuBar.append(self, text, bitmap)
+  proc init*(self: wMenu, menuBar: wMenuBar, text: string,
+      bitmap: wBitmap = nil) {.validate.} =
+    ## Initializes an empty menu and append to menubar.
+    wValidate(menuBar)
+    self.init()
+    menuBar.append(self, text, bitmap)
 
-proc Menu*(menuBar: wMenuBar, text: string, bitmap: wBitmap = nil): wMenu
-    {.inline.} =
-  ## Construct an empty menu and append to menubar.
-  wValidate(menuBar, text)
-  new(result, final)
-  result.init(menuBar, text, bitmap)
+  proc init*(self: wMenu, hMenu: HMENU) {.validate.} =
+    ## Initializes a menu by a given system menu handle. The style (dwStyle) and
+    ## application-defined value (dwMenuData) of this menu will be overwritten.
+    if IsMenu(hMenu) == 0:
+      raise newException(wError, "wMenu creation failed")
 
-proc init*(self: wMenu, hMenu: HMENU) {.validate.} =
-  ## Initializer.
-  if IsMenu(hMenu) == 0:
-    raise newException(wError, "wMenu creation failed")
+    self.mHmenu = hMenu
+    var menuInfo = MENUINFO(
+      cbSize: sizeof(MENUINFO),
+      fMask: MIM_MENUDATA or MIM_STYLE,
+      dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS,
+      dwMenuData: cast[ULONG_PTR](self))
+    SetMenuInfo(self.mHmenu, menuInfo)
+    self.mItemList = @[]
+    self.mDeletable = false
+    self.wAppMenuBaseAdd()
 
-  self.mHmenu = hMenu
-  var menuInfo = MENUINFO(
-    cbSize: sizeof(MENUINFO),
-    fMask: MIM_MENUDATA or MIM_STYLE,
-    dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS,
-    dwMenuData: cast[ULONG_PTR](self))
-  SetMenuInfo(self.mHmenu, menuInfo)
-  self.mItemList = @[]
-  self.mDeletable = false
-  self.wAppMenuBaseAdd()
+    let count = GetMenuItemCount(hMenu)
+    for i in 0..<count:
+      var text = T(65536)
+      text.setLen(wGetMenuItemString(hMenu, i, text))
 
-  let count = GetMenuItemCount(hMenu)
-  for i in 0..<count:
-    var text = T(65536)
-    text.setLen(wGetMenuItemString(hMenu, i, text))
+      var itemInfo = wGetMenuItemInfo(hMenu, i, MIIM_FTYPE or MIIM_ID or MIIM_SUBMENU)
+      let
+        submenu = if itemInfo.hSubMenu != 0: Menu(itemInfo.hSubMenu) else: nil
+        id = wCommandID itemInfo.wID
+        kind =
+          if not submenu.isNil: wMenuItemSubMenu
+          elif (itemInfo.fType and MFT_SEPARATOR) != 0: wMenuItemSeparator
+          else: wMenuItemNormal # wMenuItemCheck or wMenuItemRadio ?
 
-    var itemInfo = wGetMenuItemInfo(hMenu, i, MIIM_FTYPE or MIIM_ID or MIIM_SUBMENU)
-    let
-      submenu = if itemInfo.hSubMenu != 0: Menu(itemInfo.hSubMenu) else: nil
-      id = wCommandID itemInfo.wID
-      kind =
-        if not submenu.isNil: wMenuItemSubMenu
-        elif (itemInfo.fType and MFT_SEPARATOR) != 0: wMenuItemSeparator
-        else: wMenuItemNormal # wMenuItemCheck or wMenuItemRadio ?
-
-    var item = MenuItem(id=id, text=($text), kind=kind, submenu=submenu)
-    self.mItemList.add item
-
-proc Menu*(hMenu: HMENU): wMenu {.inline.} =
-  ## Construct a menu by a given system menu handle. The style (dwStyle) and
-  ## application-defined value (dwMenuData) of this menu will be overwritten.
-  new(result, final)
-  result.init(hMenu)
+      var item = MenuItem(id=id, text=($text), kind=kind, submenu=submenu)
+      self.mItemList.add item

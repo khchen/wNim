@@ -75,7 +75,7 @@ const
   wBallonWarning* = NIIF_WARNING
   wBallonError* = NIIF_ERROR
 
-method getDefaultSize*(self: wFrame): wSize {.validate.} =
+method getDefaultSize*(self: wFrame): wSize {.validate, uknlock.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
   # a reasonable frame size
   result = (640, 480)
@@ -83,10 +83,6 @@ method getDefaultSize*(self: wFrame): wSize {.validate.} =
 proc getMenuBar*(self: wFrame): wMenuBar {.validate, property, inline.} =
   ## Returns the menubar currently associated with the frame (if any).
   result = self.mMenuBar
-
-proc getStatusBar*(self: wFrame): wStatusBar {.validate, property, inline.} =
-  ## Returns the status bar currently associated with the frame (if any).
-  result = self.mStatusBar
 
 proc setTopMost*(self: wFrame, top = true) {.validate, property.} =
   ## Sets whether the frame top most to all windows.
@@ -276,7 +272,7 @@ proc setTrayIcon*(self: wFrame, icon: wIcon, tooltip = "") {.validate, property.
           self.setTrayIcon(self.mTrayIcon, self.mTrayToolTip)
 
         self.mTrayConn = self.systemConnect(wEvent_TrayIcon) do (event: wEvent):
-          let msg = case event.lParam
+          let msg = case event.mLparam
           of WM_LBUTTONDOWN: wEvent_TrayLeftDown
           of WM_LBUTTONUP: wEvent_TrayLeftUp
           of WM_RBUTTONDOWN: wEvent_TrayRightDown
@@ -305,7 +301,6 @@ proc showBalloon*(self: wFrame, title: string, text: string, timeout: int = 3000
   ## Display a balloon notification. Only works when the frame already have a
   ## tray icon. *flag* is one of wBallonNone, wBallonInfo, wBallonWarning or
   ## wBallonError.
-  wValidate(title, text)
   if self.mTrayIconAdded:
     # uVersion and uTimeout in the union, need setter
     var nid = NOTIFYICONDATA(cbSize: sizeof(NOTIFYICONDATA), hWnd: self.mHwnd)
@@ -386,7 +381,7 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
 
   if self.mStatusBar != nil and self.mMenuBar != nil:
     let
-      hmenu = event.mLparam.HMENU
+      hmenu = HMENU event.mLparam
       flag = HIWORD(event.mWparam)
       menuId = LOWORD(event.mWparam)
 
@@ -411,29 +406,24 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
     SendMessage(self.mStatusBar.mHwnd, SB_SETTEXT, 0, &T(text))
     processed = true
 
-proc final*(self: wFrame) =
-  ## Default finalizer for wFrame.
-  discard
-
-method release(self: wFrame) =
+method release(self: wFrame) {.uknlock.} =
   # delete the tray icon (if any)
   self.removeTrayIcon()
 
-proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
-    className = "wFrame") {.validate.} =
-  ## Initializer.
-  self.wWindow.initVerbosely(title=title, pos=pos, size=size,
-    style=style or WS_CLIPCHILDREN, owner=owner, className=className,
-    bgColor=GetSysColor(COLOR_APPWORKSPACE))
+wClass(wFrame of wWindow):
 
-  self.hardConnect(wEvent_Size, wFrame_OnSize)
-  self.hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
-  self.hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)
+  proc final*(self: wFrame) =
+    ## Default finalizer for wFrame.
+    self.wWindow.final()
 
-proc Frame*(owner: wWindow = nil, title = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
-    className = "wFrame"): wFrame {.inline, discardable.} =
-  ## Constructor, creating the frame.
-  new(result, final)
-  result.init(owner, title, pos, size, style, className)
+  proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
+      size = wDefaultSize, style: wStyle = wDefaultFrameStyle,
+      className = "wFrame") {.validate.} =
+    ## Initializes a frame.
+    self.wWindow.initVerbosely(title=title, pos=pos, size=size,
+      style=style or WS_CLIPCHILDREN, owner=owner, className=className,
+      bgColor=GetSysColor(COLOR_APPWORKSPACE))
+
+    self.hardConnect(wEvent_Size, wFrame_OnSize)
+    self.hardConnect(wEvent_SetFocus, wFrame_OnSetFocus)
+    self.hardConnect(wEvent_MenuHighlight, wFrame_OnMenuHighlight)

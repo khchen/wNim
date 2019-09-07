@@ -38,12 +38,12 @@ const
   # RadioButton styles
   wRbGroup* = WS_GROUP
 
-method getBestSize*(self: wRadioButton): wSize {.property.} =
+method getBestSize*(self: wRadioButton): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
-  result = getTextFontSizeWithCheckMark(self.label, self.mFont.mHandle, self.mHwnd)
+  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
-method getDefaultSize*(self: wRadioButton): wSize {.property.} =
+method getDefaultSize*(self: wRadioButton): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -56,36 +56,30 @@ proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
   ## Sets the radio button to checked or unchecked status.
   SendMessage(self.mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
-method release(self: wRadioButton) =
+method release(self: wRadioButton) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
 proc click*(self: wRadioButton) {.validate, inline.} =
   ## Simulates the user clicking a radiobutton.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
-proc final*(self: wRadioButton) =
-  ## Default finalizer for wRadioButton.
-  discard
+wClass(wRadioButton of wControl):
 
-proc init*(self: wRadioButton, parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
-  let style = (style and (not 0xF)) or BS_AUTORADIOBUTTON
+  proc final*(self: wRadioButton) =
+    ## Default finalizer for wRadioButton.
+    self.wControl.final()
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc init*(self: wRadioButton, parent: wWindow, id = wDefaultID,
+      label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes radio button
+    wValidate(parent)
+    # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
+    let style = (style and (not 0xF)) or BS_AUTORADIOBUTTON
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
-      self.processMessage(wEvent_RadioButton, event.mWparam, event.mLparam)
+    self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-proc RadioButton*(parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wRadioButton {.inline, discardable.} =
-  ## Constructor, creating and showing a radio button.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
+        self.processMessage(wEvent_RadioButton, event.mWparam, event.mLparam)

@@ -50,16 +50,25 @@ export wWindow, wEvent
 
 # GUI controls by default don't apply the window margin setting,
 # (except wStaticBox and wNoteBook, however they have their own override)
-method getClientSize*(self: wControl): wSize {.property.} =
+method getClientSize*(self: wControl): wSize {.property, uknlock.} =
   ## Returns the size of the control 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
   result.width = r.right - r.left
   result.height = r.bottom - r.top
 
-method getClientAreaOrigin*(self: wControl): wPoint {.property.} =
+method getClientAreaOrigin*(self: wControl): wPoint {.property, uknlock.} =
   ## Gets the origin of the client area of the control.
   result = (0, 0)
+
+proc showAndNotifyParent(self: wControl, flag = true) {.shield.} =
+  let shown = self.isShownOnScreen()
+  procCall wBase.wWindow(self).show(flag)
+  if shown != self.isShownOnScreen():
+    # parent's client size changed
+    let rect = self.mParent.getWindowRect(sizeOnly=true)
+    self.mParent.processMessage(wEvent_Size, SIZE_RESTORED,
+      MAKELPARAM(rect.width, rect.height))
 
 proc wControl_DoMenuCommand(event: wEvent) =
   # relay control's WM_MENUCOMMAND to any wFrame
@@ -143,7 +152,7 @@ proc notControl(event: wEvent): bool {.inline.} =
   # only handle if the event is really from a control
   # it's false when the event is propagated from a subclassed window for controls
   # for example, edit of ComboBox, and let wKeyEvent propagate
-  if not (event.window of wBase.wControl):
+  if not (event.mWindow of wBase.wControl):
     event.skip
     return true
 
@@ -184,7 +193,7 @@ proc wControl_OnNavigation(event: wEvent) =
 
   proc isAllowed(): bool =
     # let the control have a change to veto the navigation action
-    let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.wParam, lParam=event.lParam)
+    let naviEvent = Event(window=self, msg=wEvent_Navigation, wParam=event.mWparam, lParam=event.mLparam)
     if self.processEvent(naviEvent) and not naviEvent.isAllowed:
       return false
     else:
@@ -231,8 +240,8 @@ proc wControl_OnNavigation(event: wEvent) =
       control = control.mParent
 
 
-  let keyCode = event.keyCode
-  case event.eventMessage
+  let keyCode = event.getKeyCode()
+  case event.getEventMessage()
   of WM_CHAR:
     if keyCode == VK_TAB:
       # tab, shift+tab
@@ -305,7 +314,7 @@ proc wControl_OnNavigation(event: wEvent) =
   else: discard
 
 method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.shield, uknlock.} =
 
   var eventType: UINT
   case code
@@ -319,39 +328,46 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
   else: return
   return self.processMessage(eventType, cast[WPARAM](id), lparam, ret)
 
-proc init(self: wControl, className: string, parent: wWindow,
-    id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) {.shield.} =
-  # a global init for GUI controls, is this need to be public?
+wClass(wControl of wWindow):
 
-  var
-    size = size
-    style = style
+  proc final*(self: wControl) =
+    ## Default finalizer for wControl.
+    self.wWindow.final()
 
-  var lastControl: wWindow = nil
-  for i in countdown(parent.mChildren.len - 1, 0):
-    let child = parent.mChildren[i]
-    if child of wBase.wControl:
-      lastControl = child
-      break
+  proc init*(self: wControl, className: string, parent: wWindow,
+      id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
+      size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    ## Initializes a GUI control by given window class name. Only useful to
+    ## implement a custom wNim GUI control.
+    wValidate(parent)
+    var
+      size = size
+      style = style
 
-  # by default, first not radiobutton (include first of all) or last radiobutton
-  # must has WS_GROUP style
+    var lastControl: wWindow = nil
+    for i in countdown(parent.mChildren.len - 1, 0):
+      let child = parent.mChildren[i]
+      if child of wBase.wControl:
+        lastControl = child
+        break
 
-  if lastControl == nil or (self of wRadioButton) != (lastControl of wRadioButton):
-    style = style or WS_GROUP
+    # By default, first non radiobutton (include first of all) or last radiobutton
+    # must has WS_GROUP style
 
-  self.wWindow.initVerbosely(title=label, className=className, parent=parent, pos=pos, size=size,
-    style=style or WS_CHILD, fgColor=parent.mForegroundColor, bgColor=parent.mBackgroundColor,
-    id=HMENU(id), regist=false)
+    if lastControl == nil or (self of wRadioButton) != (lastControl of wRadioButton):
+      style = style or WS_GROUP
 
-  SetWindowSubclass(self.mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
+    self.wWindow.initVerbosely(title=label, className=className, parent=parent, pos=pos, size=size,
+      style=style or WS_CHILD, fgColor=parent.mForegroundColor, bgColor=parent.mBackgroundColor,
+      id=HMENU(id), regist=false)
 
-  self.mFocusable = true # by default, all control can has focus, modify this by subclass
+    SetWindowSubclass(self.mHwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
 
-  self.systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
-  self.systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
-  self.systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
-  self.hardConnect(WM_CHAR, wControl_OnNavigation)
-  self.hardConnect(WM_KEYDOWN, wControl_OnNavigation)
-  self.hardConnect(WM_SYSCHAR, wControl_OnNavigation)
+    self.mFocusable = true # by default, all control can has focus, modify this by subclass
+
+    self.systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
+    self.systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
+    self.systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
+    self.hardConnect(WM_CHAR, wControl_OnNavigation)
+    self.hardConnect(WM_KEYDOWN, wControl_OnNavigation)
+    self.hardConnect(WM_SYSCHAR, wControl_OnNavigation)

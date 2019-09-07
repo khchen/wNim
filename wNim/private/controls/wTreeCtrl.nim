@@ -779,7 +779,6 @@ proc insertItem(self: wTreeCtrl, parent, after: HTREEITEM, text: string,
 proc addRoot*(self: wTreeCtrl, text: string, image = wTreeImageNone,
     selImage = wTreeIgnore, data: int = 0): wTreeItem {.validate, discardable.} =
   ## Adds the root node to the tree, returning the new item.
-  wValidate(text)
   result = self.insertItem(TVI_ROOT, TVI_ROOT, text, image, selImage, data)
 
 proc appendItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
@@ -787,7 +786,6 @@ proc appendItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
     {.validate, discardable.} =
   ## Appends an item to the end of the branch identified by parent, return a new item.
   assert parent.mTreeCtrl == self
-  wValidate(text)
   result = self.insertItem(parent.mHandle, TVI_LAST, text, image, selImage, data)
 
 proc prependItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
@@ -795,7 +793,6 @@ proc prependItem*(self: wTreeCtrl, parent: wTreeItem, text: string,
     {.validate, discardable.} =
   ## Appends an item as the first child of parent, return a new item.
   assert parent.mTreeCtrl == self
-  wValidate(text)
   result = self.insertItem(parent.mHandle, TVI_FIRST, text, image, selImage, data)
 
 proc insertItem*(self: wTreeCtrl, parent: wTreeItem, prev: wTreeItem, text: string,
@@ -803,7 +800,6 @@ proc insertItem*(self: wTreeCtrl, parent: wTreeItem, prev: wTreeItem, text: stri
     {.validate, discardable.} =
   ## Inserts an item after a given one (*previous*).
   assert parent.mTreeCtrl == self and prev.mTreeCtrl == self
-  wValidate(text)
   result = self.insertItem(parent.mHandle, prev.mHandle, text, image, selImage, data)
 
 proc insertItem*(self: wTreeCtrl, parent: wTreeItem, pos: int, text: string,
@@ -811,7 +807,6 @@ proc insertItem*(self: wTreeCtrl, parent: wTreeItem, pos: int, text: string,
     {.validate, discardable.} =
   ## Inserts an item before one identified by its position (*pos*).
   assert parent.mTreeCtrl == self
-  wValidate(text)
   let hParent = parent.mHandle
   var after: HTREEITEM
 
@@ -897,7 +892,7 @@ iterator allItems*(self: wTreeCtrl): wTreeItem {.validate.} =
 
     item = item.getNextSibling()
 
-method getBestSize*(self: wTreeCtrl): wSize {.property.} =
+method getBestSize*(self: wTreeCtrl): wSize {.property, uknlock.} =
   result = wDefaultSize
 
   var info = SCROLLBARINFO(cbSize: sizeof(SCROLLBARINFO))
@@ -1019,7 +1014,7 @@ proc endDrag*(self: wTreeCtrl) {.validate.} =
     self.processEvent(event)
 
 method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   case code:
   of TVN_SELCHANGED:
@@ -1121,7 +1116,7 @@ method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 proc wTreeCtrl_OnChar(event: wEvent) =
   # Tree control don't have an activate notification code.
   # we need to generate it by ourself.
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1135,7 +1130,7 @@ proc wTreeCtrl_OnChar(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_OnContextMenu(event: wEvent) =
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1162,7 +1157,7 @@ proc wTreeCtrl_OnContextMenu(event: wEvent) =
   processed =  self.processEvent(event)
 
 proc wTreeCtrl_OnMouseMove(event: wEvent) =
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1171,7 +1166,7 @@ proc wTreeCtrl_OnMouseMove(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_LeftUp(event: wEvent) =
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1180,7 +1175,7 @@ proc wTreeCtrl_LeftUp(event: wEvent) =
     processed = true
 
 proc wTreeCtrl_RightUp(event: wEvent) =
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
@@ -1194,52 +1189,47 @@ proc wTreeCtrl_RightUp(event: wEvent) =
 proc wTreeCtrl_RightDown(event: wEvent) =
   # here we block the right down event if it's not click on item
   # becasue the default behavior will change focus even click on right space area
-  var self = wBase.wTreeCtrl event.window
+  var self = wBase.wTreeCtrl event.mWindow
   let (item, flag) = self.hitTest(event.getMousePos())
   if item.isOk() and self.isReallyOnItem(flag):
     item.select()
     event.skip
 
-proc final*(self: wTreeCtrl) =
-  ## Default finalizer for wTreeCtrl.
-  discard
-
-method release(self: wTreeCtrl) {.locks: "unknown".} =
+method release(self: wTreeCtrl) {.uknlock.} =
   self.mImageListNormal = nil
   self.mImageListState = nil
 
-proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTrNoButtons) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  # for TVS_HASBUTTONS, TVS_LINESATROOT must also be specified.
-  var style = style
-  if (style and wTrTwistButtons) != 0 or (style and TVS_HASBUTTONS) != 0:
-    style = style or TVS_LINESATROOT or TVS_HASBUTTONS
+wClass(wTreeCtrl of wControl):
 
-  self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc final*(self: wTreeCtrl) =
+    ## Default finalizer for wTreeCtrl.
+    self.wControl.final()
 
-  # a tree control by default have white background, not parent's background
-  self.setBackgroundColor(wWhite)
+  proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTrNoButtons) {.validate.} =
+    ## Initializes a tree control.
+    wValidate(parent)
+    # for TVS_HASBUTTONS, TVS_LINESATROOT must also be specified.
+    var style = style
+    if (style and wTrTwistButtons) != 0 or (style and TVS_HASBUTTONS) != 0:
+      style = style or TVS_LINESATROOT or TVS_HASBUTTONS
 
-  if (style and wTrTwistButtons) != 0:
-    SetWindowTheme(self.mHwnd, "Explorer", nil)
+    self.wControl.init(className=WC_TREEVIEW, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  self.hardConnect(wEvent_Char, wTreeCtrl_OnChar)
-  self.hardConnect(wEvent_ContextMenu, wTreeCtrl_OnContextMenu)
-  self.hardConnect(wEvent_MouseMove, wTreeCtrl_OnMouseMove)
-  self.hardConnect(wEvent_LeftUp, wTreeCtrl_LeftUp)
-  self.hardConnect(wEvent_RightUp, wTreeCtrl_RightUp)
-  self.hardConnect(wEvent_RightDown, wTreeCtrl_RightDown)
+    # a tree control by default have white background, not parent's background
+    self.setBackgroundColor(wWhite)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    if (style and wTrTwistButtons) != 0:
+      SetWindowTheme(self.mHwnd, "Explorer", nil)
 
-proc TreeCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wTrNoButtons): wTreeCtrl {.discardable.} =
-  ## Constructor, creating and showing a tree control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
+    self.hardConnect(wEvent_Char, wTreeCtrl_OnChar)
+    self.hardConnect(wEvent_ContextMenu, wTreeCtrl_OnContextMenu)
+    self.hardConnect(wEvent_MouseMove, wTreeCtrl_OnMouseMove)
+    self.hardConnect(wEvent_LeftUp, wTreeCtrl_LeftUp)
+    self.hardConnect(wEvent_RightUp, wTreeCtrl_RightUp)
+    self.hardConnect(wEvent_RightDown, wTreeCtrl_RightDown)
+
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto

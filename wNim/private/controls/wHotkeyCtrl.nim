@@ -145,14 +145,14 @@ proc update(self: wHotkeyCtrl) =
   let l = SendMessage(self.mHwnd, EM_LINELENGTH, 0, 0)
   SendMessage(self.mHwnd, EM_SETSEL, l, l)
 
-method getDefaultSize*(self: wHotkeyCtrl): wSize {.property.} =
+method getDefaultSize*(self: wHotkeyCtrl): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = getTextFontSize("Ctrl + Alt + Shift + Win + PrintScreen",
     self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
   result.width += 10
 
-method getBestSize*(self: wHotkeyCtrl): wSize {.property.} =
+method getBestSize*(self: wHotkeyCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize(self.mValue, self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -304,48 +304,44 @@ proc keyProc(nCode: int32, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} 
 
   else: discard
 
-proc final*(self: wHotkeyCtrl) =
-  ## Default finalizer for wHotkeyCtrl.
-  if currentHookedHotkeyCtrl == self:
-    currentHookedHotkeyCtrl = nil
+wClass(wHotkeyCtrl of wControl):
 
-  if self.mHook != 0:
-    UnhookWindowsHookEx(self.mHook)
-    self.mHook = 0
+  proc final*(self: wHotkeyCtrl) =
+    ## Default finalizer for wHotkeyCtrl.
+    self.wControl.final()
 
-proc init*(self: wHotkeyCtrl, parent: wWindow, id = wDefaultID,
-    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wHkLeft) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
+    if currentHookedHotkeyCtrl == self:
+      currentHookedHotkeyCtrl = nil
 
-  self.mProcessTab = ((style and wHkProcessTab) != 0)
-  self.mHookProc = wHotKeyHookProc
-  self.mClearKeyCode = wKey_Esc
+    if self.mHook != 0:
+      UnhookWindowsHookEx(self.mHook)
+      self.mHook = 0
 
-  var style = style and (not wHkProcessTab)
-  if (style and wHkRight) != 0:
-    style = style or ES_AUTOHSCROLL
+  proc init*(self: wHotkeyCtrl, parent: wWindow, id = wDefaultID,
+      value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wHkLeft) {.validate.} =
+    ## Initializes a hotkey control.
+    wValidate(parent)
 
-  self.wControl.init(className=WC_EDIT, parent=parent, id=id,
-    pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
+    self.mProcessTab = ((style and wHkProcessTab) != 0)
+    self.mHookProc = wHotKeyHookProc
+    self.mClearKeyCode = wKey_Esc
 
-  self.setBackgroundColor(wWhite)
-  self.setValue(value)
+    var style = style and (not wHkProcessTab)
+    if (style and wHkRight) != 0:
+      style = style or ES_AUTOHSCROLL
 
-  self.systemConnect(wEvent_SetFocus) do (event: wEvent):
-    let self = wBase.wHotkeyCtrl event.window
-    self.mHook = SetWindowsHookEx(WH_KEYBOARD_LL, keyProc, wAppGetInstance(), 0)
-    currentHookedHotkeyCtrl = self
+    self.wControl.init(className=WC_EDIT, parent=parent, id=id,
+      pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
 
-  self.systemConnect(wEvent_KillFocus) do (event: wEvent):
-    let self = wBase.wHotkeyCtrl event.window
-    self.final()
+    self.setBackgroundColor(wWhite)
+    self.setValue(value)
 
-proc HotkeyCtrl*(parent: wWindow, id = wDefaultID,
-    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wHkLeft): wHotkeyCtrl {.inline, discardable.} =
-  ## Constructor, creating a hotkey control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, pos, size, style)
+    self.systemConnect(wEvent_SetFocus) do (event: wEvent):
+      let self = wBase.wHotkeyCtrl event.mWindow
+      self.mHook = SetWindowsHookEx(WH_KEYBOARD_LL, keyProc, wAppGetInstance(), 0)
+      currentHookedHotkeyCtrl = self
+
+    self.systemConnect(wEvent_KillFocus) do (event: wEvent):
+      let self = wBase.wHotkeyCtrl event.mWindow
+      self.final()

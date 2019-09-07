@@ -37,6 +37,7 @@
 
 {.experimental, deadCodeElim: on.}
 
+from ../winimx import nil # For BITMAP
 import ../wBase, ../gdiobjects/[wBitmap, wIcon], wControl
 export wControl
 
@@ -48,7 +49,7 @@ const
   wBuBottom* = BS_BOTTOM
   wBuNoBorder* = BS_FLAT
 
-method getDefaultSize*(self: wButton): wSize {.property.} =
+method getDefaultSize*(self: wButton): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   # button's default size is 50x14 DLUs
   # don't use GetDialogBaseUnits, it count by DEFAULT_GUI_FONT only
@@ -57,7 +58,7 @@ method getDefaultSize*(self: wButton): wSize {.property.} =
   result.width = MulDiv(result.width, 50, 4)
   result.height = MulDiv(result.height, 14, 8)
 
-method getBestSize*(self: wButton): wSize {.property.} =
+method getBestSize*(self: wButton): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   var size: SIZE
   if SendMessage(self.mHwnd, BCM_GETIDEALSIZE, 0, &size) != 0:
@@ -153,15 +154,15 @@ proc getBitmap*(self: wButton): wBitmap {.validate, property.} =
     var
       width, height: int32
       info: IMAGEINFO
-      bm: BITMAP
+      bm: winimx.BITMAP
 
     ImageList_GetIconSize(self.mImgData.himl, &width, &height)
     ImageList_GetImageInfo(self.mImgData.himl, 0, &info)
     # need to create new bitmap, don't just warp info.hbmImage
 
-    GetObject(info.hbmImage, sizeof(BITMAP), &bm)
+    GetObject(info.hbmImage, sizeof(winimx.BITMAP), &bm)
 
-    result = Bmp(width, height, int bm.bmBitsPixel)
+    result = Bitmap(width, height, int bm.bmBitsPixel)
     let hdc = CreateCompatibleDC(0)
     let prev = SelectObject(hdc, result.mHandle)
     ImageList_Draw(self.mImgData.himl, 0, hdc, 0, 0, 0)
@@ -223,7 +224,7 @@ proc click*(self: wButton) {.validate, inline.} =
   ## Simulates the user clicking a button.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
-method release(self: wButton) =
+method release(self: wButton) {.uknlock.} =
   self.mMenu = nil # can avoid some GC bug about crashing on prepareDealloc?
   self.mParent.systemDisconnect(self.mCommandConn)
   if self.mImgData.himl != 0:
@@ -231,7 +232,7 @@ method release(self: wButton) =
     self.mImgData.himl = 0
 
 method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   case code
   of BCN_DROPDOWN:
@@ -252,33 +253,27 @@ method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wButton) =
-  ## Default finalizer for wButton.
-  discard
+wClass(wButton of wControl):
 
-proc init*(self: wButton, parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
-  let style = style and (not 0xF)
+  proc final*(self: wButton) =
+    ## Default finalizer for wButton.
+    self.wControl.final()
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
-    BS_PUSHBUTTON)
+  proc init*(self: wButton, parent: wWindow, id = wDefaultID,
+      label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a button.
+    wValidate(parent)
+    # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
+    let style = style and (not 0xF)
 
-  # default value of bitmap direction
-  self.mImgData.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT
+    self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
+      BS_PUSHBUTTON)
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
-      self.processMessage(wEvent_Button, event.mWparam, event.mLparam)
+    # default value of bitmap direction
+    self.mImgData.uAlign = BUTTON_IMAGELIST_ALIGN_LEFT
 
-proc Button*(parent: wWindow, id = wDefaultID, label: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wButton
-    {.inline, discardable.} =
-  ## Constructor, creating and showing a button.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd and HIWORD(int32 event.mWparam) == BN_CLICKED:
+        self.processMessage(wEvent_Button, event.mWparam, event.mLparam)

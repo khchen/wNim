@@ -31,7 +31,7 @@ const
   wLiHorizontal* = SS_LEFT # 0
   wLiVertical* = SS_RIGHT # 2
 
-method getDefaultSize*(self: wStaticLine): wSize {.property.} =
+method getDefaultSize*(self: wStaticLine): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   let
     pos = self.getPosition()
@@ -45,7 +45,7 @@ method getDefaultSize*(self: wStaticLine): wSize {.property.} =
     result.height = 2
     result.width = clientSize.width - pos.x * 2
 
-method getBestSize*(self: wStaticLine): wSize {.property, inline.} =
+method getBestSize*(self: wStaticLine): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -53,30 +53,24 @@ proc isVertical*(self: wStaticLine): bool {.validate.} =
   ## Returns true if the line is vertical, false if horizontal.
   result = (self.getWindowStyle() and wLiVertical) != 0
 
-proc final*(self: wStaticLine) =
-  ## Default finalizer for wStaticLine.
-  discard
+wClass(wStaticLine of wControl):
 
-proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wLiHorizontal) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  var size = size
-  if size != wDefaultSize:
-    if (style and wLiVertical) != 0:
-      size.width = 2
-    else:
-      size.height = 2
+  proc final*(self: wStaticLine) =
+    ## Default finalizer for wStaticLine.
+    self.wControl.final()
 
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_SUNKEN)
+  proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+      size = wDefaultSize, style: wStyle = wLiHorizontal) {.validate.} =
+    ## Initializes a static line
+    wValidate(parent)
+    var size = size
+    if size != wDefaultSize:
+      if (style and wLiVertical) != 0:
+        size.width = 2
+      else:
+        size.height = 2
 
-  self.mFocusable = false
+    self.wControl.init(className=WC_STATIC, parent=parent, id=id,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_SUNKEN)
 
-proc StaticLine*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wLiHorizontal): wStaticLine
-    {.inline, discardable.} =
-  ## Constructor, creating and showing a static line.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, style)
+    self.mFocusable = false

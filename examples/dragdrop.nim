@@ -143,7 +143,7 @@ frame.idFile do ():
   displayData()
 
 frame.idImage do ():
-  data = DataObject(Bmp(defaultImage))
+  data = DataObject(Bitmap(defaultImage))
   displayData()
 
 frame.idCopy do ():

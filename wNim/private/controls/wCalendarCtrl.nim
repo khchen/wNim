@@ -48,7 +48,7 @@ const
   wCalShowWeekNumbers* = MCS_WEEKNUMBERS
   wCalMultiSelect* = MCS_MULTISELECT
 
-method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
+method getBestSize*(self: wCalendarCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   var rect: RECT
   SendMessage(self.mHwnd, MCM_GETMINREQRECT, 0, addr rect)
@@ -56,7 +56,7 @@ method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
     SendMessage(self.mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
   result.height = rect.bottom + 2
 
-method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline.} =
+method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
 
@@ -149,7 +149,7 @@ proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   result = int SendMessage(self.mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
 method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   case code
   of MCN_SELCHANGE:
@@ -161,44 +161,38 @@ method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARA
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wCalendarCtrl) =
-  ## Default finalizer for wCalendarCtrl.
-  discard
+wClass(wCalendarCtrl of wControl):
 
-proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
-    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=MONTHCAL_CLASS, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc final*(self: wCalendarCtrl) =
+    ## Default finalizer for wCalendarCtrl.
+    self.wControl.final()
 
-  if (style and wCalMondayFirst) != 0:
-    SendMessage(self.mHwnd, MCM_SETFIRSTDAYOFWEEK, 0, 0)
+  proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
+      date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a calendar control.
+    ## ==========  =================================================================================
+    ## Parameters  Description
+    ## ==========  =================================================================================
+    ## parent      Parent window.
+    ## id          The identifier for the control.
+    ## date        The initial value of the control, if an invalid date (such as the default value) is used, the control is set to today.
+    ## pos         Initial position.
+    ## size        Initial size. If left at default value, the control chooses its own best size.
+    ## style       The window style.
+    wValidate(parent)
+    self.wControl.init(className=MONTHCAL_CLASS, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  if (style and wCalNoMonthChange) != 0:
-    self.enableMonthChange(false)
+    if (style and wCalMondayFirst) != 0:
+      SendMessage(self.mHwnd, MCM_SETFIRSTDAYOFWEEK, 0, 0)
 
-  if date != wDefaultTime:
-    self.setDate(date)
+    if (style and wCalNoMonthChange) != 0:
+      self.enableMonthChange(false)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    if date != wDefaultTime:
+      self.setDate(date)
 
-proc CalendarCtrl*(parent: wWindow, id = wDefaultID,
-    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wCalendarCtrl {.inline, discardable.} =
-  ## Creates the control.
-  ## ==========  =================================================================================
-  ## Parameters  Description
-  ## ==========  =================================================================================
-  ## parent      Parent window.
-  ## id          The identifier for the control.
-  ## date        The initial value of the control, if an invalid date (such as the default value) is used, the control is set to today.
-  ## pos         Initial position.
-  ## size        Initial size. If left at default value, the control chooses its own best size.
-  ## style       The window style.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, date, pos, size, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto

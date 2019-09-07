@@ -146,6 +146,17 @@ proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline, shield.} =
   if hMenu in wTheApp.mMenuBaseTable:
     return cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
 
+proc wAppExclMenuId(menuId: uint16) {.inline, shield.} =
+  wTheApp.mMenuIdSet.excl menuId
+
+proc wAppInclMenuId(menuId: uint16) {.inline, shield.} =
+  wTheApp.mMenuIdSet.incl menuId
+
+proc wAppNextMenuId(): uint16 {.inline, shield.} =
+  for i in wIdUser.uint16 .. uint16.high:
+    if i notin wTheApp.mMenuIdSet:
+      return i
+
 proc wAppProcessDialogMessage(msg: var MSG): bool {.shield.} =
   # find the top-level non-child window.
   var hwnd = GetAncestor(msg.hwnd, GA_ROOT)

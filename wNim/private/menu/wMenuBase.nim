@@ -95,13 +95,11 @@ proc getLabel*(self: wMenuBase, id: wCommandID): string {.validate, property.} =
 
 proc setText*(self: wMenuBase, id: wCommandID, text: string) {.validate, property.} =
   ## Sets the text for the menu item at the position.
-  wValidate(text)
   withMenuPos(id):
     menu.setText(pos, text)
 
 proc setLabel*(self: wMenuBase, id: wCommandID, text: string) {.validate, property.} =
   ## Sets the text for the menu item.
-  wValidate(text)
   withMenuPos(id):
     menu.setLabel(pos, text)
 
@@ -118,7 +116,6 @@ proc getHelp*(self: wMenuBase, id: wCommandID): string {.validate, property.} =
 
 proc setHelp*(self: wMenuBase, id: wCommandID, help: string) {.validate, property.} =
   ## Sets the help string of item.
-  wValidate(help)
   withMenuPos(id):
     menu.setHelp(pos, help)
 

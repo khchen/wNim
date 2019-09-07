@@ -19,20 +19,15 @@
 import wBase, wWindow
 export wWindow
 
-proc final*(self: wPanel) =
-  ## Default finalizer for wPanel.
-  discard
+wClass(wPanel of wWindow):
 
-proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wPanel") {.validate, inline.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wWindow.initVerbosely(parent=parent, pos=pos, size=size,
-    style=style, className=className, bgColor=GetSysColor(COLOR_BTNFACE))
+  proc final*(self: wPanel) =
+    ## Default finalizer for wPanel.
+    self.wWindow.final()
 
-proc Panel*(parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0, className = "wPanel"): wPanel {.inline, discardable.} =
-  ## Constructor.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, pos, size, style, className)
+  proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0, className = "wPanel") {.validate, inline.} =
+    ## Initializer.
+    wValidate(parent)
+    self.wWindow.initVerbosely(parent=parent, pos=pos, size=size,
+      style=style, className=className, bgColor=GetSysColor(COLOR_BTNFACE))

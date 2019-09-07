@@ -319,74 +319,64 @@ proc countSize(self: wListBox, minItem: int, rate: float): wSize =
   if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or count > maxItem):
     result.width += GetSystemMetrics(SM_CXVSCROLL)
 
-method getDefaultSize*(self: wListBox): wSize =
+method getDefaultSize*(self: wListBox): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = self.countSize(3, 1.3)
 
-method getBestSize*(self: wListBox): wSize =
+method getBestSize*(self: wListBox): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method release(self: wListBox) =
+method release(self: wListBox) {.uknlock.} =
   # self.mParent may be nil for wrapped wListBox.
   if not self.mParent.isNil:
     self.mParent.systemDisconnect(self.mCommandConn)
 
-method trigger(self: wListBox) {.locks: "unknown".} =
+method trigger(self: wListBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
-proc final*(self: wListBox) =
-  ## Default finalizer for wListBox.
-  discard
+wClass(wListBox of wControl):
 
-proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = wLbSingle) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mInitData = cast[ptr UncheckedArray[string]](choices)
-  self.mInitCount = choices.len
+  proc final*(self: wListBox) =
+    ## Default finalizer for wListBox.
+    self.wControl.final()
 
-  self.wControl.init(className=WC_LISTBOX, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
-    LBS_NOTIFY or LBS_NOINTEGRALHEIGHT)
+  proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
+      style: wStyle = wLbSingle) {.validate.} =
+    ## Initializes a list box.
+    wValidate(parent)
+    self.mInitData = cast[ptr UncheckedArray[string]](choices)
+    self.mInitCount = choices.len
 
-  # a list box by default have white background, not parent's background
-  self.setBackgroundColor(wWhite)
+    self.wControl.init(className=WC_LISTBOX, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
+      LBS_NOTIFY or LBS_NOINTEGRALHEIGHT)
 
-  if (style and wLbNoSel) != 0:
-    self.mFocusable = false
+    # A list box by default have white background, not parent's background
+    self.setBackgroundColor(wWhite)
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd:
-      case HIWORD(event.mWparam):
-      of LBN_SELCHANGE:
-        self.processMessage(wEvent_ListBox, event.mWparam, event.mLparam)
-      of LBN_DBLCLK:
-        self.processMessage(wEvent_ListBoxDoubleClick, event.mWparam, event.mLparam)
-      of LBN_SETFOCUS:
-        self.processMessage(wEvent_CommandSetFocus, event.mWparam, event.mLparam)
-      else: discard
+    # Even with wLbNoSel style, wListBox still can get focus!
+    # if (style and wLbNoSel) != 0:
+    #   self.mFocusable = false
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd:
+        case HIWORD(event.mWparam):
+        of LBN_SELCHANGE:
+          self.processMessage(wEvent_ListBox, event.mWparam, event.mLparam)
+        of LBN_DBLCLK:
+          self.processMessage(wEvent_ListBoxDoubleClick, event.mWparam, event.mLparam)
+        of LBN_SETFOCUS:
+          self.processMessage(wEvent_CommandSetFocus, event.mWparam, event.mLparam)
+        else: discard
 
-proc ListBox*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = wLbSingle): wListBox {.inline, discardable.} =
-  ## Constructor, creating and showing a list box.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, choices, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto
 
-proc init*(self: wListBox, hWnd: HWND) {.validate.} =
-  ## Initializer.
-  self.wWindow.init(hwnd)
-
-proc ListBox*(hWnd: HWND): wListBox {.inline, discardable.} =
-  ## A special constructor to subclass the listbox of other contorls.
-  new(result, final)
-  result.init(hWnd)
+  proc init*(self: wListBox, hWnd: HWND) {.validate.} =
+    ## Initializes a list box by subclassing a system handle. Used internally.
+    self.wWindow.init(hwnd)

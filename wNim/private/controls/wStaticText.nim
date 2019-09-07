@@ -47,13 +47,13 @@ const
   wAlignMiddle* = SS_CENTERIMAGE
   wAlignLeftNoWordWrap* = SS_LEFTNOWORDWRAP
 
-method getBestSize*(self: wStaticText): wSize {.property.} =
+method getBestSize*(self: wStaticText): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.width += 2
   result.height += 2
 
-method getDefaultSize*(self: wStaticText): wSize {.property.} =
+method getDefaultSize*(self: wStaticText): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -69,32 +69,26 @@ proc wStaticText_DoCommand(event: wEvent) {.shield.} =
       self.processMessage(wEvent_CommandLeftDoubleClick, event.mWparam, event.mLparam)
     else: discard
 
-method release(self: wStaticText) =
+method release(self: wStaticText) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
-proc final*(self: wStaticText) =
-  ## Default finalizer for wStaticText.
-  discard
+wClass(wStaticText of wControl):
 
-proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wAlignLeft) {.validate.} =
-  ## Initializer.
-  wValidate(parent, label)
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
+  proc final*(self: wStaticText) =
+    ## Default finalizer for wStaticText.
+    self.wControl.final()
 
-  self.mFocusable = false
+  proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
+      label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wAlignLeft) {.validate.} =
+    ## Initializes static text control.
+    wValidate(parent)
+    self.wControl.init(className=WC_STATIC, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY)
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
-  self.systemConnect(WM_SIZE) do (event: wEvent):
-    # when size change, StaticText should refresh itself, but windows system don't do it
-    self.refresh()
+    self.mFocusable = false
 
-proc StaticText*(parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wAlignLeft): wStaticText {.inline, discardable.} =
-  ## Constructor, creating and showing a text control.
-  wValidate(parent, label)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+    self.systemConnect(WM_SIZE) do (event: wEvent):
+      # when size change, StaticText should refresh itself, but windows system don't do it
+      self.refresh()

@@ -115,7 +115,7 @@ proc enableFindEvent(self: wFindReplaceDialog, flag = true) =
     let findMsgId = RegisterWindowMessage(FINDMSGSTRING)
     self.mMsgConn = self.mOwner.systemConnect(findMsgId) do (event: wEvent):
       let pFr = &self.mFr
-      if event.lParam != cast[LPARAM](pFr): return
+      if event.mLparam != cast[LPARAM](pFr): return
 
       if (pFr.Flags and FR_DIALOGTERM) != 0:
         # the system won't delete the dialog, let's do it by ourself, so that

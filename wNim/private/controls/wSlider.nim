@@ -55,7 +55,7 @@ proc isVertical*(self: wSlider): bool {.validate, inline.} =
   ## Returns true for slider that have the vertical style set.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and TBS_VERT) != 0
 
-method getDefaultSize*(self: wSlider): wSize {.property.} =
+method getDefaultSize*(self: wSlider): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   var x, y: int32
@@ -69,7 +69,7 @@ method getDefaultSize*(self: wSlider): wSize {.property.} =
   result.width = MulDiv(result.width, x, 4)
   result.height = MulDiv(result.height, y, 8)
 
-method getBestSize*(self: wSlider): wSize {.property, inline.} =
+method getBestSize*(self: wSlider): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -189,81 +189,75 @@ proc clearTicks*(self: wSlider) {.validate, property, inline.} =
   ## Clears the ticks.
   SendMessage(self.mHwnd, TBM_CLEARTICS, TRUE, 0)
 
-method release(self: wSlider) =
+method release(self: wSlider) {.uknlock.} =
   self.mParent.systemDisconnect(self.mHScrollConn)
   self.mParent.systemDisconnect(self.mVScrollConn)
 
-proc final*(self: wSlider) =
-  ## Default finalizer for wSlider.
-  discard
+wClass(wSlider of wControl):
 
-proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
-    value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wSlHorizontal) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
-    TBS_FIXEDLENGTH)
-  # TBS_FIXEDLENGTH is need so that TBM_SETTHUMBLENGTH works
+  proc final*(self: wSlider) =
+    ## Default finalizer for wSlider.
+    self.wControl.final()
 
-  self.setValue(value)
-  self.setRange(range)
+  proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
+      value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint,
+      size = wDefaultSize, style: wStyle = wSlHorizontal) {.validate.} =
+    ## Initializes a slider.
+    wValidate(parent)
+    self.wControl.init(className=TRACKBAR_CLASS, parent=parent, id=id, pos=pos,
+      size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
+      TBS_FIXEDLENGTH)
+    # TBS_FIXEDLENGTH is need so that TBM_SETTHUMBLENGTH works
 
-  proc scrollEventHandler(event: wEvent) =
-    if event.mLparam != self.mHwnd: return
-    let eventKind = case LOWORD(event.mWparam)
-      of SB_TOP: wEvent_ScrollTop
-      of SB_BOTTOM: wEvent_ScrollBottom
-      of SB_LINEUP: wEvent_ScrollLineUp
-      of SB_LINEDOWN: wEvent_ScrollLineDown
-      of SB_PAGEUP: wEvent_ScrollPageUp
-      of SB_PAGEDOWN: wEvent_ScrollPageDown
-      of SB_THUMBTRACK:
-        self.mDragging = true
-        wEvent_ScrollThumbTrack
-      of SB_THUMBPOSITION:
-        # this hack is because when mosue wheel is used, there won't
-        # be a SB_ENDSCROLL but only SB_THUMBPOSITION.
-        # However, we always want a wEvent_ScrollChanged if the value was changed.
-        # So, in non-dragging situation, we sent a wEvent_ScrollChanged
-        # instead of wEvent_ScrollThumbRelease.
-        if self.mDragging:
-          self.mDragging = false
-          wEvent_ScrollThumbRelease
-        else:
-          wEvent_ScrollChanged
-      of SB_ENDSCROLL: wEvent_ScrollChanged
-      else: 0
+    self.setValue(value)
+    self.setRange(range)
 
-    if eventKind != 0:
-      var
-        orientation = if self.isVertical(): wVertical else: wHorizontal
-        scrollData = wScrollData(kind: eventKind, orientation: orientation)
-        dataPtr = cast[LPARAM](&scrollData)
+    proc scrollEventHandler(event: wEvent) =
+      if event.mLparam != self.mHwnd: return
+      let eventKind = case LOWORD(event.mWparam)
+        of SB_TOP: wEvent_ScrollTop
+        of SB_BOTTOM: wEvent_ScrollBottom
+        of SB_LINEUP: wEvent_ScrollLineUp
+        of SB_LINEDOWN: wEvent_ScrollLineDown
+        of SB_PAGEUP: wEvent_ScrollPageUp
+        of SB_PAGEDOWN: wEvent_ScrollPageDown
+        of SB_THUMBTRACK:
+          self.mDragging = true
+          wEvent_ScrollThumbTrack
+        of SB_THUMBPOSITION:
+          # this hack is because when mosue wheel is used, there won't
+          # be a SB_ENDSCROLL but only SB_THUMBPOSITION.
+          # However, we always want a wEvent_ScrollChanged if the value was changed.
+          # So, in non-dragging situation, we sent a wEvent_ScrollChanged
+          # instead of wEvent_ScrollThumbRelease.
+          if self.mDragging:
+            self.mDragging = false
+            wEvent_ScrollThumbRelease
+          else:
+            wEvent_ScrollChanged
+        of SB_ENDSCROLL: wEvent_ScrollChanged
+        else: 0
 
-      # sent wEvent_Slider first, if this is processed, skip other event
-      let event = wScrollEvent Event(self, wEvent_Slider, event.mWparam, dataPtr)
-      event.mScrollPos = self.getValue()
+      if eventKind != 0:
+        var
+          orientation = if self.isVertical(): wVertical else: wHorizontal
+          scrollData = wScrollData(kind: eventKind, orientation: orientation)
+          dataPtr = cast[LPARAM](&scrollData)
 
-      if not self.processEvent(event):
-        self.processMessage(eventKind, event.mWparam, dataPtr)
+        # sent wEvent_Slider first, if this is processed, skip other event
+        let event = wScrollEvent Event(self, wEvent_Slider, event.mWparam, dataPtr)
+        event.mScrollPos = self.getValue()
 
-  self.mHScrollConn = parent.systemConnect(WM_HSCROLL, scrollEventHandler)
-  self.mVScrollConn = parent.systemConnect(WM_VSCROLL, scrollEventHandler)
+        if not self.processEvent(event):
+          self.processMessage(eventKind, event.mWparam, dataPtr)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if self.isVertical():
-      if event.keyCode in {wKey_Up, wKey_Down}:
-        event.veto
-    else:
-      if event.keyCode in {wKey_Right, wKey_Left}:
-        event.veto
+    self.mHScrollConn = parent.systemConnect(WM_HSCROLL, scrollEventHandler)
+    self.mVScrollConn = parent.systemConnect(WM_VSCROLL, scrollEventHandler)
 
-proc Slider*(parent: wWindow, id = wDefaultID, value = 0,
-    range: Slice[int] = 0..100, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSlHorizontal): wSlider {.inline, discardable.} =
-  ## Constructor, creating and showing a slider.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, range, pos, size, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if self.isVertical():
+        if event.getKeyCode() in {wKey_Up, wKey_Down}:
+          event.veto
+      else:
+        if event.getKeyCode() in {wKey_Right, wKey_Left}:
+          event.veto

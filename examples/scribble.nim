@@ -12,8 +12,8 @@ import
 when defined(aio):
   import wNim
 else:
-  import wNim/[wApp, wFrame, wImage, wIcon, wPen, wCursor, wBitmap, wBrush, wUtils,
-    wPaintDC, wClientDC, wMemoryDC]
+  import wNim/[wApp, wMacros, wFrame, wImage, wIcon, wPen, wCursor, wBitmap,
+    wBrush, wUtils, wPaintDC, wClientDC, wMemoryDC]
 
 type
   wScribble = ref object of wFrame
@@ -22,92 +22,90 @@ type
     mLastPos: wPoint
     mBmp: wBitmap
 
-proc final(self: wScribble) =
-  wFrame(self).final()
+wClass(wScribble of wFrame):
 
-proc init(self: wScribble, title: string, size: wSize) =
-  wFrame(self).init(title=title, size=size)
-  self.setIcon(Icon("", 0))
+  proc final(self: wScribble) =
+    wFrame(self).final()
 
-  self.mPen = Pen(color=wBlack, width=5)
-  self.mBmp = Bmp(wGetScreenSize())
-  self.mMemDc = MemoryDC()
-  self.mMemDc.selectObject(self.mBmp)
-  self.mMemDc.setBackground(wWhiteBrush)
-  self.mMemDc.setBrush(wWhiteBrush)
-  self.mMemDc.setPen(self.mPen)
-  self.mMemDc.clear()
-  self.mLastPos = wDefaultPoint
+  proc init(self: wScribble, title: string, size: wSize) =
+    wFrame(self).init(title=title, size=size)
+    self.setIcon(Icon("", 0))
 
-  const penResource = staticRead(r"images\pen.png")
-  let penImage = Image(penResource)
-  penImage.rescale(24, 24)
-  penImage.rotateFlip(wImageRotateNoneFlipY)
-  self.setCursor(Cursor(penImage, hotSpot=(0, 0)))
-
-  self.wEvent_Paint do ():
-    var dc = PaintDC(self)
-    let size = dc.size
-    dc.blit(source=self.mMemDc, width=size.width, height=size.height)
-    # In case that nim's destructors not works.
-    dc.delete
-
-  proc onLeftDown(event: wEvent) =
-    let pos = event.mousePos()
-    self.mMemDc.drawLine(if self.mLastPos == wDefaultPoint: pos else: self.mLastPos, pos)
-    self.refresh(eraseBackground=false)
-    self.mLastPos = pos
-
-  proc onRightDown(event: wEvent) =
-    let pos = event.mousePos()
-    self.mMemDc.setPen(wTransparentPen)
-    self.mMemDc.drawCircle(pos, 30)
+    self.mPen = Pen(color=wBlack, width=5)
+    self.mBmp = Bitmap(wGetScreenSize())
+    self.mMemDc = MemoryDC()
+    self.mMemDc.selectObject(self.mBmp)
+    self.mMemDc.setBackground(wWhiteBrush)
+    self.mMemDc.setBrush(wWhiteBrush)
     self.mMemDc.setPen(self.mPen)
+    self.mMemDc.clear()
+    self.mLastPos = wDefaultPoint
+
+    const penResource = staticRead(r"images\pen.png")
+    let penImage = Image(penResource)
+    penImage.rescale(24, 24)
+    penImage.rotateFlip(wImageRotateNoneFlipY)
+    self.setCursor(Cursor(penImage, hotSpot=(0, 0)))
+
+    self.wEvent_Paint do ():
+      var dc = PaintDC(self)
+      let size = dc.size
+      dc.blit(source=self.mMemDc, width=size.width, height=size.height)
+      # In case that nim's destructors not works.
+      dc.delete
+
+    proc onLeftDown(event: wEvent) =
+      let pos = event.mousePos()
+      self.mMemDc.drawLine(if self.mLastPos == wDefaultPoint: pos else: self.mLastPos, pos)
+      self.refresh(eraseBackground=false)
+      self.mLastPos = pos
+
+    proc onRightDown(event: wEvent) =
+      let pos = event.mousePos()
+      self.mMemDc.setPen(wTransparentPen)
+      self.mMemDc.drawCircle(pos, 30)
+      self.mMemDc.setPen(self.mPen)
+      self.refresh(eraseBackground=false)
+
+    self.connect(wEvent_LeftDown, onLeftDown)
+    self.connect(wEvent_RightDown, onRightDown)
+
+    self.wEvent_MouseLeave do (): self.mLastPos = wDefaultPoint
+    self.wEvent_LeftUp do (): self.mLastPos = wDefaultPoint
+    self.wEvent_MouseMove do (event: wEvent):
+      if event.leftDown(): onLeftDown(event)
+      elif event.rightDown(): onRightDown(event)
+
+  proc clear(self: wScribble) =
+    self.mMemDc.clear()
     self.refresh(eraseBackground=false)
 
-  self.connect(wEvent_LeftDown, onLeftDown)
-  self.connect(wEvent_RightDown, onRightDown)
+  proc setColor(self: wScribble, color: wColor) =
+    self.mPen.setColor(color)
+    self.mMemDc.setPen(self.mPen)
 
-  self.wEvent_MouseLeave do (): self.mLastPos = wDefaultPoint
-  self.wEvent_LeftUp do (): self.mLastPos = wDefaultPoint
-  self.wEvent_MouseMove do (event: wEvent):
-    if event.leftDown(): onLeftDown(event)
-    elif event.rightDown(): onRightDown(event)
+  proc setWidth(self: wScribble, width: int) =
+    self.mPen.setWidth(width)
+    self.mMemDc.setPen(self.mPen)
 
-proc Scribble(title: string, size: wSize): wScribble {.inline.} =
-  new(result, final)
-  result.init(title, size)
+  proc loadFile(self: wScribble, filename: string) =
+    var image = Image(filename)
+    self.mMemDc.clear()
+    self.mMemDc.drawImage(image)
+    self.setClientSize(image.size)
+    self.refresh(eraseBackground=false)
 
-proc clear(self: wScribble) =
-  self.mMemDc.clear()
-  self.refresh(eraseBackground=false)
+  proc saveFile(self: wScribble, filename: string) =
+    var size = self.getClientSize()
+    var bmp = Bitmap(size)
+    var dc = self.ClientDC()
+    var memdc = MemoryDC()
+    memdc.selectObject(bmp)
+    memdc.blit(0, 0, size.width, size.height, dc)
+    memdc.selectObject(wNilBitmap)
 
-proc setColor(self: wScribble, color: wColor) =
-  self.mPen.setColor(color)
-  self.mMemDc.setPen(self.mPen)
-
-proc setWidth(self: wScribble, width: int) =
-  self.mPen.setWidth(width)
-  self.mMemDc.setPen(self.mPen)
-
-proc loadFile(self: wScribble, filename: string) =
-  var image = Image(filename)
-  self.mMemDc.clear()
-  self.mMemDc.drawImage(image)
-  self.setClientSize(image.size)
-  self.refresh(eraseBackground=false)
-
-proc saveFile(self: wScribble, filename: string) =
-  var size = self.getClientSize()
-  var bmp = Bmp(size)
-  var dc = self.ClientDC()
-  var memdc = MemoryDC()
-  memdc.selectObject(bmp)
-  memdc.blit(0, 0, size.width, size.height, dc)
-  memdc.selectObject(wNilBitmap)
-
-  var image = Image(bmp)
-  image.saveFile(filename)
+    var image = Image(bmp)
+    image.saveFile(filename)
 
 when isMainModule:
   when defined(aio):

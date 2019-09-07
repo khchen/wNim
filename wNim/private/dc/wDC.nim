@@ -63,7 +63,7 @@
 import strutils, math
 import ../wBase, ../gdiobjects/[wPen, wBrush, wBitmap, wFont, wRegion]
 
-when not defined(Nimdoc):
+when not isMainModule: # hide from doc
   type
     wDC* = object of RootObj
       mHdc*: HDC
@@ -81,7 +81,20 @@ when not defined(Nimdoc):
       mhOldBitmap*: HANDLE
 else:
   type
-    wDC* = object of RootObj
+    wDC = object of RootObj
+      mHdc: HDC
+      mTextBackgroundColor: wColor
+      mTextForegroundColor: wColor
+      mFont: wFont
+      mPen: wPen
+      mBrush: wBrush
+      mBackground: wBrush
+      mRegion: wRegion
+      mScale: tuple[x, y: float]
+      mhOldFont: HANDLE
+      mhOldPen: HANDLE
+      mhOldBrush: HANDLE
+      mhOldBitmap: HANDLE
 
 const
   # for logicalFunction and blit, use logicalFunction value as default
@@ -235,10 +248,13 @@ proc drawRotatedText*(self: wDC, text: string, point: wPoint, angle: float = 0) 
   self.drawRotatedText(text, point.x, point.y, angle)
 
 proc drawLabel*(self: wDC, text: string, rect: wRect, align = wLeft or wTop) =
-  ## Draw the text into the given rectangle and aligns it as specified by alignment parameter.
+  ## Draw the text into the given rectangle and aligns it as specified by
+  ## alignment parameter. *align* can be combine of wRight, wCenter, wLeft, wUp,
+  ## wMiddle, wDown.
   var
     flag = DT_NOPREFIX or DT_SINGLELINE
     r = toRect(rect)
+    oldColor = SetBkColor(self.mHdc, self.mTextBackgroundColor)
 
   if (align and wCenter) == wCenter:
     flag = flag or DT_CENTER
@@ -254,7 +270,8 @@ proc drawLabel*(self: wDC, text: string, rect: wRect, align = wLeft or wTop) =
   elif (align and wTop) != 0:
     flag = flag or DT_TOP
 
-  DrawText(self.mHdc, text, text.len, r, flag)
+  DrawText(self.mHdc, text, text.len, &r, flag)
+  SetBkColor(self.mHdc, oldColor)
 
 proc drawCheckMark*(self: wDC, x, y, width, height: int) =
   ## Draws a check mark inside the given rectangle.
@@ -597,7 +614,7 @@ proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} =
   ## Gets the current scale factor.
   result = self.mScale
 
-method getSize*(self: wDC): wSize {.base, property.} =
+method getSize*(self: wDC): wSize {.base, property, uknlock.} =
   ## Gets the size of the device context.
   result.width = GetDeviceCaps(self.mHdc, HORZRES)
   result.height = GetDeviceCaps(self.mHdc, VERTRES)
@@ -809,12 +826,12 @@ proc drawBitmap*(self: wDC, bmp: wBitmap, pos: wPoint, transparent = true) =
 proc drawImage*(self: wDC, image: wImage, x, y: int = 0) =
   ## Draw a image on the device context at the specified point.
   wValidate(image)
-  self.drawBitmap(Bmp(image), x, y)
+  self.drawBitmap(Bitmap(image), x, y)
 
 proc drawImage*(self: wDC, image: wImage, pos: wPoint) =
   ## Draw a image on the device context at the specified point.
   wValidate(image)
-  self.drawBitmap(Bmp(image), pos.x, pos.y)
+  self.drawBitmap(Bitmap(image), pos.x, pos.y)
 
 proc drawIcon*(self: wDC, icon: wIcon, x, y: int = 0) =
   ## Draw an icon at the specified point.

@@ -38,7 +38,7 @@ const
   wNbIconLeft* = TCS_FORCEICONLEFT
 
 proc notebookPageOnPaint(event: wEvent) =
-  let page = event.window
+  let page = event.mWindow
   let self = wBase.wNoteBook page.mParent
 
   var clipRect, clientRect: RECT
@@ -46,13 +46,13 @@ proc notebookPageOnPaint(event: wEvent) =
   GetClientRect(page.mHwnd, clientRect)
 
   var dc = PaintDC(page)
-  DrawThemeBackground(self.mTheme, dc.handle, TABP_BODY, 0, clientRect, nil)
+  DrawThemeBackground(self.mTheme, dc.mHdc, TABP_BODY, 0, clientRect, nil)
   dc.delete()
 
   # So that following event handler for wEvent_Paint can work.
   InvalidateRect(page.mHwnd, clipRect, FALSE)
 
-method getClientSize*(self: wNoteBook): wSize {.property.} =
+method getClientSize*(self: wNoteBook): wSize {.property, uknlock.} =
   ## Returns the size of the notebook 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
@@ -60,7 +60,7 @@ method getClientSize*(self: wNoteBook): wSize {.property.} =
   result.width = r.right - r.left - (self.mMargin.left + self.mMargin.right)
   result.height = r.bottom - r.top - (self.mMargin.up + self.mMargin.down)
 
-method getClientAreaOrigin*(self: wNoteBook): wPoint {.property.} =
+method getClientAreaOrigin*(self: wNoteBook): wPoint {.property, uknlock.} =
   ## Get the origin of the client area of the window relative to the window top
   ## left corner.
   result = (self.mMargin.left, self.mMargin.up)
@@ -307,7 +307,7 @@ proc setPadding*(self: wNoteBook, size: wSize) {.validate, property, inline.} =
   ## Sets the amount of space around each page's icon and label, in pixels.
   SendMessage(self.mHwnd, TCM_SETPADDING, 0, MAKELPARAM(size.width, size.height))
 
-method release(self: wNoteBook) {.locks: "unknown".} =
+method release(self: wNoteBook) {.uknlock.} =
   # Don't need to delete self.mImageList
   # let GC to delete it is ok.
   self.mImageList = nil
@@ -319,7 +319,7 @@ method release(self: wNoteBook) {.locks: "unknown".} =
     self.mTheme = 0
 
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   case code
   of TCN_SELCHANGE:
@@ -339,68 +339,63 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
   else:
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wNoteBook) =
-  ## Default finalizer for wNoteBook.
-  discard
+wClass(wNoteBook of wControl):
 
-proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  # don't allow TCS_MULTILINE -> too many windows system bug to hack away
-  # don't allow TCS_BUTTONS style -> it have different behavior with normal style, it's hard to deal with
-  var style = style and (not (TCS_BUTTONS or TCS_MULTILINE))
+  proc final*(self: wNoteBook) =
+    ## Default finalizer for wNoteBook.
+    self.wControl.final()
 
-  self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, pos=pos,
-    size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or
-    TCS_FIXEDWIDTH or WS_TABSTOP)
+  proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    ## Initializes a notebook control.
+    wValidate(parent)
+    # don't allow TCS_MULTILINE -> too many windows system bug to hack away
+    # don't allow TCS_BUTTONS style -> it have different behavior with normal style, it's hard to deal with
+    var style = style and (not (TCS_BUTTONS or TCS_MULTILINE))
 
-  self.mPages = newSeq[wBase.wPanel]()
-  self.mSelection = -1
+    self.wControl.init(className=WC_TABCONTROL, parent=parent, id=id, pos=pos,
+      size=size, style=style or TCS_FOCUSONBUTTONDOWN or WS_CHILD or WS_VISIBLE or
+      TCS_FIXEDWIDTH or WS_TABSTOP)
 
-  self.mImageList = ImageList(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))
-  SendMessage(self.mHwnd, TCM_SETIMAGELIST, 0, self.mImageList.mHandle)
+    self.mPages = newSeq[wBase.wPanel]()
+    self.mSelection = -1
 
-  self.setBackgroundColor(GetSysColor(COLOR_BTNFACE))
-  if wUseTheme():
-    self.mTheme = OpenThemeData(self.mHwnd, "TAB")
+    self.mImageList = ImageList(GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))
+    SendMessage(self.mHwnd, TCM_SETIMAGELIST, 0, self.mImageList.mHandle)
 
-  self.systemConnect(WM_SIZE) do (event: wEvent):
-    self.adjustPageSize()
+    self.setBackgroundColor(GetSysColor(COLOR_BTNFACE))
+    if wUseTheme():
+      self.mTheme = OpenThemeData(self.mHwnd, "TAB")
 
-  self.hardConnect(WM_KEYDOWN) do (event: wEvent):
-    # up and down to pass focus to child
-    # We don't handle in wEvent_Navigation becasue
-    # we want to block the event at all.
-    var processed = false
-    defer: event.skip(if processed: false else: true)
+    self.systemConnect(WM_SIZE) do (event: wEvent):
+      self.adjustPageSize()
 
-    proc trySetFocus(win: wWindow): bool =
-      if win of wBase.wControl and win.isFocusable():
-        win.setFocus()
-        processed = true
-        return true
+    self.hardConnect(WM_KEYDOWN) do (event: wEvent):
+      # up and down to pass focus to child
+      # We don't handle in wEvent_Navigation becasue
+      # we want to block the event at all.
+      var processed = false
+      defer: event.skip(if processed: false else: true)
 
-    case event.keyCode
-    of VK_DOWN:
-      for win in self.mPages[self.mSelection].mChildren:
-        if win.trySetFocus(): break
+      proc trySetFocus(win: wWindow): bool =
+        if win of wBase.wControl and win.isFocusable():
+          win.setFocus()
+          processed = true
+          return true
 
-    of VK_UP:
-      for i in countdown(self.mPages[self.mSelection].mChildren.len - 1, 0):
-        let win = self.mPages[self.mSelection].mChildren[i]
-        if win.trySetFocus(): break
+      case event.getKeyCode()
+      of VK_DOWN:
+        for win in self.mPages[self.mSelection].mChildren:
+          if win.trySetFocus(): break
 
-    else: discard
+      of VK_UP:
+        for i in countdown(self.mPages[self.mSelection].mChildren.len - 1, 0):
+          let win = self.mPages[self.mSelection].mChildren[i]
+          if win.trySetFocus(): break
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    # left and right to navigate between tabs, let system do that
-    if event.keyCode in {wKey_Left, wKey_Right}:
-      event.veto
+      else: discard
 
-proc NoteBook*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wNoteBook {.inline, discardable.} =
-  ## Constructs a notebook control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      # left and right to navigate between tabs, let system do that
+      if event.getKeyCode() in {wKey_Left, wKey_Right}:
+        event.veto

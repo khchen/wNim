@@ -46,13 +46,13 @@ const
   wChkChecked* = BST_CHECKED
   wChkUndetermined* = BST_INDETERMINATE
 
-method getBestSize*(self: wCheckBox): wSize {.property.} =
+method getBestSize*(self: wCheckBox): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   # BCM_GETIDEALSIZE not works correct on BS_AUTO3STATE
-  result = getTextFontSizeWithCheckMark(self.label, self.mFont.mHandle, self.mHwnd)
+  result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
-method getDefaultSize*(self: wCheckBox): wSize {.property.} =
+method getDefaultSize*(self: wCheckBox): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -89,34 +89,28 @@ proc click*(self: wCheckBox) {.validate, inline.} =
   ## Simulates the user clicking a checkbox.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
-method release(self: wCheckBox) =
+method release(self: wCheckBox) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
-proc final*(self: wCheckBox) =
-  ## Default finalizer for wCheckBox.
-  discard
+wClass(wCheckBox of wControl):
 
-proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wChk2State) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  let checkType = if (style and wChk3State) != 0: BS_AUTO3STATE else: BS_AUTOCHECKBOX
+  proc final*(self: wCheckBox) =
+    ## Default finalizer for wCheckBox.
+    self.wControl.final()
 
-  # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
-  let style = (style and (not 0xF)) or checkType
+  proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
+      label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wChk2State) {.validate.} =
+    ## Initializes a checkbox.
+    wValidate(parent)
+    let checkType = if (style and wChk3State) != 0: BS_AUTO3STATE else: BS_AUTOCHECKBOX
 
-  self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+    # clear last 4 bits, they indicates the button type (checkbox, radiobutton, etc)
+    let style = (style and (not 0xF)) or checkType
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
-      self.processMessage(wEvent_CheckBox, event.mWparam, event.mLparam)
+    self.wControl.init(className=WC_BUTTON, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-proc CheckBox*(parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wChk2State): wCheckBox {.inline, discardable.} =
-  ## Constructor, creating and showing a checkbox
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == BN_CLICKED:
+        self.processMessage(wEvent_CheckBox, event.mWparam, event.mLparam)

@@ -185,7 +185,6 @@ proc setColumn*(self: wListCtrl, col: int, text = "", format = wListIgnore,
 proc setColumnText*(self: wListCtrl, col: int, text: string)
     {.validate, property, inline.} =
   ## Sets the column text.
-  wValidate(text)
   self.setColumn(col, text=text)
 
 proc setColumnFormat*(self: wListCtrl, col: int, format: int)
@@ -727,7 +726,7 @@ proc endEditLabel*(self: wListCtrl, cancel = false) {.validate.} =
     assert hwnd == self.mTextCtrl.mHwnd
     SendMessage(hwnd, WM_KEYDOWN, if cancel: VK_ESCAPE else: VK_RETURN, 0)
 
-method getBestSize*(self: wListCtrl): wSize {.property.} =
+method getBestSize*(self: wListCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   let ret = SendMessage(self.mHwnd, LVM_APPROXIMATEVIEWRECT, -1, MAKELPARAM(-1, -1))
   result.width = int LOWORD(ret)
@@ -772,7 +771,7 @@ proc ListEvent(self: wListCtrl, msg: UINT, lParam: LPARAM): wListEvent =
   result = event
 
 method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   let msg = case code
   of LVN_BEGINDRAG: wEvent_ListBeginDrag
@@ -884,7 +883,7 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc wListCtrl_OnPaint(event: wEvent) =
-  let self = wBase.wListCtrl(event.window)
+  let self = wBase.wListCtrl(event.mWindow)
   let hwnd = self.mHwnd
 
   if self.mAlternateRowColor == -1 or self.getView() != wLcReport:
@@ -925,40 +924,35 @@ proc wListCtrl_OnPaint(event: wEvent) =
     SendMessage(hwnd, LVM_SETTEXTBKCOLOR, 0, self.mBackgroundColor)
     SendMessage(hwnd, LVM_SETBKCOLOR, 0, self.mBackgroundColor)
 
-proc final*(self: wListCtrl) =
-  ## Default finalizer for wListCtrl.
-  discard
-
-method release(self: wListCtrl) {.locks: "unknown".} =
+method release(self: wListCtrl) {.uknlock.} =
   self.mImageListNormal = nil
   self.mImageListSmall = nil
   self.mImageListState = nil
   self.mTextCtrl = nil
 
-proc init*(self: wListCtrl, parent: wWindow, id: wCommandID = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wLcIcon) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=WC_LISTVIEW, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
-    LVS_SHAREIMAGELISTS or LVS_SHOWSELALWAYS)
+wClass(wListCtrl of wControl):
 
-  SendMessage(self.mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or
-    LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)
+  proc final*(self: wListCtrl) =
+    ## Default finalizer for wListCtrl.
+    self.wControl.final()
 
-  # set default background color
-  self.setBackgroundColor(wColor SendMessage(self.mHwnd, LVM_GETBKCOLOR, 0, 0))
-  self.disableAlternateRowColors()
+  proc init*(self: wListCtrl, parent: wWindow, id: wCommandID = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wLcIcon) {.validate.} =
+    ## Initializes a list control.
+    wValidate(parent)
+    self.wControl.init(className=WC_LISTVIEW, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP or
+      LVS_SHAREIMAGELISTS or LVS_SHOWSELALWAYS)
 
-  self.hardConnect(WM_PAINT, wListCtrl_OnPaint)
+    SendMessage(self.mHwnd, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_LABELTIP or
+      LVS_EX_FULLROWSELECT or LVS_EX_SUBITEMIMAGES or LVS_EX_HEADERDRAGDROP)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    # set default background color
+    self.setBackgroundColor(wColor SendMessage(self.mHwnd, LVM_GETBKCOLOR, 0, 0))
+    self.disableAlternateRowColors()
 
-proc ListCtrl*(parent: wWindow, id: wCommandID = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wLcIcon): wListCtrl {.inline, discardable.} =
-  ## Constructor, creating and showing a list control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent=parent, id=id, pos=pos, size=size, style=style)
+    self.hardConnect(WM_PAINT, wListCtrl_OnPaint)
+
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto

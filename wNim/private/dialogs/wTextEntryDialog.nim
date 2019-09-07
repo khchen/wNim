@@ -150,13 +150,14 @@ proc create(self: wTextEntryDialog): wFrame =
   statictext.fit()
 
   var
-    width = (statictext.size.width + 15 * 2)
-    height = statictext.size.height + textctrl.size.height +
-      buttonOk.size.height + 2 + 15 * 5
+    size = statictext.getSize()
+    width = (size.width + 15 * 2)
+    height = size.height + textctrl.getSize().height +
+      buttonOk.getSize().height + 2 + 15 * 5
 
   if width < 350: width = 350
-  frame.clientSize = (width, height)
-  frame.minClientSize = (width, height)
+  frame.setClientSize(width, height)
+  frame.setMinClientSize(width, height)
 
   proc layout() =
     panel.autolayout """
@@ -174,7 +175,7 @@ proc create(self: wTextEntryDialog): wFrame =
     layout()
 
   textctrl.wEvent_Text do ():
-    self.mValue = textctrl.value
+    self.mValue = textctrl.getValue()
 
   buttonOk.wEvent_Button do ():
     self.mReturnId = wIdOk
@@ -189,7 +190,7 @@ proc create(self: wTextEntryDialog): wFrame =
     frame.move(self.mPos)
 
   if self.mValue.len != 0:
-    textctrl.value = self.mValue
+    textctrl.setValue(self.mValue)
     textctrl.selectAll()
 
   SetWindowLongPtr(frame.mHwnd, GWLP_USERDATA, cast[LPARAM](self))

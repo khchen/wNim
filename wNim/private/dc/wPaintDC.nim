@@ -22,16 +22,18 @@
 import ../wBase, ../wWindow, wDC
 export wDC
 
-when not defined(Nimdoc):
+when not isMainModule: # hide from doc
   type
     wPaintDC* = object of wDC
       mPs*: PAINTSTRUCT
       mCanvas*: wWindow
 else:
   type
-    wPaintDC* = object of wDC
+    wPaintDC = object of wDC
+      mPs: PAINTSTRUCT
+      mCanvas: wWindow
 
-method getSize*(self: wPaintDC): wSize {.property.} =
+method getSize*(self: wPaintDC): wSize {.property, uknlock.} =
   ## Gets the size of the device context.
   result = self.mCanvas.getClientSize()
 

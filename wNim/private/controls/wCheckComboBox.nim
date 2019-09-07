@@ -361,7 +361,7 @@ iterator pairs*(self: wCheckComboBoxSelection): (int, string) =
     if self.ctrl.isSelected(i):
       yield (i, self.ctrl[i])
 
-method getDefaultSize*(self: wCheckComboBox): wSize =
+method getDefaultSize*(self: wCheckComboBox): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   var line = ""
   for text in self.items():
@@ -375,7 +375,7 @@ method getDefaultSize*(self: wCheckComboBox): wSize =
   result.height = self.getWindowRect(sizeOnly=true).height
   result.width = max(size.width + 8, result.height) + (cbi.rcButton.right - cbi.rcButton.left) + 2
 
-method getBestSize*(self: wCheckComboBox): wSize =
+method getBestSize*(self: wCheckComboBox): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = cast[wComboBox](self).countSize(1, 1.0)
 
@@ -506,7 +506,7 @@ proc onPaint(event: wEvent) =
 proc onDrawItem(event: wEvent) =
   let self = wBase.wCheckComboBox event.mWindow
 
-  var drawItem = cast[ptr DRAWITEMSTRUCT](event.lParam)
+  var drawItem = cast[ptr DRAWITEMSTRUCT](event.mLparam)
   if drawItem.CtlType != ODT_COMBOBOX or drawItem.hwndItem != self.mHwnd:
     return
 
@@ -543,35 +543,35 @@ proc onDrawItem(event: wEvent) =
 proc onKeyDown(event: wEvent) =
   let self = wBase.wCheckComboBox event.mWindow
 
-  case event.keyCode
+  case event.getkeyCode()
   of VK_RETURN:
     if self.isPopup:
       self.dismiss()
     else:
-      if self.currentSelection < 0:
-        self.currentSelection = 0
+      if self.getCurrentSelection() < 0:
+        self.setCurrentSelection(0)
       self.popup()
     return
 
   of VK_SPACE:
     if self.isPopup:
-      let pos = self.currentSelection
+      let pos = self.getCurrentSelection()
       if pos >= 0:
         let oldValue = self.mValue
         self.toggle(pos)
         if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
     else:
-      if self.currentSelection < 0:
-        self.currentSelection = 0
+      if self.getCurrentSelection() < 0:
+        self.setCurrentSelection(0)
       self.popup()
     return
 
   of VK_INSERT, VK_DELETE:
     if self.isPopup:
-      let pos = self.currentSelection
+      let pos = self.getCurrentSelection()
       if pos >= 0:
         let oldValue = self.mValue
-        if event.keyCode == VK_INSERT:
+        if event.getKeyCode() == VK_INSERT:
           self.select(pos)
         else:
           self.deselect(pos)
@@ -580,26 +580,26 @@ proc onKeyDown(event: wEvent) =
 
   of VK_UP, VK_PRIOR, VK_LEFT:
     if not self.isPopup:
-      self.currentSelection = self.len - 1
+      self.setCurrentSelection(self.len - 1)
       self.popup()
       return
 
   of VK_DOWN, VK_NEXT, VK_RIGHT:
     if not self.isPopup:
-      self.currentSelection = 0
+      self.setCurrentSelection(0)
       self.popup()
       return
 
   else: discard
   event.skip
 
-method setFont*(self: wCheckComboBox, font: wFont) {.validate, property.} =
+method setFont*(self: wCheckComboBox, font: wFont) {.validate, property, uknlock.} =
   ## Sets the font for this text control.
   wValidate(font)
   procCall wWindow(self).setFont(font)
   var dc = self.ClientDC()
   defer: dc.delete()
-  let metrics = dc.fontMetrics
+  let metrics = dc.getFontMetrics()
   let height = metrics.height + metrics.externalLeading + 1
 
   # MSDN: zero to set the height of list items
@@ -608,109 +608,103 @@ method setFont*(self: wCheckComboBox, font: wFont) {.validate, property.} =
   # -1 to set the combobox height (undocumented)
   SendMessage(self.mHwnd, CB_SETITEMHEIGHT, -1, height)
 
-proc final*(self: wCheckComboBox) =
-  ## Default finalizer for wCheckComboBox.
-  discard
-
-method trigger(self: wCheckComboBox) {.locks: "unknown".} =
+method trigger(self: wCheckComboBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
-method release(self: wCheckComboBox) {.locks: "unknown".} =
+method release(self: wCheckComboBox) {.uknlock.} =
   self.mParent.systemDisconnect(self.mDrawItemConn)
   self.mParent.systemDisconnect(self.mCommandConn)
   CloseThemeData(self.mTheme)
   CloseThemeData(self.mCheckTheme)
 
-proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mInitData = cast[ptr UncheckedArray[string]](choices)
-  self.mInitCount = choices.len
-  self.mSeparator = ", "
-  self.mEmpty = ""
-  self.changeStyle(style)
+wClass(wCheckComboBox of wControl):
 
-  let style = (style and (not CBS_OWNERDRAWVARIABLE)) or
-    CBS_DROPDOWNLIST or CBS_HASSTRINGS or CBS_OWNERDRAWFIXED
+  proc final*(self: wCheckComboBox) =
+    ## Default finalizer for wCheckComboBox.
+    self.wControl.final()
 
-  # Since setFont() method (called in wWindow.init()) will always set
-  # the height we want, so we don't need to handle WM_MEASUREITEM.
+  proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a checkcombobox.
+    wValidate(parent)
+    self.mInitData = cast[ptr UncheckedArray[string]](choices)
+    self.mInitCount = choices.len
+    self.mSeparator = ", "
+    self.mEmpty = ""
+    self.changeStyle(style)
 
-  self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id,
-    pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
+    let style = (style and (not CBS_OWNERDRAWVARIABLE)) or
+      CBS_DROPDOWNLIST or CBS_HASSTRINGS or CBS_OWNERDRAWFIXED
 
-  self.mTheme = OpenThemeData(self.mHwnd, WC_COMBOBOX)
-  self.mCheckTheme = OpenThemeData(self.mHwnd, WC_BUTTON)
+    # Since setFont() method (called in wWindow.init()) will always set
+    # the height we want, so we don't need to handle WM_MEASUREITEM.
 
-  # Only support with visual style for now.
-  if not wUseTheme() or self.mTheme == 0 or self.mCheckTheme == 0:
-    self.delete()
-    raise newException(wError, "wCheckComboBox creation failed")
+    self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id,
+      pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
 
-  self.hardConnect(WM_PAINT, onPaint)
-  self.systemConnect(WM_DRAWITEM, onDrawItem)
+    self.mTheme = OpenThemeData(self.mHwnd, WC_COMBOBOX)
+    self.mCheckTheme = OpenThemeData(self.mHwnd, WC_BUTTON)
 
-  self.mDrawItemConn = parent.systemConnect(WM_DRAWITEM) do (event: wEvent):
-    self.processMessage(WM_DRAWITEM, event.wParam, event.lParam)
+    # Only support with visual style for now.
+    if not wUseTheme() or self.mTheme == 0 or self.mCheckTheme == 0:
+      self.delete()
+      raise newException(wError, "wCheckComboBox creation failed")
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd:
-      let cmdEvent = case HIWORD(event.mWparam)
-        of CBN_CLOSEUP:
-          self.mIsPopup = false
-          self.refresh(false)
-          wEvent_CheckComboBoxCloseUp
-        of CBN_DROPDOWN:
-          self.mIsPopup = true
-          wEvent_CheckComboBoxDropDown
-        of CBN_SETFOCUS: wEvent_CommandSetFocus
-        of CBN_KILLFOCUS: wEvent_CommandKillFocus
-        else: 0
+    self.hardConnect(WM_PAINT, onPaint)
+    self.systemConnect(WM_DRAWITEM, onDrawItem)
 
-      if cmdEvent != 0:
-        self.processMessage(cmdEvent, event.mWparam, event.mLparam)
+    self.mDrawItemConn = parent.systemConnect(WM_DRAWITEM) do (event: wEvent):
+      self.processMessage(WM_DRAWITEM, event.mWparam, event.mLparam)
 
-  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
-  GetComboBoxInfo(self.mHwnd, cbi)
-  self.mList = ListBox(cbi.hwndList)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd:
+        let cmdEvent = case HIWORD(event.mWparam)
+          of CBN_CLOSEUP:
+            self.mIsPopup = false
+            self.refresh(false)
+            wEvent_CheckComboBoxCloseUp
+          of CBN_DROPDOWN:
+            self.mIsPopup = true
+            wEvent_CheckComboBoxDropDown
+          of CBN_SETFOCUS: wEvent_CommandSetFocus
+          of CBN_KILLFOCUS: wEvent_CommandKillFocus
+          else: 0
 
-  proc onListLeftDown(event: wEvent) =
-    let pos = self.mList.hitTest(event.mousePos)
-    if pos >= 0:
-      let oldValue = self.mValue
-      self.toggle(pos)
-      if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
-    else:
-      event.skip
+        if cmdEvent != 0:
+          self.processMessage(cmdEvent, event.mWparam, event.mLparam)
 
-  proc onListRightDown(event: wEvent) =
-    let pos = self.mList.hitTest(event.mousePos)
-    if pos >= 0:
-      let oldValue = self.mValue
-      self.selectAll()
-      if oldValue == self.mValue:
-        self.deselectAll()
-      if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
-    else:
-      self.dismiss()
+    var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
+    GetComboBoxInfo(self.mHwnd, cbi)
+    self.mList = ListBox(cbi.hwndList)
 
-  self.mList.hardConnect(wEvent_LeftDown, onListLeftDown)
-  self.mList.hardConnect(wEvent_LeftDoubleClick, onListLeftDown)
-  self.mList.hardConnect(wEvent_RightDown, onListRightDown)
-  self.mList.hardConnect(wEvent_RightDoubleClick, onListRightDown)
-  self.hardConnect(WM_KEYDOWN, onKeyDown)
+    proc onListLeftDown(event: wEvent) =
+      let pos = self.mList.hitTest(event.getMousePos())
+      if pos >= 0:
+        let oldValue = self.mValue
+        self.toggle(pos)
+        if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
+      else:
+        event.skip
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    proc onListRightDown(event: wEvent) =
+      let pos = self.mList.hitTest(event.getMousePos())
+      if pos >= 0:
+        let oldValue = self.mValue
+        self.selectAll()
+        if oldValue == self.mValue:
+          self.deselectAll()
+        if oldValue != self.mValue: self.processMessage(wEvent_CheckComboBox, 0, 0)
+      else:
+        self.dismiss()
 
-proc CheckComboBox*(parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = 0): wCheckComboBox {.inline, discardable.} =
-  ## Constructor, creating and showing a checkcombobox.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, choices, style)
+    self.mList.hardConnect(wEvent_LeftDown, onListLeftDown)
+    self.mList.hardConnect(wEvent_LeftDoubleClick, onListLeftDown)
+    self.mList.hardConnect(wEvent_RightDown, onListRightDown)
+    self.mList.hardConnect(wEvent_RightDoubleClick, onListRightDown)
+    self.hardConnect(WM_KEYDOWN, onKeyDown)
+
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto

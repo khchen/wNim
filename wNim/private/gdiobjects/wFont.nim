@@ -124,17 +124,7 @@ const
   wFontEncodingCp437* = OEM_CHARSET
   wFontEncodingCp850* = OEM_CHARSET
 
-proc final*(self: wFont) =
-  ## Default finalizer for wFont.
-  self.delete()
-
-proc initFromNative(self: wFont, lf: var LOGFONT) =
-  self.wGdiObject.init()
-
-  self.mHandle = CreateFontIndirect(lf)
-  if self.mHandle == 0:
-    raise newException(wFontError, "wFont creation failed")
-
+proc setup(self: wFont, lf: LOGFONT) =
   self.mPointSize = -(lf.lfHeight * 72 / wAppGetDpi())
   self.mWeight = lf.lfWeight
   self.mFaceName = ^$lf.lfFaceName
@@ -145,88 +135,93 @@ proc initFromNative(self: wFont, lf: var LOGFONT) =
   self.mUnderline = (lf.lfUnderline != 0)
   self.mStrikeout = (lf.lfStrikeout != 0)
 
-proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
-    weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
-    faceName = "", encoding = wFontEncodingDefault) {.validate.} =
-  ## Initializer.
-  var
-    nonclientMetrics = NONCLIENTMETRICS(cbSize: sizeof(NONCLIENTMETRICS).UINT)
-    lf: LOGFONT
+wClass(wFont of wGdiObject):
 
-  if SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, addr nonclientMetrics, 0):
-    lf = nonclientMetrics.lfMessageFont
-  else:
-    GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), addr lf)
+  proc final*(self: wFont) =
+    ## Default finalizer for wFont.
+    self.delete()
 
-  if pointSize.classify != fcNaN:
-    lf.lfHeight = -round(pointSize * wAppGetDpi().float / 72'f).LONG
+  proc init*(self: wFont, lf: var LOGFONT) =
+    ## Initializes a font from LOGFONT struct. Used internally.
+    self.wGdiObject.init()
 
-  if family != wFontFamilyDefault:
-    lf.lfPitchAndFamily = family.ord.byte or DEFAULT_PITCH
+    self.mHandle = CreateFontIndirect(lf)
+    if self.mHandle == 0:
+      raise newException(wFontError, "wFont creation failed")
 
-  lf.lfItalic = italic.byte
-  lf.lfUnderline = underline.byte
-  lf.lfStrikeOut = strikeout.byte
-  lf.lfWeight = weight
+    self.setup(lf)
 
-  if encoding != wFontEncodingDefault:
-    lf.lfCharSet = encoding.byte
+  proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
+      weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
+      faceName = "", encoding = wFontEncodingDefault) {.validate.} =
+    ## Initializes a font object with the specified attributes.
+    ## ==========  =================================================================================
+    ## Parameters  Description
+    ## ==========  =================================================================================
+    ## pointSize   Size in points.
+    ## family      The font family: a generic portable way of referring to fonts without specifying a facename.
+    ## weight      Font weight, sometimes also referred to as font boldness.
+    ## italic      The value can be true or false.
+    ## underline   The value can be true or false.
+    ## strikeout   The value can be true or false.
+    ## faceName    An optional string specifying the face name to be used.
+    ## encoding    The font encoding.
+    var
+      nonclientMetrics = NONCLIENTMETRICS(cbSize: sizeof(NONCLIENTMETRICS).UINT)
+      lf: LOGFONT
 
-  if faceName.len != 0:
-    lf.lfFaceName <<< T(faceName)
+    if SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, addr nonclientMetrics, 0):
+      lf = nonclientMetrics.lfMessageFont
+    else:
+      GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), addr lf)
 
-  self.initFromNative(lf)
+    if pointSize.classify != fcNaN:
+      lf.lfHeight = -round(pointSize * wAppGetDpi().float / 72'f).LONG
 
-proc Font*(pointSize: float = NaN, family = wFontFamilyDefault,
-    weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
-    faceName = "", encoding = wFontEncodingDefault): wFont {.inline.} =
-  ## Creates a font object with the specified attributes.
-  ## ==========  =================================================================================
-  ## Parameters  Description
-  ## ==========  =================================================================================
-  ## pointSize   Size in points.
-  ## family      The font family: a generic portable way of referring to fonts without specifying a facename.
-  ## weight      Font weight, sometimes also referred to as font boldness.
-  ## italic      The value can be true or false.
-  ## underline   The value can be true or false.
-  ## strikeout   The value can be true or false.
-  ## faceName    An optional string specifying the face name to be used.
-  ## encoding    The font encoding.
-  new(result, final)
-  result.init(pointSize, family, weight, italic, underline, strikeout, faceName,
-    encoding)
+    if family != wFontFamilyDefault:
+      lf.lfPitchAndFamily = family.ord.byte or DEFAULT_PITCH
 
-proc Font(lf: var LOGFONT): wFont {.inline, shield.} =
-  # Use internally.
-  new(result, final)
-  result.initFromNative(lf)
+    lf.lfItalic = italic.byte
+    lf.lfUnderline = underline.byte
+    lf.lfStrikeOut = strikeout.byte
+    lf.lfWeight = weight
 
-proc init*(self: wFont, hFont: HANDLE) {.validate.} =
-  ## Initializer.
-  if GetObjectType(hFont) == 0:
-    # maybe it means pointSize?
-    self.init(float hFont)
+    if encoding != wFontEncodingDefault:
+      lf.lfCharSet = encoding.byte
 
-  else:
+    if faceName.len != 0:
+      lf.lfFaceName <<< T(faceName)
+
+    self.init(lf)
+
+  proc init*(self: wFont, hFont: HANDLE, copy = true, shared = false) {.validate.} =
+    ## Initializes a font from system font handle.
+    ## If *copy* is false, the function only wrap the handle to wFont object.
+    ## If *shared* is false, the handle will be destroyed together with wFont
+    ## object by the GC. Otherwise, the caller is responsible for destroying it.
+    ## If hFont is not a system font handle, this function regard it a the
+    ## point size in int type.
+    if GetObjectType(hFont) == 0:
+      # maybe it means pointSize?
+      self.init(float hFont)
+      return
+
     var lf: LOGFONT
-    GetObject(hFont, sizeof(LOGFONT), cast[pointer](&lf))
-    self.initFromNative(lf)
+    if GetObject(hFont, sizeof(LOGFONT), &lf) == 0:
+      raise newException(wFontError, "wFont creation failed")
 
-proc Font*(hFont: HANDLE): wFont {.inline.} =
-  ## Construct wFont object from a system font handle.
-  new(result, final)
-  result.init(hFont)
+    if copy:
+      self.init(lf)
+    else:
+      self.wGdiObject.init()
+      self.mHandle = hFont
+      self.mDeletable = not shared
+      self.setup(lf)
 
-proc init*(self: wFont, font: wFont) {.validate.} =
-  ## Initializer.
-  wValidate(font)
-  self.init(font.mHandle)
-
-proc Font*(font: wFont): wFont {.inline.} =
-  ## Copy constructor
-  wValidate(font)
-  new(result, final)
-  result.init(font)
+  proc init*(self: wFont, font: wFont) {.validate.} =
+    ## Initializes a font from wFont object, aka. copy.
+    wValidate(font)
+    self.init(font.mHandle, copy=true)
 
 proc getPointSize*(self: wFont): float {.validate, property, inline.} =
   ## Gets the point size.

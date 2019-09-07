@@ -5,11 +5,11 @@
 #
 #====================================================================
 
-## Basic types definition for wNim. This module will automatically export by wApp.
-## So the user don't need to import this module in most situation. However,
-## sometimes the nim compiler cannot distinguish from wNim types and module names
-## (generic instantiation, etc). In that case, you can import wTypes and specify
-## the type name. For example: wTypes.wIcon.
+## Basic types definition for wNim. Symbols in this module will automatically
+## export by wApp, so the user don't need to import this module in most situation.
+## However, sometimes the nim compiler cannot distinguish wNim types from module
+## names (generic instantiation, etc). In that case, you can import wTypes and
+## specify the type name. For example: wTypes.wIcon.
 
 {.experimental, deadCodeElim: on.}
 
@@ -109,6 +109,7 @@ converter converterIntEnumTowCommandID*(x: int|enum): wCommandID = wCommandID x
 type
   wId* = enum
     ## Predefined names to use as menus or controls ID.
+    wIdAny = -1,
     wIdZero = 0,
     wIdLowest = 4999, wIdOpen, wIdClose, wIdNew, wIdSave, wIdSaveAS, wIdRevert,
       wIdExit, wIdUndo, wIdRedo, wIdHelp, wIdPrint, wIdPrintSetup, wIdPreview,
@@ -131,7 +132,7 @@ type
 
     wIdHighest = 5999, wIdUser
 
-when not defined(Nimdoc):
+when not isMainModule:
   # Mutually recursive types are only possible within a single type section.
   # So we collect all type definition in this module.
   type
@@ -155,6 +156,7 @@ when not defined(Nimdoc):
       mMenuBaseTable*: Table[HMENU, pointer]
       mGDIStockSeq*: seq[wGdiObject]
       mPropagationSet*: HashSet[UINT]
+      mMenuIdSet*: set[uint16]
       mMessageCountTable*: CountTable[UINT]
       mExitCode*: uint
       mAccelExists*: bool
@@ -564,6 +566,7 @@ when not defined(Nimdoc):
 
     wGdiObject* = ref object of RootObj
       mHandle*: HANDLE
+      mDeletable*: bool
 
     wFont* = ref object of wGdiObject
       mPointSize*: float
@@ -592,13 +595,11 @@ when not defined(Nimdoc):
     wIcon* = ref object of wGdiObject
       mWidth*: int
       mHeight*: int
-      mDeletable*: bool
 
     wCursor* = ref object of wGdiObject
       mWidth*: int
       mHeight*: int
       mHotspot*: wPoint
-      mDeletable*: bool
       mIconResource*: bool
 
     wRegion* = ref object of wGdiObject

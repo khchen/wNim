@@ -13,6 +13,7 @@
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
 
+from winimx import nil # For BITMAP
 import wBase, gdiobjects/[wBitmap, wIcon]
 
 proc getHandle*(self: wImageList): HIMAGELIST {.validate, property, inline.} =
@@ -41,7 +42,7 @@ proc add*(self: wImageList, bitmap: wBitmap, mask: wBitmap = nil): int {.validat
 proc add*(self: wImageList, image: wImage): int {.validate, discardable.} =
   ## Adds a new image using a image.
   wValidate(image)
-  result = self.add(Bmp(image))
+  result = self.add(Bitmap(image))
 
 proc replace*(self: wImageList, index: int, icon: wIcon): bool {.validate, discardable.} =
   ## Replaces the existing image with the new image.
@@ -57,7 +58,7 @@ proc replace*(self: wImageList, index: int, bitmap: wBitmap, mask: wBitmap = nil
 proc replace*(self: wImageList, index: int, image: wImage): bool {.validate, discardable.} =
   ## Replaces the existing image with the new image.
   wValidate(image)
-  result = self.replace(index, Bmp(image))
+  result = self.replace(index, Bitmap(image))
 
 proc remove*(self: wImageList, index: int): bool {.validate, discardable.} =
   ## Removes the image at the given position.
@@ -83,15 +84,15 @@ proc getBitmap*(self: wImageList, index: int): wBitmap {.validate, property.} =
   var
     width, height: int32
     info: IMAGEINFO
-    bm: BITMAP
+    bm: winimx.BITMAP
 
   # need to create new bitmap, don't just warp info.hbmImage
   if index <= self.getImageCount() and
       ImageList_GetIconSize(self.mHandle, &width, &height) != 0 and
       ImageList_GetImageInfo(self.mHandle, 0, &info) != 0 and
-      GetObject(info.hbmImage, sizeof(BITMAP), &bm) != 0:
+      GetObject(info.hbmImage, sizeof(winimx.BITMAP), &bm) != 0:
 
-    result = Bmp(width, height, int bm.bmBitsPixel)
+    result = Bitmap(width, height, int bm.bmBitsPixel)
     let
       hdc = CreateCompatibleDC(0)
       prev = SelectObject(hdc, result.mHandle)
@@ -117,31 +118,21 @@ proc delete*(self: wImageList) {.validate.} =
     ImageList_Destroy(self.mHandle)
     self.mHandle = 0
 
-proc final*(self: wImageList) =
-  ## Default finalizer for wImageList.
-  self.delete()
+wClass(wImageList):
 
-proc init*(self: wImageList, width: int, height: int, mask = false,
-    initialCount = 1) {.validate, inline.} =
-  ## Initializer.
-  let flag = if mask: ILC_COLOR32 or ILC_MASK else: ILC_COLOR32
-  self.mHandle = ImageList_Create(width, height, flag, initialCount, 1)
+  proc final*(self: wImageList) =
+    ## Default finalizer for wImageList.
+    self.delete()
 
-proc ImageList*(width: int, height: int, mask = false,
-    initialCount = 1): wImageList {.inline.} =
-  ## Constructor specifying the image size, whether image masks should be created,
-  ## and the initial size of the list.
-  new(result, final)
-  result.init(width, height, mask, initialCount)
+  proc init*(self: wImageList, width: int, height: int, mask = false,
+      initialCount = 1) {.validate, inline.} =
+    ## Initializes a image list by specifying the image size, whether image masks
+    ## should be created, and the initial size of the list.
+    let flag = if mask: ILC_COLOR32 or ILC_MASK else: ILC_COLOR32
+    self.mHandle = ImageList_Create(width, height, flag, initialCount, 1)
 
-proc init*(self: wImageList, size: wSize, mask = false,
-    initialCount = 1) {.validate, inline.} =
-  ## Initializer.
-  self.init(size.width, size.height, mask, initialCount)
-
-proc ImageList*(size: wSize, mask = false,
-    initialCount = 1): wImageList {.inline.} =
-  ## Constructor specifying the image size, whether image masks should be created,
-  ## and the initial size of the list.
-  new(result, final)
-  result.init(size, mask, initialCount)
+  proc init*(self: wImageList, size: wSize, mask = false,
+      initialCount = 1) {.validate, inline.} =
+    ## Initializes a image list by specifying the image size, whether image masks
+    ## should be created, and the initial size of the list.
+    self.init(size.width, size.height, mask, initialCount)

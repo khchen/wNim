@@ -119,56 +119,36 @@ iterator items*(self: wAcceleratorTable): wAcceleratorEntry {.validate, inline.}
   for accel in self.mAccels:
     yield wAcceleratorEntry accel
 
-proc final*(self: wAcceleratorTable) =
-  ## Default finalizer for wAcceleratorTable.
-  # self.mAccels.setLen(0) # not sure is this safe for GC, but it should not need.
-  if self.mHandle != 0:
-    DestroyAcceleratorTable(self.mHandle)
-  self.mHandle = 0
+wClass(wAcceleratorTable):
 
-proc init*(self: wAcceleratorTable) {.validate, inline.} =
-  ## Initializer.
-  self.mAccels = @[]
+  proc final*(self: wAcceleratorTable) =
+    ## Default finalizer for wAcceleratorTable.
+    # self.mAccels.setLen(0) # not sure is this safe for GC, but it should not need.
+    if self.mHandle != 0:
+      DestroyAcceleratorTable(self.mHandle)
+    self.mHandle = 0
 
-proc AcceleratorTable*(): wAcceleratorTable {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init()
+  proc init*(self: wAcceleratorTable) {.validate, inline.} =
+    ## Initializes an empty accelerator table.
+    self.mAccels = @[]
 
-proc init*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
-  ## Initializer.
-  self.mAccels = newSeqOfCap[ACCEL](entries.len)
-  for entry in entries:
-    self.mAccels.add(ACCEL entry)
-  self.mModified = true
+  proc init*(self: wAcceleratorTable, entries: openarray[wAcceleratorEntry]) =
+    ## Initializes a accelerator table from an openarray of wAcceleratorEntry.
+    self.mAccels = newSeqOfCap[ACCEL](entries.len)
+    for entry in entries:
+      self.mAccels.add(ACCEL entry)
+    self.mModified = true
 
-proc AcceleratorTable*(entries: openarray[wAcceleratorEntry]):
-    wAcceleratorTable {.inline.} =
-  ## Construct a accelerator table from an openarray of wAcceleratorEntry.
-  new(result, final)
-  result.init(entries)
+  proc init*(self: wAcceleratorTable, window: wWindow) {.validate, inline.} =
+    ## Initializes an accelerator table, and attach it to *window*.
+    self.init()
+    window.mAcceleratorTable = self
+    wAppAccelOn()
 
-proc init*(self: wAcceleratorTable, window: wWindow) {.validate, inline.} =
-  ## Initializer.
-  self.init()
-  window.mAcceleratorTable = self
-  wAppAccelOn()
-
-proc AcceleratorTable*(window: wWindow): wAcceleratorTable {.inline.} =
-  ## Construct an accelerator table, and attach it to *window*.
-  new(result, final)
-  result.init(window)
-
-proc init*(self: wAcceleratorTable, window: wWindow,
-    entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
-  ## Initializer.
-  self.init(entries)
-  window.mAcceleratorTable = self
-  wAppAccelOn()
-
-proc AcceleratorTable*(window: wWindow, entries: openarray[wAcceleratorEntry]):
-    wAcceleratorTable {.inline.} =
-  ## Construct an accelerator table from an openarray of
-  ## wAcceleratorEntry, and attach it to *window*.
-  new(result, final)
-  result.init(window, entries)
+  proc init*(self: wAcceleratorTable, window: wWindow,
+      entries: openarray[wAcceleratorEntry]) {.validate, inline.} =
+    ## Initializes an accelerator table from an openarray of
+    ## wAcceleratorEntry, and attach it to *window*.
+    self.init(entries)
+    window.mAcceleratorTable = self
+    wAppAccelOn()

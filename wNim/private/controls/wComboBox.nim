@@ -249,119 +249,113 @@ proc countSize(self: wComboBox, minItem: int, rate: float): wSize {.shield.} =
     result.width = countWidth(rate) + (cbi.rcButton.right - cbi.rcButton.left) + 2
     result.height = self.getWindowRect(sizeOnly=true).height
 
-method getDefaultSize*(self: wComboBox): wSize =
+method getDefaultSize*(self: wComboBox): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = self.countSize(3, 1.3)
 
-method getBestSize*(self: wComboBox): wSize =
+method getBestSize*(self: wComboBox): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method trigger(self: wComboBox) {.locks: "unknown".} =
+method trigger(self: wComboBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
-method release(self: wComboBox) =
+method release(self: wComboBox) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
-proc final*(self: wComboBox) =
-  ## Default finalizer for wComboBox.
-  discard
+wClass(wComboBox of wControl):
 
-proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
-    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    choices: openarray[string] = [], style: wStyle = wCbDropDown) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mInitData = cast[ptr UncheckedArray[string]](choices)
-  self.mInitCount = choices.len
+  proc final*(self: wComboBox) =
+    ## Default finalizer for wComboBox.
+    self.wControl.final()
 
-  # wCbDropDown as default style
-  var style = style
-  if (style and wCbStyleMask) == 0:
-    style = style or wCbDropDown
+  proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
+      value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      choices: openarray[string] = [], style: wStyle = wCbDropDown) {.validate.} =
+    ## Initializes a combobox.
+    wValidate(parent)
+    self.mInitData = cast[ptr UncheckedArray[string]](choices)
+    self.mInitCount = choices.len
 
-  # only wCbSimple can use CBS_NOINTEGRALHEIGHT, otherwise drop down menu will disappear
-  if (style and wCbStyleMask) == wCbSimple:
-    style = style or CBS_NOINTEGRALHEIGHT
+    # wCbDropDown as default style
+    var style = style
+    if (style and wCbStyleMask) == 0:
+      style = style or wCbDropDown
 
-  self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id, pos=pos, size=size,
-    style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD)
+    # only wCbSimple can use CBS_NOINTEGRALHEIGHT, otherwise drop down menu will disappear
+    if (style and wCbStyleMask) == wCbSimple:
+      style = style or CBS_NOINTEGRALHEIGHT
 
-  # subclass child windows (edit and listbox) to handle the message in wNim's way
-  # for wCbReadOnly, self.mHwnd == cbi.hwndItem, there is no child edit control
-  var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
-  GetComboBoxInfo(self.mHwnd, cbi)
+    self.wControl.init(className=WC_COMBOBOX, parent=parent, id=id, pos=pos, size=size,
+      style=style or WS_TABSTOP or WS_VISIBLE or WS_CHILD)
 
-  if cbi.hwndItem != self.mHwnd:
-    self.mEdit = TextCtrl(cbi.hwndItem)
-    # we need send the navigation events to this wComboBox
-    # so that navigation key can works under subclassed window
-    self.mEdit.hardConnect(WM_CHAR) do (event: wEvent):
-      if event.keyCode == VK_RETURN:
-        # try to send wEvent_TextEnter first.
-        # If someone handle this, block the default behavior.
-        # for wCbSimple, the default enter behavior is set cursor to beginning
-        if self.processMessage(wEvent_TextEnter, 0, 0):
-          return
+    # subclass child windows (edit and listbox) to handle the message in wNim's way
+    # for wCbReadOnly, self.mHwnd == cbi.hwndItem, there is no child edit control
+    var cbi = COMBOBOXINFO(cbSize: sizeof(COMBOBOXINFO))
+    GetComboBoxInfo(self.mHwnd, cbi)
 
-      if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
-        event.skip
+    if cbi.hwndItem != self.mHwnd:
+      self.mEdit = TextCtrl(cbi.hwndItem)
+      # we need send the navigation events to this wComboBox
+      # so that navigation key can works under subclassed window
+      self.mEdit.hardConnect(WM_CHAR) do (event: wEvent):
+        if event.getKeyCode() == VK_RETURN:
+          # try to send wEvent_TextEnter first.
+          # If someone handle this, block the default behavior.
+          # for wCbSimple, the default enter behavior is set cursor to beginning
+          if self.processMessage(wEvent_TextEnter, 0, 0):
+            return
 
-    self.mEdit.hardConnect(WM_KEYDOWN) do (event: wEvent):
-      if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
-        event.skip
+        if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
+          event.skip
 
-    self.mEdit.hardConnect(WM_SYSCHAR) do (event: wEvent):
-      if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
-        event.skip
+      self.mEdit.hardConnect(WM_KEYDOWN) do (event: wEvent):
+        if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
+          event.skip
 
-  if cbi.hwndList != self.mHwnd:
-    self.mList = ListBox(cbi.hwndList)
-    # don't need hook navigation events because list window by defult won't get focus
+      self.mEdit.hardConnect(WM_SYSCHAR) do (event: wEvent):
+        if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
+          event.skip
 
-  self.setValue(value)
+    if cbi.hwndList != self.mHwnd:
+      self.mList = ListBox(cbi.hwndList)
+      # don't need hook navigation events because list window by defult won't get focus
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.mLparam == self.mHwnd:
-      let cmdEvent = case HIWORD(event.mWparam)
-        of CBN_SELENDOK:
-          # the system set the edit control value AFTER this event
-          # however, we need let getValue() return a correct value.
-          let n = self.getSelection()
-          if n >= 0:
-            self.setLabel(self.getText(n))
-          wEvent_ComboBox
+    self.setValue(value)
 
-        of CBN_CLOSEUP: wEvent_ComboBoxCloseUp
-        of CBN_DROPDOWN: wEvent_ComboBoxDropDown
-        of CBN_SETFOCUS: wEvent_CommandSetFocus
-        of CBN_KILLFOCUS: wEvent_CommandKillFocus
-        of CBN_DBLCLK: wEvent_CommandLeftDoubleClick
-        else: 0
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd:
+        let cmdEvent = case HIWORD(event.mWparam)
+          of CBN_SELENDOK:
+            # the system set the edit control value AFTER this event
+            # however, we need let getValue() return a correct value.
+            let n = self.getSelection()
+            if n >= 0:
+              self.setLabel(self.getText(n))
+            wEvent_ComboBox
 
-      if cmdEvent != 0:
-        self.processMessage(cmdEvent, event.mWparam, event.mLparam)
+          of CBN_CLOSEUP: wEvent_ComboBoxCloseUp
+          of CBN_DROPDOWN: wEvent_ComboBoxDropDown
+          of CBN_SETFOCUS: wEvent_CommandSetFocus
+          of CBN_KILLFOCUS: wEvent_CommandKillFocus
+          of CBN_DBLCLK: wEvent_CommandLeftDoubleClick
+          else: 0
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+        if cmdEvent != 0:
+          self.processMessage(cmdEvent, event.mWparam, event.mLparam)
 
-  if (style and wCbStyleMask) == wCbReadOnly:
-    self.hardConnect(WM_KEYDOWN) do (event: wEvent):
-      if event.keyCode == VK_RETURN:
-        if SendMessage(self.mHwnd, CB_GETDROPPEDSTATE, 0, 0) == 0:
-          self.popup()
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto
+
+    if (style and wCbStyleMask) == wCbReadOnly:
+      self.hardConnect(WM_KEYDOWN) do (event: wEvent):
+        if event.getKeyCode() == VK_RETURN:
+          if SendMessage(self.mHwnd, CB_GETDROPPEDSTATE, 0, 0) == 0:
+            self.popup()
+          else:
+            self.dismiss()
         else:
-          self.dismiss()
-      else:
-        event.skip
-
-proc ComboBox*(parent: wWindow, id = wDefaultID, value: string = "",
-    pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],
-    style: wStyle = wCbDropDown): wComboBox {.inline, discardable.} =
-  ## Constructor, creating and showing a combobox.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, pos, size, choices, style)
+          event.skip

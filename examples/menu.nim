@@ -44,7 +44,7 @@ menuFile.append(idExit, "E&xit", "Exit the program.")
 
 let menuIcon = Menu(menuBar, "&Icon")
 for id in idIcon1..idIcon6:
-  let bmp = Bmp(Image(resources[id]).scale(36, 36))
+  let bmp = Bitmap(Image(resources[id]).scale(36, 36))
   menuIcon.append(id, $id, $id & " Help", bmp)
 
 let menuTest = Menu(menuBar, "&Test")

@@ -451,127 +451,88 @@ proc initRawBinary(self: wIconImage, data: pointer, length: int, size = wDefault
 proc error(self: wIconImage) {.inline.} =
   raise newException(wIconImageError, "wIconImage creation failed")
 
-proc final*(self: wIconImage) =
-  ## Default finalizer for wIconImage.
-  discard
+wClass(wIconImage):
 
-proc init*(self: wIconImage, icon: wIcon) {.validate.} =
-  ## Initializer.
-  wValidate(icon)
-  self.initRawHICON(icon.mHandle)
-  if self.mIcon.len == 0: self.error()
+  proc final*(self: wIconImage) =
+    ## Default finalizer for wIconImage.
+    discard
 
-proc IconImage*(icon: wIcon): wIconImage {.inline.} =
-  ## Creates an icon image from a wIcon object.
-  wValidate(icon)
-  new(result, final)
-  result.init(icon)
+  proc init*(self: wIconImage, icon: wIcon) {.validate.} =
+    ## Initializes an icon image from a wIcon object.
+    wValidate(icon)
+    self.initRawHICON(icon.mHandle)
+    if self.mIcon.len == 0: self.error()
 
-proc init*(self: wIconImage, cursor: wCursor) {.validate.} =
-  ## Initializer.
-  wValidate(cursor)
-  self.initRawHICON(cursor.mHandle)
-  if self.mIcon.len == 0: self.error()
+  proc init*(self: wIconImage, cursor: wCursor) {.validate.} =
+    ## Initializes an icon image from a wCursor object.
+    wValidate(cursor)
+    self.initRawHICON(cursor.mHandle)
+    if self.mIcon.len == 0: self.error()
 
-proc IconImage*(cursor: wCursor): wIconImage {.inline.} =
-  ## Creates an icon image from a wCursor object.
-  wValidate(cursor)
-  new(result, final)
-  result.init(cursor)
+  proc init*(self: wIconImage, bmp: wBitmap) {.validate.} =
+    ## Initializes an icon image from a wBitmap object.
+    wValidate(bmp)
+    self.initRawHBITMAP(bmp.mHandle)
+    if self.mIcon.len == 0: self.error()
 
-proc init*(self: wIconImage, bmp: wBitmap) {.validate.} =
-  ## Initializer.
-  wValidate(bmp)
-  self.initRawHBITMAP(bmp.mHandle)
-  if self.mIcon.len == 0: self.error()
+  proc init*(self: wIconImage, image: wImage) {.validate.} =
+    ## Initializes an icon image from a wImage object.
+    wValidate(image)
+    self.initRawGdipbmp(image.mGdipBmp)
+    if self.mIcon.len == 0: self.error()
 
-proc IconImage*(bmp: wBitmap): wIconImage {.inline.} =
-  ## Creates an icon image from a wBitmap object.
-  wValidate(bmp)
-  new(result, final)
-  result.init(bmp)
+  proc init*(self: wIconImage, data: pointer, length: int, size = wDefaultSize) {.validate.} =
+    ## Initializes an icon image from binary data of .ico or .cur file. The
+    ## extra *size* parameter can be used to specified the desired display
+    ## size. The function uses Windows API to search and return the best fits
+    ## icon, or uses the SM_CXICON/SM_CXCURSOR system metric value as default
+    ## value.
+    ##
+    ## **Notice: The function will not resize the image, so the real
+    ## size of retruned icon image may not equal to your desired size.**
+    wValidate(data)
+    self.initRawBinary(data, length, size)
+    if self.mIcon.len == 0: self.error()
 
-proc init*(self: wIconImage, image: wImage) {.validate.} =
-  ## Initializer.
-  wValidate(image)
-  self.initRawGdipbmp(image.mGdipBmp)
-  if self.mIcon.len == 0: self.error()
+  proc init*(self: wIconImage, str: string, size = wDefaultSize) {.validate.} =
+    ## Initializes an icon image from a file. The file should be in format of
+    ## .ico, .cur, or Windows PE file (.exe or .dll, etc). If str is not a valid
+    ## file path, it will be regarded as the binary data of .ico or .cur file.
+    ##
+    ## For Windows PE file (.exe or .dll), you should use string like
+    ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
+    ## to specifies the cursor index. Use zero-based index to specified the
+    ## resource position, and negative value to specified the resource identifier.
+    ## Empty filename (e.g. ",-1") to specified the current executable file.
+    ##
+    ## If the resource is an icon/cursor group, the extra *size* parameter can be
+    ## used to specified the desired display size. The function uses Windows API
+    ## to search and return the best fits icon, or uses the SM_CXICON/SM_CXCURSOR
+    ## system metric value as default value.
+    ##
+    ## **Notice: The function will not resize the image, so the real size of
+    ## retruned icon image may not equal to your desired size.**
+    let (module, index, isIcon) = loadIconLibrary(str)
+    if module != -1:
+      defer: FreeLibrary(module)
+      self.initRawModuleIndex(module, index, size, isIcon)
 
-proc IconImage*(image: wImage): wIconImage {.inline.} =
-  ## Creates an icon image from a wImage object.
-  wValidate(image)
-  new(result, final)
-  result.init(image)
+    else:
+      try:
+        var data = readFile(str)
+        self.initRawBinary(&data, data.len, size)
 
-proc init*(self: wIconImage, data: pointer, length: int, size = wDefaultSize) {.validate.} =
-  ## Initializer.
-  wValidate(data)
-  self.initRawBinary(data, length, size)
-  if self.mIcon.len == 0: self.error()
+      except IOError:
+        self.initRawBinary(&str, str.len, size)
 
-proc IconImage*(data: pointer, length: int, size = wDefaultSize): wIconImage {.inline.} =
-  ## Creates an icon image from binary data of .ico or .cur file. The extra *size*
-  ## parameter can be used to specified the desired display size. The function
-  ## uses Windows API to search and return the best fits icon, or uses the
-  ## SM_CXICON/SM_CXCURSOR system metric value as default value.
-  ##
-  ## **Notice: The function will not resize the image, so the real size of
-  ## retruned icon image may not equal to your desired size.**
-  wValidate(data)
-  new(result, final)
-  result.init(data, length, size)
+    if self.mIcon.len == 0: self.error()
 
-proc init*(self: wIconImage, str: string, size = wDefaultSize) {.validate.} =
-  ## Initializer.
-  let (module, index, isIcon) = loadIconLibrary(str)
-  if module != -1:
-    defer: FreeLibrary(module)
-    self.initRawModuleIndex(module, index, size, isIcon)
-
-  else:
-    try:
-      var data = readFile(str)
-      self.initRawBinary(&data, data.len, size)
-
-    except IOError:
-      self.initRawBinary(&str, str.len, size)
-
-  if self.mIcon.len == 0: self.error()
-
-proc IconImage*(str: string, size = wDefaultSize): wIconImage {.inline.} =
-  ## Creates an icon image from a file. The file should be in format of
-  ## .ico, .cur, or Windows PE file (.exe or .dll, etc). If str is not a valid
-  ## file path, it will be regarded as the binary data of .ico or .cur file.
-  ##
-  ## For Windows PE file (.exe or .dll), you should use string like
-  ## "shell32.dll,-10" to specifies the icon index or "shell32.dll:-1001" to
-  ## to specifies the cursor index. Use zero-based index to specified the
-  ## resource position, and negative value to specified the resource identifier.
-  ## Empty filename (e.g. ",-1") to specified the current executable file.
-  ##
-  ## If the resource is an icon/cursor group, the extra *size* parameter can be
-  ## used to specified the desired display size. The function uses Windows API
-  ## to search and return the best fits icon, or uses the SM_CXICON/SM_CXCURSOR
-  ## system metric value as default value.
-  ##
-  ## **Notice: The function will not resize the image, so the real size of
-  ## retruned icon image may not equal to your desired size.**
-  wValidate(str)
-  new(result, final)
-  result.init(str, size)
-
-proc init*(self: wIconImage, iconImage: wIconImage) {.validate, inline.} =
-  ## Initializer.
-  wValidate(iconImage)
-  self.mIcon = iconImage.mIcon
-  self.mHotspot = iconImage.mHotspot
-  if self.mIcon.len == 0: self.error()
-
-proc IconImage*(iconImage: wIconImage): wIconImage {.inline.} =
-  ## Creates an icon image from wIconImage object, aka. copy constructors.
-  wValidate(iconImage)
-  new(result, final)
-  result.init(iconImage)
+  proc init*(self: wIconImage, iconImage: wIconImage) {.validate, inline.} =
+    ## Initializes an icon image from wIconImage object, aka. copy.
+    wValidate(iconImage)
+    self.mIcon = iconImage.mIcon
+    self.mHotspot = iconImage.mHotspot
+    if self.mIcon.len == 0: self.error()
 
 proc isPng*(self: wIconImage): bool {.validate, inline.} =
   ## Returns true if this is a PNG format icon image.
@@ -752,9 +713,9 @@ proc save*(icons: openarray[wIconImage], isIcon = true): string =
 
   for i, icon in icons:
     var
-      width = icon.width
-      height = icon.height
-      bitCount = icon.bitCount
+      width = icon.getWidth()
+      height = icon.getHeight()
+      bitCount = icon.getBitCount()
       size = icon.mIcon.len
 
     if width >= 256: width = 0

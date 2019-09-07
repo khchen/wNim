@@ -76,7 +76,6 @@ proc final*(self: wMessageDialog) =
 proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK) {.validate.} =
   ## Initializer.
-  wValidate(message, caption)
   self.wDialog.init(owner)
   self.mMessage = message
   self.mCaption = caption
@@ -86,7 +85,6 @@ proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
 proc MessageDialog*(owner: wWindow = nil, message: string = "" ,
     caption: string = "", style: wStyle = wOK): wMessageDialog {.inline.} =
   ## Constructor specifying the message box properties.
-  wValidate(message, caption)
   new(result, final)
   result.init(owner, message, caption, style)
 
@@ -104,12 +102,10 @@ proc getStyle*(self: wMessageDialog): wStyle {.validate, property, inline.} =
 
 proc setMessage*(self: var wMessageDialog, message: string) {.validate, property, inline.} =
   ## Sets the message that will be displayed on the dialog.
-  wValidate(message)
   self.mMessage = message
 
 proc setCaption*(self: var wMessageDialog, caption: string) {.validate, property, inline.} =
   ## Sets the caption that will be displayed on the dialog.
-  wValidate(caption)
   self.mCaption = caption
 
 proc setStyle*(self: var wMessageDialog, style: wStyle) {.validate, property, inline.} =
@@ -118,20 +114,17 @@ proc setStyle*(self: var wMessageDialog, style: wStyle) {.validate, property, in
 
 proc setOKLabel*(self: wMessageDialog, ok: string) {.validate, property, inline.} =
   ## Overrides the default labels of the OK button.
-  wValidate(ok)
   self.mLabelText[IDOK] = ok
 
 proc setOKCancelLabels*(self: wMessageDialog, ok: string, cancel: string)
     {.validate, property, inline.} =
   ## Overrides the default labels of the OK and Cancel buttons.
-  wValidate(ok, cancel)
   self.mLabelText[IDOK] = ok
   self.mLabelText[IDCANCEL] = cancel
 
 proc setYesNoCancelLabels*(self: wMessageDialog, yes: string, no: string,
     cancel: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Yes, No and Cancel buttons.
-  wValidate(yes, no, cancel)
   self.mLabelText[IDYES] = yes
   self.mLabelText[IDNO] = no
   self.mLabelText[IDCANCEL] = cancel
@@ -139,21 +132,18 @@ proc setYesNoCancelLabels*(self: wMessageDialog, yes: string, no: string,
 proc setYesNoLabels*(self: wMessageDialog, yes: string, no: string)
     {.validate, property, inline.} =
   ## Overrides the default labels of the Yes and No buttons.
-  wValidate(yes, no)
   self.mLabelText[IDYES] = yes
   self.mLabelText[IDNO] = no
 
 proc setRetryCancelLabels*(self: wMessageDialog, retry: string, cancel: string)
     {.validate, property, inline.} =
   ## Overrides the default labels of the Retry and Cancel buttons.
-  wValidate(retry, cancel)
   self.mLabelText[IDRETRY] = retry
   self.mLabelText[IDCANCEL] = cancel
 
 proc setAbortRetryIgnoreLabels*(self: wMessageDialog, abort: string,
     retry: string, ignore: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Abort, Retry and Ignore buttons.
-  wValidate(abort, retry, ignore)
   self.mLabelText[IDABORT] = abort
   self.mLabelText[IDRETRY] = retry
   self.mLabelText[IDIGNORE] = ignore
@@ -161,7 +151,6 @@ proc setAbortRetryIgnoreLabels*(self: wMessageDialog, abort: string,
 proc setCancelTryContinueLabels*(self: wMessageDialog, cancel: string,
     tryagain: string, cont: string) {.validate, property, inline.} =
   ## Overrides the default labels of the Cancel, Try Again and Continue buttons.
-  wValidate(cancel, tryagain, cont)
   self.mLabelText[IDCANCEL] = cancel
   self.mLabelText[IDTRYAGAIN] = tryagain
   self.mLabelText[IDCONTINUE] = cont

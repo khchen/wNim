@@ -42,7 +42,7 @@ import net
 import ../wBase, wControl, wTextCtrl
 export wControl, wTextCtrl
 
-method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield.} =
+method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield, uknlock.} =
   # WC_IPADDRESS cannot change size after create, it's Windows's limitation.
   SetWindowPos(self.mHwnd, 0, x, y, 0, 0,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE or SWP_NOSIZE))
@@ -75,7 +75,6 @@ proc getIpAddress*(self: wIpCtrl): IpAddress {.validate, property.} =
 
 proc setText*(self: wIpCtrl, text: string) {.validate, property.} =
   ## Sets the address text for all four fields in the IP address control.
-  wValidate(text)
   self.setIpAddress(parseIpAddress(text))
 
 proc getText*(self: wIpCtrl): string {.validate, property.} =
@@ -105,7 +104,7 @@ proc getTextCtrl*(self: wIpCtrl, index: range[0..3]): wTextCtrl
   result = self.getEditControl(index)
 
 method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.shield, uknlock.} =
 
   if code == IPN_FIELDCHANGED:
     let lpnmipa = cast[LPNMIPADDRESS](lparam)
@@ -118,73 +117,67 @@ method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wIpCtrl) =
-  ## Default finalizer for wIpCtrl.
-  discard
+wClass(wIpCtrl of wControl):
 
-proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
-    pos = wDefaultPoint, size = wDefaultSize, font: wFont = nil,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
+  proc final*(self: wIpCtrl) =
+    ## Default finalizer for wIpCtrl.
+    self.wControl.final()
 
-  # need to count the init size for WC_IPADDRESS control.
-  var size = size
-  var font = if font != nil: font else: parent.mFont
+  proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
+      pos = wDefaultPoint, size = wDefaultSize, font: wFont = nil,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a ip control.
+    wValidate(parent)
 
-  if size.width == wDefault:
-    size.width = getTextFontSize(" 222 . 222 . 222 . 222 ", font.mHandle,
-      self.mHwnd).width
+    # need to count the init size for WC_IPADDRESS control.
+    var size = size
+    var font = if font != nil: font else: parent.mFont
 
-  if size.height == wDefault:
-    size.height = getLineControlDefaultHeight(font.mHandle)
+    if size.width == wDefault:
+      size.width = getTextFontSize(" 222 . 222 . 222 . 222 ", font.mHandle,
+        self.mHwnd).width
 
-  self.wControl.init(className=WC_IPADDRESS, parent=parent, id=id,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+    if size.height == wDefault:
+      size.height = getLineControlDefaultHeight(font.mHandle)
 
-  self.setFont(font)
-  if value != 0:
-    self.setValue(value)
+    self.wControl.init(className=WC_IPADDRESS, parent=parent, id=id,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  # subclass all the child edit control and relay the navigation events to self
-  proc EnumChildProc(hwnd: HWND, lParam: LPARAM): BOOL {.stdcall.} =
-    let self = cast[wIpCtrl](lParam)
-    for i in 0..3:
-      if self.mEdits[i] == nil:
-        self.mEdits[i] = TextCtrl(hwnd)
-        break
-    return TRUE
+    self.setFont(font)
+    if value != 0:
+      self.setValue(value)
 
-  EnumChildWindows(self.mHwnd, EnumChildProc, cast[LPARAM](self))
+    # subclass all the child edit control and relay the navigation events to self
+    proc EnumChildProc(hwnd: HWND, lParam: LPARAM): BOOL {.stdcall.} =
+      let self = cast[wIpCtrl](lParam)
+      for i in 0..3:
+        if self.mEdits[i] == nil:
+          self.mEdits[i] = TextCtrl(hwnd)
+          break
+      return TRUE
 
-  for edit in self.mEdits:
-    if edit != nil:
-      edit.hardConnect(WM_CHAR) do (event: wEvent):
-        if event.keyCode == VK_RETURN:
-          # try to send wEvent_TextEnter first.
-          # If someone handle this, block the default behavior.
-          if self.processMessage(wEvent_TextEnter, 0, 0):
-            return
+    EnumChildWindows(self.mHwnd, EnumChildProc, cast[LPARAM](self))
 
-        if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
-          event.skip
+    for edit in self.mEdits:
+      if edit != nil:
+        edit.hardConnect(WM_CHAR) do (event: wEvent):
+          if event.getKeyCode() == VK_RETURN:
+            # try to send wEvent_TextEnter first.
+            # If someone handle this, block the default behavior.
+            if self.processMessage(wEvent_TextEnter, 0, 0):
+              return
 
-      edit.hardConnect(WM_KEYDOWN) do (event: wEvent):
-        if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
-          event.skip
+          if not self.processMessage(WM_CHAR, event.mWparam, event.mLparam, event.mResult):
+            event.skip
 
-      edit.hardConnect(WM_SYSCHAR) do (event: wEvent):
-        if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
-          event.skip
+        edit.hardConnect(WM_KEYDOWN) do (event: wEvent):
+          if not self.processMessage(WM_KEYDOWN, event.mWparam, event.mLparam, event.mResult):
+            event.skip
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Left, wKey_Right}:
-      event.veto
+        edit.hardConnect(WM_SYSCHAR) do (event: wEvent):
+          if not self.processMessage(WM_SYSCHAR, event.mWparam, event.mLparam, event.mResult):
+            event.skip
 
-proc IpCtrl*(parent: wWindow, id = wDefaultID, value: int = 0,
-    pos = wDefaultPoint, size = wDefaultSize, font: wFont = nil,
-    style: wStyle = 0): wIpCtrl {.inline, discardable.} =
-  ## Constructor, creating and showing a ip control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, pos, size, font, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Left, wKey_Right}:
+        event.veto

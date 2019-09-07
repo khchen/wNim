@@ -38,7 +38,7 @@ proc isVertical*(self: wScrollBar): bool {.validate, inline.} =
   ## Returns true for scrollbars that have the vertical style set.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and SBS_VERT) != 0
 
-method getDefaultSize*(self: wScrollBar): wSize {.property.} =
+method getDefaultSize*(self: wScrollBar): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
 
@@ -49,7 +49,7 @@ method getDefaultSize*(self: wScrollBar): wSize {.property.} =
     result.height = GetSystemMetrics(SM_CXHSCROLL)
     result.width = MulDiv(result.width, 107, 4)
 
-method getBestSize*(self: wScrollBar): wSize {.property.} =
+method getBestSize*(self: wScrollBar): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -84,43 +84,38 @@ proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
   let info = self.getScrollInfo()
   result = info.nPos
 
-method release(self: wScrollBar) =
+method release(self: wScrollBar) {.uknlock.} =
   self.mParent.systemDisconnect(self.mHScrollConn)
   self.mParent.systemDisconnect(self.mVScrollConn)
 
-proc final*(self: wScrollBar) =
-  ## Default finalizer for wScrollBar.
-  discard
+wClass(wScrollBar of wControl):
 
-proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc final*(self: wScrollBar) =
+    ## Default finalizer for wScrollBar.
+    self.wControl.final()
 
-  self.setScrollbar(0, 1, 2)
+  proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    ## Initializes a scrollbar.
+    wValidate(parent)
+    self.wControl.init(className=WC_SCROLLBAR, parent=parent, id=id, pos=pos,
+      size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  proc wScroll_DoScroll(event: wEvent) =
-    var processed = false
-    if event.mLparam == self.mHwnd:
-      let orientation = if self.isVertical(): wVertical else: wHorizontal
-      self.wScroll_DoScrollImpl(orientation, event.mWparam, isControl=true, processed)
+    self.setScrollbar(0, 1, 2)
 
-  self.mHScrollConn = parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
-  self.mVScrollConn = parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
+    proc wScroll_DoScroll(event: wEvent) =
+      var processed = false
+      if event.mLparam == self.mHwnd:
+        let orientation = if self.isVertical(): wVertical else: wHorizontal
+        self.wScroll_DoScrollImpl(orientation, event.mWparam, isControl=true, processed)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if self.isVertical():
-      if event.keyCode in {wKey_Up, wKey_Down}:
-        event.veto
-    else:
-      if event.keyCode in {wKey_Right, wKey_Left}:
-        event.veto
+    self.mHScrollConn = parent.systemConnect(WM_HSCROLL, wScroll_DoScroll)
+    self.mVScrollConn = parent.systemConnect(WM_VSCROLL, wScroll_DoScroll)
 
-proc ScrollBar*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wScrollBar {.inline, discardable.} =
-  ## Constructor, creating and showing a scrollbar.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos=pos, size=size, style=style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if self.isVertical():
+        if event.getKeyCode() in {wKey_Up, wKey_Down}:
+          event.veto
+      else:
+        if event.getKeyCode() in {wKey_Right, wKey_Left}:
+          event.veto

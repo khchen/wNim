@@ -50,61 +50,62 @@ const
   wBrushStyleVerticalHatch* = HS_VERTICAL shl 16
   wBrushStyleMaskHatch* = 0x00ff0000
 
-proc final*(self: wBrush) =
-  ## Default finalizer for wBrush.
-  self.delete()
-
-proc initFromNative(self: wBrush, lb: var LOGBRUSH) =
-  self.wGdiObject.init()
-
-  self.mHandle = CreateBrushIndirect(lb)
-  if self.mHandle == 0:
-    raise newException(wBrushError, "wBrush creation failed")
-
+proc setup(self: wBrush, lb: LOGBRUSH) =
   self.mColor = lb.lbColor
   self.mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)
 
-proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.validate.} =
-  ## Initializer.
-  let hatch = style shr 16
-  var lb: LOGBRUSH
-  lb.lbColor = color
+wClass(wBrush of wGdiObject):
 
-  if (style and wBrushStyleMask) == wBrushStyleTransparent:
-    lb.lbStyle = BS_HOLLOW
-  elif hatch != 0:
-    lb.lbStyle = BS_HATCHED
-    lb.lbHatch = ULONG_PTR hatch
-  else:
-    lb.lbStyle = BS_SOLID
+  proc final*(self: wBrush) =
+    ## Default finalizer for wBrush.
+    self.delete()
 
-  self.initFromNative(lb)
+  proc init*(self: wBrush, lb: var LOGBRUSH) =
+    ## Initializes a brush from LOGBRUSH struct. Used internally.
+    self.wGdiObject.init()
 
-proc Brush*(color: wColor = wWHITE, style = wBrushStyleSolid): wBrush {.inline.} =
-  ## Constructs a brush from a color and style.
-  new(result, final)
-  result.init(color, style)
+    self.mHandle = CreateBrushIndirect(lb)
+    if self.mHandle == 0:
+      raise newException(wBrushError, "wBrush creation failed")
 
-proc init*(self: wBrush, hBrush: HANDLE) {.validate.} =
-  ## Initializer.
-  var lb: LOGBRUSH
-  GetObject(hBrush, sizeof(lb), &lb)
-  self.initFromNative(lb)
+    self.setup(lb)
 
-proc Brush*(hBrush: HANDLE): wBrush {.inline.} =
-  ## Construct wBrush object from a system brush handle.
-  new(result, final)
-  result.init(hBrush)
+  proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.validate.} =
+    ## Initializes a brush from a color and style.
+    let hatch = style shr 16
+    var lb: LOGBRUSH
+    lb.lbColor = color
 
-proc init*(self: wBrush, brush: wBrush) {.validate.} =
-  ## Initializer.
-  self.init(brush.mHandle)
+    if (style and wBrushStyleMask) == wBrushStyleTransparent:
+      lb.lbStyle = BS_HOLLOW
+    elif hatch != 0:
+      lb.lbStyle = BS_HATCHED
+      lb.lbHatch = ULONG_PTR hatch
+    else:
+      lb.lbStyle = BS_SOLID
 
-proc Brush*(brush: wBrush): wBrush {.inline.} =
-  ## Copy constructor
-  wValidate(brush)
-  new(result, final)
-  result.init(brush)
+    self.init(lb)
+
+  proc init*(self: wBrush, hBrush: HANDLE, copy = true, shared = false) {.validate.} =
+    ## Initializes a brush from system brush handle.
+    ## If *copy* is false, the function only wrap the handle to wBrush object.
+    ## If *shared* is false, the handle will be destroyed together with wBrush
+    ## object by the GC. Otherwise, the caller is responsible for destroying it.
+    var lb: LOGBRUSH
+    if GetObject(hBrush, sizeof(LOGBRUSH), &lb) == 0:
+      raise newException(wBrushError, "wBrush creation failed")
+
+    if copy:
+      self.init(lb)
+    else:
+      self.wGdiObject.init()
+      self.mHandle = hBrush
+      self.mDeletable = not shared
+      self.setup(lb)
+
+  proc init*(self: wBrush, brush: wBrush) {.validate.} =
+    ## Initializes a brush from a wBrush object, aka. copy.
+    self.init(brush.mHandle, copy=true)
 
 proc getColor*(self: wBrush): wColor {.validate, property, inline.} =
   ## Returns a reference to the brush color.

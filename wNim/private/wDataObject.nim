@@ -48,8 +48,8 @@ type
     refCount: LONG
     bmp: HBITMAP
 
-converter BmpDataObjectToIUnknown*(x: ptr BmpDataObject): ptr IUnknown = cast[ptr IUnknown](x)
-converter BmpDataObjectToIDataObject*(x: ptr BmpDataObject): ptr IDataObject = cast[ptr IDataObject](x)
+converter BmpDataObjectToIUnknown(x: ptr BmpDataObject): ptr IUnknown {.shield.} = cast[ptr IUnknown](x)
+converter BmpDataObjectToIDataObject(x: ptr BmpDataObject): ptr IDataObject {.shield.} = cast[ptr IDataObject](x)
 
 proc newBmpDataObject(bmp: HBITMAP): ptr BmpDataObject =
   result = cast[ptr BmpDataObject](alloc0(sizeof(BmpDataObject)))
@@ -238,7 +238,7 @@ proc getBitmap*(self: wDataObject): wBitmap {.validate, property.} =
   var medium: STGMEDIUM
   if self.mObj.GetData(&format, &medium) == S_OK:
     if medium.tymed == TYMED_GDI:
-      result = Bmp(medium.u.hBitmap, copy=true)
+      result = Bitmap(medium.u.hBitmap, copy=true)
 
     ReleaseStgMedium(&medium)
 
@@ -274,20 +274,6 @@ proc delete*(self: wDataObject) {.validate.} =
 
   self.mObj = nil
 
-proc final*(self: wDataObject) =
-  ## Default finalizer for wDataObject.
-  self.delete()
-
-proc init*(self: wDataObject, dataObj: ptr IDataObject) {.validate, inline.} =
-  ## Initializer.
-  self.mObj = dataObj
-  self.mReleasable = false
-
-proc DataObject*(dataObj: ptr IDataObject): wDataObject {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(dataObj)
-
 type
   SHCreateFileDataObjectType = proc (pidlFolder: PCIDLIST_ABSOLUTE,
     cidl: UINT, apidl: PCUITEMID_CHILD_ARRAY, pDataInner: ptr IDataObject,
@@ -305,104 +291,93 @@ proc ensureSHCreateFileDataObject() =
     SHCreateFileDataObject = cast[SHCreateFileDataObjectType](GetProcAddress(lib,
       cast[LPCSTR](740)))
 
-proc init*(self: wDataObject, text: string) {.validate.} =
-  ## Initializer.
-  ensureSHCreateFileDataObject()
-  if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
+wClass(wDataObject):
 
-  # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
-  #   error()
+  proc final*(self: wDataObject) =
+    ## Default finalizer for wDataObject.
+    self.delete()
 
-  self.mReleasable = true
+  proc init*(self: wDataObject, dataObj: ptr IDataObject) {.validate, inline.} =
+    ## Initializes a dataObject from IDataObject COM interface. Used internally.
+    self.mObj = dataObj
+    self.mReleasable = false
 
-  var format = FORMATETC(
-    dwAspect: DVASPECT_CONTENT,
-    lindex: -1,
-    tymed: TYMED_HGLOBAL)
+  proc init*(self: wDataObject, text: string) {.validate.} =
+    ## Initializes a dataObject from text.
+    ensureSHCreateFileDataObject()
+    if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
 
-  var medium = STGMEDIUM(tymed: TYMED_HGLOBAL)
+    # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
+    #   error()
 
-  let
-    wstr = +$text
-    pWstr = GlobalAlloc(GPTR, SIZE_T wstr.len * 2 + 2)
-    mstr = -$text
-    pMstr = GlobalAlloc(GPTR, SIZE_T mstr.len + 1)
+    self.mReleasable = true
 
-  if pWstr == 0 or pMstr == 0: self.error()
-  cast[ptr WCHAR](pWstr) <<< wstr
-  cast[ptr char](pMstr) <<< mstr
+    var format = FORMATETC(
+      dwAspect: DVASPECT_CONTENT,
+      lindex: -1,
+      tymed: TYMED_HGLOBAL)
 
-  format.cfFormat = CF_UNICODETEXT
-  medium.u.hGlobal = pWstr
-  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
+    var medium = STGMEDIUM(tymed: TYMED_HGLOBAL)
 
-  format.cfFormat = CF_TEXT
-  medium.u.hGlobal = pMstr
-  if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
+    let
+      wstr = +$text
+      pWstr = GlobalAlloc(GPTR, SIZE_T wstr.len * 2 + 2)
+      mstr = -$text
+      pMstr = GlobalAlloc(GPTR, SIZE_T mstr.len + 1)
 
-proc DataObject*(text: string): wDataObject {.inline.} =
-  ## Constructor from text.
-  new(result, final)
-  result.init(text)
+    if pWstr == 0 or pMstr == 0: self.error()
+    cast[ptr WCHAR](pWstr) <<< wstr
+    cast[ptr char](pMstr) <<< mstr
 
-proc init*(self: wDataObject, files: openarray[string]) {.validate.} =
-  ## Initializer.
-  if files.len == 0: self.error()
-  ensureSHCreateFileDataObject()
+    format.cfFormat = CF_UNICODETEXT
+    medium.u.hGlobal = pWstr
+    if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
-  var pidlDesk: PIDLIST_ABSOLUTE
-  if SHGetSpecialFolderLocation(0, CSIDL_DESKTOP, &pidlDesk) != S_OK: self.error()
-  defer: CoTaskMemFree(pidlDesk)
+    format.cfFormat = CF_TEXT
+    medium.u.hGlobal = pMstr
+    if self.mObj.SetData(&format, &medium, TRUE) != S_OK: self.error()
 
-  var apidl = newSeqOfCap[PIDLIST_ABSOLUTE](files.len)
-  var buffer = T(65536)
-  for file in files:
-    if GetFullPathName(file, 65536, &buffer, nil) == 0: self.error()
-    var il = ILCreateFromPath(buffer)
-    if il == nil: self.error()
-    apidl.add(il)
+  proc init*(self: wDataObject, files: openarray[string]) {.validate.} =
+    ## Initializes a dataObject from files. The path must exist.
+    if files.len == 0: self.error()
+    ensureSHCreateFileDataObject()
 
-  if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &self.mObj) != S_OK:
-    self.error()
+    var pidlDesk: PIDLIST_ABSOLUTE
+    if SHGetSpecialFolderLocation(0, CSIDL_DESKTOP, &pidlDesk) != S_OK: self.error()
+    defer: CoTaskMemFree(pidlDesk)
 
-  self.mReleasable = true
+    var apidl = newSeqOfCap[PIDLIST_ABSOLUTE](files.len)
+    var buffer = T(65536)
+    for file in files:
+      if GetFullPathName(file, 65536, &buffer, nil) == 0: self.error()
+      var il = ILCreateFromPath(buffer)
+      if il == nil: self.error()
+      apidl.add(il)
 
-  for il in apidl:
-    ILFree(il)
+    if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &self.mObj) != S_OK:
+      self.error()
 
-proc DataObject*(files: openarray[string]): wDataObject {.inline.} =
-  ## Constructor from files. The path must exist.
-  new(result, final)
-  result.init(files)
+    self.mReleasable = true
 
-proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
-  ## Initializer.
-  wValidate(bmp)
+    for il in apidl:
+      ILFree(il)
 
-  self.mObj = newBmpDataObject(bmp.mHandle)
-  if self.mObj == nil: self.error()
-  self.mReleasable = true
+  proc init*(self: wDataObject, bmp: wBitmap) {.validate.} =
+    ## Initializes a dataObject from bitmap.
+    wValidate(bmp)
 
-proc DataObject*(bmp: wBitmap): wDataObject {.inline.} =
-  ## Constructor from bitmap.
-  wValidate(bmp)
-  new(result, final)
-  result.init(bmp)
+    self.mObj = newBmpDataObject(bmp.mHandle)
+    if self.mObj == nil: self.error()
+    self.mReleasable = true
 
-proc init*(self: wDataObject, dataObj: wDataObject) {.validate.} =
-  ## Initializer.
-  wValidate(dataObj)
-  if dataObj.isText():
-    self.init(dataObj.getText())
-  elif dataObj.isFiles():
-    self.init(dataObj.getFiles())
-  elif dataObj.isBitmap():
-    self.init(dataObj.getBitmap())
-  else:
-    self.error()
-
-proc DataObject*(dataObj: wDataObject): wDataObject {.inline.} =
-  ## Copy constructor.
-  wValidate(dataObj)
-  new(result, final)
-  result.init(dataObj)
+  proc init*(self: wDataObject, dataObj: wDataObject) {.validate.} =
+    ## Initializes a dataObject from a wDataObject, aka. copy.
+    wValidate(dataObj)
+    if dataObj.isText():
+      self.init(dataObj.getText())
+    elif dataObj.isFiles():
+      self.init(dataObj.getFiles())
+    elif dataObj.isBitmap():
+      self.init(dataObj.getBitmap())
+    else:
+      self.error()

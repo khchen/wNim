@@ -1,18 +1,24 @@
 Version 0.9.0
 -------------
-* wNim sub-modules can be imported one by one to speed up compilation.
+* wNim modules can be imported one by one to speed up compilation (Requires nim version >= 0.20.0).
 * wNim don't export symbols in winim/[winstr, utils] anymore **(Breaking Change)**.
+* wBitmap: constructor rename to Bitmap() now (old name is Bmp()) **(Breaking Change)**.
 * wApp: add broadcastTopLevelMessage() and broadcastMessage().
 * wWindow: add activate(), isMouseInWindow(), setRedraw(), and queueMessage().
+* wWindow: add getToolBar().
 * wFrame: remove setMenuBar(). Use MenuBar(frame) constructor or MenuBar.attach(frame) instead.
 * wFrame: remove createStatusBar(). Use StatusBar(frame) constructor instead.
+* wFrame: remove getStatusBar(). Use wWindow.getStatusBar() instead.
+* wToolBar, wStatusBar, wRebar: showing or hiding generates wEvent_Size for parent window.
 * wMenu: add Menu(hMenu: HMENU) constructor for wrap system menu handle.
 * wComboBox: add isPopup().
 * wCheckComboBox: add changeStyle(), isPopup(), and wCcNormalColor style.
 * wHyperlinkCtrl: remove the *url* parameter from constructor. Use setUrl() instead.
 * wUtils: remove wGetMessagePosition(). Use wGetMousePosition() instead.
+* wMacros: add wClass macro.
+* Remove wPredefined.nim. Predefined objects are moved into corresponding modules.
 * Rename and rewrite examples/lowlevel.nim to winsdk.nim.
-* Remove wPredefined.nim. Predefined objects are moved into sub-modules.
+* Add examples: colors.nim.
 * Fix bugs.
 
 Version 0.8.0
@@ -46,7 +52,7 @@ Version 0.7.0
 * wEvent: add wWparam and wLparam types. In case we need "cast" for creation event object.
 * wUtil: add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSysemDpiAware(), wSetPerMonitorDpiAware().
 * wPredefined: add wNilRegion.
-* Add examples: shapewin.nim and printpreview.nim
+* Add examples: shapewin.nim and printpreview.nim.
 * Fix bugs.
 
 Version 0.6.0

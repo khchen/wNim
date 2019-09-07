@@ -437,6 +437,7 @@ const
   PS_DOT* = 2
   PS_DASHDOT* = 3
   PS_NULL* = 5
+  PS_INSIDEFRAME* = 6
   PS_STYLE_MASK* = 0x0000000F
   PS_ENDCAP_ROUND* = 0x00000000
   PS_ENDCAP_SQUARE* = 0x00000100
@@ -609,6 +610,7 @@ proc CreateCompatibleDC*(hdc: HDC): HDC {.winapi, stdcall, dynlib: "gdi32", impo
 proc CreateEllipticRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateRoundRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32, w: int32, h: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CreateSolidBrush*(color: COLORREF): HBRUSH {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteDC*(hdc: HDC): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteObject*(ho: HGDIOBJ): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Ellipse*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}

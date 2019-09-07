@@ -97,31 +97,23 @@ proc setLayoutRect*(self: wResizable, rect: wRect) {.validate, property.} =
   self.mWidth.value = float rect.width
   self.mHeight.value = float rect.height
 
-method getClientSize(self: wResizable): wSize {.base.} =
+method getClientSize(self: wResizable): wSize {.base, property, uknlock.} =
   # The base method used in wResizer.
   # This method should be not public, only the wWindow.getClientSize() is public.
   result = self.getLayoutSize()
 
-method clientSize(self: wResizable): wSize {.base.} =
-  # The base method used in wResizer.
-  # This method should be not public, only the wWindow.getClientSize() is public.
-  result = self.getLayoutSize()
+wClass(wResizable):
 
-proc final*(self: wResizable) =
-  ## Default finalizer for wResizable.
-  discard
+  proc final*(self: wResizable) =
+    ## Default finalizer for wResizable.
+    discard
 
-proc init*(self: wResizable) =
-  ## Initializer.
-  self.mLeft = newVariable()
-  self.mTop = newVariable()
-  self.mWidth = newVariable()
-  self.mHeight = newVariable()
-
-proc Resizable*(): wResizable {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init()
+  proc init*(self: wResizable) =
+    ## Initializer.
+    self.mLeft = newVariable()
+    self.mTop = newVariable()
+    self.mWidth = newVariable()
+    self.mHeight = newVariable()
 
 template attributeTempaltes(): untyped =
   template left(name: wResizable): untyped {.used.} = name.mLeft

@@ -257,14 +257,14 @@ proc bitmapUpdate(self: wPreviewFrame, count: int) =
   of dkText:
     bitmaps.setLen(count)
     for i in 0..<count:
-      bitmaps[i] = Bmp(info.bitmapSize)
+      bitmaps[i] = Bitmap(info.bitmapSize)
       memDc.selectObject(bitmaps[i])
       memDc.prepare()
       memDc.drawTextPage(info, i)
 
   of dkImage:
     bitmaps.setLen(count)
-    bitmaps[0] = Bmp(info.bitmapSize)
+    bitmaps[0] = Bitmap(info.bitmapSize)
     memDc.selectObject(bitmaps[0])
     memDc.prepare()
     memDc.drawImagePage(info)
@@ -327,7 +327,7 @@ proc pageUpdate(self: wPreviewFrame, count: int) =
 proc textMetricsUpdate(self: wPreviewFrame): int =
   template info: untyped = self.mInfo
 
-  var bmp = Bmp(info.bitmapSize)
+  var bmp = Bitmap(info.bitmapSize)
   var memDc = MemoryDC()
   memDc.font = info.font
   memDc.selectObject(bmp)
@@ -504,9 +504,9 @@ proc init(self: wPreviewFrame, title: string, size: wSize = (1024, 768)) =
   let imgReset = Image(Icon("shell32.dll,22", (24, 24))).scale(24, 24)
   imgPrev.rotateFlip(wImageRotateNoneFlipX)
 
-  toolbar.addTool(idReset, "", Bmp(imgReset), longHelp="100%")
-  toolbar.addTool(idPrev, "", Bmp(imgPrev), longHelp="Previous page")
-  toolbar.addTool(idNext, "", Bmp(imgNext), longHelp="Next page")
+  toolbar.addTool(idReset, "", Bitmap(imgReset), longHelp="100%")
+  toolbar.addTool(idPrev, "", Bitmap(imgPrev), longHelp="Previous page")
+  toolbar.addTool(idNext, "", Bitmap(imgNext), longHelp="Next page")
 
   defer:
     self.mIsDelay = false

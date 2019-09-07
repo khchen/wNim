@@ -301,7 +301,6 @@ proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
   ## Note that, unlike most other functions changing the controls values,
   ## this function generates a wEvent_Text event. To avoid this you can use
   ## changeValue() instead.
-  wValidate(value)
   self.setLabel(value)
   self.discardEdits()
 
@@ -314,7 +313,6 @@ proc setValue*(self: wTextCtrl, value: string) {.validate, property.} =
 proc changeValue*(self: wTextCtrl, value: string) {.validate.} =
   ## Sets the new text control value.
   ## This functions does not generate the wEvent_Text event.
-  wValidate(value)
   self.mDisableTextEvent = true
   self.setValue(value)
   self.mDisableTextEvent = false
@@ -335,12 +333,10 @@ proc getLineText*(self: wTextCtrl, line: int): string {.validate, property.} =
 
 proc writeText*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Writes the text into the text control at the current insertion position.
-  wValidate(text)
   SendMessage(self.mHwnd, EM_REPLACESEL, 1, &T(text))
 
 proc appendText*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control.
-  wValidate(text)
   self.setInsertionPointEnd()
   self.writeText(text)
 
@@ -356,7 +352,6 @@ proc getTextSelection*(self: wTextCtrl): string {.validate, property.} =
 proc replace*(self: wTextCtrl, range: Slice[int], value: string)
     {.validate, inline.} =
   ## Replaces the text in range.
-  wValidate(value)
   self.setSelection(range)
   self.writeText(value)
 
@@ -366,12 +361,10 @@ proc remove*(self: wTextCtrl, range: Slice[int]) {.validate, inline.} =
 
 proc loadFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
   ## Loads and displays the named file, if it exists.
-  wValidate(filename)
   self.setValue(readFile(filename))
 
 proc saveFile*(self: wTextCtrl, filename: string) {.validate, inline.} =
   ## Saves the contents of the control in a text file.
-  wValidate(filename)
   writeFile(filename, self.getValue())
 
 proc len*(self: wTextCtrl): int {.validate, inline.} =
@@ -382,7 +375,7 @@ proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control. The same as appendText()
   self.appendText(text)
 
-method setFont*(self: wTextCtrl, font: wFont) {.validate, property.} =
+method setFont*(self: wTextCtrl, font: wFont) {.validate, property, uknlock.} =
   ## Sets the font for this text control.
   wValidate(font)
   procCall wWindow(self).setFont(font)
@@ -404,7 +397,7 @@ iterator lines*(self: wTextCtrl): string {.validate.} =
   for i in 0..<count:
     yield self.getLineText(i)
 
-method getBestSize*(self: wTextCtrl): wSize {.property.} =
+method getBestSize*(self: wTextCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   if self.mRich:
     result = self.mBestSize
@@ -431,7 +424,7 @@ method getBestSize*(self: wTextCtrl): wSize {.property.} =
     if (style and WS_HSCROLL) != 0:
       result.height += GetSystemMetrics(SM_CYHSCROLL)
 
-method getDefaultSize*(self: wTextCtrl): wSize {.property.} =
+method getDefaultSize*(self: wTextCtrl): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -444,7 +437,7 @@ method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
   procCall wWindow(self).setBackgroundColor(color)
 
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
@@ -454,7 +447,7 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-method release(self: wTextCtrl) =
+method release(self: wTextCtrl) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
 proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
@@ -469,112 +462,101 @@ proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
       self.processMessage(wEvent_TextMaxlen, 0, 0)
     else: discard
 
-proc final*(self: wTextCtrl) =
-  ## Default finalizer for wTextCtrl.
-  discard
+wClass(wTextCtrl of wControl):
 
-proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
-    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wTeLeft) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  var isProcessTab = ((style and wTeProcessTab) != 0)
-  self.mRich = ((style and wTeRich) != 0)
-  self.mDisableTextEvent = false
+  proc final*(self: wTextCtrl) =
+    ## Default finalizer for wTextCtrl.
+    self.wControl.final()
 
-  if self.mRich and not loadRichDll():
+  proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
+      value: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wTeLeft) {.validate.} =
+    ## Initializes a text control.
+    wValidate(parent)
+    var isProcessTab = ((style and wTeProcessTab) != 0)
+    self.mRich = ((style and wTeRich) != 0)
+    self.mDisableTextEvent = false
+
+    if self.mRich and not loadRichDll():
+      self.mRich = false
+
+    var
+      style = style and (not (wTeRich or wTeProcessTab))
+      className = if self.mRich: MSFTEDIT_CLASS else: WC_EDIT
+
+    if (style and wTeMultiLine) == 0:
+      # single line text control should always have this style?
+      style = style or ES_AUTOHSCROLL
+
+    self.wControl.init(className=className, parent=parent, id=id, label=value,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+
+    if self.mRich:
+      SendMessage(self.mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or
+        ENM_REQUESTRESIZE or ENM_UPDATE)
+
+      var format = PARAFORMAT2(
+        cbSize: sizeof(PARAFORMAT2),
+        dwMask: PFM_LINESPACING,
+        dyLineSpacing: 0,
+        bLineSpacingRule: 5)
+      SendMessage(self.mHwnd, EM_SETPARAFORMAT, 0, &format)
+
+      # rich edit's scroll bar needs these to work well
+      self.systemConnect(WM_VSCROLL, wWindow_DoScroll)
+      self.systemConnect(WM_HSCROLL, wWindow_DoScroll)
+
+    # a text control by default have white background, not parent's background
+    self.setBackgroundColor(wWhite)
+
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      wTextCtrl_ParentOnCommand(self, event)
+
+    # for readonly control, don't generate wEvent_TextEnter event.
+    if (style and wTeReadOnly) == 0:
+      self.hardConnect(WM_CHAR) do (event: wEvent):
+        var processed = false
+        defer: event.skip(if processed: false else: true)
+
+        if event.getKeyCode() == VK_RETURN:
+          processed = self.processMessage(wEvent_TextEnter, 0, 0)
+
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      var vetoKeys = {wKey_Left, wKey_Right}
+
+      if (style and wTeMultiLine) != 0:
+        vetoKeys.incl {wKey_Up, wKey_Down}
+
+        if (style and wTeReadOnly) == 0:
+          vetoKeys.incl wKey_Enter
+
+          if isProcessTab:
+            vetoKeys.incl wKey_Tab
+
+      if event.getKeyCode() in vetoKeys:
+        event.veto
+
+  proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
+    ## Initializes a text control by subclassing a system handle. Used internally.
+    # only wrap a wWindow's child for now
+    let parent = wAppWindowFindByHwnd(GetParent(hWnd))
+    if parent == nil:
+      raise newException(wError, "cannot wrap this textctrl.")
+
+    self.wWindow.init(hwnd)
     self.mRich = false
+    self.mDisableTextEvent = false
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      wTextCtrl_ParentOnCommand(self, event)
 
-  var
-    style = style and (not (wTeRich or wTeProcessTab))
-    className = if self.mRich: MSFTEDIT_CLASS else: WC_EDIT
+    # add this so that the subcalssed control can get regain focus correctly
+    self.systemConnect(WM_KILLFOCUS) do (event: wEvent):
+      self.getTopParent().mSaveFocus = self
 
-  if (style and wTeMultiLine) == 0:
-    # single line text control should always have this style?
-    style = style or ES_AUTOHSCROLL
-
-  self.wControl.init(className=className, parent=parent, id=id, label=value,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
-
-  if self.mRich:
-    SendMessage(self.mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or
-      ENM_REQUESTRESIZE or ENM_UPDATE)
-
-    var format = PARAFORMAT2(
-      cbSize: sizeof(PARAFORMAT2),
-      dwMask: PFM_LINESPACING,
-      dyLineSpacing: 0,
-      bLineSpacingRule: 5)
-    SendMessage(self.mHwnd, EM_SETPARAFORMAT, 0, &format)
-
-    # rich edit's scroll bar needs these to work well
-    self.systemConnect(WM_VSCROLL, wWindow_DoScroll)
-    self.systemConnect(WM_HSCROLL, wWindow_DoScroll)
-
-  # a text control by default have white background, not parent's background
-  self.setBackgroundColor(wWhite)
-
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    wTextCtrl_ParentOnCommand(self, event)
-
-  # for readonly control, don't generate wEvent_TextEnter event.
-  if (style and wTeReadOnly) == 0:
-    self.hardConnect(WM_CHAR) do (event: wEvent):
-      var processed = false
-      defer: event.skip(if processed: false else: true)
-
-      if event.keyCode == VK_RETURN:
-        processed = self.processMessage(wEvent_TextEnter, 0, 0)
-
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    var vetoKeys = {wKey_Left, wKey_Right}
-
-    if (style and wTeMultiLine) != 0:
-      vetoKeys.incl {wKey_Up, wKey_Down}
-
-      if (style and wTeReadOnly) == 0:
-        vetoKeys.incl wKey_Enter
-
-        if isProcessTab:
-          vetoKeys.incl wKey_Tab
-
-    if event.keyCode in vetoKeys:
-      event.veto
-
-proc TextCtrl*(parent: wWindow, id = wDefaultID,
-    value: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wTeLeft): wTextCtrl {.inline, discardable.} =
-  ##　Constructor, creating and showing a text control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, pos, size, style)
-
-proc init*(self: wTextCtrl, hWnd: HWND) {.validate.} =
-  ## Initializer.
-  # only wrap a wWindow's child for now
-  let parent = wAppWindowFindByHwnd(GetParent(hWnd))
-  if parent == nil:
-    raise newException(wError, "cannot wrap this textctrl.")
-
-  self.wWindow.init(hwnd)
-  self.mRich = false
-  self.mDisableTextEvent = false
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    wTextCtrl_ParentOnCommand(self, event)
-
-  # add this so that the subcalssed control can get regain focus correctly
-  self.systemConnect(WM_KILLFOCUS) do (event: wEvent):
-    self.getTopParent().mSaveFocus = self
-
-  # add this so that the parent's sibling button can have "default button" style
-  self.systemConnect(WM_SETFOCUS) do (event: wEvent):
-    # Call wControl_DoSetFocus() on parent window.
-    # Don't use SendMessage(parent.mHwnd, WM_SETFOCUS...), because it let the
-    # default WndProc do some extra action.
-    var event = Event(parent, WM_SETFOCUS, event.wParam, event.lParam)
-    wControl_DoSetFocus(event)
-
-proc TextCtrl*(hWnd: HWND): wTextCtrl {.inline, discardable.} =
-  ## A special constructor to subclass the textctrl of other contorls.
-  new(result, final)
-  result.init(hWnd)
+    # add this so that the parent's sibling button can have "default button" style
+    self.systemConnect(WM_SETFOCUS) do (event: wEvent):
+      # Call wControl_DoSetFocus() on parent window.
+      # Don't use SendMessage(parent.mHwnd, WM_SETFOCUS...), because it let the
+      # default WndProc do some extra action.
+      var event = Event(parent, WM_SETFOCUS, event.mWparam, event.mLparam)
+      wControl_DoSetFocus(event)

@@ -8,8 +8,11 @@
 {.experimental, deadCodeElim: on.}
 
 # Export some modules that every module in wNim depends on.
-import winim/[winstr, utils], winim/inc/windef, winimx
-export winstr, utils, windef, winimx
+import winim/[winstr, utils], winim/inc/windef
+export winstr, utils, windef
+
+import winimx except BITMAP
+export winimx except BITMAP
 
 import wTypes, wMacros, wHelper
 export wTypes, wMacros, wHelper

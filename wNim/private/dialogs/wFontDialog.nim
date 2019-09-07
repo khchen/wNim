@@ -36,7 +36,7 @@ proc setInitialFont*(self: wFontDialog, font: wFont) {.validate, property, inlin
   self.mChosenFont = font
   if font != nil:
     self.mCf.Flags = self.mCf.Flags or CF_INITTOLOGFONTSTRUCT
-    GetObject(font.mHandle, sizeof(LOGFONT), cast[pointer](&self.mLf))
+    GetObject(font.mHandle, sizeof(LOGFONT), &self.mLf)
   else:
     self.mCf.Flags = self.mCf.Flags and (not CF_INITTOLOGFONTSTRUCT)
 

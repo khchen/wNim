@@ -12,7 +12,7 @@
 ## selected out of the memory DC:
 ##
 ## .. code-block:: Nim
-##   temp_dc.selectObject(wNilBitmap) # here wNilBitmap is a predefined bitmap
+##   tempdc.selectObject(wNilBitmap) # here wNilBitmap is a predefined bitmap
 ##
 ## Like other DC object, wMemoryDC need nim's destructors to release the resource.
 #
@@ -24,13 +24,14 @@
 import ../wBase, ../gdiobjects/wBitmap, wDC
 export wDC
 
-when not defined(Nimdoc):
+when not isMainModule: # hide from doc
   type
     wMemoryDC* = object of wDC
       mBitmap*: wBitmap
 else:
   type
-    wMemoryDC* = object of wDC
+    wMemoryDC = object of wDC
+      mBitmap: wBitmap
 
 proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   ## Selects the given bitmap into the device context, to use as the memory bitmap.
@@ -39,7 +40,7 @@ proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   let hBmp = SelectObject(self.mHdc, bitmap.mHandle)
   if self.mhOldBitmap == 0: self.mhOldBitmap = hBmp
 
-method getSize*(self: wMemoryDC): wSize {.property.} =
+method getSize*(self: wMemoryDC): wSize {.property, uknlock.} =
   ## Gets the size of the device context.
   result = self.mBitmap.getSize()
 

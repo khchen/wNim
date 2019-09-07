@@ -43,14 +43,14 @@ const
   wDpAllowNone*: wStyle = DTS_SHOWNONE
   wDpShowCentury*: wStyle = DTS_SHORTDATECENTURYFORMAT
 
-method getBestSize*(self: wDatePickerCtrl): wSize {.property.} =
+method getBestSize*(self: wDatePickerCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the window.
   var size: SIZE
   SendMessage(self.mHwnd, DTM_GETIDEALSIZE, 0, addr size)
   result.width = size.cx + 2
   result.height = size.cy + 2
 
-method getDefaultSize*(self: wDatePickerCtrl): wSize {.property.} =
+method getDefaultSize*(self: wDatePickerCtrl): wSize {.property, uknlock.} =
   ## Returns the default size for the window.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -93,45 +93,39 @@ proc setRange*(self: wDatePickerCtrl, time: (wTime, wTime)) {.validate, property
   self.setRange(time[0], time[1])
 
 method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   if code == DTN_DATETIMECHANGE:
     return self.processMessage(wEvent_DateChanged, id, lparam, ret)
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wDatePickerCtrl) =
-  ## Default finalizer for wDatePickerCtrl.
-  discard
+wClass(wDatePickerCtrl of wControl):
 
-proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
-    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wDpDropDown) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc final*(self: wDatePickerCtrl) =
+    ## Default finalizer for wDatePickerCtrl.
+    self.wControl.final()
 
-  if date != wDefaultTime:
-    self.setValue(date)
+  proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
+      date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wDpDropDown) {.validate.} =
+    ## Initializes a date picker control.
+    ## ==========  =================================================================================
+    ## Parameters  Description
+    ## ==========  =================================================================================
+    ##    parent   Parent window.
+    ##    id       The identifier for the control.
+    ##    date     The initial value of the control, if an invalid date (such as the default value) is used, the control is set to today.
+    ##    pos      Initial position.
+    ##    size     Initial size. If left at default value, the control chooses its own best size.
+    ##    style    The window style.
+    wValidate(parent)
+    self.wControl.init(className=DATETIMEPICK_CLASS, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if event.keyCode in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
-      event.veto
+    if date != wDefaultTime:
+      self.setValue(date)
 
-proc DatePickerCtrl*(parent: wWindow, id = wDefaultID,
-    date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wDpDropDown): wDatePickerCtrl {.inline, discardable.} =
-  ## Creates the control.
-  ## ==========  =================================================================================
-  ## Parameters  Description
-  ## ==========  =================================================================================
-  ##    parent   Parent window.
-  ##    id       The identifier for the control.
-  ##    date     The initial value of the control, if an invalid date (such as the default value) is used, the control is set to today.
-  ##    pos      Initial position.
-  ##    size     Initial size. If left at default value, the control chooses its own best size.
-  ##    style    The window style.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, date, pos, size, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if event.getKeyCode() in {wKey_Up, wKey_Down, wKey_Left, wKey_Right}:
+        event.veto

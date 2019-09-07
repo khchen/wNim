@@ -36,13 +36,13 @@ const
   wGaSmooth* = PBS_SMOOTH
   wGaProgress* = 0x10000000.int64 shl 32
 
-method getDefaultSize*(self: wGauge): wSize {.property.} =
+method getDefaultSize*(self: wGauge): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   result.width = MulDiv(result.width.int32, 107, 4)
   result.height = MulDiv(result.height.int32, 8, 8)
 
-method getBestSize*(self: wGauge): wSize {.property, inline.} =
+method getBestSize*(self: wGauge): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -117,42 +117,36 @@ proc getTaskBar(self: wGauge) =
 
     self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_NORMAL)
 
-method release(self: wGauge) =
+method release(self: wGauge) {.uknlock.} =
   self.getTopParent().systemDisconnect(self.mTaskBarCreatedConn)
 
   if self.mTaskBar != nil:
     self.mTaskBar.Release()
 
-proc final*(self: wGauge) =
-  ## Default finalizer for wGauge.
-  discard
+wClass(wGauge of wControl):
 
-proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
-    range = 100, value = 0, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wGaHorizontal) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
+  proc final*(self: wGauge) =
+    ## Default finalizer for wGauge.
+    self.wControl.final()
 
-  self.wControl.init(className=PROGRESS_CLASS, parent=parent, id=id, pos=pos,
-    size=size, style=style or WS_CHILD or WS_VISIBLE)
+  proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
+      range = 100, value = 0, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wGaHorizontal) {.validate.} =
+    ## Initializes a gauge control.
+    wValidate(parent)
 
-  self.mFocusable = false
-  self.setRange(range)
-  self.setValue(value)
+    self.wControl.init(className=PROGRESS_CLASS, parent=parent, id=id, pos=pos,
+      size=size, style=style or WS_CHILD or WS_VISIBLE)
 
-  if (style and wGaProgress) != 0:
-    # try to get task bar (save in mTaskBar) first
-    # if fail, maybe the task bar not yet created, try to get it latter
-    self.getTaskBar()
-    if self.mTaskBar == nil:
-      let messageId = RegisterWindowMessage("TaskbarButtonCreated")
-      self.mTaskBarCreatedConn = self.getTopParent().systemConnect(messageId) do (event: wEvent):
-        self.getTaskBar()
+    self.mFocusable = false
+    self.setRange(range)
+    self.setValue(value)
 
-proc Gauge*(parent: wWindow, id = wDefaultID, range = 100,
-    value = 0, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wGaHorizontal): wGauge {.inline, discardable.} =
-  ## Constructor, creating and showing a gauge.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, range, value, pos, size, style)
+    if (style and wGaProgress) != 0:
+      # try to get task bar (save in mTaskBar) first
+      # if fail, maybe the task bar not yet created, try to get it latter
+      self.getTaskBar()
+      if self.mTaskBar == nil:
+        let messageId = RegisterWindowMessage("TaskbarButtonCreated")
+        self.mTaskBarCreatedConn = self.getTopParent().systemConnect(messageId) do (event: wEvent):
+          self.getTaskBar()

@@ -152,100 +152,82 @@ type
     wPaperPenv10Rotated = DMPAPER_PENV_10_ROTATED
     wPaperUser = DMPAPER_USER
 
-proc final*(self: wPrintData) =
-  ## Default finalizer for wPrintData.
-  discard
+wClass(wPrintData):
 
-proc init*(self: wPrintData, hDevMode: HGLOBAL, hDevNames: HGLOBAL) {.validate.} =
-  ## Initializer by hDevMode and hDevNames, for internal use only.
-  # MSDN: If the wDeviceOffset and dmDeviceName names are not the same, use
-  # wDeviceOffset.
-  if hDevNames != 0:
-    let pDevNames = cast[ptr DEVNAMES](GlobalLock(hDevNames))
-    if pDevNames != nil:
-      let tstr = cast[ptr UncheckedArray[TCHAR]](pDevNames)
-      self.mDevice = ^$(&tstr[int pDevNames.wDeviceOffset])
-    GlobalUnlock(hDevNames)
+  proc final*(self: wPrintData) =
+    ## Default finalizer for wPrintData.
+    discard
 
-  if hDevMode != 0:
-    let pDevMode = cast[ptr DEVMODE](GlobalLock(hDevMode))
-    if pDevMode != nil:
-      let size = GlobalSize(hDevMode)
-      self.mDevModeBuffer = newString(size)
-      copyMem(&self.mDevModeBuffer, pDevMode, size)
-      if self.mDevice.len == 0:
-        self.mDevice = ^$(cast[ptr TChar](&pDevMode.dmDeviceName))
-    GlobalUnlock(hDevMode)
+  proc init*(self: wPrintData, hDevMode: HGLOBAL, hDevNames: HGLOBAL) {.validate.} =
+    ## Initializer by hDevMode and hDevNames, for internal use only.
+    # MSDN: If the wDeviceOffset and dmDeviceName names are not the same, use
+    # wDeviceOffset.
+    if hDevNames != 0:
+      let pDevNames = cast[ptr DEVNAMES](GlobalLock(hDevNames))
+      if pDevNames != nil:
+        let tstr = cast[ptr UncheckedArray[TCHAR]](pDevNames)
+        self.mDevice = ^$(&tstr[int pDevNames.wDeviceOffset])
+      GlobalUnlock(hDevNames)
 
-proc PrintData*(hDevMode: HGLOBAL, hDevNames: HGLOBAL): wPrintData {.inline.} =
-  ## Constructor by hDevMode and hDevNames, for internal use only.
-  new(result, final)
-  result.init(hDevMode, hDevNames)
+    if hDevMode != 0:
+      let pDevMode = cast[ptr DEVMODE](GlobalLock(hDevMode))
+      if pDevMode != nil:
+        let size = GlobalSize(hDevMode)
+        self.mDevModeBuffer = newString(size)
+        copyMem(&self.mDevModeBuffer, pDevMode, size)
+        if self.mDevice.len == 0:
+          self.mDevice = ^$(cast[ptr TChar](&pDevMode.dmDeviceName))
+      GlobalUnlock(hDevMode)
 
-proc init*(self: wPrintData, device: string, devMode: string) {.validate.} =
-  ## Initializer by devMode and device name, for internal use only.
-  self.mDevice = device
-  self.mDevModeBuffer = devMode
+  proc init*(self: wPrintData, device: string, devMode: string) {.validate.} =
+    ## Initializer by devMode and device name, for internal use only.
+    self.mDevice = device
+    self.mDevModeBuffer = devMode
 
-proc PrintData*(device: string, devMode: string): wPrintData {.inline.} =
-  ## Constructor by devMode and device name, for internal use only.
-  new(result, final)
-  result.init(device, devMode)
+  proc init*(self: wPrintData) {.validate, inline.} =
+    ## Initializes the data by default printer.
+    var psd = TPAGESETUPDLG(lStructSize: sizeof(TPAGESETUPDLG),
+      Flags: PSD_RETURNDEFAULT or PSD_INHUNDREDTHSOFMILLIMETERS)
 
-proc init*(self: wPrintData) {.validate, inline.} =
-  ## Initializer
-  var psd = TPAGESETUPDLG(lStructSize: sizeof(TPAGESETUPDLG),
-    Flags: PSD_RETURNDEFAULT or PSD_INHUNDREDTHSOFMILLIMETERS)
+    # If psd.hwndOwner is null, PageSetupDlg() will steal active window for a while.
+    # It makes current top-level window flicker.
+    if wAppGetCurrentApp() != nil:
+      for hwnd in wAppTopLevelHwnd():
+        psd.hwndOwner = hwnd
+        break
 
-  # If psd.hwndOwner is null, PageSetupDlg() will steal active window for a while.
-  # It makes current top-level window flicker.
-  if wAppGetCurrentApp() != nil:
-    for hwnd in wAppTopLevelHwnd():
-      psd.hwndOwner = hwnd
-      break
+    if PageSetupDlg(&psd) == 0:
+      raise newException(wPrintDataError, "wPrintData creation failed")
 
-  if PageSetupDlg(&psd) == 0:
-    raise newException(wPrintDataError, "wPrintData creation failed")
+    defer:
+      GlobalFree(psd.hDevMode)
+      GlobalFree(psd.hDevNames)
 
-  defer:
-    GlobalFree(psd.hDevMode)
-    GlobalFree(psd.hDevNames)
+    self.init(psd.hDevMode, psd.hDevNames)
 
-  self.init(psd.hDevMode, psd.hDevNames)
+  proc init*(self: wPrintData, device: string) {.validate.} =
+    ## Initializes the data by specific printer.
+    var hPrinter: HANDLE
+    if OpenPrinter(device, &hPrinter, nil) == 0:
+      raise newException(wPrintDataError, "wPrintData creation failed")
 
-proc PrintData*(): wPrintData {.inline.} =
-  ## Constructor by default printer.
-  new(result, final)
-  result.init()
+    defer: ClosePrinter(hPrinter)
 
-proc init*(self: wPrintData, device: string) {.validate.} =
-  ## Initializer.
-  var hPrinter: HANDLE
-  if OpenPrinter(device, &hPrinter, nil) == 0:
-    raise newException(wPrintDataError, "wPrintData creation failed")
+    var size = DocumentProperties(0, hPrinter, nil, nil, nil, 0)
+    if size <= 0:
+      raise newException(wPrintDataError, "wPrintData creation failed")
 
-  defer: ClosePrinter(hPrinter)
+    size += 1024 # need extra memory for buggy printer driver
+    self.mDevModeBuffer = newString(size)
+    let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
 
-  var size = DocumentProperties(0, hPrinter, nil, nil, nil, 0)
-  if size <= 0:
-    raise newException(wPrintDataError, "wPrintData creation failed")
+    if DocumentProperties(0, hPrinter, nil, pDevMode, nil, DM_OUT_BUFFER) < 0:
+      raise newException(wPrintDataError, "wPrintData creation failed")
 
-  size += 1024 # need extra memory for buggy printer driver
-  self.mDevModeBuffer = newString(size)
-  let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
-
-  if DocumentProperties(0, hPrinter, nil, pDevMode, nil, DM_OUT_BUFFER) < 0:
-    raise newException(wPrintDataError, "wPrintData creation failed")
-
-  self.mDevice = device
-
-proc PrintData*(device: string): wPrintData {.inline.} =
-  ## Constructor by specific printer.
-  new(result, final)
-  result.init(device)
+    self.mDevice = device
 
 proc getDevMode(self: wPrintData): HGLOBAL {.shield.} =
-  # convert wPrintData to movable block of memory. use internally.
+  # convert wPrintData to movable block of memory. Used internally.
   if self.mDevModeBuffer.len != 0:
     result = GlobalAlloc(GHND, SIZE_T self.mDevModeBuffer.len)
     if result != 0:
@@ -271,6 +253,7 @@ proc getPrinterName*(self: wPrintData): string {.validate, property, inline.} =
 
 proc getPaper*(self: wPrintData): wPaper {.validate, property, inline.} =
   ## Returns the paper kind.
+  result = wPaperA4
   if self.isOk():
     let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
     result = wPaper pDevMode.dmPaperSize
@@ -306,6 +289,7 @@ proc getPaperSize*(self: wPrintData): wSize {.validate, property, inline.} =
 
 proc getOrientation*(self: wPrintData): wOrientation {.validate, property, inline.} =
   ## Gets the orientation.
+  result = wPortrait
   if self.isOk():
     let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
     result = wOrientation pDevMode.dmOrientation
@@ -330,6 +314,7 @@ proc getColor*(self: wPrintData): bool {.validate, property, inline.} =
 
 proc getDuplex*(self: wPrintData): wDuplexMode {.validate, property, inline.} =
   ## Returns the duplex mode.
+  result = wDuplexSimplex
   if self.isOk():
     let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
     result = wDuplexMode pDevMode.dmDuplex

@@ -61,11 +61,11 @@ const
   wTbDropDown* = BTNS_WHOLEDROPDOWN
 
 # toolbar's best size and default size are current size
-method getBestSize*(self: wToolBar): wSize {.property, inline.} =
+method getBestSize*(self: wToolBar): wSize {.property, inline, uknlock.} =
   ## Returns the best size for the tool bar.
   result = self.getSize()
 
-method getDefaultSize*(self: wToolBar): wSize {.property, inline.} =
+method getDefaultSize*(self: wToolBar): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the tool bar.
   result = self.getSize()
 
@@ -292,8 +292,12 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     SendMessage(self.mHwnd, TB_INSERTBUTTON, pos, &button)
     SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
+method show*(self: wToolBar, flag = true) {.inline, uknlock.} =
+  ## Shows or hides the toolbar.
+  self.showAndNotifyParent(flag)
+
 method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.shield, uknlock.} =
 
   case code
   of TTN_GETDISPINFO:
@@ -362,48 +366,43 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
     self.popupMenu(menu, rect.left, rect.bottom)
     processed = true
 
-method release(self: wToolBar) =
+method release(self: wToolBar) {.uknlock.} =
   self.mParent.systemDisconnect(self.mSizeConn)
   self.mParent.systemDisconnect(self.mCommandConn)
 
-proc final*(self: wToolBar) =
-  ## Default finalizer for wToolBar.
-  discard
+wClass(wToolBar of wControl):
 
-proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
-    style: wStyle = wTbDefaultStyle) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mTools = @[]
+  proc final*(self: wToolBar) =
+    ## Default finalizer for wToolBar.
+    self.wControl.final()
 
-  self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id,
-    style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
+  proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
+      style: wStyle = wTbDefaultStyle) {.validate.} =
+    ## Initializes a toolbar.
+    wValidate(parent)
+    self.mTools = @[]
 
-  SendMessage(self.mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
-  SendMessage(self.mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
+    self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id,
+      style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
 
-  parent.mToolBar = self
-  self.mFocusable = false
-  # todo: handle key navigation by TB_SETHOTITEM?
+    SendMessage(self.mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
+    SendMessage(self.mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 
-  self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
-    SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
+    parent.mToolBar = self
+    self.mFocusable = false
+    # todo: handle key navigation by TB_SETHOTITEM?
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    # translate WM_COMMAND to wEvent_Tool
-    if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == 0:
-      self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
+    self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
+      SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
-  # send WM_MENUCOMMAND to wFrame (if there has one)
-  # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
-  # this already be done in wControl
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      # translate WM_COMMAND to wEvent_Tool
+      if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == 0:
+        self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
 
-  # show the popupmenu is a default behavior, but can be overridden.
-  self.hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)
+    # send WM_MENUCOMMAND to wFrame (if there has one)
+    # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
+    # this already be done in wControl
 
-proc ToolBar*(parent: wWindow, id = wDefaultID,
-    style: wStyle = wTbDefaultStyle): wToolBar {.inline, discardable.} =
-  ## Constructs a toolbar.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, style)
+    # show the popupmenu is a default behavior, but can be overridden.
+    self.hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)

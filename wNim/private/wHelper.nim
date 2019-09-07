@@ -216,7 +216,7 @@ proc wCheckMenuItem*(hmenu: HMENU, pos: int, flag: bool) =
   SetMenuItemInfo(hmenu, pos, true, menuItemInfo)
 
 proc wMenuCheck*(self: wMenu, pos: int, flag = true) {.validate.} =
-  # Use internally.
+  # Used internally.
   # To avoid recursive module dependencies problem, move this from
   # wMenu.nim to here.
   if pos >= 0 and pos < self.mItemList.len:
@@ -236,7 +236,7 @@ proc wMenuCheck*(self: wMenu, pos: int, flag = true) {.validate.} =
       wCheckMenuItem(self.mHmenu, pos, flag)
 
 proc wMenuToggle*(self: wMenu, pos: int) {.validate.} =
-  # Use internally.
+  # Used internally.
   # To avoid recursive module dependencies problem, move this from
   # wMenu.nim to here.
   if pos >= 0 and pos < self.mItemList.len:
@@ -277,7 +277,7 @@ proc getSize*(iconInfo: ICONINFO): wSize =
       result.height = int bitmapInfo.bmHeight div 2
 
 proc getHandle*(self: wAcceleratorTable): HACCEL =
-  # Use internally, generate the accelerator table on the fly.
+  # Used internally, generate the accelerator table on the fly.
   # To avoid recursive module dependencies problem, move this from
   # wAcceleratorTable.nim to here.
   if self.mModified:

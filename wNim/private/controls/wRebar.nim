@@ -87,8 +87,12 @@ proc len*(self: wRebar): int {.validate, inline.} =
   ## Returns the number of controls in the rebar.
   result = self.getCount()
 
+method show*(self: wRebar, flag = true) {.inline, uknlock.} =
+  ## Shows or hides the status bar.
+  self.showAndNotifyParent(flag)
+
 method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.uknlock.} =
 
   case code
   of RBN_BEGINDRAG:
@@ -115,32 +119,27 @@ method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 
-method release(self: wRebar) =
+method release(self: wRebar) {.uknlock.} =
   self.mImageList = nil
   self.mParent.systemDisconnect(self.mSizeConn)
 
-proc final*(self: wRebar) =
-  ## Default finalizer for wRebar.
-  discard
+wClass(wRebar of wControl):
 
-proc init*(self: wRebar, parent: wWindow, id = wDefaultID,
-    imageList: wImageList = nil, style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mControls = @[]
+  proc final*(self: wRebar) =
+    ## Default finalizer for wRebar.
+    self.wControl.final()
 
-  self.wControl.init(className=REBARCLASSNAME, parent=parent, id=id,
-    style=style or WS_CHILD or WS_VISIBLE or WS_CLIPSIBLINGS or WS_CLIPCHILDREN or
-    RBS_VARHEIGHT or CCS_NODIVIDER or RBS_AUTOSIZE)
+  proc init*(self: wRebar, parent: wWindow, id = wDefaultID,
+      imageList: wImageList = nil, style: wStyle = 0) {.validate.} =
+    ## Initializes a rebar.
+    wValidate(parent)
+    self.mControls = @[]
 
-  parent.mRebar = self
+    self.wControl.init(className=REBARCLASSNAME, parent=parent, id=id,
+      style=style or WS_CHILD or WS_VISIBLE or WS_CLIPSIBLINGS or WS_CLIPCHILDREN or
+      RBS_VARHEIGHT or CCS_NODIVIDER or RBS_AUTOSIZE)
 
-  self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
-    self.setSize(parent.size.width, wDefault)
+    parent.mRebar = self
 
-proc Rebar*(parent: wWindow, id = wDefaultID, imageList: wImageList = nil,
-    style: wStyle = 0): wRebar {.inline, discardable.} =
-  ## Constructs a rebar.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, imageList, style)
+    self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
+      self.setSize(parent.getSize().width, wDefault)

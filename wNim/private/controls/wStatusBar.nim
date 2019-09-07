@@ -20,11 +20,11 @@ import ../wBase, wControl
 export wControl
 
 # statusbar's best size and default size are current size
-method getBestSize*(self: wStatusBar): wSize {.property, inline.} =
+method getBestSize*(self: wStatusBar): wSize {.property, inline, uknlock.} =
   ## Returns the best size for the status bar.
   result = self.getSize()
 
-method getDefaultSize*(self: wStatusBar): wSize {.property, inline.} =
+method getDefaultSize*(self: wStatusBar): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the status bar.
   result = self.getSize()
 
@@ -115,8 +115,12 @@ proc `[]`*(self: wStatusBar, index: int): string {.validate, inline.} =
   ## Returns the string associated with a status bar of the specified field.
   result = self.getStatusText(index)
 
+method show*(self: wStatusBar, flag = true) {.inline, uknlock.} =
+  ## Shows or hides the status bar.
+  self.showAndNotifyParent(flag)
+
 method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield.} =
+    ret: var LRESULT): bool {.shield, uknlock.} =
 
   var eventKind: UINT
   case code
@@ -127,34 +131,29 @@ method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
   else: return false
   return self.processMessage(eventKind, cast[WPARAM](id), lparam)
 
-method release(self: wStatusBar) =
+method release(self: wStatusBar) {.uknlock.} =
   self.mParent.systemDisconnect(self.mSizeConn)
 
-proc final*(self: wStatusBar) =
-  ## Default finalizer for wStatusBar.
-  discard
+wClass(wStatusBar of wControl):
 
-proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=STATUSCLASSNAME, parent=parent, id=id, pos=(0, 0),
-    size=(0, 0), style=style or WS_CHILD or WS_VISIBLE)
+  proc final*(self: wStatusBar) =
+    ## Default finalizer for wStatusBar.
+    self.wControl.final()
 
-  self.mFiledNumbers = 1
-  self.mWidths[0] = -1
-  self.mFocusable = false
+  proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a status bar.
+    wValidate(parent)
+    self.wControl.init(className=STATUSCLASSNAME, parent=parent, id=id, pos=(0, 0),
+      size=(0, 0), style=style or WS_CHILD or WS_VISIBLE)
 
-  parent.mStatusBar = self
-  self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
-    # send WM_SIZE to statubar to resize itself
-    SendMessage(self.mHwnd, WM_SIZE, 0, 0)
-    # then recount the width of fields
-    self.resize()
+    self.mFiledNumbers = 1
+    self.mWidths[0] = -1
+    self.mFocusable = false
 
-proc StatusBar*(parent: wWindow, id = wDefaultID,
-    style: wStyle = 0): wStatusBar {.inline, discardable.} =
-  ## Constructor.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, style)
+    parent.mStatusBar = self
+    self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
+      # send WM_SIZE to statubar to resize itself
+      SendMessage(self.mHwnd, WM_SIZE, 0, 0)
+      # then recount the width of fields
+      self.resize()

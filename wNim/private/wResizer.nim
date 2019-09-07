@@ -105,28 +105,24 @@ iterator items*(self: wResizer): wResizable {.validate.} =
   for obj in self.mObjects:
     yield obj
 
-proc final*(self: wResizer) =
-  ## Default finalizer for wResizer.
-  discard
+wClass(wResizer):
 
-proc init*(self: wResizer, parent: wResizable) {.inline.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mParent = parent
-  self.mSolver = newSolver()
-  # initSet is deprecated since v0.20
-  when declared(initHashSet):
-    self.mObjects = initHashSet[wResizable]()
-  else:
-    self.mObjects = initSet[wResizable]()
+  proc final*(self: wResizer) =
+    ## Default finalizer for wResizer.
+    discard
 
-  self.mSolver.addEditVariable(parent.mLeft, REQUIRED-1)
-  self.mSolver.addEditVariable(parent.mTop, REQUIRED-1)
-  self.mSolver.addEditVariable(parent.mWidth, REQUIRED-1)
-  self.mSolver.addEditVariable(parent.mHeight, REQUIRED-1)
+  proc init*(self: wResizer, parent: wResizable) {.inline.} =
+    ## Initializer.
+    wValidate(parent)
+    self.mParent = parent
+    self.mSolver = newSolver()
+    # initSet is deprecated since v0.20
+    when declared(initHashSet):
+      self.mObjects = initHashSet[wResizable]()
+    else:
+      self.mObjects = initSet[wResizable]()
 
-proc Resizer*(parent: wResizable): wResizer {.inline.} =
-  ## Constructor.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent)
+    self.mSolver.addEditVariable(parent.mLeft, REQUIRED-1)
+    self.mSolver.addEditVariable(parent.mTop, REQUIRED-1)
+    self.mSolver.addEditVariable(parent.mWidth, REQUIRED-1)
+    self.mSolver.addEditVariable(parent.mHeight, REQUIRED-1)

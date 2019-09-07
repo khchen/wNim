@@ -68,7 +68,7 @@ notebook.addPage("Page2")
 notebook.addPage("Page3")
 
 const logo = staticRead(r"images\logo.png")
-let staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bmp(logo), style=wSbFit)
+let staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bitmap(logo), style=wSbFit)
 staticbitmap.backgroundColor = -1
 
 notebook.page(1).wEvent_Paint do (event: wEvent):

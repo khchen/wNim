@@ -5,10 +5,12 @@
 #
 #====================================================================
 
+import resource/resource
+
 when defined(aio):
   import wNim
 else:
-  import wNim/[wApp, wFrame, wMessageDialog]
+  import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon]
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
@@ -16,38 +18,30 @@ else:
 #    as initializer and finalizer.
 # 3. Provides an Object() proc to quickly get the ref object.
 
-type
-  wMyFrame = ref object of wFrame
+# wClass (defined in wMacros) provides a convenient way to define wNim class.
 
-proc final(self: wMyFrame) =
-  wFrame(self).final()
+wClass(wMyFrame of wFrame):
+  # Constructor is generated from initializer and finalizer automatically.
 
-proc init(self: wMyFrame, title: string) =
-  wFrame(self).init(title=title, size=(350, 200))
-  self.center()
+  proc init(self: wMyFrame, title: string) =
+    wFrame(self).init(title=title, size=(350, 200))
+    self.center()
 
-  self.wEvent_Destroy do ():
-    MessageDialog(self, "wMyFrame is about to destroy.",
-      "wEvent_Destroy", wOk or wStayOnTop).showModal()
+    self.wEvent_Destroy do ():
+      MessageDialog(self, "wMyFrame is about to destroy.",
+        "wEvent_Destroy", wOk or wStayOnTop).showModal()
 
-  self.wEvent_Close do (event: wEvent):
-    let dlg = MessageDialog(self, "Do you really want to close this application?",
-      "Confirm Exit", wOkCancel or wIconQuestion)
+    self.wEvent_Close do (event: wEvent):
+      let dlg = MessageDialog(self, "Do you really want to close this application?",
+        "Confirm Exit", wOkCancel or wIconQuestion)
 
-    if dlg.showModal() != wIdOk:
-      event.veto()
+      if dlg.showModal() != wIdOk:
+        event.veto()
 
-proc MyFrame(title: string): wMyFrame {.inline.} =
-  new(result, final)
-  result.init(title)
+  proc final(self: wMyFrame) =
+    wFrame(self).final()
 
 when isMainModule:
-  import resource/resource
-
-  when defined(aio):
-    import wNim
-  else:
-    import wNim/[wApp, wIcon]
 
   let app = App()
   let frame = MyFrame("Hello World")

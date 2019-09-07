@@ -50,31 +50,25 @@ proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int])
   ## Changes the current time of the control.
   self.setTime(time.hour, time.min, time.sec)
 
-proc final*(self: wTimePickerCtrl) =
-  ## Default finalizer for wTimePickerCtrl.
-  discard
+wClass(wTimePickerCtrl of wDatePickerCtrl):
 
-proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID,
-    time = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos,
-    size=size, style=style or DTS_TIMEFORMAT)
+  proc final*(self: wTimePickerCtrl) =
+    ## Default finalizer for wTimePickerCtrl.
+    self.wDatePickerCtrl.final()
 
-proc TimePickerCtrl*(parent: wWindow, id = wDefaultID, time = wDefaultTime,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0): wTimePickerCtrl
-    {.discardable.} =
-  ## Creates the control.
-  ## ==========  =================================================================================
-  ## Parameters  Description
-  ## ==========  =================================================================================
-  ## parent      Parent window.
-  ## id          The identifier for the control.
-  ## time        The initial value of the control, if an invalid date (such as the default value) is used, the control is set to current time.
-  ## pos         Initial position.
-  ## size        Initial size. If left at default value, the control chooses its own best size.
-  ## style       The window style, should be left at 0 as there are no special styles for this control in this version.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, time, pos, size, style)
+  proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID,
+      time = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a time picker control.
+    ## ==========  =================================================================================
+    ## Parameters  Description
+    ## ==========  =================================================================================
+    ## parent      Parent window.
+    ## id          The identifier for the control.
+    ## time        The initial value of the control, if an invalid date (such as the default value) is used, the control is set to current time.
+    ## pos         Initial position.
+    ## size        Initial size. If left at default value, the control chooses its own best size.
+    ## style       The window style, should be left at 0 as there are no special styles for this control.
+    wValidate(parent)
+    self.wDatePickerCtrl.init(parent=parent, id=id, date=time, pos=pos,
+      size=size, style=style or DTS_TIMEFORMAT)

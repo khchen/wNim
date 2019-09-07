@@ -38,7 +38,7 @@ const
   wKhaki*: wColor = 0x05F9F9F
   wLightBlue*: wColor = 0x0D8D8BF
   wLightGrey*: wColor = 0x0C0C0C0
-  wLightMagenta*: wColor = 0x0FF00FF
+  wLightMagenta*: wColor = 0x0E78BE7
   wLightSteelBlue*: wColor = 0x0BC8F8F
   wLimeGreen*: wColor = 0x032CC32
   wMagenta*: wColor = 0x0FF00FF

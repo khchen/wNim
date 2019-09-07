@@ -60,7 +60,9 @@ method getWindowRect(self: wSpinCtrl, sizeOnly = false): wRect =
   result = procCall wWindow(self).getWindowRect()
   result.width += self.mUpdownWidth
 
-method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0) {.shield.} =
+method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0)
+    {.shield, uknlock.} =
+
   var
     width = width
     height = height
@@ -99,17 +101,17 @@ method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0) {.shield.} 
   if cacheSizeEvent != nil and not noSize:
     SendMessage(self.mHwnd, WM_SIZE, cacheSizeEvent.mWparam, cacheSizeEvent.mLparam)
 
-method show*(self: wSpinCtrl, flag = true) {.inline.} =
+method show*(self: wSpinCtrl, flag = true) {.inline, uknlock.} =
   ## Shows or hides the control.
   procCall wWindow(self).show(flag)
   ShowWindow(self.mUpdownHwnd, if flag: SW_SHOWNORMAL else: SW_HIDE)
 
-method getDefaultSize*(self: wSpinCtrl): wSize {.property.} =
+method getDefaultSize*(self: wSpinCtrl): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-method getBestSize*(self: wSpinCtrl): wSize {.property.} =
+method getBestSize*(self: wSpinCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize("0000  ", self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -163,12 +165,10 @@ proc setValue*(self: wSpinCtrl, value: int) =
 
 proc setValue*(self: wSpinCtrl, text: string) {.validate, property, inline.} =
   ## Sets the value of the spin control.
-  wValidate(text)
   self.setTitle(text)
 
 proc setText*(self: wSpinCtrl, text: string) {.validate, property, inline.} =
   ## Sets the text of the spin control. The same as setValue().
-  wValidate(text)
   self.setValue(text)
 
 proc setSelection*(self: wSpinCtrl, range: Slice[int]) {.validate, property, inline.} =
@@ -183,10 +183,10 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
   var processed = false
   defer: event.skip(if processed: false else: true)
 
-  let lpnmud = cast[LPNMUPDOWN](event.lParam)
+  let lpnmud = cast[LPNMUPDOWN](event.mLparam)
   if lpnmud.hdr.hwndFrom == self.mUpdownHwnd and lpnmud.hdr.code == UDN_DELTAPOS:
-    var spinEvent = Event(window=self, msg=wEvent_Spin, wParam=event.wParam,
-      lParam=event.lParam)
+    var spinEvent = Event(window=self, msg=wEvent_Spin, wParam=event.mWparam,
+      lParam=event.mLparam)
 
     if lpnmud.iDelta > 0:
       spinEvent.mMsg = wEvent_SpinUp
@@ -203,94 +203,81 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
 
     if processed:
       # Return nonzero to prevent the change, or zero to allow the change, same as our mResult
-      event.result = spinEvent.result
+      event.mResult = spinEvent.mResult
 
-method release(self: wSpinCtrl) =
+method release(self: wSpinCtrl) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
   self.mParent.disconnect(self.mNotifyConn)
   DestroyWindow(self.mUpdownHwnd)
   self.mUpdownHwnd = 0
 
-proc final*(self: wSpinCtrl) =
-  ## Default finalizer for wSpinCtrl.
-  discard
+wClass(wSpinCtrl of wControl):
 
-proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
-    value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpLeft) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  var
-    textStyle = style and (not (wSpArrowKeys or wSpWrap)) or ES_AUTOHSCROLL or wBorderSunken
-    updownStyle = UDS_ALIGNRIGHT or UDS_SETBUDDYINT or UDS_HOTTRACK
-    useArrowKeys = false
+  proc final*(self: wSpinCtrl) =
+    ## Default finalizer for wSpinCtrl.
+    self.wControl.final()
 
-  if (style and wSpArrowKeys) != 0:
-    updownStyle = updownStyle or UDS_ARROWKEYS
-    useArrowKeys = true
+  proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
+      value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wSpLeft) {.validate.} =
+    ## Initializes a spin control. Value as text.
+    wValidate(parent)
+    var
+      textStyle = style and (not (wSpArrowKeys or wSpWrap)) or ES_AUTOHSCROLL or wBorderSunken
+      updownStyle = UDS_ALIGNRIGHT or UDS_SETBUDDYINT or UDS_HOTTRACK
+      useArrowKeys = false
 
-  if (style and wSpWrap) != 0:
-    updownStyle = updownStyle or UDS_WRAP
+    if (style and wSpArrowKeys) != 0:
+      updownStyle = updownStyle or UDS_ARROWKEYS
+      useArrowKeys = true
 
-  self.wControl.init(className=WC_EDIT, parent=parent, id=id, label=value,
-    pos=pos, size=size, style=textStyle or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+    if (style and wSpWrap) != 0:
+      updownStyle = updownStyle or UDS_WRAP
 
-  self.mUpdownHwnd = CreateWindowEx(0, UPDOWN_CLASS, nil, updownStyle or
-    WS_CHILD or WS_VISIBLE, 0, 0, 0, 0, parent.mHwnd, 0, wAppGetInstance(), nil)
+    self.wControl.init(className=WC_EDIT, parent=parent, id=id, label=value,
+      pos=pos, size=size, style=textStyle or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-  # UDM_SETBUDDY will shorten the edit control, so we can count mUpdownWidth
-  var rect1, rect2: RECT
-  GetWindowRect(self.mHwnd, rect1)
-  SendMessage(self.mUpdownHwnd, UDM_SETBUDDY, self.mHwnd, 0)
-  GetWindowRect(self.mHwnd, rect2)
-  self.mUpdownWidth = int(rect1.right - rect2.right)
+    self.mUpdownHwnd = CreateWindowEx(0, UPDOWN_CLASS, nil, updownStyle or
+      WS_CHILD or WS_VISIBLE, 0, 0, 0, 0, parent.mHwnd, 0, wAppGetInstance(), nil)
 
-  # a spin control by default have white background, not parent's background
-  self.setBackgroundColor(wWhite)
-  self.setRange(0, 100) # the default value is 100~0 ?
+    # UDM_SETBUDDY will shorten the edit control, so we can count mUpdownWidth
+    var rect1, rect2: RECT
+    GetWindowRect(self.mHwnd, rect1)
+    SendMessage(self.mUpdownHwnd, UDM_SETBUDDY, self.mHwnd, 0)
+    GetWindowRect(self.mHwnd, rect2)
+    self.mUpdownWidth = int(rect1.right - rect2.right)
 
-  self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
-    if event.lParam == self.mHwnd and HIWORD(event.wParam) == EN_CHANGE:
-      self.processMessage(wEvent_Text, 0, 0)
+    # a spin control by default have white background, not parent's background
+    self.setBackgroundColor(wWhite)
+    self.setRange(0, 100) # the default value is 100~0 ?
 
-  # cannot use processNotify method becasue the notify sent to updown's parent
-  self.mNotifyConn = parent.hardConnect(WM_NOTIFY) do (event: wEvent):
-    wSpinCtrl_OnNotify(self, event)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == EN_CHANGE:
+        self.processMessage(wEvent_Text, 0, 0)
 
-  self.hardConnect(WM_CHAR) do (event: wEvent):
-    var processed = false
-    defer: event.skip(if processed: false else: true)
+    # cannot use processNotify method becasue the notify sent to updown's parent
+    self.mNotifyConn = parent.hardConnect(WM_NOTIFY) do (event: wEvent):
+      wSpinCtrl_OnNotify(self, event)
 
-    if event.keyCode == VK_RETURN:
-      processed = self.processMessage(wEvent_TextEnter, 0, 0)
+    self.hardConnect(WM_CHAR) do (event: wEvent):
+      var processed = false
+      defer: event.skip(if processed: false else: true)
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    if useArrowKeys:
-      if event.keyCode in {wKey_Left, wKey_Right, wKey_Up, wKey_Down}:
-        event.veto
-    else:
-      # we always need left and right for text input
-      if event.keyCode in {wKey_Left, wKey_Right}:
-        event.veto
+      if event.getKeyCode() == VK_RETURN:
+        processed = self.processMessage(wEvent_TextEnter, 0, 0)
 
-proc SpinCtrl*(parent: wWindow, id = wDefaultID,
-    value: string = "0", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpLeft): wSpinCtrl {.inline, discardable.} =
-  ## Constructor, creating and showing a spin control. Value as text.
-  wValidate(parent)
-  new(result)
-  result.init(parent, id, value, pos, size, style)
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      if useArrowKeys:
+        if event.getKeyCode() in {wKey_Left, wKey_Right, wKey_Up, wKey_Down}:
+          event.veto
+      else:
+        # we always need left and right for text input
+        if event.getKeyCode() in {wKey_Left, wKey_Right}:
+          event.veto
 
-proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
-    value: int, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpLeft) {.validate.} =
-  wValidate(parent)
-  self.init(parent, id, $value, pos, size, style)
-
-proc SpinCtrl*(parent: wWindow, id = wDefaultID,
-    value: int, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSpLeft): wSpinCtrl {.inline, discardable.} =
-  ## Constructor, creating and showing a spin control. Value as int.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, value, pos, size, style)
+  proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
+      value: int, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wSpLeft) {.validate.} =
+    ## Initializes a spin control. Value as int.
+    wValidate(parent)
+    self.init(parent, id, $value, pos, size, style)

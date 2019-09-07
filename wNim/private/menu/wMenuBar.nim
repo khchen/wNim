@@ -24,6 +24,8 @@ proc remove*(self: wMenuBar, menu: wMenu)
 proc find*(self: wMenuBar, menu: wMenu): int
 proc refresh*(self: wMenuBar)
 proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil) {.inline.}
+proc enable*(self: wMenuBar, pos: int, flag = true)
+proc getLabel*(self: wMenuBar, pos: int): string
 
 import wMenuBase
 export wMenuBase
@@ -69,7 +71,7 @@ proc isAttached*(self: wMenuBar, frame: wFrame): bool {.validate.} =
 proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
     bitmap: wBitmap = nil) {.validate.} =
   ## Inserts the menu at the given position into the menubar.
-  wValidate(menu, text)
+  wValidate(menu)
   var
     text = text
     pos = pos
@@ -106,7 +108,7 @@ proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
 proc append*(self: wMenuBar, menu: wMenu, text: string, bitmap: wBitmap = nil)
     {.validate, inline.} =
   ## Adds the menu to the end of the menubar.
-  wValidate(menu, text)
+  wValidate(menu)
   self.insert(pos = -1, menu=menu, text=text, bitmap=bitmap)
 
 proc enable*(self: wMenuBar, pos: int, flag = true) {.validate.} =
@@ -141,7 +143,6 @@ iterator find*(self: wMenuBar, text: string): int {.validate.} =
   ## Iterates over each index with the given title.
   # don's use mTitle here, because a menu may be attach a frame twice,
   # or different frame?
-  wValidate(text)
   var buffer = T(65536)
   for i in 0..<GetMenuItemCount(self.mHmenu):
     let length = wGetMenuItemString(self.mHmenu, i, buffer)
@@ -150,27 +151,23 @@ iterator find*(self: wMenuBar, text: string): int {.validate.} =
 
 proc find*(self: wMenuBar, text: string): int {.validate.} =
   ## Find the first index with the given title or wNotFound(-1) if not found.
-  wValidate(text)
   for i in self.find(text):
     return i
   result = wNotFound
 
 iterator findMenu*(self: wMenuBar, text: string): wMenu {.validate.} =
   ## Iterates over each wMenu object with the given title.
-  wValidate(text)
   for i in self.find(text):
     yield self.mMenuList[i]
 
 proc findMenu*(self: wMenuBar, text: string): wMenu {.validate.} =
   ## Find the first wMenu object with the given title or nil if not found.
-  wValidate(text)
   for menu in self.findMenu(text):
     return menu
 
 iterator findText*(self: wMenuBar, text: string): int {.validate.} =
   ## Iterates over each index with the given title (not include any accelerator
   ## characters).
-  wValidate(text)
   var buffer = T(65536)
   for i in 0..<GetMenuItemCount(self.mHmenu):
     let length = wGetMenuItemString(self.mHmenu, i, buffer)
@@ -180,7 +177,6 @@ iterator findText*(self: wMenuBar, text: string): int {.validate.} =
 proc findText*(self: wMenuBar, text: string): int {.validate.} =
   ## Find the first index with the given title (not include any accelerator
   ## characters), wNotFound(-1) if not found.
-  wValidate(text)
   for i in self.findText(text):
     return i
   result = wNotFound
@@ -188,14 +184,12 @@ proc findText*(self: wMenuBar, text: string): int {.validate.} =
 iterator findMenuText*(self: wMenuBar, text: string): wMenu {.validate.} =
   ## Iterates over each wMenu object with the given title (not include any
   ## accelerator characters).
-  wValidate(text)
   for i in self.findText(text):
     yield self.mMenuList[i]
 
 proc findMenuText*(self: wMenuBar, text: string): wMenu {.validate.} =
   ## Find the first wMenu object with the given title (not include any
   ## accelerator characters), nil if not found.
-  wValidate(text)
   for menu in self.findMenuText(text):
     return menu
 
@@ -214,14 +208,12 @@ proc getLabel*(self: wMenuBar, pos: int): string {.validate, property.} =
 
 proc getLabelText*(self: wMenuBar, pos: int): string {.validate, property.} =
   ## Returns the label of a top-level menu, not include any accelerator characters.
-  wValidate(self)
   result = self.getLabel(pos)
   if result.len != 0:
     result = result.replace("&", "")
 
 proc setLabel*(self: wMenuBar, pos: int, text: string) {.validate, property.} =
   ## Sets the label of a top-level menu.
-  wValidate(text)
   if pos >= 0 and pos < self.mMenuList.len and text.len != 0:
     var menuItemInfo = MENUITEMINFO(
       cbSize: sizeof(MENUITEMINFO),
@@ -294,53 +286,39 @@ proc delete*(self: wMenuBar) {.validate.} =
     self.mMenuList = @[]
     self.mHmenu = 0
 
-proc final*(self: wMenuBar) =
-  ## Default finalizer for wMenuBar.
-  self.delete()
+wClass(wMenuBar of wMenuBase):
 
-proc init*(self: wMenuBar) {.validate.} =
-  ## Initializer.
-  self.mHmenu = CreateMenu()
-  var menuInfo = MENUINFO(
-    cbSize: sizeof(MENUINFO),
-    fMask: MIM_STYLE,
-    dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS)
-  SetMenuInfo(self.mHmenu, menuInfo)
-  self.mMenuList = @[]
-  self.wAppMenuBaseAdd()
+  proc final*(self: wMenuBar) =
+    ## Default finalizer for wMenuBar.
+    self.delete()
 
-  # initSet is deprecated since v0.20
-  when declared(initHashSet):
-    self.mParentFrameSet = initHashSet[wFrame]()
-  else:
-    self.mParentFrameSet = initSet[wFrame]()
+  proc init*(self: wMenuBar) {.validate.} =
+    ## Initializes an empty menubar.
+    self.mHmenu = CreateMenu()
+    var menuInfo = MENUINFO(
+      cbSize: sizeof(MENUINFO),
+      fMask: MIM_STYLE,
+      dwStyle: MNS_CHECKORBMP or MNS_NOTIFYBYPOS)
+    SetMenuInfo(self.mHmenu, menuInfo)
+    self.mMenuList = @[]
+    self.wAppMenuBaseAdd()
 
-proc MenuBar*(): wMenuBar {.inline.} =
-  ## Construct an empty menubar.
-  new(result, final)
-  result.init()
+    # initSet is deprecated since v0.20
+    when declared(initHashSet):
+      self.mParentFrameSet = initHashSet[wFrame]()
+    else:
+      self.mParentFrameSet = initSet[wFrame]()
 
-proc init*(self: wMenuBar, menus: openarray[(wMenu, string)]) {.validate.} =
-  ## Initializer.
-  self.init()
-  for menu in menus:
-    self.append(menu[0], menu[1])
+  proc init*(self: wMenuBar, menus: openarray[(wMenu, string)]) {.validate.} =
+    ## Initializes a menubar from arrays of menus and titles.
+    self.init()
+    for menu in menus:
+      self.append(menu[0], menu[1])
 
-proc MenuBar*(menus: openarray[(wMenu, string)]): wMenuBar {.inline.} =
-  ## Construct a menubar from arrays of menus and titles.
-  new(result, final)
-  result.init(menus)
-
-proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = [])
-    {.validate.} =
-  ## Initializer.
-  wValidate(frame)
-  self.init(menus)
-  self.attach(frame)
-
-proc MenuBar*(frame: wFrame, menus: openarray[(wMenu, string)] = []): wMenuBar
-    {.inline.} =
-  ## Construct a menubar from arrays of menus and titles, and attach it to frame window.
-  wValidate(frame)
-  new(result, final)
-  result.init(frame, menus)
+  proc init*(self: wMenuBar, frame: wFrame, menus: openarray[(wMenu, string)] = [])
+      {.validate.} =
+    ## Initializes a menubar from arrays of menus and titles, and attach it to
+    ## a frame.
+    wValidate(frame)
+    self.init(menus)
+    self.attach(frame)

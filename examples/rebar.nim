@@ -45,10 +45,10 @@ let rebar = Rebar(frame)
 rebar.setImageList(imageList)
 
 let toolbar = ToolBar(rebar)
-toolbar.addTool(idTool1, "Tool 1", Bmp(img1), "Tool1", "This is tool 1.")
-toolbar.addTool(idTool2, "Tool 2", Bmp(img2), "Tool2", "This is tool 2.")
-toolbar.addTool(idTool3, "Tool 3", Bmp(img3), "Tool3", "This is tool 3.")
-toolbar.addTool(idTool4, "Tool 4", Bmp(img4), "Tool4", "This is tool 4.")
+toolbar.addTool(idTool1, "Tool 1", Bitmap(img1), "Tool1", "This is tool 1.")
+toolbar.addTool(idTool2, "Tool 2", Bitmap(img2), "Tool2", "This is tool 2.")
+toolbar.addTool(idTool3, "Tool 3", Bitmap(img3), "Tool3", "This is tool 3.")
+toolbar.addTool(idTool4, "Tool 4", Bitmap(img4), "Tool4", "This is tool 4.")
 
 let button = Button(rebar, label="Exit")
 

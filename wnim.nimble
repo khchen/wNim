@@ -14,6 +14,7 @@ requires "nim >= 0.19.0", "winim >= 3.2.3"
 
 task example, "Build all the examples":
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/autolayoutEditor"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui examples/colors"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/customdialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui examples/dialog"
@@ -43,6 +44,7 @@ task example, "Build all the examples":
 
 task xpexample, "Build all the examples for Windows XP":
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/autolayoutEditor"
+  exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/colors"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/customdialog"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/demo"
   exec "nim c -d:release --opt:size --passL:-s --app:gui --cpu:i386 -d:useWinXP examples/dialog"

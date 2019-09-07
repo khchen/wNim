@@ -26,116 +26,102 @@ type
     wRegionDiff = RGN_DIFF
     wRegionCopy = RGN_COPY
 
-proc final*(self: wRegion) =
-  ## Default finalizer for wRegion.
-  self.delete()
+wClass(wRegion of wGdiObject):
 
-proc init*(self: wRegion) {.validate, inline.} =
-  ## Initializer.
-  # An empty regin, let mHandle == 0
-  discard
+  proc final*(self: wRegion) =
+    ## Default finalizer for wRegion.
+    self.delete()
 
-proc Region*(): wRegion {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init()
+  proc init*(self: wRegion) {.validate, inline.} =
+    ## Initializes am empty region.
+    self.wGdiObject.init()
+    self.mHandle = 0 # An empty regin, let mHandle == 0
 
-proc init*(self: wRegion, x, y, width, height: int, elliptic = false) {.validate.} =
-  ## Initializer.
-  if elliptic:
-    self.mHandle = CreateEllipticRgn(x, y, x + width, y + height)
-  else:
-    self.mHandle = CreateRectRgn(x, y, x + width, y + height)
+  proc init*(self: wRegion, x, y, width, height: int, elliptic = false) {.validate.} =
+    ## Initializes a rectangular or elliptic region.
+    self.wGdiObject.init()
 
-proc Region*(x, y, width, height: int, elliptic = false): wRegion {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(x, y, width, height, elliptic)
+    if elliptic:
+      self.mHandle = CreateEllipticRgn(x, y, x + width, y + height)
+    else:
+      self.mHandle = CreateRectRgn(x, y, x + width, y + height)
 
-proc init*(self: wRegion, point: wPoint, size: wSize, elliptic = false) {.validate, inline.} =
-  ## Initializer.
-  self.init(point.x, point.y, size.width, size.height, elliptic)
+  proc init*(self: wRegion, point: wPoint, size: wSize, elliptic = false) {.validate, inline.} =
+    ## Initializes a rectangular or elliptic region.
+    self.init(point.x, point.y, size.width, size.height, elliptic)
 
-proc Region*(point: wPoint, size: wSize, elliptic = false): wRegion {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(point, size, elliptic)
+  proc init*(self: wRegion, rect: wRect, elliptic = false) {.validate, inline.} =
+    ## Initializes a rectangular or elliptic region.
+    self.init(rect.x, rect.y, rect.width, rect.height, elliptic)
 
-proc init*(self: wRegion, rect: wRect, elliptic = false) {.validate, inline.} =
-  ## Initializer.
-  self.init(rect.x, rect.y, rect.width, rect.height, elliptic)
+  proc init*(self: wRegion, x, y, width, height: int, radius: float) {.validate.} =
+    ## Initializes a rectangular region with rounded corners.
+    ## If radius is positive, the value is assumed to be the radius of the rounded corner.
+    ## If radius is negative, the absolute value is assumed to be the proportion of the
+    ## smallest dimension of the rectangle
+    self.wGdiObject.init()
 
-proc Region*(rect: wRect, elliptic = false): wRegion {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(rect, elliptic)
+    var
+      r = int radius
+      x2 = x + width
+      y2 = y + height
 
-proc init*(self: wRegion, x, y, width, height: int, radius: float) {.validate.} =
-  ## Initializer.
-  var
-    r = int radius
-    x2 = x + width
-    y2 = y + height
+    if radius < 0:
+      r = int(-radius * min(width, height).float)
 
-  if radius < 0:
-    r = int(-radius * min(width, height).float)
+    self.mHandle = CreateRoundRectRgn(x, y, x2, y2, r * 2, r * 2)
 
-  self.mHandle = CreateRoundRectRgn(x, y, x2, y2, r * 2, r * 2)
+  proc init*(self: wRegion, point: wPoint, size: wSize, radius: float) {.validate, inline.} =
+    ## Initializes a rectangular region with rounded corners.
+    ## If radius is positive, the value is assumed to be the radius of the rounded corner.
+    ## If radius is negative, the absolute value is assumed to be the proportion of the
+    ## smallest dimension of the rectangle
+    self.init(point.x, point.y, size.width, size.height, radius)
 
-proc Region*(x, y, width, height: int, radius: float): wRegion {.inline.} =
-  ## Constructor for rounded corners region.
-  ## If radius is positive, the value is assumed to be the radius of the rounded corner.
-  ## If radius is negative, the absolute value is assumed to be the proportion of the
-  ## smallest dimension of the rectangle.
-  new(result, final)
-  result.init(x, y, width, height, radius)
+  proc init*(self: wRegion, rect: wRect, radius: float) {.validate, inline.} =
+    ## Initializes a rectangular region with rounded corners.
+    ## If radius is positive, the value is assumed to be the radius of the rounded corner.
+    ## If radius is negative, the absolute value is assumed to be the proportion of the
+    ## smallest dimension of the rectangle
+    self.init(rect.x, rect.y, rect.width, rect.height, radius)
 
-proc init*(self: wRegion, point: wPoint, size: wSize, radius: float) {.validate, inline.} =
-  ## Initializer.
-  self.init(point.x, point.y, size.width, size.height, radius)
+  proc init*(self: wRegion, image: wImage) {.validate.} =
+    ## Initializes a region from a wImage object.
+    wValidate(image)
+    self.wGdiObject.init()
 
-proc Region*(point: wPoint, size: wSize, radius: float): wRegion {.inline.} =
-  ## Constructor for rounded corners region.
-  new(result, final)
-  result.init(point, size, radius)
+    let size = image.getSize()
+    self.mHandle = CreateRectRgn(0, 0, size.width, size.height)
+    for x in 0..<size.width:
+      for y in 0..<size.height:
+        let pix = image.getPixel(x, y)
+        if (pix and 0xff000000) == 0:
+          var tmp = CreateRectRgn(x, y, x + 1, y + 1)
+          CombineRgn(self.mHandle, self.mHandle, tmp, RGN_DIFF)
+          DeleteObject(tmp)
 
-proc init*(self: wRegion, rect: wRect, radius: float) {.validate, inline.} =
-  ## Initializer.
-  self.init(rect.x, rect.y, rect.width, rect.height, radius)
+  proc init*(self: wRegion, hRgn: HRGN, copy = true, shared = false) {.validate.} =
+    ## Initializes a region from system region handle.
+    ## If *copy* is false, the function only wrap the handle to wRegion object.
+    ## If *shared* is false, the handle will be destroyed together with wRegion
+    ## object by the GC. Otherwise, the caller is responsible for destroying it.
+    self.wGdiObject.init()
 
-proc Region*(rect: wRect, radius: float): wRegion {.inline.} =
-  ## Constructor for rounded corners region.
-  new(result, final)
-  result.init(rect, radius)
+    if copy:
+      if hRgn != 0:
+        self.mHandle = CreateRectRgn(0, 0, 0, 0)
+        CombineRgn(self.mHandle, hRgn, 0, RGN_COPY)
+      else:
+        self.mHandle = 0
 
-proc init*(self: wRegion, image: wImage) {.validate.} =
-  ## Initializer.
-  wValidate(image)
-  let size = image.size
-  self.mHandle = CreateRectRgn(0, 0, size.width, size.height)
-  for x in 0..<size.width:
-    for y in 0..<size.height:
-      let pix = image.getPixel(x, y)
-      if (pix and 0xff000000) == 0:
-        var tmp = CreateRectRgn(x, y, x + 1, y + 1)
-        CombineRgn(self.mHandle, self.mHandle, tmp, RGN_DIFF)
-        DeleteObject(tmp)
+    else:
+      self.mHandle = hRgn
+      self.mDeletable = not shared
 
-proc Region*(image: wImage): wRegion {.inline.} =
-  ## Constructs a region using a image.
-  new(result, final)
-  result.init(image)
-
-proc init*(self: wRegion, region: wRegion) {.validate, inline.} =
-  ## Initializer.
-  if region.mHandle != 0:
-    self.mHandle = CreateRectRgn(0, 0, 0, 0)
-    CombineRgn(self.mHandle, region.mHandle, 0, RGN_COPY)
-
-proc Region*(region: wRegion): wRegion {.inline.} =
-  ## Copy constructor
-  new(result, final)
-  result.init(region)
+  proc init*(self: wRegion, region: wRegion) {.validate, inline.} =
+    ## Initializes a region from a wRegion object, aka. copy.
+    wValidate(region)
+    self.init(region.mHandle, copy=true)
 
 proc clear*(self: wRegion) {.validate.} =
   ## Clears the current region.

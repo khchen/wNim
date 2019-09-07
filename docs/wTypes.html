@@ -1233,6 +1233,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
@@ -1260,16 +1261,17 @@ function main() {
     title="wLparam = LPARAM"><wbr />w<wbr />Lparam<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wId"
     title="wId = enum
-  wIdZero = 0, wIdLowest = 4999, wIdOpen, wIdClose, wIdNew, wIdSave, wIdSaveAS, wIdRevert,
-  wIdExit, wIdUndo, wIdRedo, wIdHelp, wIdPrint, wIdPrintSetup, wIdPreview, wIdAbout,
-  wIdHelpContents, wIdHelpCommands, wIdHelpProcedures, wIdCloseAll, wIdDelete,
-  wIdProperties, wIdReplace, wIdCut = 5030, wIdCopy, wIdPaste, wIdClear, wIdFind,
-  wIdDuplicate, wIdSelectAll, wIdFile1 = 5050, wIdFile2, wIdFile3, wIdFile4, wIdFile5,
-  wIdFile6, wIdFile7, wIdFile8, wIdFile9, wIdOk = 5100, wIdCancel, wIdApply, wIdYes,
-  wIdNo, wIdStatic, wIdForward, wIdBackward, wIdDefault, wIdMore, wIdSetup, wIdReset,
-  wIdContextHelp, wIdYesToAll, wIdNoToAll, wIdAbort, wIdRetry, wIdIgnore, wIdContinue,
-  wIdTryAgain, wIdSystemMenu = 5200, wIdCloseFrame, wIdMoveFrame, wIdResizeFrame,
-  wIdMaximizeFrame, wIdIconizeFrame, wIdRestoreFrame, wIdHighest = 5999, wIdUser"><wbr />w<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
+  wIdAny = -1, wIdZero = 0, wIdLowest = 4999, wIdOpen, wIdClose, wIdNew, wIdSave, wIdSaveAS,
+  wIdRevert, wIdExit, wIdUndo, wIdRedo, wIdHelp, wIdPrint, wIdPrintSetup, wIdPreview,
+  wIdAbout, wIdHelpContents, wIdHelpCommands, wIdHelpProcedures, wIdCloseAll,
+  wIdDelete, wIdProperties, wIdReplace, wIdCut = 5030, wIdCopy, wIdPaste, wIdClear,
+  wIdFind, wIdDuplicate, wIdSelectAll, wIdFile1 = 5050, wIdFile2, wIdFile3, wIdFile4,
+  wIdFile5, wIdFile6, wIdFile7, wIdFile8, wIdFile9, wIdOk = 5100, wIdCancel, wIdApply,
+  wIdYes, wIdNo, wIdStatic, wIdForward, wIdBackward, wIdDefault, wIdMore, wIdSetup,
+  wIdReset, wIdContextHelp, wIdYesToAll, wIdNoToAll, wIdAbort, wIdRetry, wIdIgnore,
+  wIdContinue, wIdTryAgain, wIdSystemMenu = 5200, wIdCloseFrame, wIdMoveFrame,
+  wIdResizeFrame, wIdMaximizeFrame, wIdIconizeFrame, wIdRestoreFrame,
+  wIdHighest = 5999, wIdUser"><wbr />w<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wApp"
     title="wApp = ref object of RootObj"><wbr />w<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent"
@@ -1475,7 +1477,7 @@ function main() {
   <li><a class="reference" href="#wDefaultID"
     title="wDefaultID: wCommandID = -1"><wbr />w<wbr />Default<wbr />ID<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultTime"
-    title="wDefaultTime: wTime = initTime(low(int64), 0)"><wbr />w<wbr />Default<wbr />Time<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wDefaultTime: wTime = (seconds: -9223372036854775808, nanosecond: 0)"><wbr />w<wbr />Default<wbr />Time<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wNotFound"
     title="wNotFound = -1"><wbr />w<wbr />Not<wbr />Found<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wLeft"
@@ -1525,8 +1527,9 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">Basic types definition for wNim. This module will automatically export by wApp. So the user don't need to import this module in most situation. However, sometimes the nim compiler cannot distinguish from wNim types and module names (generic instantiation, etc). In that case, you can import wTypes and specify the type name. For example: wTypes.wIcon.</p>
-  <div class="section" id="7">
+  <p class="module-desc">Basic types definition for wNim. Symbols in this module will automatically export by wApp, so the user don't need to import this module in most situation. However, sometimes the nim compiler cannot distinguish wNim types from module names (generic instantiation, etc). In that case, you can import wTypes and specify the type name. For example: wTypes.wIcon.</p>
+  
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="wSize"></a>
@@ -1586,574 +1589,299 @@ Represents a point in time.
 </dd>
 <a id="wWparam"></a>
 <dt><pre><span class="Identifier">wWparam</span> <span class="Other">=</span> <span class="Identifier">WPARAM</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wLparam"></a>
 <dt><pre><span class="Identifier">wLparam</span> <span class="Other">=</span> <span class="Identifier">LPARAM</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wId"></a>
 <dt><pre><span class="Identifier">wId</span> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">wIdZero</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">wIdLowest</span> <span class="Other">=</span> <span class="DecNumber">4999</span><span class="Other">,</span> <span class="Identifier">wIdOpen</span><span class="Other">,</span> <span class="Identifier">wIdClose</span><span class="Other">,</span> <span class="Identifier">wIdNew</span><span class="Other">,</span> <span class="Identifier">wIdSave</span><span class="Other">,</span> <span class="Identifier">wIdSaveAS</span><span class="Other">,</span> <span class="Identifier">wIdRevert</span><span class="Other">,</span>
-  <span class="Identifier">wIdExit</span><span class="Other">,</span> <span class="Identifier">wIdUndo</span><span class="Other">,</span> <span class="Identifier">wIdRedo</span><span class="Other">,</span> <span class="Identifier">wIdHelp</span><span class="Other">,</span> <span class="Identifier">wIdPrint</span><span class="Other">,</span> <span class="Identifier">wIdPrintSetup</span><span class="Other">,</span> <span class="Identifier">wIdPreview</span><span class="Other">,</span> <span class="Identifier">wIdAbout</span><span class="Other">,</span>
-  <span class="Identifier">wIdHelpContents</span><span class="Other">,</span> <span class="Identifier">wIdHelpCommands</span><span class="Other">,</span> <span class="Identifier">wIdHelpProcedures</span><span class="Other">,</span> <span class="Identifier">wIdCloseAll</span><span class="Other">,</span> <span class="Identifier">wIdDelete</span><span class="Other">,</span>
-  <span class="Identifier">wIdProperties</span><span class="Other">,</span> <span class="Identifier">wIdReplace</span><span class="Other">,</span> <span class="Identifier">wIdCut</span> <span class="Other">=</span> <span class="DecNumber">5030</span><span class="Other">,</span> <span class="Identifier">wIdCopy</span><span class="Other">,</span> <span class="Identifier">wIdPaste</span><span class="Other">,</span> <span class="Identifier">wIdClear</span><span class="Other">,</span> <span class="Identifier">wIdFind</span><span class="Other">,</span>
-  <span class="Identifier">wIdDuplicate</span><span class="Other">,</span> <span class="Identifier">wIdSelectAll</span><span class="Other">,</span> <span class="Identifier">wIdFile1</span> <span class="Other">=</span> <span class="DecNumber">5050</span><span class="Other">,</span> <span class="Identifier">wIdFile2</span><span class="Other">,</span> <span class="Identifier">wIdFile3</span><span class="Other">,</span> <span class="Identifier">wIdFile4</span><span class="Other">,</span> <span class="Identifier">wIdFile5</span><span class="Other">,</span>
-  <span class="Identifier">wIdFile6</span><span class="Other">,</span> <span class="Identifier">wIdFile7</span><span class="Other">,</span> <span class="Identifier">wIdFile8</span><span class="Other">,</span> <span class="Identifier">wIdFile9</span><span class="Other">,</span> <span class="Identifier">wIdOk</span> <span class="Other">=</span> <span class="DecNumber">5100</span><span class="Other">,</span> <span class="Identifier">wIdCancel</span><span class="Other">,</span> <span class="Identifier">wIdApply</span><span class="Other">,</span> <span class="Identifier">wIdYes</span><span class="Other">,</span>
-  <span class="Identifier">wIdNo</span><span class="Other">,</span> <span class="Identifier">wIdStatic</span><span class="Other">,</span> <span class="Identifier">wIdForward</span><span class="Other">,</span> <span class="Identifier">wIdBackward</span><span class="Other">,</span> <span class="Identifier">wIdDefault</span><span class="Other">,</span> <span class="Identifier">wIdMore</span><span class="Other">,</span> <span class="Identifier">wIdSetup</span><span class="Other">,</span> <span class="Identifier">wIdReset</span><span class="Other">,</span>
-  <span class="Identifier">wIdContextHelp</span><span class="Other">,</span> <span class="Identifier">wIdYesToAll</span><span class="Other">,</span> <span class="Identifier">wIdNoToAll</span><span class="Other">,</span> <span class="Identifier">wIdAbort</span><span class="Other">,</span> <span class="Identifier">wIdRetry</span><span class="Other">,</span> <span class="Identifier">wIdIgnore</span><span class="Other">,</span> <span class="Identifier">wIdContinue</span><span class="Other">,</span>
-  <span class="Identifier">wIdTryAgain</span><span class="Other">,</span> <span class="Identifier">wIdSystemMenu</span> <span class="Other">=</span> <span class="DecNumber">5200</span><span class="Other">,</span> <span class="Identifier">wIdCloseFrame</span><span class="Other">,</span> <span class="Identifier">wIdMoveFrame</span><span class="Other">,</span> <span class="Identifier">wIdResizeFrame</span><span class="Other">,</span>
-  <span class="Identifier">wIdMaximizeFrame</span><span class="Other">,</span> <span class="Identifier">wIdIconizeFrame</span><span class="Other">,</span> <span class="Identifier">wIdRestoreFrame</span><span class="Other">,</span> <span class="Identifier">wIdHighest</span> <span class="Other">=</span> <span class="DecNumber">5999</span><span class="Other">,</span> <span class="Identifier">wIdUser</span></pre></dt>
+  <span class="Identifier">wIdAny</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">wIdZero</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">wIdLowest</span> <span class="Other">=</span> <span class="DecNumber">4999</span><span class="Other">,</span> <span class="Identifier">wIdOpen</span><span class="Other">,</span> <span class="Identifier">wIdClose</span><span class="Other">,</span> <span class="Identifier">wIdNew</span><span class="Other">,</span> <span class="Identifier">wIdSave</span><span class="Other">,</span> <span class="Identifier">wIdSaveAS</span><span class="Other">,</span>
+  <span class="Identifier">wIdRevert</span><span class="Other">,</span> <span class="Identifier">wIdExit</span><span class="Other">,</span> <span class="Identifier">wIdUndo</span><span class="Other">,</span> <span class="Identifier">wIdRedo</span><span class="Other">,</span> <span class="Identifier">wIdHelp</span><span class="Other">,</span> <span class="Identifier">wIdPrint</span><span class="Other">,</span> <span class="Identifier">wIdPrintSetup</span><span class="Other">,</span> <span class="Identifier">wIdPreview</span><span class="Other">,</span>
+  <span class="Identifier">wIdAbout</span><span class="Other">,</span> <span class="Identifier">wIdHelpContents</span><span class="Other">,</span> <span class="Identifier">wIdHelpCommands</span><span class="Other">,</span> <span class="Identifier">wIdHelpProcedures</span><span class="Other">,</span> <span class="Identifier">wIdCloseAll</span><span class="Other">,</span>
+  <span class="Identifier">wIdDelete</span><span class="Other">,</span> <span class="Identifier">wIdProperties</span><span class="Other">,</span> <span class="Identifier">wIdReplace</span><span class="Other">,</span> <span class="Identifier">wIdCut</span> <span class="Other">=</span> <span class="DecNumber">5030</span><span class="Other">,</span> <span class="Identifier">wIdCopy</span><span class="Other">,</span> <span class="Identifier">wIdPaste</span><span class="Other">,</span> <span class="Identifier">wIdClear</span><span class="Other">,</span>
+  <span class="Identifier">wIdFind</span><span class="Other">,</span> <span class="Identifier">wIdDuplicate</span><span class="Other">,</span> <span class="Identifier">wIdSelectAll</span><span class="Other">,</span> <span class="Identifier">wIdFile1</span> <span class="Other">=</span> <span class="DecNumber">5050</span><span class="Other">,</span> <span class="Identifier">wIdFile2</span><span class="Other">,</span> <span class="Identifier">wIdFile3</span><span class="Other">,</span> <span class="Identifier">wIdFile4</span><span class="Other">,</span>
+  <span class="Identifier">wIdFile5</span><span class="Other">,</span> <span class="Identifier">wIdFile6</span><span class="Other">,</span> <span class="Identifier">wIdFile7</span><span class="Other">,</span> <span class="Identifier">wIdFile8</span><span class="Other">,</span> <span class="Identifier">wIdFile9</span><span class="Other">,</span> <span class="Identifier">wIdOk</span> <span class="Other">=</span> <span class="DecNumber">5100</span><span class="Other">,</span> <span class="Identifier">wIdCancel</span><span class="Other">,</span> <span class="Identifier">wIdApply</span><span class="Other">,</span>
+  <span class="Identifier">wIdYes</span><span class="Other">,</span> <span class="Identifier">wIdNo</span><span class="Other">,</span> <span class="Identifier">wIdStatic</span><span class="Other">,</span> <span class="Identifier">wIdForward</span><span class="Other">,</span> <span class="Identifier">wIdBackward</span><span class="Other">,</span> <span class="Identifier">wIdDefault</span><span class="Other">,</span> <span class="Identifier">wIdMore</span><span class="Other">,</span> <span class="Identifier">wIdSetup</span><span class="Other">,</span>
+  <span class="Identifier">wIdReset</span><span class="Other">,</span> <span class="Identifier">wIdContextHelp</span><span class="Other">,</span> <span class="Identifier">wIdYesToAll</span><span class="Other">,</span> <span class="Identifier">wIdNoToAll</span><span class="Other">,</span> <span class="Identifier">wIdAbort</span><span class="Other">,</span> <span class="Identifier">wIdRetry</span><span class="Other">,</span> <span class="Identifier">wIdIgnore</span><span class="Other">,</span>
+  <span class="Identifier">wIdContinue</span><span class="Other">,</span> <span class="Identifier">wIdTryAgain</span><span class="Other">,</span> <span class="Identifier">wIdSystemMenu</span> <span class="Other">=</span> <span class="DecNumber">5200</span><span class="Other">,</span> <span class="Identifier">wIdCloseFrame</span><span class="Other">,</span> <span class="Identifier">wIdMoveFrame</span><span class="Other">,</span>
+  <span class="Identifier">wIdResizeFrame</span><span class="Other">,</span> <span class="Identifier">wIdMaximizeFrame</span><span class="Other">,</span> <span class="Identifier">wIdIconizeFrame</span><span class="Other">,</span> <span class="Identifier">wIdRestoreFrame</span><span class="Other">,</span>
+  <span class="Identifier">wIdHighest</span> <span class="Other">=</span> <span class="DecNumber">5999</span><span class="Other">,</span> <span class="Identifier">wIdUser</span></pre></dt>
 <dd>
 Predefined names to use as menus or controls ID.
 
 </dd>
 <a id="wApp"></a>
 <dt><pre><span class="Identifier">wApp</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wEvent"></a>
 <dt><pre><span class="Identifier">wEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCommandEvent"></a>
 <dt><pre><span class="Identifier">wCommandEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wContextMenuEvent"></a>
 <dt><pre><span class="Identifier">wContextMenuEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDialogEvent"></a>
 <dt><pre><span class="Identifier">wDialogEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDragDropEvent"></a>
 <dt><pre><span class="Identifier">wDragDropEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wHyperlinkEvent"></a>
 <dt><pre><span class="Identifier">wHyperlinkEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wIpEvent"></a>
 <dt><pre><span class="Identifier">wIpEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wKeyEvent"></a>
 <dt><pre><span class="Identifier">wKeyEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wListEvent"></a>
 <dt><pre><span class="Identifier">wListEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMouseEvent"></a>
 <dt><pre><span class="Identifier">wMouseEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMoveEvent"></a>
 <dt><pre><span class="Identifier">wMoveEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wNavigationEvent"></a>
 <dt><pre><span class="Identifier">wNavigationEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wOtherEvent"></a>
 <dt><pre><span class="Identifier">wOtherEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wScrollEvent"></a>
 <dt><pre><span class="Identifier">wScrollEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wScrollWinEvent"></a>
 <dt><pre><span class="Identifier">wScrollWinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSetCursorEvent"></a>
 <dt><pre><span class="Identifier">wSetCursorEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSizeEvent"></a>
 <dt><pre><span class="Identifier">wSizeEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSpinEvent"></a>
 <dt><pre><span class="Identifier">wSpinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStatusBarEvent"></a>
 <dt><pre><span class="Identifier">wStatusBarEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTrayEvent"></a>
 <dt><pre><span class="Identifier">wTrayEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTreeEvent"></a>
 <dt><pre><span class="Identifier">wTreeEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wWebViewEvent"></a>
 <dt><pre><span class="Identifier">wWebViewEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDataObject"></a>
 <dt><pre><span class="Identifier">wDataObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPrintData"></a>
 <dt><pre><span class="Identifier">wPrintData</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wAcceleratorTable"></a>
 <dt><pre><span class="Identifier">wAcceleratorTable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wImage"></a>
 <dt><pre><span class="Identifier">wImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wImageList"></a>
 <dt><pre><span class="Identifier">wImageList</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wIconImage"></a>
 <dt><pre><span class="Identifier">wIconImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wResizable"></a>
 <dt><pre><span class="Identifier">wResizable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wResizer"></a>
 <dt><pre><span class="Identifier">wResizer</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wWindow"></a>
 <dt><pre><span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wResizable</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wFrame"></a>
 <dt><pre><span class="Identifier">wFrame</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPanel"></a>
 <dt><pre><span class="Identifier">wPanel</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wControl"></a>
 <dt><pre><span class="Identifier">wControl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wButton"></a>
 <dt><pre><span class="Identifier">wButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCalendarCtrl"></a>
 <dt><pre><span class="Identifier">wCalendarCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCheckBox"></a>
 <dt><pre><span class="Identifier">wCheckBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCheckComboBox"></a>
 <dt><pre><span class="Identifier">wCheckComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wComboBox"></a>
 <dt><pre><span class="Identifier">wComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDatePickerCtrl"></a>
 <dt><pre><span class="Identifier">wDatePickerCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wGauge"></a>
 <dt><pre><span class="Identifier">wGauge</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wHotkeyCtrl"></a>
 <dt><pre><span class="Identifier">wHotkeyCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wHyperlinkCtrl"></a>
 <dt><pre><span class="Identifier">wHyperlinkCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wIpCtrl"></a>
 <dt><pre><span class="Identifier">wIpCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wListBox"></a>
 <dt><pre><span class="Identifier">wListBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wListCtrl"></a>
 <dt><pre><span class="Identifier">wListCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wNoteBook"></a>
 <dt><pre><span class="Identifier">wNoteBook</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wRadioButton"></a>
 <dt><pre><span class="Identifier">wRadioButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wRebar"></a>
 <dt><pre><span class="Identifier">wRebar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wScrollBar"></a>
 <dt><pre><span class="Identifier">wScrollBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSlider"></a>
 <dt><pre><span class="Identifier">wSlider</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSpinButton"></a>
 <dt><pre><span class="Identifier">wSpinButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSpinCtrl"></a>
 <dt><pre><span class="Identifier">wSpinCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSplitter"></a>
 <dt><pre><span class="Identifier">wSplitter</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStaticBitmap"></a>
 <dt><pre><span class="Identifier">wStaticBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStaticBox"></a>
 <dt><pre><span class="Identifier">wStaticBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStaticLine"></a>
 <dt><pre><span class="Identifier">wStaticLine</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStaticText"></a>
 <dt><pre><span class="Identifier">wStaticText</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wStatusBar"></a>
 <dt><pre><span class="Identifier">wStatusBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTextCtrl"></a>
 <dt><pre><span class="Identifier">wTextCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTimePickerCtrl"></a>
 <dt><pre><span class="Identifier">wTimePickerCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDatePickerCtrl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wToolBar"></a>
 <dt><pre><span class="Identifier">wToolBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTreeCtrl"></a>
 <dt><pre><span class="Identifier">wTreeCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTreeItem"></a>
 <dt><pre><span class="Identifier">wTreeItem</span> <span class="Other">=</span> <span class="Keyword">object</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wWebView"></a>
 <dt><pre><span class="Identifier">wWebView</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMenuItemKind"></a>
 <dt><pre><span class="Identifier">wMenuItemKind</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">wMenuItemNormal</span><span class="Other">,</span> <span class="Identifier">wMenuItemSeparator</span><span class="Other">,</span> <span class="Identifier">wMenuItemCheck</span><span class="Other">,</span> <span class="Identifier">wMenuItemRadio</span><span class="Other">,</span>
   <span class="Identifier">wMenuItemSubMenu</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMenuBase"></a>
 <dt><pre><span class="Identifier">wMenuBase</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMenu"></a>
 <dt><pre><span class="Identifier">wMenu</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMenuBar"></a>
 <dt><pre><span class="Identifier">wMenuBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMenuItem"></a>
 <dt><pre><span class="Identifier">wMenuItem</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wGdiObject"></a>
 <dt><pre><span class="Identifier">wGdiObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wBitmap"></a>
 <dt><pre><span class="Identifier">wBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wBrush"></a>
 <dt><pre><span class="Identifier">wBrush</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCursor"></a>
 <dt><pre><span class="Identifier">wCursor</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wFont"></a>
 <dt><pre><span class="Identifier">wFont</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wIcon"></a>
 <dt><pre><span class="Identifier">wIcon</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPen"></a>
 <dt><pre><span class="Identifier">wPen</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wRegion"></a>
 <dt><pre><span class="Identifier">wRegion</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDialog"></a>
 <dt><pre><span class="Identifier">wDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wColorDialog"></a>
 <dt><pre><span class="Identifier">wColorDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDirDialog"></a>
 <dt><pre><span class="Identifier">wDirDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wFileDialog"></a>
 <dt><pre><span class="Identifier">wFileDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wFindReplaceDialog"></a>
 <dt><pre><span class="Identifier">wFindReplaceDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wFontDialog"></a>
 <dt><pre><span class="Identifier">wFontDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMessageDialog"></a>
 <dt><pre><span class="Identifier">wMessageDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPageSetupDialog"></a>
 <dt><pre><span class="Identifier">wPageSetupDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPrintDialog"></a>
 <dt><pre><span class="Identifier">wPrintDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTextEntryDialog"></a>
 <dt><pre><span class="Identifier">wTextEntryDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPasswordEntryDialog"></a>
 <dt><pre><span class="Identifier">wPasswordEntryDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wTextEntryDialog</span></pre></dt>
-<dd>
 
-
-</dd>
 
 </dl></div>
 <div class="section" id="10">
@@ -2208,7 +1936,7 @@ Used in wNim as default command ID.
 
 </dd>
 <a id="wDefaultTime"></a>
-<dt><pre><span class="Identifier">wDefaultTime</span><span class="Other">:</span> <span class="Identifier">wTime</span> <span class="Other">=</span> <span class="Identifier">initTime</span><span class="Other">(</span><span class="Identifier">low</span><span class="Other">(</span><span class="Identifier">int64</span><span class="Other">)</span><span class="Other">,</span> <span class="DecNumber">0</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Identifier">wDefaultTime</span><span class="Other">:</span> <span class="Identifier">wTime</span> <span class="Other">=</span> <span class="Other">(</span><span class="Identifier">seconds</span><span class="Other">:</span> <span class="DecNumber">-9223372036854775808</span><span class="Other">,</span> <span class="Identifier">nanosecond</span><span class="Other">:</span> <span class="DecNumber">0</span><span class="Other">)</span></pre></dt>
 <dd>
 Used in wNim as default time.
 
@@ -2221,94 +1949,49 @@ Used in wNim as default value.
 </dd>
 <a id="wLeft"></a>
 <dt><pre><span class="Identifier">wLeft</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wRight"></a>
 <dt><pre><span class="Identifier">wRight</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wUp"></a>
 <dt><pre><span class="Identifier">wUp</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wDown"></a>
 <dt><pre><span class="Identifier">wDown</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wTop"></a>
 <dt><pre><span class="Identifier">wTop</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wBottom"></a>
 <dt><pre><span class="Identifier">wBottom</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wNorth"></a>
 <dt><pre><span class="Identifier">wNorth</span> <span class="Other">=</span> <span class="DecNumber">0x00000040</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wSouth"></a>
 <dt><pre><span class="Identifier">wSouth</span> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wWest"></a>
 <dt><pre><span class="Identifier">wWest</span> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wEast"></a>
 <dt><pre><span class="Identifier">wEast</span> <span class="Other">=</span> <span class="DecNumber">0x00000020</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wHorizontal"></a>
 <dt><pre><span class="Identifier">wHorizontal</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wVertical"></a>
 <dt><pre><span class="Identifier">wVertical</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wBoth"></a>
 <dt><pre><span class="Identifier">wBoth</span> <span class="Other">=</span> <span class="DecNumber">240</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wCenter"></a>
 <dt><pre><span class="Identifier">wCenter</span> <span class="Other">=</span> <span class="DecNumber">48</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wMiddle"></a>
 <dt><pre><span class="Identifier">wMiddle</span> <span class="Other">=</span> <span class="DecNumber">192</span></pre></dt>
-<dd>
 
-
-</dd>
 
 </dl></div>
 <div class="section" id="16">
@@ -2330,7 +2013,7 @@ We usually use the enum for where need a command ID. see the examples.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-09-07 05:14:08 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-10 17:54:00 UTC</small>
       </div>
     </div>
   </div>

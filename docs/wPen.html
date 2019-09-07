@@ -1267,8 +1267,10 @@ function main() {
     title="wPenStyleDot = 2"><wbr />w<wbr />Pen<wbr />Style<wbr />Dot<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPenStyleDash"
     title="wPenStyleDash = 1"><wbr />w<wbr />Pen<wbr />Style<wbr />Dash<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wPenStyleDot_DASH"
-    title="wPenStyleDot_DASH = 3"><wbr />w<wbr />Pen<wbr />Style<wbr />Dot_<wbr />DASH<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPenStyleDotDash"
+    title="wPenStyleDotDash = 3"><wbr />w<wbr />Pen<wbr />Style<wbr />Dot<wbr />Dash<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPenStyleInsideFrame"
+    title="wPenStyleInsideFrame = 6"><wbr />w<wbr />Pen<wbr />Style<wbr />Inside<wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPenStyleTransparent"
     title="wPenStyleTransparent = 5"><wbr />w<wbr />Pen<wbr />Style<wbr />Transparent<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPenStyleMask"
@@ -1295,14 +1297,18 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#final%2CwPen"
     title="final(self: wPen)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#init%2CwPen%2Cint"
-    title="init(self: wPen; color = wBlack; style = 0 or 0x00000000; width = 1)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#Pen%2Cint"
-    title="Pen(color = wBlack; style = 0 or 0x00000000; width = 1): wPen"><wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwPen%2CEXTLOGPEN"
+    title="init(self: wPen; elp: EXTLOGPEN)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Pen%2CEXTLOGPEN"
+    title="Pen(elp: EXTLOGPEN): wPen"><wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwPen%2Cint%2Cint"
+    title="init(self: wPen; color = wBlack; style = 0; width = 1)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Pen%2Cint%2Cint"
+    title="Pen(color = wBlack; style = 0; width = 1): wPen"><wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwPen%2CHANDLE"
-    title="init(self: wPen; hPen: HANDLE)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="init(self: wPen; hPen: HANDLE; copy = true; shared = false)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Pen%2CHANDLE"
-    title="Pen(hPen: HANDLE): wPen"><wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="Pen(hPen: HANDLE; copy = true; shared = false): wPen"><wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwPen%2CwPen"
     title="init(self: wPen; pen: wPen)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Pen%2CwPen"
@@ -1360,18 +1366,19 @@ function main() {
   <p class="module-desc">A pen is a drawing tool for drawing outlines.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wGdiObject.html">wGdiObject</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Seealso:</th><td><a class="reference external" href="wDC.html">wDC</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Consts:</th><td><table border="1" class="docutils"><tr><th>Pen Styles</th><th>Description</th></tr>
-<tr><td>wPenJoinBevel</td><td>PS_JOIN_BEVEL</td></tr>
-<tr><td>wPenJoinMiter</td><td>PS_JOIN_MITER</td></tr>
-<tr><td>wPenJoinRound</td><td>PS_JOIN_ROUND</td></tr>
-<tr><td>wPenJoinMask</td><td>PS_JOIN_MASK</td></tr>
-<tr><td>wPenCapRound</td><td>PS_ENDCAP_ROUND</td></tr>
-<tr><td>wPenCapProjecting</td><td>PS_ENDCAP_SQUARE</td></tr>
-<tr><td>wPenCapButt</td><td>PS_ENDCAP_FLAT</td></tr>
-<tr><td>wPenCapMask</td><td>PS_ENDCAP_MASK</td></tr>
+<tr><td>wPenJoinBevel</td><td>Joins are beveled.</td></tr>
+<tr><td>wPenJoinMiter</td><td>Joins are mitered.</td></tr>
+<tr><td>wPenJoinRound</td><td>Joins are round.</td></tr>
+<tr><td>wPenJoinMask</td><td>Joins mask.</td></tr>
+<tr><td>wPenCapRound</td><td>End caps are round.</td></tr>
+<tr><td>wPenCapProjecting</td><td>End caps are square.</td></tr>
+<tr><td>wPenCapButt</td><td>End caps are flat.</td></tr>
+<tr><td>wPenCapMask</td><td>End caps mask.</td></tr>
 <tr><td>wPenStyleSolid</td><td>Solid style.</td></tr>
 <tr><td>wPenStyleDot</td><td>Dotted style.</td></tr>
 <tr><td>wPenStyleDash</td><td>Dashed style.</td></tr>
-<tr><td>wPenStyleDot_DASH</td><td>Dot and dash style.</td></tr>
+<tr><td>wPenStyleDotDash</td><td>Dot and dash style.</td></tr>
+<tr><td>wPenStyleInsideFrame</td><td>Drawing inside frame.</td></tr>
 <tr><td>wPenStyleTransparent</td><td>No pen is used.</td></tr>
 <tr><td>wPenStyleMask</td><td>Pen style mask.</td></tr>
 <tr><td>wPenStyleBdiagonalHatch</td><td>Backward diagonal hatch.</td></tr>
@@ -1401,130 +1408,70 @@ An error raised when wPen creation failed.
 <dl class="item">
 <a id="wPenJoinBevel"></a>
 <dt><pre><span class="Identifier">wPenJoinBevel</span> <span class="Other">=</span> <span class="DecNumber">0x00001000</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenJoinMiter"></a>
 <dt><pre><span class="Identifier">wPenJoinMiter</span> <span class="Other">=</span> <span class="DecNumber">0x00002000</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenJoinRound"></a>
 <dt><pre><span class="Identifier">wPenJoinRound</span> <span class="Other">=</span> <span class="DecNumber">0x00000000</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenJoinMask"></a>
 <dt><pre><span class="Identifier">wPenJoinMask</span> <span class="Other">=</span> <span class="DecNumber">0x0000F000</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenCapRound"></a>
 <dt><pre><span class="Identifier">wPenCapRound</span> <span class="Other">=</span> <span class="DecNumber">0x00000000</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenCapProjecting"></a>
 <dt><pre><span class="Identifier">wPenCapProjecting</span> <span class="Other">=</span> <span class="DecNumber">0x00000100</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenCapButt"></a>
 <dt><pre><span class="Identifier">wPenCapButt</span> <span class="Other">=</span> <span class="DecNumber">0x00000200</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenCapMask"></a>
 <dt><pre><span class="Identifier">wPenCapMask</span> <span class="Other">=</span> <span class="DecNumber">0x00000F00</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleSolid"></a>
 <dt><pre><span class="Identifier">wPenStyleSolid</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleDot"></a>
 <dt><pre><span class="Identifier">wPenStyleDot</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleDash"></a>
 <dt><pre><span class="Identifier">wPenStyleDash</span> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
-<dd>
 
+<a id="wPenStyleDotDash"></a>
+<dt><pre><span class="Identifier">wPenStyleDotDash</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
 
-</dd>
-<a id="wPenStyleDot_DASH"></a>
-<dt><pre><span class="Identifier">wPenStyleDot_DASH</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
-<dd>
+<a id="wPenStyleInsideFrame"></a>
+<dt><pre><span class="Identifier">wPenStyleInsideFrame</span> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
 
-
-</dd>
 <a id="wPenStyleTransparent"></a>
 <dt><pre><span class="Identifier">wPenStyleTransparent</span> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleMask"></a>
 <dt><pre><span class="Identifier">wPenStyleMask</span> <span class="Other">=</span> <span class="DecNumber">0x0000000F</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleBdiagonalHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleBdiagonalHatch</span> <span class="Other">=</span> <span class="DecNumber">196608</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleCrossdiagHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleCrossdiagHatch</span> <span class="Other">=</span> <span class="DecNumber">327680</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleFdiagonalHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleFdiagonalHatch</span> <span class="Other">=</span> <span class="DecNumber">131072</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleCrossHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleCrossHatch</span> <span class="Other">=</span> <span class="DecNumber">262144</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleHorizontalHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleHorizontalHatch</span> <span class="Other">=</span> <span class="DecNumber">0</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleVerticalHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleVerticalHatch</span> <span class="Other">=</span> <span class="DecNumber">65536</span></pre></dt>
-<dd>
 
-
-</dd>
 <a id="wPenStyleMaskHatch"></a>
 <dt><pre><span class="Identifier">wPenStyleMaskHatch</span> <span class="Other">=</span> <span class="DecNumber">0x00FF0000</span></pre></dt>
-<dd>
 
-
-</dd>
 
 </dl></div>
 <div class="section" id="12">
@@ -1536,78 +1483,92 @@ An error raised when wPen creation failed.
 Default finalizer for wPen.
 
 </dd>
-<a id="init,wPen,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">color</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="DecNumber">0</span> <span class="Keyword">or</span> <span class="DecNumber">0x00000000</span><span class="Other">;</span> <span class="Identifier">width</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="init,wPen,EXTLOGPEN"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">elp</span><span class="Other">:</span> <span class="Identifier">EXTLOGPEN</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Initializer.
+Initializes a pen from EXTLOGPEN struct. Used internally.
 
 </dd>
-<a id="Pen,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">color</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="DecNumber">0</span> <span class="Keyword">or</span> <span class="DecNumber">0x00000000</span><span class="Other">;</span> <span class="Identifier">width</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="Pen,EXTLOGPEN"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">elp</span><span class="Other">:</span> <span class="Identifier">EXTLOGPEN</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
+                             <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Constructs a pen from color, width, and style.
+Constructor.
+
+</dd>
+<a id="init,wPen,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">color</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">width</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Initializes a pen from color, width, and style.
+
+</dd>
+<a id="Pen,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">color</span> <span class="Other">=</span> <span class="Identifier">wBlack</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">width</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Constructor.
 
 </dd>
 <a id="init,wPen,HANDLE"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">hPen</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">hPen</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Initializer.
+Initializes a pen from system pen handle. If <em>copy</em> is false, the function only wrap the handle to wPen object. If <em>shared</em> is false, the handle will be destroyed together with wPen object by the GC. Otherwise, the caller is responsible for destroying it.
 
 </dd>
 <a id="Pen,HANDLE"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">hPen</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">hPen</span><span class="Other">:</span> <span class="Identifier">HANDLE</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">shared</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Construct wPen object from a system pen handle.
+Constructor.
 
 </dd>
 <a id="init,wPen,wPen"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">pen</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">pen</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Initializer.
+Initializes a pen from a wPen object, aka. copy.
 
 </dd>
 <a id="Pen,wPen"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">pen</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Pen</span><span class="Other">(</span><span class="Identifier">pen</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPen</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+                        <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
+                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Copy constructor
+Constructor.
 
 </dd>
 <a id="getColor,wPen"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns a reference to the pen color.
 
 </dd>
 <a id="getStyle,wPen"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DWORD</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DWORD</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the pen style.
 
 </dd>
 <a id="getWidth,wPen"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the pen width.
 
 </dd>
 <a id="setColor,wPen,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
-                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setColor</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the pen color.
 
 </dd>
 <a id="setStyle,wPen,DWORD"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">DWORD</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
-                                     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setStyle</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">DWORD</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Set the pen style.
 
 </dd>
 <a id="setWidth,wPen,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">validate</span><span class="Other">,</span> <span class="Identifier">property</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setWidth</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPen</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Sets the pen width.
 
@@ -1694,7 +1655,7 @@ Predefined default (black) pen. <strong>Don't delete</strong>.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-09-07 05:14:28 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-10 17:54:14 UTC</small>
       </div>
     </div>
   </div>

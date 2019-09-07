@@ -42,12 +42,12 @@ const
   wSbFit* = SS_REALSIZECONTROL
   wSbCenter* = SS_CENTERIMAGE
 
-method getBestSize*(self: wStaticBitmap): wSize {.property, inline.} =
+method getBestSize*(self: wStaticBitmap): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   if self.mBitmap != nil:
     result = self.mBitmap.getSize()
 
-method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline.} =
+method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the control.
   if self.mBitmap != nil:
     result = self.mBitmap.getSize()
@@ -62,32 +62,26 @@ proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
   ## Returns the bitmap currently used in the control.
   result = self.mBitmap
 
-method release(self: wStaticBitmap) =
+method release(self: wStaticBitmap) {.uknlock.} =
   self.mParent.systemDisconnect(self.mCommandConn)
 
-proc final*(self: wStaticBitmap) =
-  ## Default finalizer for wStaticBitmap.
-  discard
+wClass(wStaticBitmap of wControl):
 
-proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
-    bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSbAuto) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="",
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
+  proc final*(self: wStaticBitmap) =
+    ## Default finalizer for wStaticBitmap.
+    self.wControl.final()
 
-  self.setBitmap(bitmap)
-  self.mFocusable = false
+  proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
+      bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = wSbAuto) {.validate.} =
+    ## Initializes static bitmap control.
+    # Accepts nil bitmap for later assign.
+    wValidate(parent)
+    self.wControl.init(className=WC_STATIC, parent=parent, id=id, label="",
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or SS_NOTIFY or SS_BITMAP)
 
-  # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
-  self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+    self.setBitmap(bitmap)
+    self.mFocusable = false
 
-proc StaticBitmap*(parent: wWindow, id = wDefaultID,
-    bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = wSbAuto): wStaticBitmap {.inline, discardable.} =
-  ## Constructor, creating and showing a static bitmap control.
-  # Acceptable nil bitmap for later assign.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, bitmap, pos, size, style=style)
+    # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
+    self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)

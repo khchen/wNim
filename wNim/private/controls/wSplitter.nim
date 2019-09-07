@@ -113,7 +113,7 @@ proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
       self.splitterResize(pos)
 
   elif index > 0:
-    let panel = event.window
+    let panel = event.mWindow
     let pos = event.getMousePos()
     let size = panel.getClientSize()
 
@@ -139,13 +139,13 @@ proc wSplitter_DoMouseMove(self: wSplitter, event: wEvent, index: int) =
 
 proc wSplitter_DoMouseLeave(self: wSplitter, event: wEvent, index: int) =
   self.mInPanelMargin = false
-  event.window.setOverrideCursor(nil)
+  event.mWindow.setOverrideCursor(nil)
 
 proc wSplitter_DoLeftDown(self: wSplitter, event: wEvent, index: int) =
   if index == 0 or self.mInPanelMargin:
     let event = Event(window=self, msg=wEvent_Splitter)
     if not self.processEvent(event) or event.isAllowed:
-      event.window.captureMouse()
+      event.mWindow.captureMouse()
       self.mDragging = true
       # Here can't just use getMousePos() because we need client pos relative to splitter.
       self.mPosOffset = self.screenToClient(event.getMouseScreenPos())
@@ -153,7 +153,7 @@ proc wSplitter_DoLeftDown(self: wSplitter, event: wEvent, index: int) =
 proc wSplitter_DoLeftUp(self: wSplitter, event: wEvent, index: int) =
   if self.mDragging:
     self.mDragging = false
-    event.window.releaseMouse()
+    event.mWindow.releaseMouse()
 
 proc clearEventHandle(self: wSplitter) =
   for tup in self.mConnections:
@@ -288,7 +288,7 @@ proc setSplitMode*(self: wSplitter, mode: int) {.validate, property.} =
       self.splitterResetCursor()
 
 proc wSplitter_DoPaint(event: wEvent) =
-  let self = wBase.wSplitter event.window
+  let self = wBase.wSplitter event.mWindow
   if not self.mIsDrawButton:
     event.skip
     return
@@ -317,71 +317,66 @@ proc wSplitter_DoPaint(event: wEvent) =
       dc.gradientFillConcentric((x + dot * i, y, dot, dot),
         wDarkGrey, bkColor, (0, 0))
 
-method release(self: wSplitter) =
+method release(self: wSplitter) {.uknlock.} =
   self.mParent.systemDisconnect(self.mSizeConn)
 
-proc final*(self: wSplitter) =
-  ## Default finalizer for wSplitter.
-  discard
+wClass(wSplitter of wControl):
 
-proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical,
-    className = "wSplitter") {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.mSize = 6
-  self.mMin1 = 0
-  self.mMin2 = 0
-  self.mSystemConnections = @[]
-  self.mConnections = @[]
+  proc final*(self: wSplitter) =
+    ## Default finalizer for wSplitter.
+    self.wControl.final()
 
-  if (style and wSpHorizontal) == 0:
-    self.mIsVertical = true
-    if size.width != wDefault:
-      self.mSize = size.width
-  else:
-    if size.height != wDefault:
-      self.mSize = size.height
+  proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical,
+      className = "wSplitter") {.validate.} =
+    ## Initializes a splitter. For vertical splitter, settings of y-axis are
+    ## ignored, vice versa.
+    wValidate(parent)
+    self.mSize = 6
+    self.mMin1 = 0
+    self.mMin2 = 0
+    self.mSystemConnections = @[]
+    self.mConnections = @[]
 
-  if (style and wSpButton) != 0:
-    self.mIsDrawButton = true
+    if (style and wSpHorizontal) == 0:
+      self.mIsVertical = true
+      if size.width != wDefault:
+        self.mSize = size.width
+    else:
+      if size.height != wDefault:
+        self.mSize = size.height
 
-  self.wWindow.initVerbosely(parent=parent, id=id, style=style and wInvisible,
-    className=className, bgColor=GetSysColor(COLOR_ACTIVEBORDER))
+    if (style and wSpButton) != 0:
+      self.mIsDrawButton = true
 
-  var panelStyle = wInvisible
-  if (style and wClipChildren) != 0: panelStyle = panelStyle or wClipChildren
-  if (style and wDoubleBuffered) != 0: panelStyle = panelStyle or wDoubleBuffered
-  self.mPanel1 = Panel(parent, style=panelStyle)
-  self.mPanel2 = Panel(parent, style=panelStyle)
+    self.wWindow.initVerbosely(parent=parent, id=id, style=style and wInvisible,
+      className=className, bgColor=GetSysColor(COLOR_ACTIVEBORDER))
 
-  self.splitterResize(pos)
-  self.splitterResetCursor()
+    var panelStyle = wInvisible
+    if (style and wClipChildren) != 0: panelStyle = panelStyle or wClipChildren
+    if (style and wDoubleBuffered) != 0: panelStyle = panelStyle or wDoubleBuffered
+    self.mPanel1 = Panel(parent, style=panelStyle)
+    self.mPanel2 = Panel(parent, style=panelStyle)
 
-  if (style and wInvisible) == 0:
-    self.show()
-    self.mPanel1.show()
-    self.mPanel2.show()
+    self.splitterResize(pos)
+    self.splitterResetCursor()
 
-  self.bindEventHandle(0)
+    if (style and wInvisible) == 0:
+      self.show()
+      self.mPanel1.show()
+      self.mPanel2.show()
 
-  self.mSizeConn = parent.systemConnect(wEvent_Size) do (event: wEvent):
-    self.splitterResize()
+    self.bindEventHandle(0)
 
-  # handle this message so that setPosition() works to change
-  # splitter's position.
-  self.systemConnect(WM_WINDOWPOSCHANGED) do (event: wEvent):
-    let winpos = cast[LPWINDOWPOS](event.lParam)
-    if not self.mResizing:
-      self.mSize = if self.mIsVertical: winpos.cx else: winpos.cy
+    self.mSizeConn = parent.systemConnect(wEvent_Size) do (event: wEvent):
       self.splitterResize()
 
-  self.systemConnect(wEvent_Paint, wSplitter_DoPaint)
+    # handle this message so that setPosition() works to change
+    # splitter's position.
+    self.systemConnect(WM_WINDOWPOSCHANGED) do (event: wEvent):
+      let winpos = cast[LPWINDOWPOS](event.mLparam)
+      if not self.mResizing:
+        self.mSize = if self.mIsVertical: winpos.cx else: winpos.cy
+        self.splitterResize()
 
-proc Splitter*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = wSpVertical,
-    className = "wSplitter"): wSplitter {.inline, discardable.} =
-  ## Constructor. For vertical splitter, settings of y-axis are ignored, vice versa.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, style, className)
+    self.systemConnect(wEvent_Paint, wSplitter_DoPaint)

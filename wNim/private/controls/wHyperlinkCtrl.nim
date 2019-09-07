@@ -36,14 +36,14 @@ const
   wHlAlignLeft* = 0
   wHlAlignRight* = LWS_RIGHT
 
-method getBestSize*(self: wHyperlinkCtrl): wSize {.property.} =
+method getBestSize*(self: wHyperlinkCtrl): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   var size: SIZE
   SendMessage(self.mHwnd, LM_GETIDEALSIZE, 0, &size)
   result.width = size.cx
   result.height = size.cy
 
-method getDefaultSize*(self: wHyperlinkCtrl): wSize {.property, inline.} =
+method getDefaultSize*(self: wHyperlinkCtrl): wSize {.property, inline, uknlock.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
 
@@ -147,53 +147,47 @@ proc setVisited*(self: wHyperlinkCtrl, flag = true, index = -1) {.validate, prop
   SendMessage(self.mHwnd, LM_SETITEM, 0, &item)
 
 method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR,
-    lParam: LPARAM, ret: var LRESULT): bool {.shield.} =
+    lParam: LPARAM, ret: var LRESULT): bool {.uknlock.} =
 
   if code == NM_CLICK or code == NM_RETURN:
     var event = wHyperlinkEvent Event(self, wEvent_Hyperlink, cast[WPARAM](id), lParam)
-    event.mVisited = self.getVisited(event.index)
+    event.mVisited = self.getVisited(event.getIndex())
     var processed = self.processEvent(event)
-    self.setVisited(true, event.index)
+    self.setVisited(true, event.getIndex())
     return processed
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-proc final*(self: wHyperlinkCtrl) =
-  ## Default finalizer for wHyperlinkCtrl.
-  discard
+wClass(wHyperlinkCtrl of wControl):
 
-proc init*(self: wHyperlinkCtrl, parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
-  self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label,
-    pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
+  proc final*(self: wHyperlinkCtrl) =
+    ## Default finalizer for wHyperlinkCtrl.
+    self.wControl.final()
 
-  self.hardConnect(wEvent_Navigation) do (event: wEvent):
-    # use arrow key to navigate between links in control.
-    var count = self.getItemCount()
-    if count >= 2:
-      var
-        prevFocused = self.getFocused()
-        focused = prevFocused
+  proc init*(self: wHyperlinkCtrl, parent: wWindow, id = wDefaultID,
+      label: string = "", pos = wDefaultPoint, size = wDefaultSize,
+      style: wStyle = 0) {.validate.} =
+    ## Initializes a hyperlink control.
+    wValidate(parent)
+    self.wControl.init(className=WC_LINK, parent=parent, id=id, label=label,
+      pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
-      if event.keyCode in {wKey_Right, wKey_Down}:
-        focused.inc
-        if focused >= count: focused = 0
+    self.hardConnect(wEvent_Navigation) do (event: wEvent):
+      # use arrow key to navigate between links in control.
+      var count = self.getItemCount()
+      if count >= 2:
+        var
+          prevFocused = self.getFocused()
+          focused = prevFocused
 
-      elif event.keyCode in {wKey_Left, wKey_Up}:
-        focused.dec
-        if focused < 0: focused = count - 1
+        if event.getKeyCode() in {wKey_Right, wKey_Down}:
+          focused.inc
+          if focused >= count: focused = 0
 
-      if prevFocused != focused:
-        self.setFocused(focused)
-        event.veto
+        elif event.getKeyCode() in {wKey_Left, wKey_Up}:
+          focused.dec
+          if focused < 0: focused = count - 1
 
-proc HyperlinkCtrl*(parent: wWindow, id = wDefaultID,
-    label: string = "", pos = wDefaultPoint, size = wDefaultSize,
-    style: wStyle = 0): wHyperlinkCtrl {.inline, discardable.} =
-  ##　Constructor, creating and showing a hyperlink control.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, label, pos, size, style)
+        if prevFocused != focused:
+          self.setFocused(focused)
+          event.veto

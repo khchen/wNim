@@ -40,6 +40,9 @@
 ## An event is usually generated from system. However, the user may define their
 ## own event type, create the event object, and pass to a window by
 ## wWindow.processEvent().
+##
+## Notice: Event() is the only constructor for all event objects in wNim.
+## `import wNim/wEvent` will import all of its subclasses automatically.
 #
 ## :Subclasses:
 ##   `wMouseEvent <wMouseEvent.html>`_

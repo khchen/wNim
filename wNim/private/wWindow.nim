@@ -64,6 +64,7 @@ export wEvent, wResizable
 # Forward declarations
 proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.}
 proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc) {.shield.}
+proc isShown*(self: wWindow): bool {.inline.}
 
 const
   wBorderSimple* = WS_BORDER
@@ -125,7 +126,7 @@ method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base, shield.} =
     result.y = rect.top
 
 method setWindowRect(self: wWindow, x, y, width, height, flag = 0)
-    {.base, inline, shield.} =
+    {.base, inline, shield, uknlock.} =
   # must use SWP_NOACTIVATE or window will steal focus after setsize
   SetWindowPos(self.mHwnd, 0, x, y, width, height,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE))
@@ -136,14 +137,14 @@ proc setWindowSize(self: wWindow, width, height: int) {.inline.} =
 proc setWindowPos(self: wWindow, x, y: int) {.inline.} =
   self.setWindowRect(x, y, 0, 0, SWP_NOSIZE)
 
-method getClientSize*(self: wWindow): wSize {.property.} =
+method getClientSize*(self: wWindow): wSize {.property, uknlock.} =
   ## Returns the size of the window 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
   result.width = r.right - r.left - (self.mMargin.left + self.mMargin.right)
   result.height = r.bottom - r.top - (self.mMargin.up + self.mMargin.down)
 
-  if self.mToolBar != nil:
+  if self.mToolBar != nil and self.mToolBar.isShown():
     let rect = self.mToolBar.getWindowRect()
     case toolBarDirection(self.mToolBar.mHwnd)
     of wTop, wBottom:
@@ -157,21 +158,21 @@ method getClientSize*(self: wWindow): wSize {.property.} =
 
     else: discard
 
-  if self.mRebar != nil:
+  if self.mRebar != nil and self.mRebar.isShown():
     let rect = self.mRebar.getWindowRect()
     result.height -= rect.height
 
-  if self.mStatusBar != nil:
+  if self.mStatusBar != nil and self.mStatusBar.isShown():
     let rect = self.mStatusBar.getWindowRect(sizeOnly=true)
     result.height -= rect.height
 
-method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
+method getClientAreaOrigin*(self: wWindow): wPoint {.base, property, uknlock.} =
   ## Gets the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
   ## scrollbars, other decorations...).
   result.x = self.mMargin.left
   result.y = self.mMargin.up
-  if self.mToolBar != nil:
+  if self.mToolBar != nil and self.mToolBar.isShown():
     let rect = self.mToolBar.getWindowRect()
     case toolBarDirection(self.mToolBar.mHwnd)
     of wTop:
@@ -180,7 +181,7 @@ method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
       result.x += rect.width + rect.x
     else: discard
 
-  if self.mRebar != nil:
+  if self.mRebar != nil and self.mRebar.isShown():
     let rect = self.mRebar.getWindowRect()
     result.y += rect.height + rect.y
 
@@ -248,13 +249,13 @@ proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete().
   self.delete()
 
-method release(self: wWindow) {.base, inline, shield, locks: "unknown".} =
+method release(self: wWindow) {.base, inline, shield, uknlock.} =
   # override this if a window need extra code to release the resource
   # delete only destroy the window
   # really resoruce clear is in WM_NCDESTROY
   discard
 
-method trigger(self: wWindow) {.base, inline, shield, locks: "unknown".} =
+method trigger(self: wWindow) {.base, inline, shield, uknlock.} =
   # override this if a window need extra init after window create.
   # similar to WM_CREATE.
   discard
@@ -359,12 +360,6 @@ proc getPosition*(self: wWindow): wPoint {.validate, property.} =
   result.y = rect.y
   self.adjustForParentClientOriginSub(result.x, result.y)
 
-method getDefaultSize*(self: wWindow): wSize {.base, property, inline.} =
-  ## Returns the system suggested size of a window (usually used for GUI controls).
-  # window's default size is it's parent's clientSize, or 0, 0 by default
-  if self.mParent != nil:
-    result = self.mParent.getClientSize()
-
 proc getClientMargin*(self: wWindow, direction: int): int {.validate, property.} =
   ## Returns the client margin of the specified direction.
   ## This function basically exists for wNim's layout DSL.
@@ -404,7 +399,13 @@ proc clientToWindow(self: wWindow, size: wSize): wSize {.validate.} =
   if size.height != wDefault:
     result.height += windowSize.height - clientSize.height
 
-method getBestSize*(self: wWindow): wSize {.base, property.} =
+method getDefaultSize*(self: wWindow): wSize {.base, property, inline, uknlock.} =
+  ## Returns the system suggested size of a window (usually used for GUI controls).
+  # window's default size is it's parent's clientSize, or 0, 0 by default
+  if self.mParent != nil:
+    result = self.mParent.getClientSize()
+
+method getBestSize*(self: wWindow): wSize {.base, property, uknlock.} =
   ## Returns the best acceptable minimal size for the window
   ## (usually used for GUI controls).
   if self.mChildren.len == 0:
@@ -621,7 +622,7 @@ proc refresh*(self: wWindow, eraseBackground = true, rect: wRect) {.validate, in
   var r = rect.toRECT()
   InvalidateRect(self.mHwnd, r, eraseBackground)
 
-method show*(self: wWindow, flag = true) {.base, inline.} =
+method show*(self: wWindow, flag = true) {.base, inline, uknlock.} =
   ## Shows or hides the window.
   ShowWindow(self.mHwnd, if flag: SW_SHOWNORMAL else: SW_HIDE)
 
@@ -707,7 +708,7 @@ proc hasFocus*(self: wWindow): bool {.validate.} =
 proc disableFocus*(self: wWindow, flag = true) {.validate.} =
   ## Disable (or reenable) focus to a window.
   proc handler(event: wEvent) =
-    SetFocus(cast[HWND](event.wParam))
+    SetFocus(cast[HWND](event.mWparam))
 
   if flag:
     self.mFocusable = false
@@ -751,6 +752,10 @@ proc getFont*(self: wWindow): wFont {.validate, property, inline.} =
 proc getStatusBar*(self: wWindow): wStatusBar {.validate, property, inline.} =
   ## Returns the status bar currently associated with the window.
   result = self.mStatusBar
+
+proc getToolBar*(self: wWindow): wToolBar {.validate, property, inline.} =
+  ## Returns the toolbar currently associated with the window.
+  result = self.mToolBar
 
 proc getId*(self: wWindow): wCommandID {.validate, property, inline.} =
   ## Returns the identifier of the window.
@@ -854,12 +859,10 @@ proc setId*(self: wWindow, id: wCommandID)  {.validate, property, inline.} =
 
 proc setTitle*(self: wWindow, title: string) {.validate, property, inline.} =
   ## Sets the window's title.
-  wValidate(title)
   SetWindowText(self.mHwnd, title)
 
 proc setLabel*(self: wWindow, label: string) {.validate, property, inline.} =
   ## Sets the window's label. The same as setTitle().
-  wValidate(label)
   SetWindowText(self.mHwnd, label)
 
 proc getData*(self: wWindow): int {.validate, property, inline.} =
@@ -870,7 +873,7 @@ proc setData*(self: wWindow, data: int) {.validate, property.} =
   ## Sets the window associated data.
   self.mData = data
 
-method setFont*(self: wWindow, font: wFont) {.base, validate, property.} =
+method setFont*(self: wWindow, font: wFont) {.base, validate, property, uknlock.} =
   ## Sets the font for this window.
   wValidate(font)
   self.mFont = font
@@ -1260,7 +1263,7 @@ proc queueMessage*(self: wWindow, msg: UINT, wParam: wWparam, lParam: wLparam)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret: var LRESULT, origin: HWND): bool {.discardable, shield.} =
-  # Use internally, generate the event object and process it.
+  # Used internally, generate the event object and process it.
   if wAppHasMessage(msg):
     let event = Event(window=self, msg=msg, wParam=wParam, lParam=lParam,
       origin=origin)
@@ -1269,7 +1272,7 @@ proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret: var LRESULT): bool {.inline, discardable, shield.} =
-  # Use internally, ignore origin means origin is self.mHwnd.
+  # Used internally, ignore origin means origin is self.mHwnd.
   result = self.processMessage(msg, wParam, lParam, ret, self.mHwnd)
 
 proc processMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0,
@@ -1281,7 +1284,7 @@ proc processMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0,
   result = self.processMessage(msg, wParam, lParam, dummy)
 
 method processNotify(self: wWindow, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.base, shield, locks: "unknown".} =
+    ret: var LRESULT): bool {.base, uknlock.} =
   # subclass can override this to process the nofity message
   discard
 
@@ -1944,14 +1947,14 @@ proc wWindow_DoMouseLeave(event: wEvent) =
   event.mWindow.mMouseInWindow = false
 
 proc wWindow_DoSize(event: wEvent) =
-  case int event.wParam:
+  case int event.mWparam:
   of SIZE_RESTORED:
-    event.window.processMessage(wEvent_Size, event.wParam, event.lParam)
+    event.mWindow.processMessage(wEvent_Size, event.mWparam, event.mLparam)
   of SIZE_MINIMIZED:
-    event.window.processMessage(wEvent_Minimize, event.wParam, event.lParam)
+    event.mWindow.processMessage(wEvent_Minimize, event.mWparam, event.mLparam)
   of SIZE_MAXIMIZED:
-    event.window.processMessage(wEvent_Maximize, event.wParam, event.lParam)
-    event.window.processMessage(wEvent_Size, event.wParam, event.lParam)
+    event.mWindow.processMessage(wEvent_Maximize, event.mWparam, event.mLparam)
+    event.mWindow.processMessage(wEvent_Size, event.mWparam, event.mLparam)
   else: discard # don't care about SIZE_MAXHIDE, SIZE_MAXSHOW, etc
 
 proc wWindow_DoGetMinMaxInfo(event: wEvent) =
@@ -1967,7 +1970,7 @@ proc wWindow_DoScroll(event: wEvent) {.shield.} =
   var processed = false
   if event.mLparam == 0: # means the standard scroll bar
     let orientation = if event.mMsg == WM_VSCROLL: wVertical else: wHorizontal
-    event.mWindow.wScroll_DoScrollImpl(orientation, event.wParam,
+    event.mWindow.wScroll_DoScrollImpl(orientation, event.mWparam,
       isControl=false, processed)
 
 proc wWindow_DoDestroy(event: wEvent) =
@@ -2018,8 +2021,8 @@ proc wWindow_OnCommand(event: wEvent) =
   # typically, a accelerator table is associated with a frame.
   # however, maybe there is some exception (editor?)
   # So we handle this at wWindow level.
-  if event.lParam == 0 and HIWORD(event.wParam) == 1:
-    let id = LOWORD(event.wParam)
+  if event.mLparam == 0 and HIWORD(event.mWparam) == 1:
+    let id = LOWORD(event.mWparam)
     processed = self.processMessage(wEvent_Menu, WPARAM id, 0, event.mResult)
 
 proc wWindow_OnNotify(event: wEvent) =
@@ -2068,7 +2071,7 @@ proc wWindow_OnSetCursor(event: wEvent) =
   var processed = false
   defer:
     # MSDN: If an application processes this message, it should return TRUE.
-    if processed: event.result = TRUE
+    if processed: event.mResult = TRUE
     event.skip(if processed: false else: true)
 
   # Windows system sent WM_SETCURSOR to parent before processing by default.
@@ -2087,24 +2090,24 @@ proc wWindow_OnSetCursor(event: wEvent) =
   #
   # Before all of that, using wEvent_SetCursor to ask the cursor.
 
-  if HWND(event.wParam) == event.window.mHwnd and LOWORD(event.lParam) == HTCLIENT:
+  if HWND(event.mWparam) == event.mWindow.mHwnd and LOWORD(event.mLparam) == HTCLIENT:
     var hCursor: HCURSOR = 0
-    let event = Event(window=event.window, msg=wEvent_SetCursor)
-    if event.window.processEvent(event) and event.getCursor() != nil:
+    let event = Event(window=event.mWindow, msg=wEvent_SetCursor)
+    if event.mWindow.processEvent(event) and event.getCursor() != nil:
       hCursor = event.getCursor().mHandle
 
     if hCursor == 0:
-      let tmpCursor = event.window.mOverrideCursor
+      let tmpCursor = event.mWindow.mOverrideCursor
       if tmpCursor != nil and tmpCursor.isCustomCursor:
         hCursor = tmpCursor.mHandle
 
     if hCursor == 0:
-      let cursor = event.window.mCursor
+      let cursor = event.mWindow.mCursor
       if cursor.isCustomCursor:
         hCursor = cursor.mHandle
 
       elif cursor.isNilCursor:
-        var win = event.window.mParent
+        var win = event.mWindow.mParent
         while win != nil:
           if win.mCursor.isCustomCursor:
             hCursor = win.mCursor.mHandle
@@ -2231,11 +2234,6 @@ proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
 
   return DefSubclassProc(hwnd, msg, wParam, lParam)
 
-proc final*(self: wWindow) =
-  ## Default finalizer for wWindow.
-  # Just don't need do anything. WM_NCDESTROY does a lot.
-  discard
-
 proc initBase(self: wWindow) {.shield.} =
   self.wResizable.init()
   self.mConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
@@ -2249,7 +2247,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     title = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
     className = "wWindow", owner: wWindow = nil,  regist = true) {.shield.} =
-  # use internally
+  # Used internally
   self.initBase()
   self.mParent = parent
 
@@ -2397,56 +2395,51 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     self.hardConnect(WM_MEASUREITEM, wWindow_OnMeasureItem)
     self.hardConnect(WM_DRAWITEM, wWindow_OndrawItem)
 
-proc init*(self: wWindow, hWnd: HWND) {.validate.} =
-  ## Initializer.
-  self.initBase()
-  self.mHwnd = hWnd
-  self.mParent = wAppWindowFindByHwnd(GetParent(hwnd))
-  self.mBackgroundColor = wDefaultColor
-  self.mForegroundColor = wDefaultColor
+wClass(wWindow of wResizable):
 
-  let hFont = cast[HANDLE](SendMessage(self.mHwnd, WM_GETFONT, 0, 0))
-  if hFont != 0:
-    self.mFont = Font(hFont)
-  else:
-    self.mFont = wNormalFont
+  proc final*(self: wWindow) =
+    ## Default finalizer for wWindow.
+    # Basically, a window should clear it's resource in WM_NCDESTROY event.
+    self.wResizable.final()
 
-  wAppWindowAdd(self)
-  if self.mParent == nil:
-    # Don't add a subclassed window into our top level list
-    # it means, all window in top level list is a window create from wNim
-    discard # wAppTopLevelWindowAdd(self)
-  else:
-    self.mParent.mChildren.add(self)
+  proc init*(self: wWindow, hWnd: HWND) {.validate.} =
+    ## Initializes a wWindow by subclassing the hWnd.
+    self.initBase()
+    self.mHwnd = hWnd
+    self.mParent = wAppWindowFindByHwnd(GetParent(hwnd))
+    self.mBackgroundColor = wDefaultColor
+    self.mForegroundColor = wDefaultColor
 
-  self.systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
-  self.systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
-  self.systemConnect(WM_DESTROY, wWindow_DoDestroy)
-  self.systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
-  # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
+    let hFont = cast[HANDLE](SendMessage(self.mHwnd, WM_GETFONT, 0, 0))
+    if hFont != 0:
+      self.mFont = Font(hFont)
+    else:
+      self.mFont = wNormalFont
 
-  SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
+    wAppWindowAdd(self)
+    if self.mParent == nil:
+      # Don't add a subclassed window into our top level list
+      # it means, all window in top level list is a window create from wNim
+      discard # wAppTopLevelWindowAdd(self)
+    else:
+      self.mParent.mChildren.add(self)
 
-proc Window*(hWnd: HWND): wWindow {.discardable.} =
-  ## Subclassed constructor
-  new(result, final)
-  result.init(hwnd)
+    self.systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
+    self.systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
+    self.systemConnect(WM_DESTROY, wWindow_DoDestroy)
+    self.systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+    # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
 
-proc init*(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
-    className = "wWindow") {.validate, inline.} =
-  ## Initializer.
-  self.initVerbosely(parent=parent, id=id, pos=pos, size=size, style=style,
-    className=className)
+    SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))
 
-proc Window*(parent: wWindow = nil, id: wCommandID = 0,
-    pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
-    className = "wWindow"): wWindow {.inline, discardable.} =
-  ## Constructs a window.
-  # make all wWindow and subclass as discardable, because sometimes we just want
-  # a window there and don't do anything about it. Especially for controls.
-  new(result, final)
-  result.init(parent, id, pos, size, style, className)
+  proc init*(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
+      pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
+      className = "wWindow") {.validate, inline.} =
+    ## Initializes a window.
+    # make all wWindow and subclass as discardable, because sometimes we just want
+    # a window there and don't do anything about it. Especially for controls.
+    self.initVerbosely(parent=parent, id=id, pos=pos, size=size, style=style,
+      className=className)
 
 # Export wResizer for wWindow layout. But for recursive module dependencies,
 # So put it here.

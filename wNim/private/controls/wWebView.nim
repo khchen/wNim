@@ -752,11 +752,11 @@ proc getWeb(self: wWebView): ptr wWeb =
   result = cast[ptr wWeb](GetWindowLongPtr(self.mHwnd, 0))
   assert result != nil
 
-method getDefaultSize*(self: wWebView): wSize {.property.} =
+method getDefaultSize*(self: wWebView): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
   result = self.mParent.getClientSize()
 
-method getBestSize*(self: wWebView): wSize {.property.} =
+method getBestSize*(self: wWebView): wSize {.property, uknlock.} =
   ## Returns the best acceptable size for the control.
   result = self.mParent.getClientSize()
 
@@ -1045,47 +1045,42 @@ proc copy*(self: wWebView) {.validate, inline.} =
   ## Copies the current selection.
   self.execCommand("Copy")
 
-method trigger(self: wWebView) {.locks: "unknown".} =
+method trigger(self: wWebView) {.uknlock.} =
   let web = self.getWeb()
   web.view = self
 
-proc final*(self: wWebView) =
-  ## Default finalizer for wWebView.
-  discard
+wClass(wWebView of wControl):
 
-proc init*(self: wWebView, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  wValidate(parent)
+  proc final*(self: wWebView) =
+    ## Default finalizer for wWebView.
+    self.wControl.final()
 
-  wWebViewClassInit(wWebViewClassName)
+  proc init*(self: wWebView, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
+      size = wDefaultSize, style: wStyle = 0) {.validate.} =
+    ## Initializes a webview control.
+    wValidate(parent)
 
-  self.wControl.init(className=wWebViewClassName, parent=parent, id=id,
-    pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
+    wWebViewClassInit(wWebViewClassName)
 
-  # make sure WM_SIZE and WM_DESTROY for wWeb won't override by newer event handler
-  self.systemConnect(WM_SIZE) do (event: wEvent):
-    DefSubclassProc(self.mHwnd, WM_SIZE, event.wParam, event.lParam)
+    self.wControl.init(className=wWebViewClassName, parent=parent, id=id,
+      pos=pos, size=size, style=style or WS_CHILD or WS_TABSTOP or WS_VISIBLE)
 
-  self.systemConnect(WM_DESTROY) do (event: wEvent):
-    DefSubclassProc(self.mHwnd, WM_DESTROY, event.wParam, event.lParam)
+    # make sure WM_SIZE and WM_DESTROY for wWeb won't override by newer event handler
+    self.systemConnect(WM_SIZE) do (event: wEvent):
+      DefSubclassProc(self.mHwnd, WM_SIZE, event.mWparam, event.mLparam)
 
-  if (style and wWvNoFocus) != 0:
-    self.mFocusable = false
+    self.systemConnect(WM_DESTROY) do (event: wEvent):
+      DefSubclassProc(self.mHwnd, WM_DESTROY, event.mWparam, event.mLparam)
 
-  else:
-    self.mFocusable = true
-    self.systemConnect(WM_SETFOCUS) do (event: wEvent):
-      let web = self.getWeb()
-      if web.hwndIe != 0:
-        web.wWebViewSetFocus()
+    if (style and wWvNoFocus) != 0:
+      self.mFocusable = false
 
-  self.wEvent_Navigation do (event: wEvent):
-    event.veto
+    else:
+      self.mFocusable = true
+      self.systemConnect(WM_SETFOCUS) do (event: wEvent):
+        let web = self.getWeb()
+        if web.hwndIe != 0:
+          web.wWebViewSetFocus()
 
-proc WebView*(parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
-    size = wDefaultSize, style: wStyle = 0): wWebView {.inline, discardable.} =
-  ## Constructor, creating and showing a webview.
-  wValidate(parent)
-  new(result, final)
-  result.init(parent, id, pos, size, style)
+    self.wEvent_Navigation do (event: wEvent):
+      event.veto

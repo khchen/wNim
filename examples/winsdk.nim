@@ -14,11 +14,11 @@ import
 when defined(aio):
   import wNim
 else:
-  import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wMessageDialog]
+  import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush, wMessageDialog]
 
 let
   app = App()
-  frame = Frame(title="Windows SDK via winim", size=(640, 480))
+  frame = Frame(title="wNim with Windows SDK", size=(640, 480))
   statusBar = StatusBar(frame)
 
   # Loads a system icon
@@ -33,12 +33,12 @@ let
 # Wraps HICON to wIcon object.
 frame.icon = Icon(hIcon)
 
-# Wraps system menu to wMenu object for modifying.
+# Wraps the system menu handle to wMenu object for modifying.
 let menu = Menu(hMenu)
 menu.insertSeparator(0)
 menu.insert(0, wIdSystemMenu, "About")
 
-# Let us to pop up system menu anywhere.
+# Let's pop up system menu anywhere.
 frame.wEvent_ContextMenu do ():
   frame.popupMenu(menu)
 
@@ -46,21 +46,26 @@ frame.wEvent_Paint do ():
   var dc = PaintDC(frame)
   defer: delete dc
 
-  # Gets the system DC handle from the wPaintDC.
+  # Wraps the system brush handle to wBrush object for drawing.
+  let hBrush = CreateSolidBrush(wGrey)
+  dc.background = Brush(hBrush, copy=false)
+  dc.clear()
+
+  # Gets the system DC handle from the wPaintDC object.
   let hDc = dc.handle
 
-  # Draws an icon by Windows API
+  # Draws an icon by Windows API.
   DrawIcon(hDc, 10, 10, hIcon)
 
-# When it pops up as context menu, we receive wEvent_Menu event.
-# We send WM_SYSCOMMAND message back to the frame window so that the command works.
+# When the menu pops up as context menu, we receive wEvent_Menu event.
+# Sends WM_SYSCOMMAND message back to the frame window so that the command works.
 frame.wEvent_Menu do (event: wEvent):
   SendMessage(hWnd, WM_SYSCOMMAND, wWparam event.id, 0)
 
-# Connect system message as an event.
+# Connects system message as an event.
 frame.connect(WM_SYSCOMMAND) do (event: wEvent):
   let msg = case int event.wParam:
-  of int wIdSystemMenu: "Windows GUI Framework + SDK"
+  of int wIdSystemMenu: "wNim Framework with Windows SDK"
   of SC_CLOSE: "SC_CLOSE"
   of SC_MAXIMIZE: "SC_MAXIMIZE"
   of SC_MINIMIZE: "SC_MINIMIZE"

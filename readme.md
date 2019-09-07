@@ -80,20 +80,25 @@ Without git:
 The easiest way to use wNim is to import the whole package.
 
 ```nimrod
-    import wNim
+import wNim
 ```
 
 However, the modules of wNim can be aslo imported one by one  to speed up compilation time.
 
 ```nimrod
-    import wNim/[wApp, wFrame]
+import wNim/[wApp, wFrame]
 ```
 
 There are some simple rules:
-    1. For every constructor, there is a correspond module to import.
-    2. wApp module must be imported by every wNim program.
-    3. Sometimes you need import wTypes module. [Explanation](https://khchen.github.io/wNim/wTypes.html).
 
+    1. For every classes in wNim, there is a corresponding module.
+       For example: wFrame, wIcon, wMenu, etc.
+    2. wApp module must be imported in every wNim program.
+    3. Symbols in wColors and wKeyCodes modules are imported automatically with wApp module.
+    4. All event classes in wNim share the same constructor: Event(), so all subclasses module
+       of wEvent will be imported with wEvent module automatically.
+    5. wMacros, wUtils, and wTypes modules are three special module in wNim.
+       See their document for more information.
 
 ## Compile
 To compile the examples, try following command:

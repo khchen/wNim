@@ -17,18 +17,19 @@
 ##   ==============================  =============================================================
 ##   Pen Styles                      Description
 ##   ==============================  =============================================================
-##   wPenJoinBevel                   PS_JOIN_BEVEL
-##   wPenJoinMiter                   PS_JOIN_MITER
-##   wPenJoinRound                   PS_JOIN_ROUND
-##   wPenJoinMask                    PS_JOIN_MASK
-##   wPenCapRound                    PS_ENDCAP_ROUND
-##   wPenCapProjecting               PS_ENDCAP_SQUARE
-##   wPenCapButt                     PS_ENDCAP_FLAT
-##   wPenCapMask                     PS_ENDCAP_MASK
+##   wPenJoinBevel                   Joins are beveled.
+##   wPenJoinMiter                   Joins are mitered.
+##   wPenJoinRound                   Joins are round.
+##   wPenJoinMask                    Joins mask.
+##   wPenCapRound                    End caps are round.
+##   wPenCapProjecting               End caps are square.
+##   wPenCapButt                     End caps are flat.
+##   wPenCapMask                     End caps mask.
 ##   wPenStyleSolid                  Solid style.
 ##   wPenStyleDot                    Dotted style.
 ##   wPenStyleDash                   Dashed style.
-##   wPenStyleDot_DASH               Dot and dash style.
+##   wPenStyleDotDash                Dot and dash style.
+##   wPenStyleInsideFrame            Drawing inside frame.
 ##   wPenStyleTransparent            No pen is used.
 ##   wPenStyleMask                   Pen style mask.
 ##   wPenStyleBdiagonalHatch         Backward diagonal hatch.
@@ -62,7 +63,8 @@ const
   wPenStyleSolid* = PS_SOLID
   wPenStyleDot* = PS_DOT
   wPenStyleDash* = PS_DASH
-  wPenStyleDot_DASH* = PS_DASHDOT
+  wPenStyleDotDash* = PS_DASHDOT
+  wPenStyleInsideFrame* = PS_INSIDEFRAME
   wPenStyleTransparent* = PS_NULL
   wPenStyleMask* = PS_STYLE_MASK
 
@@ -75,72 +77,72 @@ const
   wPenStyleVerticalHatch* = HS_VERTICAL shl 16
   wPenStyleMaskHatch* = 0x00ff0000
 
-proc final*(self: wPen) =
-  ## Default finalizer for wPen.
-  self.delete()
-
-proc initFromNative(self: wPen, elp: EXTLOGPEN) =
-  self.wGdiObject.init()
-
-  var lb: LOGBRUSH
-  lb.lbStyle = elp.elpBrushStyle
-  lb.lbColor = elp.elpColor
-  lb.lbHatch = elp.elpHatch
-  self.mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC,
-    elp.elpWidth, lb, 0, nil)
-
-  if self.mHandle == 0:
-    raise newException(wPenError, "wPen creation failed")
-
+proc setup(self: wPen, elp: EXTLOGPEN) =
   self.mColor = elp.elpColor
   self.mStyle = elp.elpPenStyle or (DWORD elp.elpHatch shl 16)
   self.mWidth = elp.elpWidth
 
-proc init*(self: wPen, color = wBlack, style = wPenStyleSolid or wPenCapRound,
-    width = 1) {.validate.} =
-  ## Initializer.
-  let hatch = style shr 16
-  var elp: EXTLOGPEN
-  elp.elpPenStyle = style and 0xFFFF
-  elp.elpWidth = width
-  elp.elpColor = color
+wClass(wPen of wGdiObject):
 
-  if (style and wPenStyleMask) == wPenStyleTransparent:
-    elp.elpBrushStyle = BS_HOLLOW
-  elif hatch != 0:
-    elp.elpBrushStyle = BS_HATCHED
-    elp.elpHatch = ULONG_PTR hatch
-  else:
-    elp.elpBrushStyle = BS_SOLID
+  proc final*(self: wPen) =
+    ## Default finalizer for wPen.
+    self.delete()
 
-  self.initFromNative(elp)
+  proc init*(self: wPen, elp: EXTLOGPEN) {.validate.} =
+    ## Initializes a pen from EXTLOGPEN struct. Used internally.
+    self.wGdiObject.init()
 
-proc Pen*(color = wBlack, style = wPenStyleSolid or wPenCapRound, width = 1): wPen
-    {.inline.} =
-  ## Constructs a pen from color, width, and style.
-  new(result, final)
-  result.init(color, style, width)
+    var lb: LOGBRUSH
+    lb.lbStyle = elp.elpBrushStyle
+    lb.lbColor = elp.elpColor
+    lb.lbHatch = elp.elpHatch
+    self.mHandle = ExtCreatePen(elp.elpPenStyle or PS_GEOMETRIC,
+      elp.elpWidth, lb, 0, nil)
 
-proc init*(self: wPen, hPen: HANDLE) {.validate.} =
-  ## Initializer.
-  var elp: EXTLOGPEN
-  GetObject(hPen, sizeof(elp), &elp)
-  self.initFromNative(elp)
+    if self.mHandle == 0:
+      raise newException(wPenError, "wPen creation failed")
 
-proc Pen*(hPen: HANDLE): wPen {.inline.} =
-  ## Construct wPen object from a system pen handle.
-  new(result, final)
-  result.init(hPen)
+    self.setup(elp)
 
-proc init*(self: wPen, pen: wPen) {.validate.} =
-  ## Initializer.
-  wValidate(pen)
-  self.init(pen.mHandle)
+  proc init*(self: wPen, color = wBlack, style = 0, width = 1) {.validate.} =
+    ## Initializes a pen from color, width, and style.
+    let hatch = style shr 16
+    var elp: EXTLOGPEN
+    elp.elpPenStyle = style and 0xFFFF
+    elp.elpWidth = width
+    elp.elpColor = color
 
-proc Pen*(pen: wPen): wPen {.inline.} =
-  ## Copy constructor
-  wValidate(pen)
-  result.init(pen)
+    if (style and wPenStyleMask) == wPenStyleTransparent:
+      elp.elpBrushStyle = BS_HOLLOW
+    elif hatch != 0:
+      elp.elpBrushStyle = BS_HATCHED
+      elp.elpHatch = ULONG_PTR hatch
+    else:
+      elp.elpBrushStyle = BS_SOLID
+
+    self.init(elp)
+
+  proc init*(self: wPen, hPen: HANDLE, copy = true, shared = false) {.validate.} =
+    ## Initializes a pen from system pen handle.
+    ## If *copy* is false, the function only wrap the handle to wPen object.
+    ## If *shared* is false, the handle will be destroyed together with wPen
+    ## object by the GC. Otherwise, the caller is responsible for destroying it.
+    var elp: EXTLOGPEN
+    if GetObject(hPen, sizeof(elp), &elp) == 0:
+      raise newException(wPenError, "wPen creation failed")
+
+    if copy:
+      self.init(elp)
+    else:
+      self.wGdiObject.init()
+      self.mHandle = hPen
+      self.mDeletable = not shared
+      self.setup(elp)
+
+  proc init*(self: wPen, pen: wPen) {.validate.} =
+    ## Initializes a pen from a wPen object, aka. copy.
+    wValidate(pen)
+    self.init(pen.mHandle, copy=true)
 
 proc getColor*(self: wPen): wColor {.validate, property, inline.} =
   ## Returns a reference to the pen color.
