@@ -30,6 +30,7 @@
 ##  - `wWindow <wWindow.html>`_
 ##  - `wPanel <wPanel.html>`_
 ##  - `wFrame <wFrame.html>`_
+##  - `wToolTip <wToolTip.html>`_
 ##
 ##  Menus
 ##  -----
@@ -146,7 +147,7 @@ when not defined(Nimdoc):
   import
     wNim/private/[wTypes, wMacros, wApp, wAcceleratorTable, wDataObject, wPrintData,
       wIconImage, wImage, wImageList, wEvent, wResizable, wResizer, wWindow,
-      wPanel, wFrame, wUtils, autolayout],
+      wPanel, wFrame, wToolTip, wUtils, autolayout],
 
     wNim/private/gdiobjects/[wBitmap, wBrush, wCursor, wFont, wGdiObject, wIcon, wPen, wRegion],
 

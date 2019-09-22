@@ -25,19 +25,14 @@
 import ../wBase, ../wFrame, wDialog, wTextEntryDialog
 export wDialog, wTextEntryDialog
 
-proc final*(self: wPasswordEntryDialog) =
-  ## Default finalizer for wPasswordEntryDialog.
-  wTextEntryDialog(self).final()
+wClass(wPasswordEntryDialog of wTextEntryDialog):
 
-proc init*(self: wPasswordEntryDialog, owner: wWindow = nil, message = "Input password",
-    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
-    pos = wDefaultPoint) {.validate, inline.} =
-  ## Initializer.
-  self.wTextEntryDialog.init(owner, message, caption, value, style, pos)
+  proc final*(self: wPasswordEntryDialog) =
+    ## Default finalizer for wPasswordEntryDialog.
+    self.wTextEntryDialog.final()
 
-proc PasswordEntryDialog*(owner: wWindow = nil, message = "Input password",
-    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
-    pos = wDefaultPoint): wPasswordEntryDialog {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, message, caption, value, style, pos)
+  proc init*(self: wPasswordEntryDialog, owner: wWindow = nil, message = "Input password",
+      caption = "", value = "", style: wStyle = wDefaultDialogStyle,
+      pos = wDefaultPoint) {.validate, inline.} =
+    ## Initializer.
+    self.wTextEntryDialog.init(owner, message, caption, value, style, pos)

@@ -24,7 +24,7 @@
 ##   wEvent_FindNext                 When find next button was pressed.
 ##   wEvent_Replace                  When replace button was pressed.
 ##   wEvent_ReplaceAll               When replace all button was pressed .
-##   wEvent_PrintChanged             When the selected printer is changed.
+##   wEvent_PrinterChanged           When the selected printer is changed.
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
@@ -40,7 +40,7 @@ DefineEvent:
   wEvent_FindNext
   wEvent_Replace
   wEvent_ReplaceAll
-  wEvent_PrintChanged
+  wEvent_PrinterChanged
   wEvent_DialogLast
 
 proc isDialogEvent(msg: UINT): bool {.inline, shield.} =

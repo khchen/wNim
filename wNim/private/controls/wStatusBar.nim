@@ -107,6 +107,14 @@ proc setMinHeight*(self: wStatusBar, height: int) {.validate, property, inline.}
   ## Sets the minimal possible height for the status bar.
   SendMessage(self.mHwnd, SB_SETMINHEIGHT, height, 0)
 
+proc setHelpIndex*(self: wStatusBar, index: int) {.validate, property, inline.} =
+  ## Sets the index to show the help string for menu items.
+  self.mHelpIndex = index
+
+proc getHelpIndex*(self: wStatusBar): int {.validate, property, inline.} =
+  ## Returns the index to show the help string for menu items.
+  result = self.mHelpIndex
+
 proc `[]=`*(self: wStatusBar, index: int, text: string) {.validate, inline.} =
   ## Sets the status text for the specified field.
   self.setStatusText(text, index)

@@ -26,7 +26,7 @@
 ##   wEvent_DialogCreated             When the dialog is created but not yet shown.
 ##   wEvent_DialogClosed              When the dialog is being closed.
 ##   wEvent_DialogHelp                When the Help button is pressed.
-##   wEvent_PrintChanged              When the selected printer is changed.
+##   wEvent_PrinterChanged            When the selected printer is changed.
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
@@ -153,18 +153,6 @@ proc setCollate*(self: wPrintDialog, flag: bool) {.validate, property, inline.} 
   else:
     self.mPd.Flags = self.mPd.Flags and (not PD_COLLATE)
 
-proc final*(self: wPrintDialog) =
-  ## Default finalizer for wPrintDialog.
-  if self.mPd.hDevMode != 0:
-    GlobalFree(self.mPd.hDevMode)
-    self.mPd.hDevMode = 0
-
-  if self.mPd.hDevNames != 0:
-    GlobalFree(self.mPd.hDevNames)
-    self.mPd.hDevNames = 0
-
-  self.wDialog.final()
-
 type
   wPrintDialogOle = object
     lpVtbl: ptr IPrintDialogCallbackVtbl
@@ -247,7 +235,7 @@ proc newPrintDialogOle(self: wPrintDialog): ptr wPrintDialogOle =
         obj.dialog.mPrintData = PrintData(device, devMode)
         # only trigger the event if everything is right, so that dialog.getPrintData()
         # can be used to get the current selected printer.
-        let event = Event(window=obj.dialog, msg=wEvent_PrintChanged)
+        let event = Event(window=obj.dialog, msg=wEvent_PrinterChanged)
         obj.dialog.processEvent(event)
 
     # MSDN: Return S_FALSE to allow PrintDlgEx to perform its default actions
@@ -262,41 +250,43 @@ proc newPrintDialogOle(self: wPrintDialog): ptr wPrintDialogOle =
     pResult[] = LRESULT obj.dialog.wDialogHookProc(hWnd, msg, wParam, lParam)
     result = (if pResult[] == 0: S_FALSE else: S_OK)
 
-proc init*(self: wPrintDialog, owner: wWindow, initDefault = false) {.validate.} =
-  ## Initializer.
-  wValidate(owner)
-  self.wDialog.init(owner)
-  self.mPd.lStructSize = sizeof(TPRINTDLGEX)
-  self.mPd.nMaxPageRanges = self.mRanges.len
-  self.mPd.lpPageRanges = &self.mRanges[0]
-  self.mPd.nStartPage = START_PAGE_GENERAL
-  self.mPd.lpCallback = cast[ptr IUnknown](self.newPrintDialogOle())
-  self.mPd.hwndOwner = owner.mHwnd
+wClass(wPrintDialog of wDialog):
 
-  if initDefault:
-    self.mPd.Flags = PD_RETURNDEFAULT
-    if PrintDlgEx(&self.mPd) != S_OK:
-      raise newException(wPrintDialogError, "wPrintDialog creation failed")
-    self.mPd.Flags = 0
+  proc final*(self: wPrintDialog) =
+    ## Default finalizer for wPrintDialog.
+    if self.mPd.hDevMode != 0:
+      GlobalFree(self.mPd.hDevMode)
+      self.mPd.hDevMode = 0
 
-proc PrintDialog*(owner: wWindow, initDefault = false): wPrintDialog {.inline.} =
-  ## Constructor. If initDefault is true, the dialog is initialized for the
-  ## system default printer.
-  wValidate(owner)
-  new(result, final)
-  result.init(owner, initDefault)
+    if self.mPd.hDevNames != 0:
+      GlobalFree(self.mPd.hDevNames)
+      self.mPd.hDevNames = 0
 
-proc init*(self: wPrintDialog, owner: wWindow, data: wPrintData) {.validate.} =
-  ## Initializer.
-  self.init(owner)
-  if not data.isNil:
-    self.setPrintData(data)
+    self.wDialog.final()
 
-proc PrintDialog*(owner: wWindow, data: wPrintData): wPrintDialog {.inline.} =
-  ## Constructor. Use specified printData as default setting.
-  wValidate(owner)
-  new(result, final)
-  result.init(owner, data)
+  proc init*(self: wPrintDialog, owner: wWindow, initDefault = false) {.validate.} =
+    ## Initializer. If initDefault is true, the dialog is initialized for the
+    ## system default printer.
+    wValidate(owner)
+    self.wDialog.init(owner)
+    self.mPd.lStructSize = sizeof(TPRINTDLGEX)
+    self.mPd.nMaxPageRanges = self.mRanges.len
+    self.mPd.lpPageRanges = &self.mRanges[0]
+    self.mPd.nStartPage = START_PAGE_GENERAL
+    self.mPd.lpCallback = cast[ptr IUnknown](self.newPrintDialogOle())
+    self.mPd.hwndOwner = owner.mHwnd
+
+    if initDefault:
+      self.mPd.Flags = PD_RETURNDEFAULT
+      if PrintDlgEx(&self.mPd) != S_OK:
+        raise newException(wPrintDialogError, "wPrintDialog creation failed")
+      self.mPd.Flags = 0
+
+  proc init*(self: wPrintDialog, owner: wWindow, data: wPrintData) {.validate.} =
+    ## Initializer. Uses specified printData as default setting.
+    self.init(owner)
+    if not data.isNil:
+      self.setPrintData(data)
 
 proc showModal*(self: wPrintDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed Print, wIdApply if

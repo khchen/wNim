@@ -40,20 +40,6 @@
 ##   ==============================  =============================================================
 ##
 ##   ==============================  =============================================================
-##   Font Weight                     Description
-##   ==============================  =============================================================
-##   wFontWeightThin                 FW_THIN
-##   wFontWeightExtralight           FW_EXTRALIGHT
-##   wFontWeightLight                FW_LIGHT
-##   wFontWeightNormal               FW_NORMAL
-##   wFontWeightMedium               FW_MEDIUM
-##   wFontWeightSemiBold             FW_SEMIBOLD
-##   wFontWeightBold                 FW_BOLD
-##   wFontWeightExtraBold            FW_EXTRABOLD
-##   wFontWeightHeavy                FW_HEAVY
-##   ==============================  =============================================================
-##
-##   ==============================  =============================================================
 ##   Font Encoding                   Description
 ##   ==============================  =============================================================
 ##   wFontEncodingDefault            DEFAULT_CHARSET

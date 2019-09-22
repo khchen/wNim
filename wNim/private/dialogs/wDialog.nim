@@ -76,11 +76,11 @@ proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
     return TRUE
 
 proc final(self: wDialog) {.shield.} =
-  ## Default finalizer for wDialog.
+  # Default finalizer for wDialog.
   discard
 
 proc init(self: wDialog, owner: wWindow) {.shield.} =
-  ## Initializer.
+  # Initializer.
   self.initBase()
   self.mOwner = owner # may be nil
   self.mBackgroundColor = wDefaultColor

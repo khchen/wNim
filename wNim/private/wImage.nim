@@ -131,7 +131,8 @@ proc wGdipCreateStreamOnMemory(data: pointer, length: int = 0): ptr IStream =
     let lib = LoadLibrary("shlwapi.dll")
     SHCreateMemStream = cast[SHCreateMemStreamType](GetProcAddress(lib, cast[LPCSTR](12)))
 
-  result = SHCreateMemStream(data, length.UINT)
+  {.gcsafe.}:
+    result = SHCreateMemStream(data, length.UINT)
 
 proc wGdipReadStream(stream: ptr IStream, data: var string) =
   var stg: STATSTG

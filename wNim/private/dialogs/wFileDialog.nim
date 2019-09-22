@@ -40,26 +40,21 @@ const
   wFdMultiple* = OFN_ALLOWMULTISELECT
   wFdMaxPath = 65536
 
-proc final*(self: wFileDialog) =
-  ## Default finalizer for wFileDialog.
-  self.wDialog.final()
+wClass(wFileDialog of wDialog):
 
-proc init*(self: wFileDialog, owner: wWindow = nil, message = "", defaultDir = "",
-    defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
-  ## Initializer.
-  self.wDialog.init(owner)
-  self.mMessage = message
-  self.mDefaultDir = defaultDir
-  self.mDefaultFile = defaultFile
-  self.mWildcard = wildcard
-  self.mStyle = style
+  proc final*(self: wFileDialog) =
+    ## Default finalizer for wFileDialog.
+    self.wDialog.final()
 
-proc FileDialog*(owner: wWindow = nil, message = "", defaultDir = "",
-    defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen): wFileDialog
-    {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, message, defaultDir, defaultFile, wildcard, style)
+  proc init*(self: wFileDialog, owner: wWindow = nil, message = "", defaultDir = "",
+      defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
+    ## Initializer.
+    self.wDialog.init(owner)
+    self.mMessage = message
+    self.mDefaultDir = defaultDir
+    self.mDefaultFile = defaultFile
+    self.mWildcard = wildcard
+    self.mStyle = style
 
 proc getMessage*(self: wFileDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.
@@ -134,7 +129,9 @@ proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
       nMaxFile: wFdMaxPath,
       nFilterIndex: self.mFilterIndex)
 
-  ofn.Flags = OFN_EXPLORER or
+  buffer << T(self.mDefaultFile)
+
+  ofn.Flags = OFN_EXPLORER or OFN_NOCHANGEDIR or
     cast[DWORD](self.mStyle and 0xffffffff)
 
   if self.mOwner != nil:
@@ -165,13 +162,19 @@ proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
     var str = $buffer # convert to utf8
     var first = true
 
-    str.setLen(str.find("\0\0"))
+    let term = if (ofn.Flags and OFN_ALLOWMULTISELECT) == 0: "\0" else: "\0\0"
+    str.setLen(str.find(term))
+
     for name in str.split('\0'):
       if first:
         self.mPath = name
         first = false
       else:
-        self.mPaths.add(self.mPath & "\\" & name)
+        var path = self.mPath
+        if path.len > 0 and path[^1] != '\\': path.add '\\'
+        path.add name
+
+        self.mPaths.add(path)
 
     # if only one file choosed, add it to paths
     if self.mPaths.len == 0:

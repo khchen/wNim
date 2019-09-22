@@ -7,7 +7,7 @@
 
 {.experimental, deadCodeElim: on.}
 
-import lists, times
+import lists, times, tables
 import winim/[winstr, utils], winim/inc/windef, winimx
 import wTypes, wMacros
 
@@ -35,6 +35,30 @@ iterator rnodes*[T](L: SomeLinkedList[T]): SomeLinkedNode[T] =
     var prv = it.prev
     yield it
     it = prv
+
+# std CountTable is not reliable, see https://github.com/nim-lang/Nim/issues/12200.
+proc inc*(table: var Table[UINT, int], key: UINT, n = 1) =
+  table.withValue(key, value) do:
+    value[].inc n
+    if value[] == 0:
+      table.del key
+  do:
+    if n != 0:
+      table[key] = n
+
+proc dec*(table: var Table[UINT, int], key: UINT, n = 1) {.inline.} =
+  table.inc(key, -n)
+
+template postDefaultHandler*(event: wEvent, body: untyped): untyped =
+  var runDefault {.global.} = false
+  if runDefault:
+    event.skip
+
+  else:
+    runDefault = true
+    event.result = SendMessage(event.window.handle, event.eventMessage, event.wParam, event.lParam)
+    runDefault = false
+    body
 
 proc toRect*(r: wRect): RECT =
   result.left = r.x
@@ -251,7 +275,7 @@ proc loadRichDll*(): bool =
       richDllLoaded = true
   result = richDllLoaded
 
-proc useTheme*(): bool =
+proc usingTheme*(): bool =
   let hDll = LoadLibrary("comctl32.dll")
   if hDll != 0:
     defer: FreeLibrary(hDll)
@@ -259,7 +283,7 @@ proc useTheme*(): bool =
     var dllGetVersion = cast[DLLGETVERSIONPROC](GetProcAddress(hDll, "DllGetVersion"))
     if not dllGetVersion.isNil:
       var vi = DLLVERSIONINFO(cbSize: int32 sizeof(DLLVERSIONINFO))
-      discard dllGetVersion(vi)
+      {.gcsafe.}: discard dllGetVersion(vi)
       result = vi.dwMajorVersion >= 6
 
 proc getSize*(iconInfo: ICONINFO): wSize =
@@ -301,7 +325,7 @@ proc wGetWinVersionImpl*(): float =
 
     var rtlGetVersion = cast[RtlGetVersion](GetProcAddress(hDll, "RtlGetVersion"))
     if not rtlGetVersion.isNil:
-      rtlGetVersion(osv)
+      {.gcsafe.}: rtlGetVersion(osv)
       return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
 
   GetVersionEx(osv)
@@ -312,3 +336,13 @@ proc wGetMessagePosition*(): wPoint =
   var val = GetMessagePos()
   result.x = GET_X_LPARAM(val)
   result.y = GET_Y_LPARAM(val)
+
+proc forceForegroundWindow*(hWnd: HWND) =
+  let foreId = GetWindowThreadProcessId(GetForegroundWindow(), nil)
+  let curId = GetCurrentThreadId()
+  AttachThreadInput(curId, foreId, TRUE)
+  SetForegroundWindow(hWnd)
+  AttachThreadInput(curId, foreId, FALSE)
+
+  SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE or SWP_SHOWWINDOW)
+  BringWindowToTop(hWnd)

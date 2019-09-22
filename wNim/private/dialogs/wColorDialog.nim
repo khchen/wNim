@@ -85,31 +85,27 @@ proc wColorHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT
   if self != nil:
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
-proc final*(self: wColorDialog) =
-  ## Default finalizer for wColorDialog.
-  self.wDialog.final()
+wClass(wColorDialog of wDialog):
 
-proc init*(self: wColorDialog, owner: wWindow = nil, defaultColor = wBlack,
-    style: wStyle = 0) {.validate.} =
-  ## Initializer.
-  self.wDialog.init(owner)
-  self.mStyle = style
-  self.mCc = TCHOOSECOLOR(
-    lStructSize: sizeof(TCHOOSECOLOR),
-    rgbResult: defaultColor,
-    lpCustColors: &self.mCustomColor[0],
-    lpfnHook: wColorHookProc,
-    lCustData: cast[LPARAM](self),
-    Flags: CC_RGBINIT or CC_ANYCOLOR or CC_ENABLEHOOK)
+  proc final*(self: wColorDialog) =
+    ## Default finalizer for wColorDialog.
+    self.wDialog.final()
 
-  if owner != nil:
-    self.mCc.hwndOwner = owner.mHwnd
+  proc init*(self: wColorDialog, owner: wWindow = nil, defaultColor = wBlack,
+      style: wStyle = 0) {.validate.} =
+    ## Initializer.
+    self.wDialog.init(owner)
+    self.mStyle = style
+    self.mCc = TCHOOSECOLOR(
+      lStructSize: sizeof(TCHOOSECOLOR),
+      rgbResult: defaultColor,
+      lpCustColors: &self.mCustomColor[0],
+      lpfnHook: wColorHookProc,
+      lCustData: cast[LPARAM](self),
+      Flags: CC_RGBINIT or CC_ANYCOLOR or CC_ENABLEHOOK)
 
-proc ColorDialog*(owner: wWindow = nil, defaultColor = wBlack,
-    style: wStyle = 0): wColorDialog {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, defaultColor, style)
+    if owner != nil:
+      self.mCc.hwndOwner = owner.mHwnd
 
 proc showModal*(self: wColorDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel

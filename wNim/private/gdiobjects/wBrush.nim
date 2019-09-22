@@ -128,17 +128,17 @@ proc setStyle*(self: wBrush, style: DWORD) {.validate, property.} =
 template wBlackBrush*(): untyped =
   ## Predefined black brush. **Don't delete**.
   wGDIStock(wBrush, BlackBrush):
-    Brush(color=wBLACK)
+    Brush(color=wBlack)
 
 template wWhiteBrush*(): untyped =
   ## Predefined white brush. **Don't delete**.
   wGDIStock(wBrush, WhiteBrush):
-    Brush(color=wWHITE)
+    Brush(color=wWhite)
 
 template wGreyBrush*(): untyped =
   ## Predefined grey brush. **Don't delete**.
   wGDIStock(wBrush, GreyBrush):
-    Brush(color=wGREY)
+    Brush(color=wGrey)
 
 template wTransparentBrush*(): untyped =
   ## Predefined transparent brush. **Don't delete**.
@@ -148,32 +148,32 @@ template wTransparentBrush*(): untyped =
 template wLightGreyBrush*(): untyped =
   ## Predefined light grey brush. **Don't delete**.
   wGDIStock(wBrush, LightGreyBrush):
-    Brush(color=wLIGHTGREY)
+    Brush(color=wLightGrey)
 
 template wMediumGreyBrush*(): untyped =
   ## Predefined medium grey brush. **Don't delete**.
   wGDIStock(wBrush, MediumGreyBrush):
-    Brush(color=wMEDIUMGREY)
+    Brush(color=wMediumGrey)
 
 template wBlueBrush*(): untyped =
   ## Predefined blue brush. **Don't delete**.
   wGDIStock(wBrush, BlueBrush):
-    Brush(color=wBLUE)
+    Brush(color=wBlue)
 
 template wGreenBrush*(): untyped =
   ## Predefined green brush. **Don't delete**.
   wGDIStock(wBrush, GreenBrush):
-    Brush(color=wGREEN)
+    Brush(color=wGreen)
 
 template wCyanBrush*(): untyped =
   ## Predefined cyan brush. **Don't delete**.
   wGDIStock(wBrush, CyanBrush):
-    Brush(color=wCYAN)
+    Brush(color=wCyan)
 
 template wRedBrush*(): untyped =
   ## Predefined red brush. **Don't delete**.
   wGDIStock(wBrush, RedBrush):
-    Brush(color=wRED)
+    Brush(color=wRed)
 
 template wDefaultBrush*(): untyped =
   ## Predefined default (white) brush. **Don't delete**.

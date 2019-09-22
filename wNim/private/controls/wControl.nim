@@ -61,6 +61,117 @@ method getClientAreaOrigin*(self: wControl): wPoint {.property, uknlock.} =
   ## Gets the origin of the client area of the control.
   result = (0, 0)
 
+proc setBuddy*(self: wControl, buddy: wControl, direction: int = wRight,
+    length = wDefault, indent = 0) {.validate.} =
+  ## Sets a control as the *buddy* to this control. The *buddy* control will be
+  ## attached to the border specified by *direction* (wUp, wDown, wLeft, wRight),
+  ## and occupies part of non-client area in *length*. *buddy* can be nil to cancel
+  ## the relationship. Notice: *buddy* control should be a sibling, not a child.
+  ##
+  ## For example, a text control with a "Browse" button as a buddy:
+  ##
+  ## .. code-block:: Nim
+  ##   let textctrl = TextCtrl(panel, style=wBorderSunken, pos=(10, 10))
+  ##   let button = Button(panel, label="...")
+  ##   textctrl.setBuddy(button, wRight, length=25)
+
+  var
+    bEdge: RECT
+    buddyWidth: int
+    buddyHeight: int
+
+  proc getBuddyRect(rect: var RECT) =
+    case direction
+    of wLeft:
+      rect.top += bEdge.top
+      rect.bottom -= bEdge.bottom
+      rect.left = rect.left + bEdge.left
+      rect.right = rect.left + buddyWidth
+
+    of wRight:
+      rect.top += bEdge.top
+      rect.bottom -= bEdge.bottom
+      rect.right -= bEdge.right
+      rect.left = rect.right - buddyWidth
+
+      if bEdge.right > bEdge.left: # scrollbars here
+        OffsetRect(rect, bEdge.right - bEdge.left, 0)
+
+    of wUp, wDown:
+      rect.left = rect.left + bEdge.left
+      rect.right -= bEdge.right
+      if direction == wUp:
+        rect.top += bEdge.top
+        rect.bottom = rect.top + buddyHeight
+      else:
+        rect.bottom -= bEdge.bottom
+        rect.top = rect.bottom - buddyHeight
+
+      if bEdge.right > bEdge.left: # scrollbars here
+        rect.right += bEdge.right - bEdge.left
+
+    else:
+      rect.reset()
+
+  proc onNcCalcSize(event: wEvent) =
+    let prect = cast[ptr RECT](event.mLparam)
+    var oldRect: RECT = prect[]
+
+    event.postDefaultHandler:
+      bEdge.left = prect.left - oldrect.left + indent
+      bEdge.right = oldrect.right - prect.right + indent
+      bEdge.top = prect.top - oldrect.top + indent
+      bEdge.bottom = oldrect.bottom - prect.bottom + indent
+
+      case direction
+      of wRight: prect[].right -= buddyWidth
+      of wLeft: prect[].left += buddyWidth
+      of wUp: prect[].top += buddyHeight
+      of wDown: prect[].bottom -= buddyHeight
+      else: discard
+
+  proc onSize(event: wEvent) =
+    event.skip
+    var rc: RECT
+    GetWindowRect(self.mHwnd, rc)
+    getBuddyRect(rc)
+
+    MapWindowPoints(0, self.mParent.mHwnd, cast[LPPOINT](&rc), 2)
+    SetWindowPos(buddy.mHwnd, 0, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top,
+      SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE)
+
+  proc onNcHitTest(event: wEvent) =
+    var pt = POINT(x: GET_X_LPARAM(event.mLparam), y: GET_Y_LPARAM(event.mLparam))
+    var rc: RECT
+    GetWindowRect(self.mHwnd, rc)
+    getBuddyRect(rc)
+
+    if PtInRect(rc, pt):
+      event.result = HTTRANSPARENT
+    else:
+      event.skip
+
+  self.disconnect(WM_NCHITTEST, onNcHitTest)
+  self.disconnect(WM_NCCALCSIZE, onNcCalcSize)
+  self.disconnect(wEvent_Size, onSize)
+
+  if not buddy.isNil and direction in {wLeft, wUp, wRight, wDown}:
+    if self.mParent != buddy.mParent:
+      raise newException(wError, "buddy control must have the same parent")
+
+    (buddyWidth, buddyHeight) = if length == wDefault: buddy.getSize() else: (length, length)
+    self.connect(WM_NCHITTEST, onNcHitTest)
+    self.connect(WM_NCCALCSIZE, onNcCalcSize)
+    self.connect(wEvent_Size, onSize)
+
+    # SetWindowPos(buddy.mHwnd, self.mHwnd, 0, 0, 0, 0,
+    #   SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE)
+
+  SetWindowPos(self.mHwnd, 0, 0, 0, 0, 0,
+    SWP_FRAMECHANGED or SWP_DRAWFRAME or SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE or SWP_NOZORDER)
+
+  self.processMessage(wEvent_Size)
+
 proc showAndNotifyParent(self: wControl, flag = true) {.shield.} =
   let shown = self.isShownOnScreen()
   procCall wBase.wWindow(self).show(flag)

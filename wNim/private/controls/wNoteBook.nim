@@ -132,7 +132,7 @@ proc insertPage*(self: wNoteBook, pos = -1, page: wPanel, text = "",
   if select or self.mSelection == -1:
     self.updateSelection(pos)
 
-  if wUseTheme() and self.mTheme != 0:
+  if wUsingTheme() and self.mTheme != 0:
     page.systemConnect(wEvent_Paint, notebookPageOnPaint)
 
 proc insertPage*(self: wNoteBook, pos = -1, text = "", select = false,
@@ -364,7 +364,7 @@ wClass(wNoteBook of wControl):
     SendMessage(self.mHwnd, TCM_SETIMAGELIST, 0, self.mImageList.mHandle)
 
     self.setBackgroundColor(GetSysColor(COLOR_BTNFACE))
-    if wUseTheme():
+    if wUsingTheme():
       self.mTheme = OpenThemeData(self.mHwnd, "TAB")
 
     self.systemConnect(WM_SIZE) do (event: wEvent):

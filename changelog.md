@@ -1,3 +1,14 @@
+Version 0.10.0
+--------------
+* wPrintDialog: rename wEvent_PrintChanged to wEvent_PrinterChanged **(Breaking Change)**.
+* Add wToolTip class (a standalone tooltip anywhere on the screen).
+* wControl: add setBuddy(). This function can achieve a text control with a "Browse" button.
+* wToolBar: setBackgroundColor() works for toolbar now (transparent by default).
+* wStatusBar: add setHelpIndex(), getHelpIndex().
+* wDirDialog: remove wDdXpCompatible (WinXP compatible code only exists with -d:useWinXp).
+* Modify examples/customdialog.nim and pickicondialog.nim to demonstrate setBuddy().
+* Fix bugs.
+
 Version 0.9.0
 -------------
 * wNim modules can be imported one by one to speed up compilation (Requires nim version >= 0.20.0).

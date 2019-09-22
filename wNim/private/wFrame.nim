@@ -232,14 +232,14 @@ proc endModal*(self: wFrame, retCode: int = 0) =
     EnableWindow(hwnd, true)
   self.mDisableList = @[]
 
-  self.hide()
-  self.setReturnCode(retCode)
-
   # sometimes the owner window will lost the foreground unexpectedly
   # for example, call another system modal window in modal dialog
   let owner = GetWindow(self.mHwnd, GW_OWNER)
   if owner != 0:
-    SetForegroundWindow(owner)
+    forceForegroundWindow(owner)
+
+  self.hide()
+  self.setReturnCode(retCode)
 
   self.mIsModal = false
 
@@ -403,7 +403,7 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
 
     # self.mStatusBar.setStatusText(if selectedItem != nil: selectedItem.mHelp else: "")
     let text = if selectedItem != nil: selectedItem.mHelp else: ""
-    SendMessage(self.mStatusBar.mHwnd, SB_SETTEXT, 0, &T(text))
+    SendMessage(self.mStatusBar.mHwnd, SB_SETTEXT, LOBYTE(self.mStatusBar.mHelpIndex), &T(text))
     processed = true
 
 method release(self: wFrame) {.uknlock.} =

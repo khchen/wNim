@@ -114,30 +114,27 @@ proc wFontHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_
   if self != nil:
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
-proc final*(self: wFontDialog) =
-  ## Default finalizer for wFontDialog.
-  self.wDialog.final()
+wClass(wFontDialog of wDialog):
 
-proc init*(self: wFontDialog, owner: wWindow = nil, font: wFont = nil) {.validate.} =
-  ## Initializer.
-  self.wDialog.init(owner)
-  self.mCf = TCHOOSEFONT(
-    lStructSize: sizeof(TCHOOSEFONT),
-    lpfnHook: wFontHookProc,
-    lCustData: cast[LPARAM](self),
-    lpLogFont: &self.mLf,
-    Flags: CF_ENABLEHOOK)
+  proc final*(self: wFontDialog) =
+    ## Default finalizer for wFontDialog.
+    self.wDialog.final()
 
-  if owner != nil:
-    self.mCf.hwndOwner = owner.mHwnd
+  proc init*(self: wFontDialog, owner: wWindow = nil, font: wFont = nil) {.validate.} =
+    ## Initializer.
+    self.wDialog.init(owner)
+    self.mCf = TCHOOSEFONT(
+      lStructSize: sizeof(TCHOOSEFONT),
+      lpfnHook: wFontHookProc,
+      lCustData: cast[LPARAM](self),
+      lpLogFont: &self.mLf,
+      Flags: CF_ENABLEHOOK)
 
-  self.setInitialFont(font)
-  self.enableEffects(true)
+    if owner != nil:
+      self.mCf.hwndOwner = owner.mHwnd
 
-proc FontDialog*(owner: wWindow = nil, font: wFont = nil): wFontDialog {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, font)
+    self.setInitialFont(font)
+    self.enableEffects(true)
 
 proc showModal*(self: wFontDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel

@@ -90,29 +90,24 @@ proc setOKCancelLabels*(self: wTextEntryDialog, ok: string, cancel: string)
   self.mOkLabel = ok
   self.mCancelLabe = cancel
 
-proc final*(self: wTextEntryDialog) =
-  ## Default finalizer for wTextEntryDialog.
-  self.wDialog.final()
+wClass(wTextEntryDialog of wDialog):
 
-proc init*(self: wTextEntryDialog, owner: wWindow = nil, message = "Input text",
-    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
-    pos = wDefaultPoint) {.validate.} =
-  ## Initializer.
-  self.wDialog.init(owner)
-  self.mMessage = message
-  self.mCaption = caption
-  self.mValue = value
-  self.mStyle = style
-  self.mPos = pos
-  self.mOkLabel = "&OK"
-  self.mCancelLabe = "&Cancel"
+  proc final*(self: wTextEntryDialog) =
+    ## Default finalizer for wTextEntryDialog.
+    self.wDialog.final()
 
-proc TextEntryDialog*(owner: wWindow = nil, message = "Input text",
-    caption = "", value = "", style: wStyle = wDefaultDialogStyle,
-    pos = wDefaultPoint): wTextEntryDialog {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, message, caption, value, style, pos)
+  proc init*(self: wTextEntryDialog, owner: wWindow = nil, message = "Input text",
+      caption = "", value = "", style: wStyle = wDefaultDialogStyle,
+      pos = wDefaultPoint) {.validate.} =
+    ## Initializer.
+    self.wDialog.init(owner)
+    self.mMessage = message
+    self.mCaption = caption
+    self.mValue = value
+    self.mStyle = style
+    self.mPos = pos
+    self.mOkLabel = "&OK"
+    self.mCancelLabe = "&Cancel"
 
 proc wTextEntryHookProc(win: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM): bool =
   let self = cast[wTextEntryDialog](GetWindowLongPtr(win.mHwnd, GWLP_USERDATA))

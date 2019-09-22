@@ -174,12 +174,12 @@ proc setWidth*(self: wPen, width: int) {.validate, property.} =
 template wBlackPen*(): untyped =
   ## Predefined black pen. **Don't delete**.
   wGDIStock(wPen, BlackPen):
-    Pen(color=wBLACK)
+    Pen(color=wBlack)
 
 template wWhitePen*(): untyped =
   ## Predefined white pen. **Don't delete**.
   wGDIStock(wPen, WhitePen):
-    Pen(color=wWHITE)
+    Pen(color=wWhite)
 
 template wTransparentPen*(): untyped =
   ## Predefined transparent pen. **Don't delete**.
@@ -189,37 +189,37 @@ template wTransparentPen*(): untyped =
 template wRedPen*(): untyped =
   ## Predefined red pen. **Don't delete**.
   wGDIStock(wPen, RedPen):
-    Pen(color=wRED)
+    Pen(color=wRed)
 
 template wCyanPen*(): untyped =
   ## Predefined cyan pen. **Don't delete**.
   wGDIStock(wPen, CyanPen):
-    Pen(color=wCYAN)
+    Pen(color=wCyan)
 
 template wGreenPen*(): untyped =
   ## Predefined green pen. **Don't delete**.
   wGDIStock(wPen, GreenPen):
-    Pen(color=wGREEN)
+    Pen(color=wGreen)
 
 template wGreyPen*(): untyped =
   ## Predefined grey pen. **Don't delete**.
   wGDIStock(wPen, GreyPen):
-    Pen(color=wGREY)
+    Pen(color=wGrey)
 
 template wMediumGreyPen*(): untyped =
   ## Predefined medium grey pen. **Don't delete**.
   wGDIStock(wPen, MediumGreyPen):
-    Pen(color=wMEDIUMGREY)
+    Pen(color=wMediumGrey)
 
 template wLightGreyPen*(): untyped =
   ## Predefined light grey pen. **Don't delete**.
   wGDIStock(wPen, LightGreyPen):
-    Pen(color=wLIGHTGREY)
+    Pen(color=wLightGrey)
 
 template wBlackDashedPen*(): untyped =
   ## Predefined black dashed pen. **Don't delete**.
   wGDIStock(wPen, BlackDashedPen):
-    Pen(color=wBLACK, style=wPENSTYLE_SHORT_DASH)
+    Pen(color=wBlack, style=wPenStyleDash)
 
 template wDefaultPen*(): untyped =
   ## Predefined default (black) pen. **Don't delete**.

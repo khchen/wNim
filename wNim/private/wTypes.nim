@@ -157,12 +157,12 @@ when not isMainModule:
       mGDIStockSeq*: seq[wGdiObject]
       mPropagationSet*: HashSet[UINT]
       mMenuIdSet*: set[uint16]
-      mMessageCountTable*: CountTable[UINT]
+      mMessageCountTable*: Table[UINT, int]
       mExitCode*: uint
       mAccelExists*: bool
       mDpi*: int
       mWinVersion*: float
-      mUseTheme*: bool
+      mUsingTheme*: bool
 
     wEvent* = ref object of RootObj
       mWindow*: wWindow
@@ -341,11 +341,16 @@ when not isMainModule:
 
     wPanel* = ref object of wWindow
 
+    wToolTip* = ref object of wWindow
+      mText*: string
+      mToolInfo*: TOOLINFO
+
     wControl* = ref object of wWindow
 
     wStatusBar* = ref object of wControl
       mFiledNumbers*: int
       mWidths*: array[256, int32]
+      mHelpIndex*: int
       mSizeConn*: wEventConnection
 
     wToolBarTool* = ref object of RootObj

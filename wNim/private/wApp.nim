@@ -41,10 +41,9 @@ proc App*(): wApp {.discardable.} =
   result.mWindowTable = initTable[HWND, wWindow]()
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
-  result.mMessageCountTable = initCountTable[UINT]()
-  {.gcsafe.}:
-    result.mWinVersion = wGetWinVersionImpl()
-    result.mUseTheme = useTheme()
+  result.mMessageCountTable = initTable[UINT, int]()
+  result.mWinVersion = wGetWinVersionImpl()
+  result.mUsingTheme = usingTheme()
 
   # initSet is deprecated since v0.20
   when declared(initHashSet):
@@ -64,8 +63,8 @@ proc wAppGetInstance(): HANDLE {.inline, shield.} =
 proc wAppWinVersion(): float {.inline, shield.} =
   result = wTheApp.mWinVersion
 
-proc wUseTheme(): bool {.inline, shield.} =
-  result = wTheApp.mUseTheme
+proc wUsingTheme(): bool {.inline, shield.} =
+  result = wTheApp.mUsingTheme
 
 proc wAppGetDpi(): int {.shield.} =
   if wTheApp.mDpi == 0:
@@ -106,10 +105,10 @@ proc wAppIsMessagePropagation(msg: UINT): bool {.inline, shield.} =
   result = msg in wTheApp.mPropagationSet
 
 proc wAppIncMessage(msg: UINT) {.inline, shield.} =
-  wTheApp.mMessageCountTable.inc(msg, 1)
+  wTheApp.mMessageCountTable.inc(msg)
 
 proc wAppDecMessage(msg: UINT) {.inline, shield.} =
-  wTheApp.mMessageCountTable.inc(msg, -1)
+  wTheApp.mMessageCountTable.dec(msg)
 
 proc wAppHasMessage(msg: UINT): bool {.inline, shield.} =
   msg in wTheApp.mMessageCountTable

@@ -69,24 +69,20 @@ const
   # defined in wFrame.nim
   # wStayOnTop* = WS_EX_TOPMOST.int64 shl 32
 
-proc final*(self: wMessageDialog) =
-  ## Default finalizer for wMessageDialog.
-  self.wDialog.final()
+wClass(wMessageDialog of wDialog):
 
-proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
-    caption: string = "", style: wStyle = wOK) {.validate.} =
-  ## Initializer.
-  self.wDialog.init(owner)
-  self.mMessage = message
-  self.mCaption = caption
-  self.mStyle = style
-  self.mLabelText = initTable[INT, string]()
+  proc final*(self: wMessageDialog) =
+    ## Default finalizer for wMessageDialog.
+    self.wDialog.final()
 
-proc MessageDialog*(owner: wWindow = nil, message: string = "" ,
-    caption: string = "", style: wStyle = wOK): wMessageDialog {.inline.} =
-  ## Constructor specifying the message box properties.
-  new(result, final)
-  result.init(owner, message, caption, style)
+  proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
+      caption: string = "", style: wStyle = wOK) {.validate.} =
+    ## Initializer.
+    self.wDialog.init(owner)
+    self.mMessage = message
+    self.mCaption = caption
+    self.mStyle = style
+    self.mLabelText = initTable[INT, string]()
 
 proc getMessage*(self: wMessageDialog): string {.validate, property, inline.} =
   ## Returns the message that will be displayed on the dialog.

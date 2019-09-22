@@ -300,6 +300,18 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool {.shield, uknlock.} =
 
   case code
+  of NM_CUSTOMDRAW:
+    if self.mBackgroundColor != -1: # -1 means transparent.
+      var pNMTBCUSTOMDRAW = cast[LPNMTBCUSTOMDRAW](lparam)
+      if pNMTBCUSTOMDRAW.nmcd.dwDrawStage == CDDS_PREERASE:
+        let hdc = pNMTBCUSTOMDRAW.nmcd.hdc
+        var rect = pNMTBCUSTOMDRAW.nmcd.rc
+        let oldcr = SetBkColor(hdc, self.mBackgroundColor)
+        ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, "", 0, nil)
+        SetBkColor(hdc, oldcr)
+        ret = CDRF_SKIPDEFAULT
+        return true
+
   of TTN_GETDISPINFO:
     # show the tip (short help)
     var pNMTTDISPINFO = cast[LPNMTTDISPINFO](lparam)
@@ -383,8 +395,9 @@ wClass(wToolBar of wControl):
     self.mTools = @[]
 
     self.wControl.init(className=TOOLBARCLASSNAME, parent=parent, id=id,
-      style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS)
+      style=style or WS_CHILD or WS_VISIBLE or TBSTYLE_TOOLTIPS or TBSTYLE_CUSTOMERASE)
 
+    self.setBackgroundColor(-1) # default transparent instead of parent's color
     SendMessage(self.mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
     SendMessage(self.mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 

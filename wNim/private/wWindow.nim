@@ -592,8 +592,8 @@ macro dpiAutoScale*(self: wWindow, body: untyped): untyped =
 proc getWindowStyle*(self: wWindow): wStyle {.validate, property.} =
   ## Gets the wNim's window style.
   ## It simply combine of windows' style and exstyle.
-  result = towStyle(DWORD GetWindowLongPtr(self.mHwnd, GWL_STYLE),
-    DWORD GetWindowLongPtr(self.mHwnd, GWL_EXSTYLE))
+  result = towStyle(cast[DWORD](GetWindowLongPtr(self.mHwnd, GWL_STYLE)),
+    cast[DWORD](GetWindowLongPtr(self.mHwnd, GWL_EXSTYLE)))
 
 proc setWindowStyle*(self: wWindow, style: wStyle) {.validate, property.} =
   ## Sets the style of the window.
@@ -1054,14 +1054,9 @@ proc center*(self: wWindow, direction = wBoth) {.validate.} =
 
     self.setWindowPos(rect.x, rect.y)
 
-proc activate*(self: wWindow, force = false) {.validate.} =
+proc activate*(self: wWindow) {.validate.} =
   ## Activates the window.
-  if SetForegroundWindow(self.mHwnd) == 0 and force:
-    let foreId = GetWindowThreadProcessId(GetForegroundWindow(), nil)
-    let curId = GetCurrentThreadId()
-    AttachThreadInput(curId, foreId, TRUE)
-    SetForegroundWindow(self.mHwnd)
-    AttachThreadInput(curId, foreId, FALSE)
+  forceForegroundWindow(self.mHwnd)
 
 proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
     flag = 0): wCommandID {.validate, discardable.} =
@@ -1471,7 +1466,7 @@ proc disconnect*(self: wWindow, msg: UINT, handler: wEventProc) {.validate.} =
   ## Disconnects the specified handler proc from the event handler.
   self.mConnectionTable.withValue(msg, list):
     for node in list.nodes:
-      if node.value.handler == handler and not node.value.undeletable:
+      if node.value.handler.rawProc == handler.rawProc and not node.value.undeletable:
         list.remove(node)
         wAppDecMessage(msg)
 
@@ -1479,7 +1474,7 @@ proc disconnect*(self: wWindow, msg: UINT, handler: wEventNeatProc) {.validate.}
   ## Disconnects the specified handler proc from the event handler.
   self.mConnectionTable.withValue(msg, list):
     for node in list.nodes:
-      if node.value.neatHandler == handler and not node.value.undeletable:
+      if node.value.neatHandler.rawProc == handler.rawProc and not node.value.undeletable:
         list.remove(node)
         wAppDecMessage(msg)
 
@@ -1506,7 +1501,7 @@ proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc) {.validate.
   # Used internally, disconnects the specified connection.
   self.mSystemConnectionTable.withValue(msg, list):
     for node in list.nodes:
-      if node.value.handler == handler:
+      if node.value.handler.rawProc == handler.rawProc:
         list.remove(node)
         wAppDecMessage(msg)
 
@@ -1914,7 +1909,7 @@ proc setShape*(self: wWindow, region: wRegion) {.validate, property.} =
     CombineRgn(hRgn, region.mHandle, 0, RGN_COPY)
     SetWindowRgn(self.mHwnd, hRgn, TRUE)
 
-proc wWindow_DoMouseMove(event: wEvent) =
+proc wWindow_DoMouseMove(event: wEvent) {.shield.} =
   let self = event.mWindow
 
   # we only handle WM_MOUSEMOVE if it's not from child window
@@ -1943,7 +1938,7 @@ proc wWindow_DoMouseMove(event: wEvent) =
     if self.hasCapture() and not self.isMouseInWindow():
       self.processMessage(wEvent_MouseLeave, event.mWparam, event.mLparam)
 
-proc wWindow_DoMouseLeave(event: wEvent) =
+proc wWindow_DoMouseLeave(event: wEvent) {.shield.} =
   event.mWindow.mMouseInWindow = false
 
 proc wWindow_DoSize(event: wEvent) =

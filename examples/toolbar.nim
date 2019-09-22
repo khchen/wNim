@@ -27,7 +27,7 @@ let panel = Panel(frame)
 panel.margin = 5
 
 # Toolbar has the transparent look by default.
-frame.backgroundColor = panel.backgroundColor
+toolbar.backgroundColor = panel.backgroundColor
 
 let listbox = ListBox(panel, pos=(0, 0), style=wLbNeededScroll or wLbNoSel)
 

@@ -648,7 +648,7 @@ wClass(wCheckComboBox of wControl):
     self.mCheckTheme = OpenThemeData(self.mHwnd, WC_BUTTON)
 
     # Only support with visual style for now.
-    if not wUseTheme() or self.mTheme == 0 or self.mCheckTheme == 0:
+    if not wUsingTheme() or self.mTheme == 0 or self.mCheckTheme == 0:
       self.delete()
       raise newException(wError, "wCheckComboBox creation failed")
 

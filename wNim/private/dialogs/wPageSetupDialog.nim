@@ -178,18 +178,6 @@ proc setMarginBottomRight*(self: wPageSetupDialog, point: wPoint) {.validate, pr
   self.mPsd.rtMargin.bottom = point.y * 100
   self.mPsd.Flags = self.mPsd.Flags or PSD_MARGINS
 
-proc final*(self: wPageSetupDialog) =
-  ## Default finalizer for wPageSetupDialog.
-  if self.mPsd.hDevMode != 0:
-    GlobalFree(self.mPsd.hDevMode)
-    self.mPsd.hDevMode = 0
-
-  if self.mPsd.hDevNames != 0:
-    GlobalFree(self.mPsd.hDevNames)
-    self.mPsd.hDevNames = 0
-
-  self.wDialog.final()
-
 proc wPageSetupHookProc(hWnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
     {.stdcall.} =
 
@@ -202,40 +190,42 @@ proc wPageSetupHookProc(hWnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): 
   if self != nil:
     result = self.wDialogHookProc(hWnd, msg, wParam, lParam)
 
-proc init*(self: wPageSetupDialog, owner: wWindow, initDefault = false) {.validate.} =
-  ## Initializer.
-  wValidate(owner)
-  self.wDialog.init(owner)
-  self.mPsd.lStructSize = sizeof(TPAGESETUPDLG)
-  self.mPsd.lCustData = cast[LPARAM](self)
-  self.mPsd.Flags = PSD_INHUNDREDTHSOFMILLIMETERS or PSD_ENABLEPAGESETUPHOOK
-  self.mPsd.lpfnPageSetupHook = wPageSetupHookProc
-  self.mPsd.hwndOwner = owner.mHwnd
+wClass(wPageSetupDialog of wDialog):
 
-  if initDefault:
-    self.mPsd.Flags = self.mPsd.Flags or PSD_RETURNDEFAULT
-    if PageSetupDlg(&self.mPsd) == 0:
-      raise newException(wPageSetupDialogError, "wPageSetupDialog creation failed")
-    self.mPsd.Flags = self.mPsd.Flags and (not PSD_RETURNDEFAULT)
+  proc final*(self: wPageSetupDialog) =
+    ## Default finalizer for wPageSetupDialog.
+    if self.mPsd.hDevMode != 0:
+      GlobalFree(self.mPsd.hDevMode)
+      self.mPsd.hDevMode = 0
 
-proc PageSetupDialog*(owner: wWindow, initDefault = false): wPageSetupDialog {.inline.} =
-  ## Constructor. If initDefault is true, the dialog is initialized for the
-  ## system default printer.
-  wValidate(owner)
-  new(result, final)
-  result.init(owner, initDefault)
+    if self.mPsd.hDevNames != 0:
+      GlobalFree(self.mPsd.hDevNames)
+      self.mPsd.hDevNames = 0
 
-proc init*(self: wPageSetupDialog, owner: wWindow, data: wPrintData) {.validate.} =
-  ## Initializer.
-  self.init(owner)
-  if not data.isNil:
-    self.setPrintData(data)
+    self.wDialog.final()
 
-proc PageSetupDialog*(owner: wWindow, data: wPrintData): wPageSetupDialog {.inline.} =
-  ## Constructor. Use specified printData as default setting.
-  wValidate(owner)
-  new(result, final)
-  result.init(owner, data)
+  proc init*(self: wPageSetupDialog, owner: wWindow, initDefault = false) {.validate.} =
+    ## Initializer. If initDefault is true, the dialog is initialized for the
+    ## system default printer.
+    wValidate(owner)
+    self.wDialog.init(owner)
+    self.mPsd.lStructSize = sizeof(TPAGESETUPDLG)
+    self.mPsd.lCustData = cast[LPARAM](self)
+    self.mPsd.Flags = PSD_INHUNDREDTHSOFMILLIMETERS or PSD_ENABLEPAGESETUPHOOK
+    self.mPsd.lpfnPageSetupHook = wPageSetupHookProc
+    self.mPsd.hwndOwner = owner.mHwnd
+
+    if initDefault:
+      self.mPsd.Flags = self.mPsd.Flags or PSD_RETURNDEFAULT
+      if PageSetupDlg(&self.mPsd) == 0:
+        raise newException(wPageSetupDialogError, "wPageSetupDialog creation failed")
+      self.mPsd.Flags = self.mPsd.Flags and (not PSD_RETURNDEFAULT)
+
+  proc init*(self: wPageSetupDialog, owner: wWindow, data: wPrintData) {.validate.} =
+    ## Initializer. Uses specified printData as default setting.
+    self.init(owner)
+    if not data.isNil:
+      self.setPrintData(data)
 
 proc showModal*(self: wPageSetupDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel

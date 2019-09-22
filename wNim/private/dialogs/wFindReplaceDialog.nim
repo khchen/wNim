@@ -164,33 +164,29 @@ proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM)
   if self != nil:
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
-proc final*(self: wFindReplaceDialog) =
-  ## Default finalizer for wFindReplaceDialog.
-  self.wDialog.final()
+wClass(wFindReplaceDialog of wDialog):
 
-proc init*(self: wFindReplaceDialog, owner: wWindow, flags: int = 0) {.validate.} =
-  ## Initializer.
-  wValidate(owner)
-  self.wDialog.init(owner)
-  self.mFindString = T(1024)
-  self.mReplaceString = T(1024)
-  self.mFr = FINDREPLACE(
-    lStructSize: sizeof(FINDREPLACE),
-    lpfnHook: wFindReplaceHookProc,
-    lCustData: cast[LPARAM](self),
-    lpstrFindWhat: &self.mFindString,
-    lpstrReplaceWith: &self.mReplaceString,
-    wFindWhatLen: WORD self.mFindString.len,
-    wReplaceWithLen: WORD self.mReplaceString.len,
-    hwndOwner: owner.mHwnd)
+  proc final*(self: wFindReplaceDialog) =
+    ## Default finalizer for wFindReplaceDialog.
+    self.wDialog.final()
 
-  self.setFlags(flags)
+  proc init*(self: wFindReplaceDialog, owner: wWindow, flags: int = 0) {.validate.} =
+    ## Initializer.
+    wValidate(owner)
+    self.wDialog.init(owner)
+    self.mFindString = T(1024)
+    self.mReplaceString = T(1024)
+    self.mFr = FINDREPLACE(
+      lStructSize: sizeof(FINDREPLACE),
+      lpfnHook: wFindReplaceHookProc,
+      lCustData: cast[LPARAM](self),
+      lpstrFindWhat: &self.mFindString,
+      lpstrReplaceWith: &self.mReplaceString,
+      wFindWhatLen: WORD self.mFindString.len,
+      wReplaceWithLen: WORD self.mReplaceString.len,
+      hwndOwner: owner.mHwnd)
 
-proc FindReplaceDialog*(owner: wWindow, flags: int = 0): wFindReplaceDialog
-    {.inline.} =
-  ## Constructor.
-  new(result, final)
-  result.init(owner, flags)
+    self.setFlags(flags)
 
 proc showModaless*(self: wFindReplaceDialog) {.validate.} =
   ## Shows the dialog in modaless mode. The frame of this dialog will recieve

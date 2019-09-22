@@ -58,10 +58,9 @@ method getDefaultSize*(self: wStaticText): wSize {.property, uknlock.} =
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-proc wStaticText_DoCommand(event: wEvent) {.shield.} =
+proc wStaticText_DoCommand(self: wControl, event: wEvent) {.shield.} =
   # also used in wStaticBitmap
-  let self = wAppWindowFindByHwnd(HWND event.mLparam)
-  if self != nil:
+  if event.mLparam == self.mHwnd:
     case HIWORD(event.mWparam)
     of STN_CLICKED:
       self.processMessage(wEvent_CommandLeftClick, event.mWparam, event.mLparam)
@@ -88,7 +87,9 @@ wClass(wStaticText of wControl):
 
     self.mFocusable = false
 
-    self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      self.wStaticText_DoCommand(event)
+
     self.systemConnect(WM_SIZE) do (event: wEvent):
       # when size change, StaticText should refresh itself, but windows system don't do it
       self.refresh()

@@ -1241,8 +1241,6 @@ function main() {
     title="wDdDirMustExist = 1"><wbr />w<wbr />Dd<wbr />Dir<wbr />Must<wbr />Exist<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDdChangeDir"
     title="wDdChangeDir = 2"><wbr />w<wbr />Dd<wbr />Change<wbr />Dir<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDdXpCompatible"
-    title="wDdXpCompatible = 4"><wbr />w<wbr />Dd<wbr />Xp<wbr />Compatible<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1282,7 +1280,6 @@ function main() {
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Styles:</th><td><table border="1" class="docutils"><tr><th>Styles</th><th>Description</th></tr>
 <tr><td>wDdDirMustExist</td><td>The dialog will allow the user to choose only an existing folder.</td></tr>
 <tr><td>wDdChangeDir</td><td>Change the current working directory to the directory chosen by the user.</td></tr>
-<tr><td>wDdXpCompatible</td><td>Use the Windows XP compatible UI as the dialog.</td></tr>
 </table></td></tr>
 </tbody></table></p>
   
@@ -1294,9 +1291,6 @@ function main() {
 
 <a id="wDdChangeDir"></a>
 <dt><pre><span class="Identifier">wDdChangeDir</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
-
-<a id="wDdXpCompatible"></a>
-<dt><pre><span class="Identifier">wDdXpCompatible</span> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
 
 
 </dl></div>
@@ -1319,8 +1313,8 @@ Initializer.
 </dd>
 <a id="DirDialog,wWindow,string,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">DirDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">message</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">defaultPath</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDirDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1373,7 +1367,7 @@ Shows the dialog in modal mode, returning the selected path or nil.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-09-10 17:54:39 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-21 23:38:51 UTC</small>
       </div>
     </div>
   </div>

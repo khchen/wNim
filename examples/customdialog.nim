@@ -10,13 +10,14 @@ import resource/resource
 when defined(aio):
   import wNim
 else:
-  import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon,
-    wStaticText, wTextCtrl, wButton, wStatusBar, wMessageDialog]
+  import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
+    wStaticText, wTextCtrl, wToolBar, wButton, wStatusBar, wMessageDialog]
 
 proc passwordDialog(owner: wWindow): string =
   var password = ""
   let dialog = Frame(owner=owner, size=(320, 200), style=wCaption or wSystemMenu)
   let panel = Panel(dialog)
+
   let statictext = StaticText(panel, label="Please enter the password:", pos=(10, 10))
   let textctrl = TextCtrl(panel, pos=(20, 50), size=(270, 30),
     style=wBorderSunken or wTePassword)
@@ -26,10 +27,19 @@ proc passwordDialog(owner: wWindow): string =
   const ok = staticRead(r"images\ok.ico")
   const cancel = staticRead(r"images\cancel.ico")
 
+  # Add a [X] button to delete the text.
+  let toolbar = ToolBar(panel, style=wTbDefaultStyle or wTbNoDivider or wTbNoAlign or wTbNoResize)
+  toolbar.backgroundColor = wWhite
+  toolbar.addTool(wIdDelete, "", Bitmap(Icon("shell32.dll,131", (16, 16))))
+  textctrl.setBuddy(toolbar, wRight, 24)
+
   buttonOk.setDefault()
   buttonOk.setIcon(Icon(ok))
   buttonCancel.setIcon(Icon(cancel))
   dialog.icon = Icon(ok)
+
+  dialog.wIdDelete do ():
+    textctrl.clear()
 
   dialog.wEvent_Close do ():
     dialog.endModal()

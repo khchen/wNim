@@ -84,4 +84,5 @@ wClass(wStaticBitmap of wControl):
     self.mFocusable = false
 
     # translate wEvent_CommandLeftClick and wEvent_CommandLeftDoubleClick
-    self.mCommandConn = parent.systemConnect(WM_COMMAND, wStaticText_DoCommand)
+    self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
+      self.wStaticText_DoCommand(event)

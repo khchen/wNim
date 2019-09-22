@@ -19,10 +19,11 @@ else:
 import strformat except `&`
 
 proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
-  const iconFiles = ["accessibilitycpl.dll", "explorer.exe", "gameux.dll",
-    "imageres.dll", "mmcndmgr.dll", "mmres.dll", "moricons.dll", "mstscax.dll",
-    "netshell.dll", "networkmap.dll", "pifmgr.dll", "sensorscpl.dll",
-    "setupapi.dll", "shell32.dll", "wmp.dll", "wmploc.dll", "wpdshext.dll"]
+  const iconFiles = ["accessibilitycpl.dll", "comres.dll", "explorer.exe",
+    "filemgmt.dll", "gameux.dll", "imageres.dll", "mmcndmgr.dll", "mmres.dll",
+    "moricons.dll", "mstscax.dll", "mycomput.dll", "netshell.dll", "networkmap.dll",
+    "pifmgr.dll", "pmcsnap.dll", "sensorscpl.dll", "setupapi.dll", "shell32.dll",
+    "wdc.dll", "wfsr.dll", "wmp.dll", "wmploc.dll", "wpdshext.dll", "wsecedit.dll"]
 
   let
     dialog = Frame(owner=owner, title="Pick Icon Dialog", size=(440, 440),
@@ -63,7 +64,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
     defer:
       delete dc
 
-    if PathCompactPath(dc.handle, buffer, UINT staticText.size.width - 4):
+    if PathCompactPath(dc.handle, buffer, UINT staticText.clientSize.width - 4):
       text = $buffer.nullTerminated()
     else:
       text = currentFile
@@ -123,17 +124,19 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
 
   dialog.icon = Icon("shell32.dll,22")
   select.setDropdownMenu(menu)
+  staticText.setBuddy(select, wRight)
   ok.setDefault()
+
   showIcons()
 
   proc layout() =
     panel.autolayout """
       spacing: 12
-      H:|-[staticText]-[select(select.defaultWidth)]-|
+      H:|-[staticText]-|
       H:|-[listCtrl]-|
       H:|-[combo(combo.bestWidth)]->[ok(cancel)]-[cancel(cancel.bestWidth+48)]-|
       V:|-[staticText(staticText.defaultHeight)]-[listCtrl]-[combo(combo.bestHeight)]-|
-      V:|-[select(staticText.height)]-[listCtrl]-[ok,cancel(combo.height)]-|
+      V:|-[staticText]-[listCtrl]-[ok,cancel(combo.height)]-|
     """
 
     let n = ok.size.width + cancel.size.width + combo.size.width + 12 * 4
