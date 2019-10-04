@@ -1,3 +1,8 @@
+Version 0.10.1
+--------------
+* Don't maintain compatibility with Nim Compiler 0.19.
+* Fix bugs.
+
 Version 0.10.0
 --------------
 * wPrintDialog: rename wEvent_PrintChanged to wEvent_PrinterChanged **(Breaking Change)**.

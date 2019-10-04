@@ -171,7 +171,7 @@ when not defined(Nimdoc):
   export
     wTypes, wMacros, wApp, wAcceleratorTable, wDataObject, wPrintData,
     wIconImage, wImage, wImageList, wEvent, wResizable, wResizer, wWindow,
-    wPanel, wFrame, wUtils, autolayout,
+    wPanel, wFrame, wToolTip, wUtils, autolayout,
 
     wBitmap, wBrush, wCursor, wFont, wGdiObject, wIcon, wPen, wRegion,
 

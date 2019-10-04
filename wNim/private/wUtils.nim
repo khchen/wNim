@@ -97,7 +97,7 @@ proc wGetScreenSize*(): wSize =
 proc wSetClipboard*(dataObject: wDataObject): bool {.discardable.} =
   ## Places a specific data object onto the clipboard.
   wValidate(dataObject)
-  OleSetClipboard(dataObject.mObj)
+  result = OleSetClipboard(dataObject.mObj) == S_OK
 
 proc wGetClipboard*(): wDataObject =
   ## Retrieves a data object that you can use to access the contents of the
