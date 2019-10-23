@@ -374,7 +374,22 @@ proc len*(self: wTextCtrl): int {.validate, inline.} =
 proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control. The same as appendText()
   self.appendText(text)
-
+  
+proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.validate, inline.} =
+  if self.mRich:
+    var charformat = CHARFORMAT2(cbSize:int32 sizeof(CHARFORMAT2))
+    charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS or CFM_BACKCOLOR or CFM_COLOR
+    charformat.yHeight = LONG(font.mPointSize * 20)
+    charformat.wWeight = WORD font.mWeight
+    charformat.crBackColor = COLORREF back
+    charformat.crTextColor = COLORREF fore
+    charformat.szFaceName << T(font.mFaceName)
+    charformat.bCharSet = BYTE font.mEncoding
+    charformat.bPitchAndFamily = BYTE font.mFamily
+    if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
+    if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
+    SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_SELECTION, cast[LPARAM](&charformat))
+    
 method setFont*(self: wTextCtrl, font: wFont) {.validate, property, uknlock.} =
   ## Sets the font for this text control.
   wValidate(font)
