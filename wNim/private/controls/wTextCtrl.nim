@@ -376,6 +376,7 @@ proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   self.appendText(text)
   
 proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.validate, inline.} =
+  ## Format the selected text if wTeRich style is specified
   if self.mRich:
     var charformat = CHARFORMAT2(cbSize:int32 sizeof(CHARFORMAT2))
     charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS or CFM_BACKCOLOR or CFM_COLOR
