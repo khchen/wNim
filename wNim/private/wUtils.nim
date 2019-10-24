@@ -135,11 +135,11 @@ proc wSetDefaultPrinter*(device: string) {.inline.} =
 proc wGetPrinters*(): seq[string] =
   ## Returns available printers.
   var needed, returned: DWORD
-  EnumPrinters(PRINTER_ENUM_LOCAL, "", 1, nil, 0, &needed, &returned)
+  EnumPrinters(PRINTER_ENUM_CONNECTIONS or PRINTER_ENUM_LOCAL, "", 1, nil, 0, &needed, &returned)
 
   let buffer = cast[LPBYTE](alloc(needed))
   defer: dealloc(buffer)
-  EnumPrinters(PRINTER_ENUM_LOCAL, "", 1, buffer, needed, &needed, &returned)
+  EnumPrinters(PRINTER_ENUM_CONNECTIONS or PRINTER_ENUM_LOCAL, "", 1, buffer, needed, &needed, &returned)
 
   let printers = cast[ptr UncheckedArray[PRINTER_INFO_1]](buffer)
   for i in 0..<returned:
