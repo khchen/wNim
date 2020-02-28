@@ -134,4 +134,4 @@ However, it only support Windows system.
 ## License
 Read license.txt for more details.
 
-Copyright (c) 2017-2019 Kai-Hung Chen, Ward. All rights reserved.
+Copyright (c) 2017-2020 Kai-Hung Chen, Ward. All rights reserved.

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -117,18 +117,19 @@ proc setBuddy*(self: wControl, buddy: wControl, direction: int = wRight,
     let prect = cast[ptr RECT](event.mLparam)
     var oldRect: RECT = prect[]
 
-    event.postDefaultHandler:
-      bEdge.left = prect.left - oldrect.left + indent
-      bEdge.right = oldrect.right - prect.right + indent
-      bEdge.top = prect.top - oldrect.top + indent
-      bEdge.bottom = oldrect.bottom - prect.bottom + indent
+    when not defined(Nimdoc):
+      event.postDefaultHandler:
+        bEdge.left = prect.left - oldrect.left + indent
+        bEdge.right = oldrect.right - prect.right + indent
+        bEdge.top = prect.top - oldrect.top + indent
+        bEdge.bottom = oldrect.bottom - prect.bottom + indent
 
-      case direction
-      of wRight: prect[].right -= buddyWidth
-      of wLeft: prect[].left += buddyWidth
-      of wUp: prect[].top += buddyHeight
-      of wDown: prect[].bottom -= buddyHeight
-      else: discard
+        case direction
+        of wRight: prect[].right -= buddyWidth
+        of wLeft: prect[].left += buddyWidth
+        of wUp: prect[].top += buddyHeight
+        of wDown: prect[].bottom -= buddyHeight
+        else: discard
 
   proc onSize(event: wEvent) =
     event.skip
@@ -146,10 +147,11 @@ proc setBuddy*(self: wControl, buddy: wControl, direction: int = wRight,
     GetWindowRect(self.mHwnd, rc)
     getBuddyRect(rc)
 
-    if PtInRect(rc, pt):
-      event.result = HTTRANSPARENT
-    else:
-      event.skip
+    when not defined(Nimdoc):
+      if PtInRect(rc, pt):
+        event.result = HTTRANSPARENT
+      else:
+        event.skip
 
   self.disconnect(WM_NCHITTEST, onNcHitTest)
   self.disconnect(WM_NCCALCSIZE, onNcCalcSize)

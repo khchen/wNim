@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -14,7 +14,7 @@ else:
 
 let app = App()
 
-const logo = staticRead(r"images\logo.png")
+const logo = staticRead(r"images/logo.png")
 let image = Image(logo)
 
 let frame = Frame(size=image.size, style=0)

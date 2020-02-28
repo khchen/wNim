@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -41,7 +41,7 @@ wClass(wScribble of wFrame):
     self.mMemDc.clear()
     self.mLastPos = wDefaultPoint
 
-    const penResource = staticRead(r"images\pen.png")
+    const penResource = staticRead(r"images/pen.png")
     let penImage = Image(penResource)
     penImage.rescale(24, 24)
     penImage.rotateFlip(wImageRotateNoneFlipY)

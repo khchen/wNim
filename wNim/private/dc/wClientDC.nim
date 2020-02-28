@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -27,6 +27,15 @@ else:
     wClientDC = object of wDC
       mCanvas: wWindow
 
+proc `=destroy`(self: var wClientDC) =
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  if self.mHdc != 0:
+    self.wDC.final()
+    ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+    self.mHdc = 0
+
 method getSize*(self: wClientDC): wSize {.property, uknlock.} =
   ## Gets the size of the device context.
   result = self.mCanvas.getClientSize()
@@ -40,13 +49,4 @@ proc ClientDC*(canvas: wWindow): wClientDC =
     background=canvas.mBackgroundBrush, font=canvas.mFont)
 
 proc delete*(self: var wClientDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
-    self.mHdc = 0
-
-proc `=destroy`(self: var wClientDC) =
-  self.delete()
+  self.`=destroy`()

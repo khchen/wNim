@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -23,12 +23,12 @@ type
     idEnable, idDisable, idAbout
 
 const resources: array[idIcon1..idIcon6, string] = [
-  staticRead(r"images\1.png"),
-  staticRead(r"images\2.png"),
-  staticRead(r"images\3.png"),
-  staticRead(r"images\4.png"),
-  staticRead(r"images\5.png"),
-  staticRead(r"images\6.png") ]
+  staticRead(r"images/1.png"),
+  staticRead(r"images/2.png"),
+  staticRead(r"images/3.png"),
+  staticRead(r"images/4.png"),
+  staticRead(r"images/5.png"),
+  staticRead(r"images/6.png") ]
 
 let app = App()
 let frame = Frame(title="wNim Menu Demo")

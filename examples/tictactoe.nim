@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -82,9 +82,9 @@ wClass(wBoard of wFrame):
     wFrame(self).init(title=title,
       style=wCaption or wSystemMenu or wMinimizeBox or wModalFrame or wResizeBorder)
 
-    const boardImg = staticRead(r"images\board1.png")
-    const piece1Img = staticRead(r"images\o.png")
-    const piece2Img = staticRead(r"images\x.png")
+    const boardImg = staticRead(r"images/board1.png")
+    const piece1Img = staticRead(r"images/o.png")
+    const piece2Img = staticRead(r"images/x.png")
     self.mBoard = Image(boardImg)
     self.mPiece1 = Image(piece1Img)
     self.mPiece2 = Image(piece2Img)

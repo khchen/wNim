@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -33,6 +33,15 @@ else:
     wMemoryDC = object of wDC
       mBitmap: wBitmap
 
+proc `=destroy`(self: var wMemoryDC) =
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  if self.mHdc != 0:
+    self.wDC.final()
+    DeleteDC(self.mHdc)
+    self.mHdc = 0
+
 proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   ## Selects the given bitmap into the device context, to use as the memory bitmap.
   wValidate(bitmap)
@@ -55,13 +64,4 @@ proc MemoryDC*(dc: wDC): wMemoryDC =
   result.wDC.init()
 
 proc delete*(self: var wMemoryDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    DeleteDC(self.mHdc)
-    self.mHdc = 0
-
-proc `=destroy`(self: var wMemoryDC) =
-  self.delete()
+  self.`=destroy`()

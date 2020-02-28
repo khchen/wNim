@@ -1240,6 +1240,16 @@ function main() {
       <li><a class="reference" href="#setBuddy%2CwControl%2CwControl%2Cint%2Cint"
     title="setBuddy(self: wControl; buddy: wControl; direction: int = wRight; length = wDefault;
          indent = 0)"><wbr />set<wbr />Buddy<span class="attachedType" style="visibility:hidden"></span></a></li>
+  
+  
+  <li><a class="reference" href="#final%2CwControl"
+    title="final(self: wControl)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#init%2CwControl%2Cstring%2CwWindow%2CwCommandID%2Cstring%2CwStyle"
+    title="init(self: wControl; className: string; parent: wWindow; id: wCommandID = -1;
+     label: string = &quot;&quot;; pos = wDefaultPoint; size = wDefaultSize; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#Control%2Cstring%2CwWindow%2CwCommandID%2Cstring%2CwStyle"
+    title="Control(className: string; parent: wWindow; id: wCommandID = -1; label: string = &quot;&quot;;
+        pos = wDefaultPoint; size = wDefaultSize; style: wStyle = 0): wControl"><wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1250,6 +1260,7 @@ function main() {
     title="getClientSize(self: wControl): wSize"><wbr />get<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getClientAreaOrigin.e%2CwControl"
     title="getClientAreaOrigin(self: wControl): wPoint"><wbr />get<wbr />Client<wbr />Area<wbr />Origin<span class="attachedType" style="visibility:hidden"></span></a></li>
+  
 
   </ul>
 </li>
@@ -1280,6 +1291,37 @@ function main() {
 
 </dd>
 
+
+
+
+
+
+<a id="final,wControl"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wControl</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Default finalizer for wControl.
+
+</dd>
+<a id="init,wControl,string,wWindow,wCommandID,string,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wControl</span><span class="Other">;</span> <span class="Identifier">className</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span>
+         <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Initializes a GUI control by given window class name. Only useful to implement a custom wNim GUI control.
+
+</dd>
+<a id="Control,string,wWindow,wCommandID,string,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">Control</span><span class="Other">(</span><span class="Identifier">className</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <span class="Identifier">wCommandID</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+            <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wControl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                               <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Constructor.
+
+</dd>
+
 </dl></div>
 <div class="section" id="14">
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
@@ -1298,6 +1340,9 @@ Gets the origin of the client area of the control.
 
 </dd>
 
+
+
+
 </dl></div>
 
 
@@ -1308,7 +1353,7 @@ Gets the origin of the client area of the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-09-21 23:39:24 UTC</small>
+        <small>Made with Nim. Generated: 2020-02-28 08:40:25 UTC</small>
       </div>
     </div>
   </div>

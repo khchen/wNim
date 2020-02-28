@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -17,11 +17,11 @@ type
   MenuID = enum
     idTool1 = wIdUser, idTool2, idTool3, idTool4
 
-const resource1 = staticRead(r"images\1.png")
-const resource2 = staticRead(r"images\2.png")
-const resource3 = staticRead(r"images\3.png")
-const resource4 = staticRead(r"images\4.png")
-const resource5 = staticRead(r"images\cancel.ico")
+const resource1 = staticRead(r"images/1.png")
+const resource2 = staticRead(r"images/2.png")
+const resource3 = staticRead(r"images/3.png")
+const resource4 = staticRead(r"images/4.png")
+const resource5 = staticRead(r"images/cancel.ico")
 
 let imageList = ImageList(24, 24)
 imageList.add(Image(resource1).scale(24, 24))

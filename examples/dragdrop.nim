@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -22,7 +22,7 @@ type
 
 const defaultText = "You can drop text, image, or files on drop target."
 const defaultFile = ["dragdrop.exe"]
-const defaultImage = staticRead(r"images\logo.png")
+const defaultImage = staticRead(r"images/logo.png")
 
 let app = App()
 var data = DataObject(defaultText)

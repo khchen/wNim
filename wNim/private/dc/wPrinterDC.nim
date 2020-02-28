@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -22,6 +22,15 @@ export wDC
 
 type
   wPrinterDC* = object of wDC
+
+proc `=destroy`(self: var wPrinterDC) =
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  if self.mHdc != 0:
+    self.wDC.final()
+    DeleteDC(self.mHdc)
+    self.mHdc = 0
 
 proc getPaperRect*(self: wPrinterDC): wRect {.property.} =
   ## Return the rectangle in device coordinates that corresponds to the full
@@ -75,13 +84,4 @@ proc PrinterDC*(printData: wPrintData): wPrinterDC =
   result.wDC.init()
 
 proc delete*(self: var wPrinterDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    DeleteDC(self.mHdc)
-    self.mHdc = 0
-
-proc `=destroy`(self: var wPrinterDC) =
-  self.delete()
+  self.`=destroy`()

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -31,11 +31,11 @@ toolbar.backgroundColor = panel.backgroundColor
 
 let listbox = ListBox(panel, pos=(0, 0), style=wLbNeededScroll or wLbNoSel)
 
-const resource1 = staticRead(r"images\1.png")
-const resource2 = staticRead(r"images\2.png")
-const resource3 = staticRead(r"images\3.png")
-const resource4 = staticRead(r"images\4.png")
-const resource5 = staticRead(r"images\5.png")
+const resource1 = staticRead(r"images/1.png")
+const resource2 = staticRead(r"images/2.png")
+const resource3 = staticRead(r"images/3.png")
+const resource4 = staticRead(r"images/4.png")
+const resource5 = staticRead(r"images/5.png")
 
 let img1 = Image(resource1).scale(36, 36)
 let img2 = Image(resource2).scale(36, 36)

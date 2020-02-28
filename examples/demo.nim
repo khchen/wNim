@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -67,7 +67,7 @@ notebook.addPage("Page1")
 notebook.addPage("Page2")
 notebook.addPage("Page3")
 
-const logo = staticRead(r"images\logo.png")
+const logo = staticRead(r"images/logo.png")
 let staticbitmap = StaticBitmap(notebook.page(0), bitmap=Bitmap(logo), style=wSbFit)
 staticbitmap.backgroundColor = -1
 

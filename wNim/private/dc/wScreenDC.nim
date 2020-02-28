@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -20,12 +20,7 @@ export wDC
 type
   wScreenDC* = object of wDC
 
-proc ScreenDC*(): wScreenDC =
-  ## Constructor.
-  result.mHdc = GetDC(0)
-  result.wDC.init()
-
-proc delete*(self: var wScreenDC) =
+proc `=destroy`(self: var wScreenDC) =
   ## Nim's destructors will delete this object by default.
   ## However, sometimes you maybe want to do that by yourself.
   ## (Nim's destructors don't work in some version?)
@@ -34,5 +29,10 @@ proc delete*(self: var wScreenDC) =
     ReleaseDC(0, self.mHdc)
     self.mHdc = 0
 
-proc `=destroy`(self: var wScreenDC) =
-  self.delete()
+proc ScreenDC*(): wScreenDC =
+  ## Constructor.
+  result.mHdc = GetDC(0)
+  result.wDC.init()
+
+proc delete*(self: var wScreenDC) =
+  self.`=destroy`()

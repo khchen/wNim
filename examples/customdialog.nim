@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2019 Ward
+#                (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -24,8 +24,8 @@ proc passwordDialog(owner: wWindow): string =
   let buttonOk = Button(panel, label="&OK", size=(90, 30), pos=(100, 120))
   let buttonCancel = Button(panel, label="&Cancel", size=(90, 30), pos=(200, 120))
 
-  const ok = staticRead(r"images\ok.ico")
-  const cancel = staticRead(r"images\cancel.ico")
+  const ok = staticRead(r"images/ok.ico")
+  const cancel = staticRead(r"images/cancel.ico")
 
   # Add a [X] button to delete the text.
   let toolbar = ToolBar(panel, style=wTbDefaultStyle or wTbNoDivider or wTbNoAlign or wTbNoResize)

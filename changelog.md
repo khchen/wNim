@@ -1,3 +1,9 @@
+Version 0.10.2
+--------------
+* Merged pull requests of Duncan Clarke.
+* Fix broken document about controls.
+* Fix #41, #44.
+
 Version 0.10.1
 --------------
 * Don't maintain compatibility with Nim Compiler 0.19.

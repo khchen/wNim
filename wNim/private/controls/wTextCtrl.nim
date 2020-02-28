@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2019 Ward
+#                 (c) Copyright 2017-2020 Ward
 #
 #====================================================================
 
@@ -374,7 +374,7 @@ proc len*(self: wTextCtrl): int {.validate, inline.} =
 proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control. The same as appendText()
   self.appendText(text)
-  
+
 proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.validate, inline.} =
   ## Format the selected text if wTeRich style is specified
   if self.mRich:
@@ -390,7 +390,7 @@ proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.v
     if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
     if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
     SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_SELECTION, cast[LPARAM](&charformat))
-    
+
 method setFont*(self: wTextCtrl, font: wFont) {.validate, property, uknlock.} =
   ## Sets the font for this text control.
   wValidate(font)
