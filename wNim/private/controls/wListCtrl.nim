@@ -356,9 +356,8 @@ proc insertItem*(self: wListCtrl, index: int, texts: openarray[string],
     image = wListImageNone, data: int = 0): int {.validate, discardable.} =
   ## Inserts an item, and sets the text of subitems in the mean time.
   if texts.len >= 1:
-    result = self.insertItem(index, texts[0], image, data)
-    for i in 1..<texts.len:
-      self.setItem(result, i, texts[i])
+    for i in texts:
+      result = self.insertItem(index, i, image, data)    
 
 proc appendItem*(self: wListCtrl, texts: openarray[string],
     image = wListImageNone, data: int = 0): int {.validate, discardable.} =
