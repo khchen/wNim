@@ -35,6 +35,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import times
 import ../wBase, wControl
@@ -163,9 +164,9 @@ method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARA
 
 wClass(wCalendarCtrl of wControl):
 
-  proc final*(self: wCalendarCtrl) =
-    ## Default finalizer for wCalendarCtrl.
-    self.wControl.final()
+  method release*(self: wCalendarCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wCalendarCtrl, parent: wWindow, id = wDefaultID,
       date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,

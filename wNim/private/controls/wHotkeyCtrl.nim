@@ -37,6 +37,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import tables, strutils
 import ../wBase, wControl
@@ -304,18 +305,20 @@ proc keyProc(nCode: int32, wParam: WPARAM, lParam: LPARAM): LRESULT {.stdcall.} 
 
   else: discard
 
+proc unhook(self: wHotkeyCtrl) =
+  if currentHookedHotkeyCtrl == self:
+    currentHookedHotkeyCtrl = nil
+
+  if self.mHook != 0:
+    UnhookWindowsHookEx(self.mHook)
+    self.mHook = 0
+
 wClass(wHotkeyCtrl of wControl):
 
-  proc final*(self: wHotkeyCtrl) =
-    ## Default finalizer for wHotkeyCtrl.
-    self.wControl.final()
-
-    if currentHookedHotkeyCtrl == self:
-      currentHookedHotkeyCtrl = nil
-
-    if self.mHook != 0:
-      UnhookWindowsHookEx(self.mHook)
-      self.mHook = 0
+  method release*(self: wHotkeyCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.unhook()
+    free(self[])
 
   proc init*(self: wHotkeyCtrl, parent: wWindow, id = wDefaultID,
       value: string = "", pos = wDefaultPoint, size = wDefaultSize,
@@ -344,4 +347,4 @@ wClass(wHotkeyCtrl of wControl):
 
     self.systemConnect(wEvent_KillFocus) do (event: wEvent):
       let self = wBase.wHotkeyCtrl event.mWindow
-      self.final()
+      self.unhook()

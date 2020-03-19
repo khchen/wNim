@@ -26,6 +26,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import sets, math
 import wBase, wWindow, kiwi/kiwi
@@ -107,20 +108,12 @@ iterator items*(self: wResizer): wResizable {.validate.} =
 
 wClass(wResizer):
 
-  proc final*(self: wResizer) =
-    ## Default finalizer for wResizer.
-    discard
-
   proc init*(self: wResizer, parent: wResizable) {.inline.} =
     ## Initializer.
     wValidate(parent)
     self.mParent = parent
     self.mSolver = newSolver()
-    # initSet is deprecated since v0.20
-    when declared(initHashSet):
-      self.mObjects = initHashSet[wResizable]()
-    else:
-      self.mObjects = initSet[wResizable]()
+    self.mObjects = initHashSet[wResizable]()
 
     self.mSolver.addEditVariable(parent.mLeft, REQUIRED-1)
     self.mSolver.addEditVariable(parent.mTop, REQUIRED-1)

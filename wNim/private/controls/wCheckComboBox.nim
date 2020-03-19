@@ -38,6 +38,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase, ../gdiobjects/wCursor, ../dc/[wPaintDC, wClientDC], wControl, wComboBox
@@ -612,17 +613,15 @@ method trigger(self: wCheckComboBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
-method release(self: wCheckComboBox) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mDrawItemConn)
-  self.mParent.systemDisconnect(self.mCommandConn)
-  CloseThemeData(self.mTheme)
-  CloseThemeData(self.mCheckTheme)
-
 wClass(wCheckComboBox of wControl):
 
-  proc final*(self: wCheckComboBox) =
-    ## Default finalizer for wCheckComboBox.
-    self.wControl.final()
+  method release*(self: wCheckComboBox) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mDrawItemConn)
+    self.mParent.systemDisconnect(self.mCommandConn)
+    CloseThemeData(self.mTheme)
+    CloseThemeData(self.mCheckTheme)
+    free(self[])
 
   proc init*(self: wCheckComboBox, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],

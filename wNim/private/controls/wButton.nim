@@ -36,6 +36,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 from ../winimx import nil # For BITMAP
 import ../wBase, ../gdiobjects/[wBitmap, wIcon], wControl
@@ -224,13 +225,6 @@ proc click*(self: wButton) {.validate, inline.} =
   ## Simulates the user clicking a button.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
-method release(self: wButton) {.uknlock.} =
-  self.mMenu = nil # can avoid some GC bug about crashing on prepareDealloc?
-  self.mParent.systemDisconnect(self.mCommandConn)
-  if self.mImgData.himl != 0:
-    ImageList_Destroy(self.mImgData.himl)
-    self.mImgData.himl = 0
-
 method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool {.uknlock.} =
 
@@ -255,9 +249,14 @@ method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wButton of wControl):
 
-  proc final*(self: wButton) =
-    ## Default finalizer for wButton.
-    self.wControl.final()
+  method release*(self: wButton) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    if self.mImgData.himl != 0:
+      ImageList_Destroy(self.mImgData.himl)
+      self.mImgData.himl = 0
+
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wButton, parent: wWindow, id = wDefaultID,
       label: string = "", pos = wDefaultPoint, size = wDefaultSize,

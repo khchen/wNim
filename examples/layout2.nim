@@ -6,12 +6,8 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wButton, wResizable,
-    wMenuBar, wMenu]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wButton, wResizable,
+  wMenuBar, wMenu]
 
 const
   UseAutoLayout = not defined(legacy)

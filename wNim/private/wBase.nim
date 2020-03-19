@@ -5,11 +5,13 @@
 #
 #====================================================================
 
+## Basic types definition for wNim.
+
 {.experimental, deadCodeElim: on.}
 
 # Export some modules that every module in wNim depends on.
-import winim/[winstr, utils], winim/inc/windef
-export winstr, utils, windef
+import winim/[winstr, utils], winim/inc/windef, kiwi/kiwi
+export winstr, utils, windef, kiwi
 
 import winimx except BITMAP
 export winimx except BITMAP

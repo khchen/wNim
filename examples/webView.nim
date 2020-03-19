@@ -6,25 +6,24 @@
 #====================================================================
 
 import
-  strutils, os, random,
+  random,
   resource/resource2,
   winim/com
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
-    wRebar, wWebView, wTextCtrl, wMessageDialog]
+import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
+  wRebar, wWebView, wTextCtrl, wMessageDialog]
 
-# block:
-#   var hkey: HKEY
-#   if RegCreateKeyEx(HKEY_CURRENT_USER, r"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION",
-#     0, nil, REG_OPTION_VOLATILE, KEY_WRITE, nil, &hkey, nil) == ERROR_SUCCESS:
+when false:
+  import os
 
-#     defer: RegCloseKey(hkey)
+  var hkey: HKEY
+  if RegCreateKeyEx(HKEY_CURRENT_USER, r"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION",
+    0, nil, REG_OPTION_VOLATILE, KEY_WRITE, nil, &hkey, nil) == ERROR_SUCCESS:
 
-#     var val = DWORD 11000
-#     RegSetValueEx(hkey, getAppFilename().extractFilename(), 0, REG_DWORD, cast[ptr BYTE](&val), 4)
+    defer: RegCloseKey(hkey)
+
+    var val = DWORD 11000
+    RegSetValueEx(hkey, getAppFilename().extractFilename(), 0, REG_DWORD, cast[ptr BYTE](&val), 4)
 
 type
   MenuID = enum

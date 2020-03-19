@@ -30,6 +30,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wImageList, ../wImage, ../wPanel, ../dc/wPaintDC, wControl
 export wControl
@@ -307,17 +308,6 @@ proc setPadding*(self: wNoteBook, size: wSize) {.validate, property, inline.} =
   ## Sets the amount of space around each page's icon and label, in pixels.
   SendMessage(self.mHwnd, TCM_SETPADDING, 0, MAKELPARAM(size.width, size.height))
 
-method release(self: wNoteBook) {.uknlock.} =
-  # Don't need to delete self.mImageList
-  # let GC to delete it is ok.
-  self.mImageList = nil
-  for page in self.mPages:
-    page.delete()
-
-  if self.mTheme != 0:
-    CloseThemeData(self.mTheme)
-    self.mTheme = 0
-
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool {.uknlock.} =
 
@@ -341,9 +331,16 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wNoteBook of wControl):
 
-  proc final*(self: wNoteBook) =
-    ## Default finalizer for wNoteBook.
-    self.wControl.final()
+  method release*(self: wNoteBook) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    for page in self.mPages:
+      page.delete()
+
+    if self.mTheme != 0:
+      CloseThemeData(self.mTheme)
+      self.mTheme = 0
+
+    free(self[])
 
   proc init*(self: wNoteBook, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =

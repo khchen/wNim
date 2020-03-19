@@ -30,6 +30,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -56,18 +57,16 @@ proc setValue*(self: wRadioButton, state: bool) {.validate, property, inline.} =
   ## Sets the radio button to checked or unchecked status.
   SendMessage(self.mHwnd, BM_SETCHECK, if state: BST_CHECKED else: BST_UNCHECKED, 0)
 
-method release(self: wRadioButton) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 proc click*(self: wRadioButton) {.validate, inline.} =
   ## Simulates the user clicking a radiobutton.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
 wClass(wRadioButton of wControl):
 
-  proc final*(self: wRadioButton) =
-    ## Default finalizer for wRadioButton.
-    self.wControl.final()
+  method release*(self: wRadioButton) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wRadioButton, parent: wWindow, id = wDefaultID,
       label: string = "", pos = wDefaultPoint, size = wDefaultSize,

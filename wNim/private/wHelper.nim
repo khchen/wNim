@@ -6,22 +6,15 @@
 #====================================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import lists, times, tables
 import winim/[winstr, utils], winim/inc/windef, winimx
 import wTypes, wMacros
 
-# converter DWORDToInt*(x: DWORD): int = int x
 converter IntToDWORD*(x: int): DWORD = DWORD x
 converter PtrPtrObjectToPtrPointer*(x: ptr ptr object): ptr pointer = cast[ptr pointer](x)
 converter GpImageToGpBitmap*(x: ptr GpBitmap): ptr GpImage = cast[ptr GpImage](x)
-
-template `^$`*[T](x: T): untyped =
-  # `$` cause ambiguous call since 0.2.0, use ^$ instead
-  when T is ptr char:
-    $x
-  else:
-    winstr.`$`(x)
 
 proc `-`*(a, b: wPoint): wPoint =
   result = (a.x - b.x, a.y - b.y)
@@ -29,11 +22,15 @@ proc `-`*(a, b: wPoint): wPoint =
 proc `+`*(a, b: wPoint): wPoint =
   result = (a.x + b.x, a.y + b.y)
 
+# gc:arc let program crash for ref, but works of for ptr. bug or not?
+template ref2ptr(x: ref): ptr = cast[ptr type(x[])](x)
+template ptr2ref(x: ptr): ref = cast[ref type(x[])](x)
+
 iterator rnodes*[T](L: SomeLinkedList[T]): SomeLinkedNode[T] =
-  var it = L.tail
+  var it = ref2ptr(L.tail)
   while it != nil:
-    var prv = it.prev
-    yield it
+    var prv = ref2ptr(it.prev)
+    yield ptr2ref(it)
     it = prv
 
 # std CountTable is not reliable, see https://github.com/nim-lang/Nim/issues/12200.
@@ -50,15 +47,16 @@ proc dec*(table: var Table[UINT, int], key: UINT, n = 1) {.inline.} =
   table.inc(key, -n)
 
 template postDefaultHandler*(event: wEvent, body: untyped): untyped =
-  var runDefault {.global.} = false
-  if runDefault:
-    event.skip
+  when not defined(Nimdoc):
+    var runDefault {.threadvar.}: bool
+    if runDefault:
+      event.skip
 
-  else:
-    runDefault = true
-    event.result = SendMessage(event.window.handle, event.eventMessage, event.wParam, event.lParam)
-    runDefault = false
-    body
+    else:
+      runDefault = true
+      event.result = SendMessage(event.window.handle, event.eventMessage, event.wParam, event.lParam)
+      runDefault = false
+      body
 
 proc toRect*(r: wRect): RECT =
   result.left = r.x

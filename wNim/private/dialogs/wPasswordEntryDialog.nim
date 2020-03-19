@@ -21,15 +21,12 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wFrame, wDialog, wTextEntryDialog
 export wDialog, wTextEntryDialog
 
 wClass(wPasswordEntryDialog of wTextEntryDialog):
-
-  proc final*(self: wPasswordEntryDialog) =
-    ## Default finalizer for wPasswordEntryDialog.
-    self.wTextEntryDialog.final()
 
   proc init*(self: wPasswordEntryDialog, owner: wWindow = nil, message = "Input password",
       caption = "", value = "", style: wStyle = wDefaultDialogStyle,

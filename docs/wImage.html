@@ -1357,8 +1357,6 @@ function main() {
     title="saveFile(self: wImage; filename: string; fileType = &quot;&quot;; quality: range[0 .. 100] = 90)"><wbr />save<wbr />File<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#saveData%2CwImage%2Cstring%2Crange%5B%5D"
     title="saveData(self: wImage; fileType: string; quality: range[0 .. 100] = 90): string"><wbr />save<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwImage"
-    title="final(self: wImage)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwImage%2Cptr.GpBitmap"
     title="init(self: wImage; gdip: ptr GpBitmap; copy = true)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Image%2Cptr.GpBitmap"
@@ -1738,12 +1736,6 @@ Saves an image into the file. If fileType is empty, use extension name as fileTy
 Saves an image into binary data (stored as string). Use getEncoders iterator to list the supported format.
 
 </dd>
-<a id="final,wImage"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wImage.
-
-</dd>
 <a id="init,wImage,ptr.GpBitmap"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">gdip</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span><span class="Other">;</span> <span class="Identifier">copy</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
@@ -2075,7 +2067,7 @@ Iterates over each available image decoder on system.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:41 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:19 UTC</small>
       </div>
     </div>
   </div>

@@ -24,6 +24,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import wBase, gdiobjects/wBitmap
 
@@ -266,13 +267,7 @@ proc delete*(self: wDataObject) {.validate.} =
   ## However, sometimes you maybe want do that by yourself.
   ## Moreover, if the data object is still on the clipboard, delete
   ## it will force to flush it.
-  if OleIsCurrentClipboard(self.mObj):
-    OleFlushClipboard()
-
-  if self.mReleasable and self.mObj != nil:
-    self.mObj.Release()
-
-  self.mObj = nil
+  `=destroy`(self[])
 
 type
   SHCreateFileDataObjectType = proc (pidlFolder: PCIDLIST_ABSOLUTE,
@@ -292,10 +287,6 @@ proc ensureSHCreateFileDataObject() =
       cast[LPCSTR](740)))
 
 wClass(wDataObject):
-
-  proc final*(self: wDataObject) =
-    ## Default finalizer for wDataObject.
-    self.delete()
 
   proc init*(self: wDataObject, dataObj: ptr IDataObject) {.validate, inline.} =
     ## Initializes a dataObject from IDataObject COM interface. Used internally.

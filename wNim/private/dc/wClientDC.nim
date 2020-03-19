@@ -14,27 +14,10 @@
 ##   `wDC <wDC.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wWindow, wDC
 export wDC
-
-when not isMainModule: # hide from doc
-  type
-    wClientDC* = object of wDC
-      mCanvas*: wWindow
-else:
-  type
-    wClientDC = object of wDC
-      mCanvas: wWindow
-
-proc `=destroy`(self: var wClientDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
-    self.mHdc = 0
 
 method getSize*(self: wClientDC): wSize {.property, uknlock.} =
   ## Gets the size of the device context.
@@ -46,7 +29,10 @@ proc ClientDC*(canvas: wWindow): wClientDC =
   result.mCanvas = canvas
   result.mHdc = GetDC(canvas.mHwnd)
   result.wDC.init(fgColor=canvas.mForegroundColor, bgColor=canvas.mBackgroundColor,
-    background=canvas.mBackgroundBrush, font=canvas.mFont)
+    background=canvas.mBackgroundColor, font=canvas.mFont)
 
 proc delete*(self: var wClientDC) =
-  self.`=destroy`()
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  `=destroy`(self)

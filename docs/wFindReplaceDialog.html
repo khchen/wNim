@@ -1283,8 +1283,6 @@ function main() {
     title="isMatchcase(self: wFindReplaceDialog): bool"><wbr />is<wbr />Matchcase<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enableHelp%2CwFindReplaceDialog"
     title="enableHelp(self: wFindReplaceDialog; flag = true)"><wbr />enable<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwFindReplaceDialog"
-    title="final(self: wFindReplaceDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwFindReplaceDialog%2CwWindow%2Cint"
     title="init(self: wFindReplaceDialog; owner: wWindow; flags: int = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#FindReplaceDialog%2CwWindow%2Cint"
@@ -1424,15 +1422,9 @@ Case whether sensitive search/replace selected.
 Display a Help button, the dialog got wEvent_DialogHelp event when the button pressed.
 
 </dd>
-<a id="final,wFindReplaceDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wFindReplaceDialog.
-
-</dd>
 <a id="init,wFindReplaceDialog,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
@@ -1440,9 +1432,8 @@ Initializer.
 </dd>
 <a id="FindReplaceDialog,wWindow,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">FindReplaceDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">flags</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFindReplaceDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1464,7 +1455,7 @@ Shows the dialog in modaless mode. The frame of this dialog will recieve wEvent_
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:39:56 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:09 UTC</small>
       </div>
     </div>
   </div>

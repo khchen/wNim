@@ -25,6 +25,7 @@
 ##   `wSpinEvent <wSpinEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -79,14 +80,12 @@ proc wSpinButton_OnNotify(self: wSpinButton, event: wEvent) =
     if processed:
       event.mResult = spinEvent.mResult
 
-method release(self: wSpinButton) {.uknlock.} =
-  self.mParent.disconnect(self.mNotifyConn)
-
 wClass(wSpinButton of wControl):
 
-  proc final*(self: wSpinButton) =
-    ## Default finalizer for wSpinButton.
-    self.wControl.final()
+  method release*(self: wSpinButton) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.disconnect(self.mNotifyConn)
+    free(self[])
 
   proc init*(self: wSpinButton, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical) {.validate.} =

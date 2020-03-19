@@ -1246,7 +1246,7 @@ function main() {
   <li><a class="reference" href="#wDirection"
     title="wDirection = tuple[left: int, up: int, right: int, down: int]"><wbr />w<wbr />Direction<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wError"
-    title="wError = object of Exception"><wbr />w<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wError = object of CatchableError"><wbr />w<wbr />Error<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wCommandID"
     title="wCommandID = distinct int"><wbr />w<wbr />Command<wbr />ID<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wStyle"
@@ -1272,188 +1272,558 @@ function main() {
   wIdContinue, wIdTryAgain, wIdSystemMenu = 5200, wIdCloseFrame, wIdMoveFrame,
   wIdResizeFrame, wIdMaximizeFrame, wIdIconizeFrame, wIdRestoreFrame,
   wIdHighest = 5999, wIdUser"><wbr />w<wbr />Id<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEventProc"
+    title="wEventProc = proc (event: wEvent)"><wbr />w<wbr />Event<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEventNeatProc"
+    title="wEventNeatProc = proc ()"><wbr />w<wbr />Event<wbr />Neat<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHookProc"
+    title="wHookProc = proc (self: wWindow; msg: UINT; wParam: WPARAM; lParam: LPARAM): bool"><wbr />w<wbr />Hook<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wApp"
-    title="wApp = ref object of RootObj"><wbr />w<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wApp = ref object of RootObj
+  mInstance*: HANDLE
+  mClassAtomTable*: Table[string, ATOM]
+  mTopLevelWindowTable*: Table[HWND, wWindow]
+  mWindowTable*: Table[HWND, wWindow]
+  mMenuBaseTable*: Table[HMENU, pointer]
+  mGDIStockSeq*: seq[wGdiObject]
+  mPropagationSet*: HashSet[UINT]
+  mMenuIdSet*: set[uint16]
+  mMessageCountTable*: Table[UINT, int]
+  mExitCode*: uint
+  mAccelExists*: bool
+  mDpi*: int
+  mWinVersion*: float
+  mUsingTheme*: bool"><wbr />w<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent"
-    title="wEvent = ref object of RootObj"><wbr />w<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wCommandEvent"
-    title="wCommandEvent = ref object of wEvent"><wbr />w<wbr />Command<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wContextMenuEvent"
-    title="wContextMenuEvent = ref object of wEvent"><wbr />w<wbr />Context<wbr />Menu<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDialogEvent"
-    title="wDialogEvent = ref object of wEvent"><wbr />w<wbr />Dialog<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDragDropEvent"
-    title="wDragDropEvent = ref object of wEvent"><wbr />w<wbr />Drag<wbr />Drop<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wHyperlinkEvent"
-    title="wHyperlinkEvent = ref object of wCommandEvent"><wbr />w<wbr />Hyperlink<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wIpEvent"
-    title="wIpEvent = ref object of wCommandEvent"><wbr />w<wbr />Ip<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wKeyEvent"
-    title="wKeyEvent = ref object of wEvent"><wbr />w<wbr />Key<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wListEvent"
-    title="wListEvent = ref object of wCommandEvent"><wbr />w<wbr />List<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent = ref object of RootObj
+  mWindow*: wWindow
+  mOrigin*: HWND
+  mMsg*: UINT
+  mId*: wCommandID
+  mWparam*: WPARAM
+  mLparam*: LPARAM
+  mUserData*: int
+  mSkip*: bool
+  mPropagationLevel*: int
+  mResult*: LRESULT
+  mKeyStatus*: array[256, int8]
+  mMousePos*: wPoint
+  mClientPos*: wPoint"><wbr />w<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wMouseEvent"
     title="wMouseEvent = ref object of wEvent"><wbr />w<wbr />Mouse<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wMoveEvent"
-    title="wMoveEvent = ref object of wEvent"><wbr />w<wbr />Move<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wNavigationEvent"
-    title="wNavigationEvent = ref object of wEvent"><wbr />w<wbr />Navigation<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wOtherEvent"
-    title="wOtherEvent = ref object of wEvent"><wbr />w<wbr />Other<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wScrollEvent"
-    title="wScrollEvent = ref object of wCommandEvent"><wbr />w<wbr />Scroll<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wScrollWinEvent"
-    title="wScrollWinEvent = ref object of wEvent"><wbr />w<wbr />Scroll<wbr />Win<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSetCursorEvent"
-    title="wSetCursorEvent = ref object of wEvent"><wbr />w<wbr />Set<wbr />Cursor<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wKeyEvent"
+    title="wKeyEvent = ref object of wEvent"><wbr />w<wbr />Key<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wSizeEvent"
     title="wSizeEvent = ref object of wEvent"><wbr />w<wbr />Size<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSpinEvent"
-    title="wSpinEvent = ref object of wCommandEvent"><wbr />w<wbr />Spin<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wStatusBarEvent"
-    title="wStatusBarEvent = ref object of wCommandEvent"><wbr />w<wbr />Status<wbr />Bar<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMoveEvent"
+    title="wMoveEvent = ref object of wEvent"><wbr />w<wbr />Move<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wScrollWinEvent"
+    title="wScrollWinEvent = ref object of wEvent
+  mScrollPos*: int"><wbr />w<wbr />Scroll<wbr />Win<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wOtherEvent"
+    title="wOtherEvent = ref object of wEvent"><wbr />w<wbr />Other<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wContextMenuEvent"
+    title="wContextMenuEvent = ref object of wEvent"><wbr />w<wbr />Context<wbr />Menu<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCommandEvent"
+    title="wCommandEvent = ref object of wEvent"><wbr />w<wbr />Command<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wNavigationEvent"
+    title="wNavigationEvent = ref object of wEvent"><wbr />w<wbr />Navigation<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSetCursorEvent"
+    title="wSetCursorEvent = ref object of wEvent"><wbr />w<wbr />Set<wbr />Cursor<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTrayEvent"
     title="wTrayEvent = ref object of wEvent"><wbr />w<wbr />Tray<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDragDropEvent"
+    title="wDragDropEvent = ref object of wEvent
+  mDataObject*: wDataObject
+  mEffect*: int"><wbr />w<wbr />Drag<wbr />Drop<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDialogEvent"
+    title="wDialogEvent = ref object of wEvent"><wbr />w<wbr />Dialog<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStatusBarEvent"
+    title="wStatusBarEvent = ref object of wCommandEvent"><wbr />w<wbr />Status<wbr />Bar<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wListEvent"
+    title="wListEvent = ref object of wCommandEvent
+  mIndex*: int
+  mCol*: int
+  mText*: string"><wbr />w<wbr />List<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTreeEvent"
-    title="wTreeEvent = ref object of wCommandEvent"><wbr />w<wbr />Tree<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wTreeEvent = ref object of wCommandEvent
+  mTreeCtrl*: wTreeCtrl
+  mHandle*: HTREEITEM
+  mOldHandle*: HTREEITEM
+  mText*: string
+  mInsertMark*: int
+  mPoint*: wPoint"><wbr />w<wbr />Tree<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wScrollEvent"
+    title="wScrollEvent = ref object of wCommandEvent
+  mScrollPos*: int"><wbr />w<wbr />Scroll<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSpinEvent"
+    title="wSpinEvent = ref object of wCommandEvent"><wbr />w<wbr />Spin<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHyperlinkEvent"
+    title="wHyperlinkEvent = ref object of wCommandEvent
+  mVisited*: bool"><wbr />w<wbr />Hyperlink<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIpEvent"
+    title="wIpEvent = ref object of wCommandEvent
+  mIndex*: int
+  mValue*: int"><wbr />w<wbr />Ip<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wWebViewEvent"
-    title="wWebViewEvent = ref object of wCommandEvent"><wbr />w<wbr />Web<wbr />View<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDataObject"
-    title="wDataObject = ref object"><wbr />w<wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wPrintData"
-    title="wPrintData = ref object"><wbr />w<wbr />Print<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wAcceleratorTable"
-    title="wAcceleratorTable = ref object of RootObj"><wbr />w<wbr />Accelerator<wbr />Table<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wImage"
-    title="wImage = ref object of RootObj"><wbr />w<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wImageList"
-    title="wImageList = ref object of RootObj"><wbr />w<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wIconImage"
-    title="wIconImage = ref object of RootObj"><wbr />w<wbr />Icon<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wWebViewEvent = ref object of wCommandEvent
+  mDispatch*: ptr IDispatch
+  mUrl*: string
+  mText*: string"><wbr />w<wbr />Web<wbr />View<wbr />Event<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wScrollData"
+    title="wScrollData = object
+  kind*: int
+  orientation*: int"><wbr />w<wbr />Scroll<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wResizable"
-    title="wResizable = ref object of RootObj"><wbr />w<wbr />Resizable<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wResizable = ref object of RootObj
+  mLeft*: Variable
+  mTop*: Variable
+  mWidth*: Variable
+  mHeight*: Variable"><wbr />w<wbr />Resizable<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wResizer"
-    title="wResizer = ref object of RootObj"><wbr />w<wbr />Resizer<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wResizer = ref object of RootObj
+  mParent*: wResizable
+  mSolver*: Solver
+  mObjects*: HashSet[wResizable]"><wbr />w<wbr />Resizer<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDataObject"
+    title="wDataObject = ref object
+  mObj*: ptr IDataObject
+  mReleasable*: bool"><wbr />w<wbr />Data<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPrintData"
+    title="wPrintData = ref object
+  mDevice*: string
+  mDevModeBuffer*: string"><wbr />w<wbr />Print<wbr />Data<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEventConnection"
+    title="wEventConnection = object
+  msg*: UINT
+  id*: wCommandID
+  handler*: wEventProc
+  neatHandler*: wEventNeatProc
+  userData*: int
+  undeletable*: bool"><wbr />w<wbr />Event<wbr />Connection<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wAcceleratorTable"
+    title="wAcceleratorTable = ref object of RootObj
+  mHandle*: HACCEL
+  mAccels*: seq[ACCEL]
+  mModified*: bool"><wbr />w<wbr />Accelerator<wbr />Table<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDropTarget"
+    title="wDropTarget = object
+  lpVtbl*: ptr IDropTargetVtbl
+  vtbl*: IDropTargetVtbl
+  self*: wWindow
+  effect*: DWORD"><wbr />w<wbr />Drop<wbr />Target<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wWindow"
-    title="wWindow = ref object of wResizable"><wbr />w<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wWindow = ref object of wResizable
+  mHwnd*: HWND
+  mParent*: wWindow
+  mChildren*: seq[wWindow]
+  mData*: int
+  mClassName*: string
+  mRegistered*: bool
+  mSystemConnectionTable*: Table[UINT, DoublyLinkedList[wEventConnection]]
+  mConnectionTable*: Table[UINT, DoublyLinkedList[wEventConnection]]
+  mMargin*: wDirection
+  mStatusBar*: wStatusBar
+  mToolBar*: wToolBar
+  mRebar*: wRebar
+  mFont*: wFont
+  mBackgroundColor*: wColor
+  mForegroundColor*: wColor
+  mBackgroundBrush*: wBrush
+  mCursor*: wCursor
+  mOverrideCursor*: wCursor
+  mAcceleratorTable*: wAcceleratorTable
+  mPopupMenu*: wMenu
+  mSaveFocusHwnd*: HWND
+  mFocusable*: bool
+  mMouseInWindow*: bool
+  mMaxSize*: wSize
+  mMinSize*: wSize
+  mDummyParent*: HWND
+  mTipHwnd*: HWND
+  mSizingInfo*: wSizingInfo
+  mDraggableInfo*: wDraggableInfo
+  mDropTarget*: ref wDropTarget
+  mHookProc*: wHookProc"><wbr />w<wbr />Window<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wFrame"
-    title="wFrame = ref object of wWindow"><wbr />w<wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wFrame = ref object of wWindow
+  mMenuBar*: wMenuBar
+  mIcon*: wIcon
+  mDisableList*: seq[HWND]
+  mTrayIcon*: wIcon
+  mTrayToolTip*: string
+  mTrayIconAdded*: bool
+  mTrayConn*: wEventConnection
+  mCreateConn*: wEventConnection
+  mRetCode*: int
+  mIsModal*: bool"><wbr />w<wbr />Frame<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPanel"
     title="wPanel = ref object of wWindow"><wbr />w<wbr />Panel<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wToolTip"
+    title="wToolTip = ref object of wWindow
+  mText*: string
+  mToolInfo*: TOOLINFO"><wbr />w<wbr />Tool<wbr />Tip<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wControl"
     title="wControl = ref object of wWindow"><wbr />w<wbr />Control<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wButton"
-    title="wButton = ref object of wControl"><wbr />w<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wCalendarCtrl"
-    title="wCalendarCtrl = ref object of wControl"><wbr />w<wbr />Calendar<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wCheckBox"
-    title="wCheckBox = ref object of wControl"><wbr />w<wbr />Check<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wCheckComboBox"
-    title="wCheckComboBox = ref object of wControl"><wbr />w<wbr />Check<wbr />Combo<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wComboBox"
-    title="wComboBox = ref object of wControl"><wbr />w<wbr />Combo<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDatePickerCtrl"
-    title="wDatePickerCtrl = ref object of wControl"><wbr />w<wbr />Date<wbr />Picker<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wGauge"
-    title="wGauge = ref object of wControl"><wbr />w<wbr />Gauge<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wHotkeyCtrl"
-    title="wHotkeyCtrl = ref object of wControl"><wbr />w<wbr />Hotkey<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wHyperlinkCtrl"
-    title="wHyperlinkCtrl = ref object of wControl"><wbr />w<wbr />Hyperlink<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wIpCtrl"
-    title="wIpCtrl = ref object of wControl"><wbr />w<wbr />Ip<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wListBox"
-    title="wListBox = ref object of wControl"><wbr />w<wbr />List<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wListCtrl"
-    title="wListCtrl = ref object of wControl"><wbr />w<wbr />List<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wNoteBook"
-    title="wNoteBook = ref object of wControl"><wbr />w<wbr />Note<wbr />Book<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wRadioButton"
-    title="wRadioButton = ref object of wControl"><wbr />w<wbr />Radio<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStatusBar"
+    title="wStatusBar = ref object of wControl
+  mFiledNumbers*: int
+  mWidths*: array[256, int32]
+  mHelpIndex*: int
+  mSizeConn*: wEventConnection"><wbr />w<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wToolBarTool"
+    title="wToolBarTool = ref object of RootObj
+  mBitmap*: wBitmap
+  mShortHelp*: string
+  mLongHelp*: string
+  mMenu*: wMenu"><wbr />w<wbr />Tool<wbr />Bar<wbr />Tool<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wToolBar"
+    title="wToolBar = ref object of wControl
+  mTools*: seq[wToolBarTool]
+  mSizeConn*: wEventConnection
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Tool<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wRebar"
-    title="wRebar = ref object of wControl"><wbr />w<wbr />Rebar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wScrollBar"
-    title="wScrollBar = ref object of wControl"><wbr />w<wbr />Scroll<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSlider"
-    title="wSlider = ref object of wControl"><wbr />w<wbr />Slider<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSpinButton"
-    title="wSpinButton = ref object of wControl"><wbr />w<wbr />Spin<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSpinCtrl"
-    title="wSpinCtrl = ref object of wControl"><wbr />w<wbr />Spin<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wSplitter"
-    title="wSplitter = ref object of wControl"><wbr />w<wbr />Splitter<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wRebar = ref object of wControl
+  mControls*: seq[wControl]
+  mImageList*: wImageList
+  mSizeConn*: wEventConnection
+  mDragging*: bool"><wbr />w<wbr />Rebar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wButton"
+    title="wButton = ref object of wControl
+  mImgData*: BUTTON_IMAGELIST
+  mDefault*: bool
+  mMenu*: wMenu
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStaticText"
+    title="wStaticText = ref object of wControl
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Static<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wStaticBitmap"
-    title="wStaticBitmap = ref object of wControl"><wbr />w<wbr />Static<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wStaticBox"
-    title="wStaticBox = ref object of wControl"><wbr />w<wbr />Static<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wStaticBitmap = ref object of wControl
+  mBitmap*: wBitmap
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Static<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wStaticLine"
     title="wStaticLine = ref object of wControl"><wbr />w<wbr />Static<wbr />Line<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wStaticText"
-    title="wStaticText = ref object of wControl"><wbr />w<wbr />Static<wbr />Text<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wStatusBar"
-    title="wStatusBar = ref object of wControl"><wbr />w<wbr />Status<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIpCtrl"
+    title="wIpCtrl = ref object of wControl
+  mEdits*: array[4, wTextCtrl]"><wbr />w<wbr />Ip<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCheckBox"
+    title="wCheckBox = ref object of wControl
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Check<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wRadioButton"
+    title="wRadioButton = ref object of wControl
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Radio<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wStaticBox"
+    title="wStaticBox = ref object of wControl"><wbr />w<wbr />Static<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wComboBox"
+    title="wComboBox = ref object of wControl
+  mEdit*: wTextCtrl
+  mList*: wListBox
+  mOldEditProc*: WNDPROC
+  mInitData*: ptr UncheckedArray[string]
+  mInitCount*: int
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Combo<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCheckComboBox"
+    title="wCheckComboBox = ref object of wControl
+  mTheme*: HTHEME
+  mCheckTheme*: HTHEME
+  mDrawTextFlag*: DWORD
+  mComboPart*: DWORD
+  mSeparator*: string
+  mValue*: string
+  mEmpty*: string
+  mList*: wListBox
+  mIsPopup*: bool
+  mInitData*: ptr UncheckedArray[string]
+  mInitCount*: int
+  mDrawItemConn*: wEventConnection
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Check<wbr />Combo<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTextCtrl"
-    title="wTextCtrl = ref object of wControl"><wbr />w<wbr />Text<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wTextCtrl = ref object of wControl
+  mRich*: bool
+  mDisableTextEvent*: bool
+  mBestSize*: wSize
+  mCommandConn*: wEventConnection"><wbr />w<wbr />Text<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wNoteBook"
+    title="wNoteBook = ref object of wControl
+  mTheme*: HTHEME
+  mImageList*: wImageList
+  mSelection*: int
+  mPages*: seq[wPanel]"><wbr />w<wbr />Note<wbr />Book<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSpinCtrl"
+    title="wSpinCtrl = ref object of wControl
+  mUpdownHwnd*: HWND
+  mUpdownWidth*: int
+  mCommandConn*: wEventConnection
+  mNotifyConn*: wEventConnection"><wbr />w<wbr />Spin<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSpinButton"
+    title="wSpinButton = ref object of wControl
+  mNotifyConn*: wEventConnection"><wbr />w<wbr />Spin<wbr />Button<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSlider"
+    title="wSlider = ref object of wControl
+  mReversed*: bool
+  mMax*: int
+  mMin*: int
+  mDragging*: bool
+  mHScrollConn*: wEventConnection
+  mVScrollConn*: wEventConnection"><wbr />w<wbr />Slider<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wScrollBar"
+    title="wScrollBar = ref object of wControl
+  mPageSize*: int
+  mRange*: int
+  mHScrollConn*: wEventConnection
+  mVScrollConn*: wEventConnection"><wbr />w<wbr />Scroll<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wGauge"
+    title="wGauge = ref object of wControl
+  mTaskBar*: ptr ITaskbarList3
+  mTaskBarCreatedConn*: wEventConnection"><wbr />w<wbr />Gauge<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCalendarCtrl"
+    title="wCalendarCtrl = ref object of wControl"><wbr />w<wbr />Calendar<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDatePickerCtrl"
+    title="wDatePickerCtrl = ref object of wControl"><wbr />w<wbr />Date<wbr />Picker<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTimePickerCtrl"
     title="wTimePickerCtrl = ref object of wDatePickerCtrl"><wbr />w<wbr />Time<wbr />Picker<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wToolBar"
-    title="wToolBar = ref object of wControl"><wbr />w<wbr />Tool<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wListBox"
+    title="wListBox = ref object of wControl
+  mInitData*: ptr UncheckedArray[string]
+  mInitCount*: int
+  mCommandConn*: wEventConnection"><wbr />w<wbr />List<wbr />Box<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wListCtrl"
+    title="wListCtrl = ref object of wControl
+  mColCount*: int
+  mImageListNormal*: wImageList
+  mImageListSmall*: wImageList
+  mImageListState*: wImageList
+  mAlternateRowColor*: wColor
+  mTextCtrl*: wTextCtrl
+  mDragging*: bool"><wbr />w<wbr />List<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTreeCtrl"
-    title="wTreeCtrl = ref object of wControl"><wbr />w<wbr />Tree<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wTreeCtrl = ref object of wControl
+  mImageListNormal*: wImageList
+  mImageListState*: wImageList
+  mOwnsImageListNormal*: bool
+  mOwnsImageListState*: bool
+  mInSortChildren*: bool
+  mDataTable*: Table[HTREEITEM, int]
+  mTextCtrl*: wTextCtrl
+  mEnableInsertMark*: bool
+  mDragging*: bool
+  mCurrentDraggingItem*: HTREEITEM
+  mCurrentInsertMark*: int
+  mCurrentInsertItem*: HTREEITEM"><wbr />w<wbr />Tree<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTreeItem"
-    title="wTreeItem = object"><wbr />w<wbr />Tree<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wTreeItem = object
+  mHandle*: HTREEITEM
+  mTreeCtrl*: wTreeCtrl"><wbr />w<wbr />Tree<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHyperlinkCtrl"
+    title="wHyperlinkCtrl = ref object of wControl"><wbr />w<wbr />Hyperlink<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wSplitter"
+    title="wSplitter = ref object of wControl
+  mIsVertical*: bool
+  mIsDrawButton*: bool
+  mSize*: int
+  mDragging*: bool
+  mResizing*: bool
+  mPanel1*: wPanel
+  mPanel2*: wPanel
+  mMin1*: int
+  mMin2*: int
+  mPosOffset*: wPoint
+  mInPanelMargin*: bool
+  mSystemConnections*: seq[tuple[win: wWindow, conn: wEventConnection]]
+  mConnections*: seq[tuple[win: wWindow, conn: wEventConnection]]
+  mSizeConn*: wEventConnection
+  mAttach1*: bool
+  mAttach2*: bool"><wbr />w<wbr />Splitter<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wWebView"
     title="wWebView = ref object of wControl"><wbr />w<wbr />Web<wbr />View<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wHotkeyCtrl"
+    title="wHotkeyCtrl = ref object of wControl
+  mProcessTab*: bool
+  mClearKeyCode*: int
+  mHook*: HHOOK
+  mCtrl*: bool
+  mAlt*: bool
+  mShift*: bool
+  mWin*: bool
+  mValue*: string
+  mKeyCode*: int
+  mModifiers*: int"><wbr />w<wbr />Hotkey<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMenuBase"
+    title="wMenuBase = ref object of RootObj
+  mHmenu*: HMENU"><wbr />w<wbr />Menu<wbr />Base<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMenu"
+    title="wMenu = ref object of wMenuBase
+  mBitmap*: wBitmap
+  mItemList*: seq[wMenuItem]
+  mDeletable*: bool"><wbr />w<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMenuBar"
+    title="wMenuBar = ref object of wMenuBase
+  mMenuList*: seq[wMenu]"><wbr />w<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wMenuItemKind"
     title="wMenuItemKind = enum
   wMenuItemNormal, wMenuItemSeparator, wMenuItemCheck, wMenuItemRadio,
   wMenuItemSubMenu"><wbr />w<wbr />Menu<wbr />Item<wbr />Kind<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wMenuBase"
-    title="wMenuBase = ref object of RootObj"><wbr />w<wbr />Menu<wbr />Base<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wMenu"
-    title="wMenu = ref object of wMenuBase"><wbr />w<wbr />Menu<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wMenuBar"
-    title="wMenuBar = ref object of wMenuBase"><wbr />w<wbr />Menu<wbr />Bar<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wMenuItem"
-    title="wMenuItem = ref object of RootObj"><wbr />w<wbr />Menu<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wMenuItem = ref object of RootObj
+  mId*: wCommandID
+  mKind*: wMenuItemKind
+  mText*: string
+  mHelp*: string
+  mBitmap*: wBitmap
+  mSubmenu*: wMenu
+  mData*: int"><wbr />w<wbr />Menu<wbr />Item<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImage"
+    title="wImage = ref object of RootObj
+  mGdipBmp*: ptr GpBitmap"><wbr />w<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wImageList"
+    title="wImageList = ref object of RootObj
+  mHandle*: HIMAGELIST"><wbr />w<wbr />Image<wbr />List<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIconImage"
+    title="wIconImage = ref object of RootObj
+  mIcon*: string
+  mHotspot*: wPoint"><wbr />w<wbr />Icon<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wGdiObject"
-    title="wGdiObject = ref object of RootObj"><wbr />w<wbr />Gdi<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBitmap"
-    title="wBitmap = ref object of wGdiObject"><wbr />w<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wBrush"
-    title="wBrush = ref object of wGdiObject"><wbr />w<wbr />Brush<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wCursor"
-    title="wCursor = ref object of wGdiObject"><wbr />w<wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wGdiObject = ref object of RootObj
+  mHandle*: HANDLE
+  mDeletable*: bool"><wbr />w<wbr />Gdi<wbr />Object<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wFont"
-    title="wFont = ref object of wGdiObject"><wbr />w<wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wIcon"
-    title="wIcon = ref object of wGdiObject"><wbr />w<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wFont = ref object of wGdiObject
+  mPointSize*: float
+  mFamily*: int
+  mWeight*: int
+  mItalic*: bool
+  mUnderline*: bool
+  mStrikeout*: bool
+  mFaceName*: string
+  mEncoding*: int"><wbr />w<wbr />Font<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPen"
-    title="wPen = ref object of wGdiObject"><wbr />w<wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wPen = ref object of wGdiObject
+  mColor*: wColor
+  mStyle*: DWORD
+  mWidth*: int"><wbr />w<wbr />Pen<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBrush"
+    title="wBrush = ref object of wGdiObject
+  mColor*: wColor
+  mStyle*: DWORD"><wbr />w<wbr />Brush<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wBitmap"
+    title="wBitmap = ref object of wGdiObject
+  mWidth*: int
+  mHeight*: int
+  mDepth*: int"><wbr />w<wbr />Bitmap<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wIcon"
+    title="wIcon = ref object of wGdiObject
+  mWidth*: int
+  mHeight*: int"><wbr />w<wbr />Icon<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wCursor"
+    title="wCursor = ref object of wGdiObject
+  mWidth*: int
+  mHeight*: int
+  mHotspot*: wPoint
+  mIconResource*: bool"><wbr />w<wbr />Cursor<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wRegion"
     title="wRegion = ref object of wGdiObject"><wbr />w<wbr />Region<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDC"
+    title="wDC = object of RootObj
+  mHdc*: HDC
+  mTextBackgroundColor*: wColor
+  mFont*: wFont
+  mPen*: wPen
+  mBrush*: wBrush
+  mRegion*: wRegion
+  mScale*: tuple[x, y: float]
+  mhOldFont*: HANDLE
+  mhOldPen*: HANDLE
+  mhOldBrush*: HANDLE
+  mhOldBitmap*: HANDLE"><wbr />w<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMemoryDC"
+    title="wMemoryDC = object of wDC
+  mBitmap*: wBitmap"><wbr />w<wbr />Memory<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wScreenDC"
+    title="wScreenDC = object of wDC"><wbr />w<wbr />Screen<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wWindowDC"
+    title="wWindowDC = object of wDC
+  mCanvas*: wWindow"><wbr />w<wbr />Window<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wClientDC"
+    title="wClientDC = object of wDC
+  mCanvas*: wWindow"><wbr />w<wbr />Client<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPaintDC"
+    title="wPaintDC = object of wDC
+  mPs*: PAINTSTRUCT
+  mCanvas*: wWindow"><wbr />w<wbr />Paint<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPrinterDC"
+    title="wPrinterDC = object of wDC"><wbr />w<wbr />Printer<wbr />DC<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDialog"
-    title="wDialog = ref object of wWindow"><wbr />w<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wColorDialog"
-    title="wColorDialog = ref object of wDialog"><wbr />w<wbr />Color<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wDirDialog"
-    title="wDirDialog = ref object of wDialog"><wbr />w<wbr />Dir<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wFileDialog"
-    title="wFileDialog = ref object of wDialog"><wbr />w<wbr />File<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wFindReplaceDialog"
-    title="wFindReplaceDialog = ref object of wDialog"><wbr />w<wbr />Find<wbr />Replace<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wFontDialog"
-    title="wFontDialog = ref object of wDialog"><wbr />w<wbr />Font<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wDialog = ref object of wWindow
+  mOwner*: wWindow"><wbr />w<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wMessageDialog"
-    title="wMessageDialog = ref object of wDialog"><wbr />w<wbr />Message<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wPageSetupDialog"
-    title="wPageSetupDialog = ref object of wDialog"><wbr />w<wbr />Page<wbr />Setup<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#wPrintDialog"
-    title="wPrintDialog = ref object of wDialog"><wbr />w<wbr />Print<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wMessageDialog = ref object of wDialog
+  mHook*: HHOOK
+  mMessage*: string
+  mCaption*: string
+  mStyle*: wStyle
+  mLabelText*: Table[INT, string]"><wbr />w<wbr />Message<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wDirDialog"
+    title="wDirDialog = ref object of wDialog
+  mMessage*: string
+  mPath*: string
+  mStyle*: wStyle"><wbr />w<wbr />Dir<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wFileDialog"
+    title="wFileDialog = ref object of wDialog
+  mMessage*: string
+  mDefaultDir*: string
+  mDefaultFile*: string
+  mWildcard*: string
+  mStyle*: wStyle
+  mFilterIndex*: int
+  mPath*: string
+  mPaths*: seq[string]"><wbr />w<wbr />File<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wColorDialog"
+    title="wColorDialog = ref object of wDialog
+  mCc*: TCHOOSECOLOR
+  mStyle*: wStyle
+  mCustomColor*: array[16, wColor]"><wbr />w<wbr />Color<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wFontDialog"
+    title="wFontDialog = ref object of wDialog
+  mCf*: TCHOOSEFONT
+  mLf*: LOGFONT
+  mChosenFont*: wFont"><wbr />w<wbr />Font<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wTextEntryDialog"
-    title="wTextEntryDialog = ref object of wDialog"><wbr />w<wbr />Text<wbr />Entry<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wTextEntryDialog = ref object of wDialog
+  mFrame*: wFrame
+  mMessage*: string
+  mCaption*: string
+  mValue*: string
+  mStyle*: wStyle
+  mMaxLength*: int
+  mPos*: wPoint
+  mOkLabel*: string
+  mCancelLabe*: string
+  mReturnId*: wId"><wbr />w<wbr />Text<wbr />Entry<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wPasswordEntryDialog"
     title="wPasswordEntryDialog = ref object of wTextEntryDialog"><wbr />w<wbr />Password<wbr />Entry<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wFindReplaceDialog"
+    title="wFindReplaceDialog = ref object of wDialog
+  mFr*: FINDREPLACE
+  mFindString*: TString
+  mReplaceString*: TString
+  mIsReplace*: bool
+  mMsgConn*: wEventConnection"><wbr />w<wbr />Find<wbr />Replace<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPageSetupDialog"
+    title="wPageSetupDialog = ref object of wDialog
+  mPsd*: TPAGESETUPDLG
+  mPrintData*: wPrintData"><wbr />w<wbr />Page<wbr />Setup<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPrintDialogCallback"
+    title="wPrintDialogCallback = object
+  lpVtbl*: ptr IPrintDialogCallbackVtbl
+  vtbl*: IPrintDialogCallbackVtbl
+  withSite*: IObjectWithSite
+  services*: ptr IPrintDialogServices"><wbr />w<wbr />Print<wbr />Dialog<wbr />Callback<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wPrintDialog"
+    title="wPrintDialog = ref object of wDialog
+  mPd*: TPRINTDLGEX
+  mRanges*: array[64, PRINTPAGERANGE]
+  mPrintData*: wPrintData
+  mCallBack*: wPrintDialogCallback"><wbr />w<wbr />Print<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1527,7 +1897,7 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">Basic types definition for wNim. Symbols in this module will automatically export by wApp, so the user don't need to import this module in most situation. However, sometimes the nim compiler cannot distinguish wNim types from module names (generic instantiation, etc). In that case, you can import wTypes and specify the type name. For example: wTypes.wIcon.</p>
+  <p class="module-desc">Basic types definition for wNim. Symbols in this module will automatically export by wApp, so the user should not import this module directly. Sometimes the nim compiler cannot distinguish wNim types from module names. In that case, you need to specify the type name from wApp. For example: <em>wApp.wIcon</em>.</p>
   
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -1557,7 +1927,7 @@ A data structure contains left, up, right, down.
 
 </dd>
 <a id="wError"></a>
-<dt><pre><span class="Identifier">wError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Exception</span>
+<dt><pre><span class="Identifier">wError</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">CatchableError</span>
   </pre></dt>
 <dd>
 Base of exception use in wNim.
@@ -1610,277 +1980,739 @@ Represents a point in time.
 Predefined names to use as menus or controls ID.
 
 </dd>
+<a id="wEventProc"></a>
+<dt><pre><span class="Identifier">wEventProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span></pre></dt>
+
+<a id="wEventNeatProc"></a>
+<dt><pre><span class="Identifier">wEventNeatProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Other">)</span></pre></dt>
+
+<a id="wHookProc"></a>
+<dt><pre><span class="Identifier">wHookProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+
 <a id="wApp"></a>
-<dt><pre><span class="Identifier">wApp</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+<dt><pre><span class="Identifier">wApp</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mInstance</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+  <span class="Identifier">mClassAtomTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">,</span> <span class="Identifier">ATOM</span><span class="Other">]</span>
+  <span class="Identifier">mTopLevelWindowTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HWND</span><span class="Other">,</span> <span class="Identifier">wWindow</span><span class="Other">]</span>
+  <span class="Identifier">mWindowTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HWND</span><span class="Other">,</span> <span class="Identifier">wWindow</span><span class="Other">]</span>
+  <span class="Identifier">mMenuBaseTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HMENU</span><span class="Other">,</span> <span class="Identifier">pointer</span><span class="Other">]</span>
+  <span class="Identifier">mGDIStockSeq</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wGdiObject</span><span class="Other">]</span>
+  <span class="Identifier">mPropagationSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">]</span>
+  <span class="Identifier">mMenuIdSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">uint16</span><span class="Other">]</span>
+  <span class="Identifier">mMessageCountTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">]</span>
+  <span class="Identifier">mExitCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint</span>
+  <span class="Identifier">mAccelExists</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDpi</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mWinVersion</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">mUsingTheme</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wEvent"></a>
-<dt><pre><span class="Identifier">wEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wCommandEvent"></a>
-<dt><pre><span class="Identifier">wCommandEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wContextMenuEvent"></a>
-<dt><pre><span class="Identifier">wContextMenuEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wDialogEvent"></a>
-<dt><pre><span class="Identifier">wDialogEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wDragDropEvent"></a>
-<dt><pre><span class="Identifier">wDragDropEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wHyperlinkEvent"></a>
-<dt><pre><span class="Identifier">wHyperlinkEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-
-<a id="wIpEvent"></a>
-<dt><pre><span class="Identifier">wIpEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-
-<a id="wKeyEvent"></a>
-<dt><pre><span class="Identifier">wKeyEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wListEvent"></a>
-<dt><pre><span class="Identifier">wListEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mWindow</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">mOrigin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mMsg</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">UINT</span>
+  <span class="Identifier">mId</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wCommandID</span>
+  <span class="Identifier">mWparam</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">WPARAM</span>
+  <span class="Identifier">mLparam</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">LPARAM</span>
+  <span class="Identifier">mUserData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mSkip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mPropagationLevel</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mResult</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">LRESULT</span>
+  <span class="Identifier">mKeyStatus</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">int8</span><span class="Other">]</span>
+  <span class="Identifier">mMousePos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+  <span class="Identifier">mClientPos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+</pre></dt>
 
 <a id="wMouseEvent"></a>
 <dt><pre><span class="Identifier">wMouseEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
-<a id="wMoveEvent"></a>
-<dt><pre><span class="Identifier">wMoveEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wNavigationEvent"></a>
-<dt><pre><span class="Identifier">wNavigationEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wOtherEvent"></a>
-<dt><pre><span class="Identifier">wOtherEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wScrollEvent"></a>
-<dt><pre><span class="Identifier">wScrollEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
-
-<a id="wScrollWinEvent"></a>
-<dt><pre><span class="Identifier">wScrollWinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
-
-<a id="wSetCursorEvent"></a>
-<dt><pre><span class="Identifier">wSetCursorEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+<a id="wKeyEvent"></a>
+<dt><pre><span class="Identifier">wKeyEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
 <a id="wSizeEvent"></a>
 <dt><pre><span class="Identifier">wSizeEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
-<a id="wSpinEvent"></a>
-<dt><pre><span class="Identifier">wSpinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+<a id="wMoveEvent"></a>
+<dt><pre><span class="Identifier">wMoveEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
-<a id="wStatusBarEvent"></a>
-<dt><pre><span class="Identifier">wStatusBarEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+<a id="wScrollWinEvent"></a>
+<dt><pre><span class="Identifier">wScrollWinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span>
+  <span class="Identifier">mScrollPos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wOtherEvent"></a>
+<dt><pre><span class="Identifier">wOtherEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+
+<a id="wContextMenuEvent"></a>
+<dt><pre><span class="Identifier">wContextMenuEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+
+<a id="wCommandEvent"></a>
+<dt><pre><span class="Identifier">wCommandEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+
+<a id="wNavigationEvent"></a>
+<dt><pre><span class="Identifier">wNavigationEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+
+<a id="wSetCursorEvent"></a>
+<dt><pre><span class="Identifier">wSetCursorEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
 <a id="wTrayEvent"></a>
 <dt><pre><span class="Identifier">wTrayEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
 
+<a id="wDragDropEvent"></a>
+<dt><pre><span class="Identifier">wDragDropEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span>
+  <span class="Identifier">mDataObject</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wDataObject</span>
+  <span class="Identifier">mEffect</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wDialogEvent"></a>
+<dt><pre><span class="Identifier">wDialogEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wEvent</span></pre></dt>
+
+<a id="wStatusBarEvent"></a>
+<dt><pre><span class="Identifier">wStatusBarEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+
+<a id="wListEvent"></a>
+<dt><pre><span class="Identifier">wListEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mIndex</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mCol</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+
 <a id="wTreeEvent"></a>
-<dt><pre><span class="Identifier">wTreeEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+<dt><pre><span class="Identifier">wTreeEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mTreeCtrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span>
+  <span class="Identifier">mHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTREEITEM</span>
+  <span class="Identifier">mOldHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTREEITEM</span>
+  <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mInsertMark</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPoint</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+</pre></dt>
+
+<a id="wScrollEvent"></a>
+<dt><pre><span class="Identifier">wScrollEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mScrollPos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wSpinEvent"></a>
+<dt><pre><span class="Identifier">wSpinEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+
+<a id="wHyperlinkEvent"></a>
+<dt><pre><span class="Identifier">wHyperlinkEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mVisited</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
+
+<a id="wIpEvent"></a>
+<dt><pre><span class="Identifier">wIpEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mIndex</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mValue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
 
 <a id="wWebViewEvent"></a>
-<dt><pre><span class="Identifier">wWebViewEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span></pre></dt>
+<dt><pre><span class="Identifier">wWebViewEvent</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+  <span class="Identifier">mDispatch</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDispatch</span>
+  <span class="Identifier">mUrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
 
-<a id="wDataObject"></a>
-<dt><pre><span class="Identifier">wDataObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span></pre></dt>
-
-<a id="wPrintData"></a>
-<dt><pre><span class="Identifier">wPrintData</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span></pre></dt>
-
-<a id="wAcceleratorTable"></a>
-<dt><pre><span class="Identifier">wAcceleratorTable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wImage"></a>
-<dt><pre><span class="Identifier">wImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wImageList"></a>
-<dt><pre><span class="Identifier">wImageList</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wIconImage"></a>
-<dt><pre><span class="Identifier">wIconImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+<a id="wScrollData"></a>
+<dt><pre><span class="Identifier">wScrollData</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">kind</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">orientation</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
 
 <a id="wResizable"></a>
-<dt><pre><span class="Identifier">wResizable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+<dt><pre><span class="Identifier">wResizable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mLeft</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Variable</span>
+  <span class="Identifier">mTop</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Variable</span>
+  <span class="Identifier">mWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Variable</span>
+  <span class="Identifier">mHeight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Variable</span>
+</pre></dt>
 
 <a id="wResizer"></a>
-<dt><pre><span class="Identifier">wResizer</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+<dt><pre><span class="Identifier">wResizer</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mParent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wResizable</span>
+  <span class="Identifier">mSolver</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Solver</span>
+  <span class="Identifier">mObjects</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">wResizable</span><span class="Other">]</span>
+</pre></dt>
+
+<a id="wDataObject"></a>
+<dt><pre><span class="Identifier">wDataObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span>
+  <span class="Identifier">mObj</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span>
+  <span class="Identifier">mReleasable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
+
+<a id="wPrintData"></a>
+<dt><pre><span class="Identifier">wPrintData</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span>
+  <span class="Identifier">mDevice</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mDevModeBuffer</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+</pre></dt>
+
+<a id="wEventConnection"></a>
+<dt><pre><span class="Identifier">wEventConnection</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">msg</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">UINT</span>
+  <span class="Identifier">id</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wCommandID</span>
+  <span class="Identifier">handler</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventProc</span>
+  <span class="Identifier">neatHandler</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventNeatProc</span>
+  <span class="Identifier">userData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">undeletable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
+
+<a id="wAcceleratorTable"></a>
+<dt><pre><span class="Identifier">wAcceleratorTable</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HACCEL</span>
+  <span class="Identifier">mAccels</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">ACCEL</span><span class="Other">]</span>
+  <span class="Identifier">mModified</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
+
+<a id="wDropTarget"></a>
+<dt><pre><span class="Identifier">wDropTarget</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">lpVtbl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDropTargetVtbl</span>
+  <span class="Identifier">vtbl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">IDropTargetVtbl</span>
+  <span class="Identifier">self</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">effect</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+</pre></dt>
 
 <a id="wWindow"></a>
-<dt><pre><span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wResizable</span></pre></dt>
+<dt><pre><span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wResizable</span>
+  <span class="Identifier">mHwnd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mParent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">mChildren</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wWindow</span><span class="Other">]</span>
+  <span class="Identifier">mData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mClassName</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mRegistered</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mSystemConnectionTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">DoublyLinkedList</span><span class="Other">[</span><span class="Identifier">wEventConnection</span><span class="Other">]</span><span class="Other">]</span>
+  <span class="Identifier">mConnectionTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">DoublyLinkedList</span><span class="Other">[</span><span class="Identifier">wEventConnection</span><span class="Other">]</span><span class="Other">]</span>
+  <span class="Identifier">mMargin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wDirection</span>
+  <span class="Identifier">mStatusBar</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStatusBar</span>
+  <span class="Identifier">mToolBar</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wToolBar</span>
+  <span class="Identifier">mRebar</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wRebar</span>
+  <span class="Identifier">mFont</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wFont</span>
+  <span class="Identifier">mBackgroundColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mForegroundColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mBackgroundBrush</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBrush</span>
+  <span class="Identifier">mCursor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wCursor</span>
+  <span class="Identifier">mOverrideCursor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wCursor</span>
+  <span class="Identifier">mAcceleratorTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wAcceleratorTable</span>
+  <span class="Identifier">mPopupMenu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenu</span>
+  <span class="Identifier">mSaveFocusHwnd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mFocusable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mMouseInWindow</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mMaxSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wSize</span>
+  <span class="Identifier">mMinSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wSize</span>
+  <span class="Identifier">mDummyParent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mTipHwnd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mSizingInfo</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wSizingInfo</span>
+  <span class="Identifier">mDraggableInfo</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wDraggableInfo</span>
+  <span class="Identifier">mDropTarget</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Identifier">wDropTarget</span>
+  <span class="Identifier">mHookProc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wHookProc</span>
+</pre></dt>
 
 <a id="wFrame"></a>
-<dt><pre><span class="Identifier">wFrame</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
+<dt><pre><span class="Identifier">wFrame</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">mMenuBar</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenuBar</span>
+  <span class="Identifier">mIcon</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wIcon</span>
+  <span class="Identifier">mDisableList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">HWND</span><span class="Other">]</span>
+  <span class="Identifier">mTrayIcon</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wIcon</span>
+  <span class="Identifier">mTrayToolTip</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mTrayIconAdded</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mTrayConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mCreateConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mRetCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mIsModal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wPanel"></a>
 <dt><pre><span class="Identifier">wPanel</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
 
+<a id="wToolTip"></a>
+<dt><pre><span class="Identifier">wToolTip</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mToolInfo</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TOOLINFO</span>
+</pre></dt>
+
 <a id="wControl"></a>
 <dt><pre><span class="Identifier">wControl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
 
-<a id="wButton"></a>
-<dt><pre><span class="Identifier">wButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wStatusBar"></a>
+<dt><pre><span class="Identifier">wStatusBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mFiledNumbers</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mWidths</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">int32</span><span class="Other">]</span>
+  <span class="Identifier">mHelpIndex</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mSizeConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
-<a id="wCalendarCtrl"></a>
-<dt><pre><span class="Identifier">wCalendarCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wToolBarTool"></a>
+<dt><pre><span class="Identifier">wToolBarTool</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBitmap</span>
+  <span class="Identifier">mShortHelp</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mLongHelp</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mMenu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenu</span>
+</pre></dt>
 
-<a id="wCheckBox"></a>
-<dt><pre><span class="Identifier">wCheckBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wCheckComboBox"></a>
-<dt><pre><span class="Identifier">wCheckComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wComboBox"></a>
-<dt><pre><span class="Identifier">wComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wDatePickerCtrl"></a>
-<dt><pre><span class="Identifier">wDatePickerCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wGauge"></a>
-<dt><pre><span class="Identifier">wGauge</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wHotkeyCtrl"></a>
-<dt><pre><span class="Identifier">wHotkeyCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wHyperlinkCtrl"></a>
-<dt><pre><span class="Identifier">wHyperlinkCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wIpCtrl"></a>
-<dt><pre><span class="Identifier">wIpCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wListBox"></a>
-<dt><pre><span class="Identifier">wListBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wListCtrl"></a>
-<dt><pre><span class="Identifier">wListCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wNoteBook"></a>
-<dt><pre><span class="Identifier">wNoteBook</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wRadioButton"></a>
-<dt><pre><span class="Identifier">wRadioButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wToolBar"></a>
+<dt><pre><span class="Identifier">wToolBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mTools</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wToolBarTool</span><span class="Other">]</span>
+  <span class="Identifier">mSizeConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
 <a id="wRebar"></a>
-<dt><pre><span class="Identifier">wRebar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<dt><pre><span class="Identifier">wRebar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mControls</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wControl</span><span class="Other">]</span>
+  <span class="Identifier">mImageList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mSizeConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
-<a id="wScrollBar"></a>
-<dt><pre><span class="Identifier">wScrollBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wButton"></a>
+<dt><pre><span class="Identifier">wButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mImgData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">BUTTON_IMAGELIST</span>
+  <span class="Identifier">mDefault</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mMenu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenu</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
-<a id="wSlider"></a>
-<dt><pre><span class="Identifier">wSlider</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wSpinButton"></a>
-<dt><pre><span class="Identifier">wSpinButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wSpinCtrl"></a>
-<dt><pre><span class="Identifier">wSpinCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wSplitter"></a>
-<dt><pre><span class="Identifier">wSplitter</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wStaticText"></a>
+<dt><pre><span class="Identifier">wStaticText</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
 <a id="wStaticBitmap"></a>
-<dt><pre><span class="Identifier">wStaticBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
-
-<a id="wStaticBox"></a>
-<dt><pre><span class="Identifier">wStaticBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<dt><pre><span class="Identifier">wStaticBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBitmap</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
 <a id="wStaticLine"></a>
 <dt><pre><span class="Identifier">wStaticLine</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
 
-<a id="wStaticText"></a>
-<dt><pre><span class="Identifier">wStaticText</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wIpCtrl"></a>
+<dt><pre><span class="Identifier">wIpCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mEdits</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">4</span><span class="Other">,</span> <span class="Identifier">wTextCtrl</span><span class="Other">]</span>
+</pre></dt>
 
-<a id="wStatusBar"></a>
-<dt><pre><span class="Identifier">wStatusBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wCheckBox"></a>
+<dt><pre><span class="Identifier">wCheckBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wRadioButton"></a>
+<dt><pre><span class="Identifier">wRadioButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wStaticBox"></a>
+<dt><pre><span class="Identifier">wStaticBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+
+<a id="wComboBox"></a>
+<dt><pre><span class="Identifier">wComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mEdit</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span>
+  <span class="Identifier">mList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wListBox</span>
+  <span class="Identifier">mOldEditProc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">WNDPROC</span>
+  <span class="Identifier">mInitData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">UncheckedArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">mInitCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wCheckComboBox"></a>
+<dt><pre><span class="Identifier">wCheckComboBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mTheme</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTHEME</span>
+  <span class="Identifier">mCheckTheme</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTHEME</span>
+  <span class="Identifier">mDrawTextFlag</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+  <span class="Identifier">mComboPart</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+  <span class="Identifier">mSeparator</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mValue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mEmpty</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wListBox</span>
+  <span class="Identifier">mIsPopup</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mInitData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">UncheckedArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">mInitCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mDrawItemConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
 
 <a id="wTextCtrl"></a>
-<dt><pre><span class="Identifier">wTextCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<dt><pre><span class="Identifier">wTextCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mRich</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDisableTextEvent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mBestSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wSize</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wNoteBook"></a>
+<dt><pre><span class="Identifier">wNoteBook</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mTheme</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTHEME</span>
+  <span class="Identifier">mImageList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mSelection</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPages</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wPanel</span><span class="Other">]</span>
+</pre></dt>
+
+<a id="wSpinCtrl"></a>
+<dt><pre><span class="Identifier">wSpinCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mUpdownHwnd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mUpdownWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mNotifyConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wSpinButton"></a>
+<dt><pre><span class="Identifier">wSpinButton</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mNotifyConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wSlider"></a>
+<dt><pre><span class="Identifier">wSlider</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mReversed</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mMax</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mMin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mHScrollConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mVScrollConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wScrollBar"></a>
+<dt><pre><span class="Identifier">wScrollBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mPageSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mRange</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHScrollConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mVScrollConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wGauge"></a>
+<dt><pre><span class="Identifier">wGauge</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mTaskBar</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">ITaskbarList3</span>
+  <span class="Identifier">mTaskBarCreatedConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wCalendarCtrl"></a>
+<dt><pre><span class="Identifier">wCalendarCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+
+<a id="wDatePickerCtrl"></a>
+<dt><pre><span class="Identifier">wDatePickerCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
 
 <a id="wTimePickerCtrl"></a>
 <dt><pre><span class="Identifier">wTimePickerCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDatePickerCtrl</span></pre></dt>
 
-<a id="wToolBar"></a>
-<dt><pre><span class="Identifier">wToolBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<a id="wListBox"></a>
+<dt><pre><span class="Identifier">wListBox</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mInitData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">UncheckedArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">mInitCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wListCtrl"></a>
+<dt><pre><span class="Identifier">wListCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mColCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mImageListNormal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mImageListSmall</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mImageListState</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mAlternateRowColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mTextCtrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span>
+  <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wTreeCtrl"></a>
-<dt><pre><span class="Identifier">wTreeCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+<dt><pre><span class="Identifier">wTreeCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mImageListNormal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mImageListState</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wImageList</span>
+  <span class="Identifier">mOwnsImageListNormal</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mOwnsImageListState</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mInSortChildren</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDataTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HTREEITEM</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">]</span>
+  <span class="Identifier">mTextCtrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wTextCtrl</span>
+  <span class="Identifier">mEnableInsertMark</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mCurrentDraggingItem</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTREEITEM</span>
+  <span class="Identifier">mCurrentInsertMark</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mCurrentInsertItem</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTREEITEM</span>
+</pre></dt>
 
 <a id="wTreeItem"></a>
-<dt><pre><span class="Identifier">wTreeItem</span> <span class="Other">=</span> <span class="Keyword">object</span></pre></dt>
+<dt><pre><span class="Identifier">wTreeItem</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">mHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HTREEITEM</span>
+  <span class="Identifier">mTreeCtrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wTreeCtrl</span>
+</pre></dt>
+
+<a id="wHyperlinkCtrl"></a>
+<dt><pre><span class="Identifier">wHyperlinkCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+
+<a id="wSplitter"></a>
+<dt><pre><span class="Identifier">wSplitter</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mIsVertical</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mIsDrawButton</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mResizing</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mPanel1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPanel</span>
+  <span class="Identifier">mPanel2</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPanel</span>
+  <span class="Identifier">mMin1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mMin2</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPosOffset</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+  <span class="Identifier">mInPanelMargin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mSystemConnections</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">win</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">,</span> <span class="Identifier">conn</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span><span class="Other">]</span><span class="Other">]</span>
+  <span class="Identifier">mConnections</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">win</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">,</span> <span class="Identifier">conn</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span><span class="Other">]</span><span class="Other">]</span>
+  <span class="Identifier">mSizeConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+  <span class="Identifier">mAttach1</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mAttach2</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wWebView"></a>
 <dt><pre><span class="Identifier">wWebView</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span></pre></dt>
+
+<a id="wHotkeyCtrl"></a>
+<dt><pre><span class="Identifier">wHotkeyCtrl</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wControl</span>
+  <span class="Identifier">mProcessTab</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mClearKeyCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHook</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HHOOK</span>
+  <span class="Identifier">mCtrl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mAlt</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mShift</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mWin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mValue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mKeyCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mModifiers</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wMenuBase"></a>
+<dt><pre><span class="Identifier">wMenuBase</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mHmenu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HMENU</span>
+</pre></dt>
+
+<a id="wMenu"></a>
+<dt><pre><span class="Identifier">wMenu</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span>
+  <span class="Identifier">mBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBitmap</span>
+  <span class="Identifier">mItemList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wMenuItem</span><span class="Other">]</span>
+  <span class="Identifier">mDeletable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
+
+<a id="wMenuBar"></a>
+<dt><pre><span class="Identifier">wMenuBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span>
+  <span class="Identifier">mMenuList</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wMenu</span><span class="Other">]</span>
+</pre></dt>
 
 <a id="wMenuItemKind"></a>
 <dt><pre><span class="Identifier">wMenuItemKind</span> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">wMenuItemNormal</span><span class="Other">,</span> <span class="Identifier">wMenuItemSeparator</span><span class="Other">,</span> <span class="Identifier">wMenuItemCheck</span><span class="Other">,</span> <span class="Identifier">wMenuItemRadio</span><span class="Other">,</span>
   <span class="Identifier">wMenuItemSubMenu</span></pre></dt>
 
-<a id="wMenuBase"></a>
-<dt><pre><span class="Identifier">wMenuBase</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wMenu"></a>
-<dt><pre><span class="Identifier">wMenu</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span></pre></dt>
-
-<a id="wMenuBar"></a>
-<dt><pre><span class="Identifier">wMenuBar</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wMenuBase</span></pre></dt>
-
 <a id="wMenuItem"></a>
-<dt><pre><span class="Identifier">wMenuItem</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+<dt><pre><span class="Identifier">wMenuItem</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mId</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wCommandID</span>
+  <span class="Identifier">mKind</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenuItemKind</span>
+  <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mHelp</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBitmap</span>
+  <span class="Identifier">mSubmenu</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wMenu</span>
+  <span class="Identifier">mData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wImage"></a>
+<dt><pre><span class="Identifier">wImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mGdipBmp</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">GpBitmap</span>
+</pre></dt>
+
+<a id="wImageList"></a>
+<dt><pre><span class="Identifier">wImageList</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HIMAGELIST</span>
+</pre></dt>
+
+<a id="wIconImage"></a>
+<dt><pre><span class="Identifier">wIconImage</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mIcon</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mHotspot</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+</pre></dt>
 
 <a id="wGdiObject"></a>
-<dt><pre><span class="Identifier">wGdiObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
-
-<a id="wBitmap"></a>
-<dt><pre><span class="Identifier">wBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-
-<a id="wBrush"></a>
-<dt><pre><span class="Identifier">wBrush</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-
-<a id="wCursor"></a>
-<dt><pre><span class="Identifier">wCursor</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
+<dt><pre><span class="Identifier">wGdiObject</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mHandle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+  <span class="Identifier">mDeletable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wFont"></a>
-<dt><pre><span class="Identifier">wFont</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
-
-<a id="wIcon"></a>
-<dt><pre><span class="Identifier">wIcon</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
+<dt><pre><span class="Identifier">wFont</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mPointSize</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float</span>
+  <span class="Identifier">mFamily</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mWeight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mItalic</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mUnderline</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mStrikeout</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mFaceName</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mEncoding</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
 
 <a id="wPen"></a>
-<dt><pre><span class="Identifier">wPen</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
+<dt><pre><span class="Identifier">wPen</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+  <span class="Identifier">mWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wBrush"></a>
+<dt><pre><span class="Identifier">wBrush</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+</pre></dt>
+
+<a id="wBitmap"></a>
+<dt><pre><span class="Identifier">wBitmap</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHeight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mDepth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wIcon"></a>
+<dt><pre><span class="Identifier">wIcon</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHeight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wCursor"></a>
+<dt><pre><span class="Identifier">wCursor</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span>
+  <span class="Identifier">mWidth</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHeight</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mHotspot</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+  <span class="Identifier">mIconResource</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+</pre></dt>
 
 <a id="wRegion"></a>
 <dt><pre><span class="Identifier">wRegion</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wGdiObject</span></pre></dt>
 
+<a id="wDC"></a>
+<dt><pre><span class="Identifier">wDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <span class="Identifier">mHdc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HDC</span>
+  <span class="Identifier">mTextBackgroundColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wColor</span>
+  <span class="Identifier">mFont</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wFont</span>
+  <span class="Identifier">mPen</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPen</span>
+  <span class="Identifier">mBrush</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBrush</span>
+  <span class="Identifier">mRegion</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wRegion</span>
+  <span class="Identifier">mScale</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">]</span>
+  <span class="Identifier">mhOldFont</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+  <span class="Identifier">mhOldPen</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+  <span class="Identifier">mhOldBrush</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+  <span class="Identifier">mhOldBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
+</pre></dt>
+
+<a id="wMemoryDC"></a>
+<dt><pre><span class="Identifier">wMemoryDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span>
+  <span class="Identifier">mBitmap</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wBitmap</span>
+</pre></dt>
+
+<a id="wScreenDC"></a>
+<dt><pre><span class="Identifier">wScreenDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span></pre></dt>
+
+<a id="wWindowDC"></a>
+<dt><pre><span class="Identifier">wWindowDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span>
+  <span class="Identifier">mCanvas</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+</pre></dt>
+
+<a id="wClientDC"></a>
+<dt><pre><span class="Identifier">wClientDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span>
+  <span class="Identifier">mCanvas</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+</pre></dt>
+
+<a id="wPaintDC"></a>
+<dt><pre><span class="Identifier">wPaintDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span>
+  <span class="Identifier">mPs</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">PAINTSTRUCT</span>
+  <span class="Identifier">mCanvas</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+</pre></dt>
+
+<a id="wPrinterDC"></a>
+<dt><pre><span class="Identifier">wPrinterDC</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDC</span></pre></dt>
+
 <a id="wDialog"></a>
-<dt><pre><span class="Identifier">wDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span></pre></dt>
-
-<a id="wColorDialog"></a>
-<dt><pre><span class="Identifier">wColorDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-
-<a id="wDirDialog"></a>
-<dt><pre><span class="Identifier">wDirDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-
-<a id="wFileDialog"></a>
-<dt><pre><span class="Identifier">wFileDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-
-<a id="wFindReplaceDialog"></a>
-<dt><pre><span class="Identifier">wFindReplaceDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
-
-<a id="wFontDialog"></a>
-<dt><pre><span class="Identifier">wFontDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
+<dt><pre><span class="Identifier">wDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wWindow</span>
+  <span class="Identifier">mOwner</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wWindow</span>
+</pre></dt>
 
 <a id="wMessageDialog"></a>
-<dt><pre><span class="Identifier">wMessageDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
+<dt><pre><span class="Identifier">wMessageDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mHook</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HHOOK</span>
+  <span class="Identifier">mMessage</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mCaption</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStyle</span>
+  <span class="Identifier">mLabelText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">INT</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
 
-<a id="wPageSetupDialog"></a>
-<dt><pre><span class="Identifier">wPageSetupDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
+<a id="wDirDialog"></a>
+<dt><pre><span class="Identifier">wDirDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mMessage</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mPath</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStyle</span>
+</pre></dt>
 
-<a id="wPrintDialog"></a>
-<dt><pre><span class="Identifier">wPrintDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
+<a id="wFileDialog"></a>
+<dt><pre><span class="Identifier">wFileDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mMessage</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mDefaultDir</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mDefaultFile</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mWildcard</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStyle</span>
+  <span class="Identifier">mFilterIndex</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPath</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mPaths</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+</pre></dt>
+
+<a id="wColorDialog"></a>
+<dt><pre><span class="Identifier">wColorDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mCc</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TCHOOSECOLOR</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStyle</span>
+  <span class="Identifier">mCustomColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">16</span><span class="Other">,</span> <span class="Identifier">wColor</span><span class="Other">]</span>
+</pre></dt>
+
+<a id="wFontDialog"></a>
+<dt><pre><span class="Identifier">wFontDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mCf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TCHOOSEFONT</span>
+  <span class="Identifier">mLf</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">LOGFONT</span>
+  <span class="Identifier">mChosenFont</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wFont</span>
+</pre></dt>
 
 <a id="wTextEntryDialog"></a>
-<dt><pre><span class="Identifier">wTextEntryDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span></pre></dt>
+<dt><pre><span class="Identifier">wTextEntryDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mFrame</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wFrame</span>
+  <span class="Identifier">mMessage</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mCaption</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mValue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mStyle</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wStyle</span>
+  <span class="Identifier">mMaxLength</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPoint</span>
+  <span class="Identifier">mOkLabel</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mCancelLabe</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">mReturnId</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wId</span>
+</pre></dt>
 
 <a id="wPasswordEntryDialog"></a>
 <dt><pre><span class="Identifier">wPasswordEntryDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wTextEntryDialog</span></pre></dt>
+
+<a id="wFindReplaceDialog"></a>
+<dt><pre><span class="Identifier">wFindReplaceDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mFr</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">FINDREPLACE</span>
+  <span class="Identifier">mFindString</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TString</span>
+  <span class="Identifier">mReplaceString</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TString</span>
+  <span class="Identifier">mIsReplace</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mMsgConn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wEventConnection</span>
+</pre></dt>
+
+<a id="wPageSetupDialog"></a>
+<dt><pre><span class="Identifier">wPageSetupDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mPsd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TPAGESETUPDLG</span>
+  <span class="Identifier">mPrintData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPrintData</span>
+</pre></dt>
+
+<a id="wPrintDialogCallback"></a>
+<dt><pre><span class="Identifier">wPrintDialogCallback</span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">lpVtbl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IPrintDialogCallbackVtbl</span>
+  <span class="Identifier">vtbl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">IPrintDialogCallbackVtbl</span>
+  <span class="Identifier">withSite</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">IObjectWithSite</span>
+  <span class="Identifier">services</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IPrintDialogServices</span>
+</pre></dt>
+
+<a id="wPrintDialog"></a>
+<dt><pre><span class="Identifier">wPrintDialog</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wDialog</span>
+  <span class="Identifier">mPd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">TPRINTDLGEX</span>
+  <span class="Identifier">mRanges</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">64</span><span class="Other">,</span> <span class="Identifier">PRINTPAGERANGE</span><span class="Other">]</span>
+  <span class="Identifier">mPrintData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPrintData</span>
+  <span class="Identifier">mCallBack</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">wPrintDialogCallback</span>
+</pre></dt>
 
 
 </dl></div>
@@ -2013,7 +2845,7 @@ We usually use the enum for where need a command ID. see the examples.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:50 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:28 UTC</small>
       </div>
     </div>
   </div>

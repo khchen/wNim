@@ -1283,8 +1283,6 @@ function main() {
     title="setSelection(self: wSpinCtrl; range: Slice[int])"><wbr />set<wbr />Selection<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getUpdownHandle%2CwSpinCtrl"
     title="getUpdownHandle(self: wSpinCtrl): HANDLE"><wbr />get<wbr />Updown<wbr />Handle<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwSpinCtrl"
-    title="final(self: wSpinCtrl)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwSpinCtrl%2CwWindow%2Cstring%2CwStyle"
     title="init(self: wSpinCtrl; parent: wWindow; id = wDefaultID; value: string = &quot;0&quot;;
      pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wSpLeft)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1310,6 +1308,8 @@ function main() {
     title="getDefaultSize(self: wSpinCtrl): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBestSize.e%2CwSpinCtrl"
     title="getBestSize(self: wSpinCtrl): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#release.e%2CwSpinCtrl"
+    title="release(self: wSpinCtrl)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1451,16 +1451,10 @@ Select the text in the text part of the control.
 Gets the system handle of the updown control.
 
 </dd>
-<a id="final,wSpinCtrl"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wSpinCtrl.
-
-</dd>
 <a id="init,wSpinCtrl,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpLeft</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a spin control. Value as text.
@@ -1469,8 +1463,8 @@ Initializes a spin control. Value as text.
 <a id="SpinCtrl,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">SpinCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;0&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
              <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpLeft</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span>
-                        <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1478,7 +1472,7 @@ Constructor.
 <a id="init,wSpinCtrl,wWindow,int,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpLeft</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a spin control. Value as int.
@@ -1487,8 +1481,8 @@ Initializes a spin control. Value as int.
 <a id="SpinCtrl,wWindow,int,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">SpinCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
              <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpLeft</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span>
-                        <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1520,6 +1514,13 @@ Returns the default size for the control.
 Returns the best acceptable minimal size for the control.
 
 </dd>
+<a id="release.e,wSpinCtrl"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSpinCtrl</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+                               <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
+
+</dd>
 
 </dl></div>
 
@@ -1531,7 +1532,7 @@ Returns the best acceptable minimal size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:47 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:24:00 UTC</small>
       </div>
     </div>
   </div>

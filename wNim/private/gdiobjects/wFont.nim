@@ -63,6 +63,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import math
 import ../wBase, wGdiObject
@@ -113,8 +114,7 @@ const
 proc setup(self: wFont, lf: LOGFONT) =
   self.mPointSize = -(lf.lfHeight * 72 / wAppGetDpi())
   self.mWeight = lf.lfWeight
-  self.mFaceName = ^$lf.lfFaceName
-  self.mFaceName.nullTerminate()
+  self.mFaceName = nullTerminated(%$lf.lfFaceName)
   self.mEncoding = int lf.lfCharSet
   self.mFamily = int(lf.lfPitchAndFamily and 0b000)
   self.mItalic = (lf.lfItalic != 0)
@@ -122,10 +122,6 @@ proc setup(self: wFont, lf: LOGFONT) =
   self.mStrikeout = (lf.lfStrikeout != 0)
 
 wClass(wFont of wGdiObject):
-
-  proc final*(self: wFont) =
-    ## Default finalizer for wFont.
-    self.delete()
 
   proc init*(self: wFont, lf: var LOGFONT) =
     ## Initializes a font from LOGFONT struct. Used internally.

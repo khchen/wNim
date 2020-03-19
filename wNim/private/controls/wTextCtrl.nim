@@ -49,6 +49,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase, wControl
@@ -463,9 +464,6 @@ method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
   return procCall wControl(self).processNotify(code, id, lParam, ret)
 
-method release(self: wTextCtrl) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
   if event.mLparam == self.mHwnd:
     case HIWORD(event.mWparam)
@@ -480,9 +478,10 @@ proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
 
 wClass(wTextCtrl of wControl):
 
-  proc final*(self: wTextCtrl) =
-    ## Default finalizer for wTextCtrl.
-    self.wControl.final()
+  method release*(self: wTextCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,
       value: string = "", pos = wDefaultPoint, size = wDefaultSize,
@@ -567,7 +566,7 @@ wClass(wTextCtrl of wControl):
 
     # add this so that the subcalssed control can get regain focus correctly
     self.systemConnect(WM_KILLFOCUS) do (event: wEvent):
-      self.getTopParent().mSaveFocus = self
+      self.getTopParent().mSaveFocusHwnd = self.mHwnd
 
     # add this so that the parent's sibling button can have "default button" style
     self.systemConnect(WM_SETFOCUS) do (event: wEvent):

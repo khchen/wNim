@@ -1243,14 +1243,20 @@ function main() {
     title="setTime(self: wTimePickerCtrl; hour: int; min: int; sec: int)"><wbr />set<wbr />Time<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTime%2CwTimePickerCtrl%2Ctuple%5Bint%2Cint%2Cint%5D"
     title="setTime(self: wTimePickerCtrl; time: tuple[hour, min, sec: int])"><wbr />set<wbr />Time<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwTimePickerCtrl"
-    title="final(self: wTimePickerCtrl)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwTimePickerCtrl%2CwWindow%2CwStyle"
     title="init(self: wTimePickerCtrl; parent: wWindow; id = wDefaultID; time = wDefaultTime;
      pos = wDefaultPoint; size = wDefaultSize; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#TimePickerCtrl%2CwWindow%2CwStyle"
     title="TimePickerCtrl(parent: wWindow; id = wDefaultID; time = wDefaultTime;
                pos = wDefaultPoint; size = wDefaultSize; style: wStyle = 0): wTimePickerCtrl"><wbr />Time<wbr />Picker<wbr />Ctrl<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+<li>
+  <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#release.e%2CwTimePickerCtrl"
+    title="release(self: wTimePickerCtrl)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1290,16 +1296,10 @@ Changes the current time of the control.
 Changes the current time of the control.
 
 </dd>
-<a id="final,wTimePickerCtrl"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTimePickerCtrl</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wTimePickerCtrl.
-
-</dd>
 <a id="init,wTimePickerCtrl,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTimePickerCtrl</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">time</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a time picker control.<table border="1" class="docutils"><tr><th>Parameters</th><th>Description</th></tr>
@@ -1315,11 +1315,22 @@ Initializes a time picker control.<table border="1" class="docutils"><tr><th>Par
 <a id="TimePickerCtrl,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">TimePickerCtrl</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">time</span> <span class="Other">=</span> <span class="Identifier">wDefaultTime</span><span class="Other">;</span>
                    <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wTimePickerCtrl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
-                               <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span>
+                               <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
+
+</dd>
+
+</dl></div>
+<div class="section" id="14">
+<h1><a class="toc-backref" href="#14">Methods</a></h1>
+<dl class="item">
+<a id="release.e,wTimePickerCtrl"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wTimePickerCtrl</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
 
 </dd>
 
@@ -1333,7 +1344,7 @@ Constructor.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:41:00 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:24:13 UTC</small>
       </div>
     </div>
   </div>

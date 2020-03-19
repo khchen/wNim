@@ -6,11 +6,7 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC]
+import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC]
 
 let app = App()
 

@@ -1301,8 +1301,6 @@ function main() {
     title="canCopy(self: wWebView): bool"><wbr />can<wbr />Copy<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#copy%2CwWebView"
     title="copy(self: wWebView)"><wbr />copy<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwWebView"
-    title="final(self: wWebView)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwWebView%2CwWindow%2CwStyle"
     title="init(self: wWebView; parent: wWindow; id = wDefaultID; pos = wDefaultPoint;
      size = wDefaultSize; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1319,6 +1317,8 @@ function main() {
     title="getDefaultSize(self: wWebView): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBestSize.e%2CwWebView"
     title="getBestSize(self: wWebView): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#release.e%2CwWebView"
+    title="release(self: wWebView)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1522,16 +1522,11 @@ Returns true if the current selection can be copied.
 Copies the current selection.
 
 </dd>
-<a id="final,wWebView"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebView</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wWebView.
-
-</dd>
 <a id="init,wWebView,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebView</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
          <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span>
-    <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a webview control.
 
@@ -1539,7 +1534,7 @@ Initializes a webview control.
 <a id="WebView,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">WebView</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
             <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWebView</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span>
-    <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
@@ -1562,6 +1557,12 @@ Returns the default size for the control.
                                         <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Returns the best acceptable size for the control.
+
+</dd>
+<a id="release.e,wWebView"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWebView</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
 
 </dd>
 
@@ -1592,7 +1593,7 @@ The same as getComObject().
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:41:05 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:24:18 UTC</small>
       </div>
     </div>
   </div>

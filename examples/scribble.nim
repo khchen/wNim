@@ -9,11 +9,8 @@ import
   strutils,
   resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wMacros, wFrame, wImage, wIcon, wPen, wCursor, wBitmap,
-    wBrush, wUtils, wPaintDC, wClientDC, wMemoryDC]
+import wNim/[wApp, wMacros, wFrame, wImage, wIcon, wPen, wCursor, wBitmap,
+  wBrush, wUtils, wPaintDC, wClientDC, wMemoryDC]
 
 type
   wScribble = ref object of wFrame
@@ -23,9 +20,6 @@ type
     mBmp: wBitmap
 
 wClass(wScribble of wFrame):
-
-  proc final(self: wScribble) =
-    wFrame(self).final()
 
   proc init(self: wScribble, title: string, size: wSize) =
     wFrame(self).init(title=title, size=size)
@@ -108,11 +102,9 @@ wClass(wScribble of wFrame):
     image.saveFile(filename)
 
 when isMainModule:
-  when defined(aio):
-    import wNim
-  else:
-    import wNim/[wApp, wMenuBar, wMenu, wStatusBar,
-      wFileDialog, wMessageDialog, wColorDialog]
+
+  import wNim/[wApp, wMenuBar, wMenu, wStatusBar,
+    wFileDialog, wMessageDialog, wColorDialog]
 
   type
     MenuId = enum

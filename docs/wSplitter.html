@@ -1279,14 +1279,20 @@ function main() {
     title="attachPanel(self: wSplitter; attach = true)"><wbr />attach<wbr />Panel<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setSplitMode%2CwSplitter%2Cint"
     title="setSplitMode(self: wSplitter; mode: int)"><wbr />set<wbr />Split<wbr />Mode<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwSplitter"
-    title="final(self: wSplitter)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwSplitter%2CwWindow%2CwStyle%2Cstring"
     title="init(self: wSplitter; parent: wWindow; id = wDefaultID; pos = wDefaultPoint;
      size = wDefaultSize; style: wStyle = wSpVertical; className = &quot;wSplitter&quot;)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#Splitter%2CwWindow%2CwStyle%2Cstring"
     title="Splitter(parent: wWindow; id = wDefaultID; pos = wDefaultPoint; size = wDefaultSize;
          style: wStyle = wSpVertical; className = &quot;wSplitter&quot;): wSplitter"><wbr />Splitter<span class="attachedType" style="visibility:hidden"></span></a></li>
+
+  </ul>
+</li>
+<li>
+  <a class="reference reference-toplevel" href="#14" id="64">Methods</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#release.e%2CwSplitter"
+    title="release(self: wSplitter)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1425,16 +1431,10 @@ Attach splitter to both panels.
 Sets the split mode. Mode can be wSpHorizontal or wSpVertical.
 
 </dd>
-<a id="final,wSplitter"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSplitter</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wSplitter.
-
-</dd>
 <a id="init,wSplitter,wWindow,wStyle,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSplitter</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
          <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpVertical</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wSplitter&quot;</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a splitter. For vertical splitter, settings of y-axis are ignored, vice versa.
@@ -1443,11 +1443,23 @@ Initializes a splitter. For vertical splitter, settings of y-axis are ignored, v
 <a id="Splitter,wWindow,wStyle,string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">Splitter</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
              <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wSpVertical</span><span class="Other">;</span> <span class="Identifier">className</span> <span class="Other">=</span> <span class="StringLit">&quot;wSplitter&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wSplitter</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span>
-                        <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
+
+</dd>
+
+</dl></div>
+<div class="section" id="14">
+<h1><a class="toc-backref" href="#14">Methods</a></h1>
+<dl class="item">
+<a id="release.e,wSplitter"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wSplitter</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+                               <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
 
 </dd>
 
@@ -1461,7 +1473,7 @@ Constructor.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:49 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:24:02 UTC</small>
       </div>
     </div>
   </div>

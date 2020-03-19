@@ -44,6 +44,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wDialog
 export wDialog
@@ -109,7 +110,7 @@ proc enableHelp*(self: wFindReplaceDialog, flag = true) =
 
 proc enableFindEvent(self: wFindReplaceDialog, flag = true) =
   # enable must be called when WM_INITDIALOG, and disable when WM_NCDESTROY
-  # so that gc will collect "self" object and final() will be called.
+  # so that gc will collect "self" object and destructor will be called.
   assert self.mOwner != nil
   if flag:
     let findMsgId = RegisterWindowMessage(FINDMSGSTRING)
@@ -136,6 +137,7 @@ proc enableFindEvent(self: wFindReplaceDialog, flag = true) =
 
   else:
     self.mOwner.systemDisconnect(self.mMsgConn)
+    free(self[])
 
 proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_PTR
     {.stdcall.} =
@@ -153,7 +155,8 @@ proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM)
     # handle FINDMSGSTRING event
     self.enableFindEvent(true)
 
-  of WM_NCDESTROY:
+  of WM_DESTROY:
+    # WM_DESTROY instead of WM_NCDESTROY so that the following codes run before dialogQuit()
     assert self != nil
     self.enableFindEvent(false)
     wAppWindowDelete(hwnd)
@@ -165,10 +168,6 @@ proc wFindReplaceHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM)
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
 wClass(wFindReplaceDialog of wDialog):
-
-  proc final*(self: wFindReplaceDialog) =
-    ## Default finalizer for wFindReplaceDialog.
-    self.wDialog.final()
 
   proc init*(self: wFindReplaceDialog, owner: wWindow, flags: int = 0) {.validate.} =
     ## Initializer.

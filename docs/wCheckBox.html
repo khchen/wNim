@@ -1269,8 +1269,6 @@ function main() {
     title="setValue(self: wCheckBox; state: bool)"><wbr />set<wbr />Value<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#click%2CwCheckBox"
     title="click(self: wCheckBox)"><wbr />click<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwCheckBox"
-    title="final(self: wCheckBox)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwCheckBox%2CwWindow%2Cstring%2CwStyle"
     title="init(self: wCheckBox; parent: wWindow; id = wDefaultID; label: string = &quot;&quot;;
      pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wChk2State)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1287,6 +1285,8 @@ function main() {
     title="getBestSize(self: wCheckBox): wSize"><wbr />get<wbr />Best<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getDefaultSize.e%2CwCheckBox"
     title="getDefaultSize(self: wCheckBox): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#release.e%2CwCheckBox"
+    title="release(self: wCheckBox)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1377,16 +1377,10 @@ Sets the checkbox to the given state.
 Simulates the user clicking a checkbox.
 
 </dd>
-<a id="final,wCheckBox"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wCheckBox.
-
-</dd>
 <a id="init,wCheckBox,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckBox</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
          <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wChk2State</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a checkbox.
@@ -1395,8 +1389,8 @@ Initializes a checkbox.
 <a id="CheckBox,wWindow,string,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">CheckBox</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
              <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="Identifier">wChk2State</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wCheckBox</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span>
-                        <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1418,6 +1412,13 @@ Returns the best acceptable minimal size for the control.
 Returns the default size for the control.
 
 </dd>
+<a id="release.e,wCheckBox"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wCheckBox</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+                               <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
+
+</dd>
 
 </dl></div>
 
@@ -1429,7 +1430,7 @@ Returns the default size for the control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:20 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:33 UTC</small>
       </div>
     </div>
   </div>

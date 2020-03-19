@@ -1294,8 +1294,6 @@ function main() {
     title="getPageImage(self: wNoteBook; pos: int): int"><wbr />get<wbr />Page<wbr />Image<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setPadding%2CwNoteBook%2CwSize"
     title="setPadding(self: wNoteBook; size: wSize)"><wbr />set<wbr />Padding<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwNoteBook"
-    title="final(self: wNoteBook)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwNoteBook%2CwWindow%2CwStyle"
     title="init(self: wNoteBook; parent: wWindow; id = wDefaultID; pos = wDefaultPoint;
      size = wDefaultSize; style: wStyle = 0)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1312,6 +1310,8 @@ function main() {
     title="getClientSize(self: wNoteBook): wSize"><wbr />get<wbr />Client<wbr />Size<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getClientAreaOrigin.e%2CwNoteBook"
     title="getClientAreaOrigin(self: wNoteBook): wPoint"><wbr />get<wbr />Client<wbr />Area<wbr />Origin<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#release.e%2CwNoteBook"
+    title="release(self: wNoteBook)"><wbr />release<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1382,7 +1382,7 @@ Inserts a page (wPanel object) at the specified position. Page's parent must be 
 <a id="insertPage,wNoteBook,string,wImage,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">insertPage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">select</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
                <span class="Identifier">imageId</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPanel</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Inserts a new page at the specified position. Return the new page (wPanel object).
@@ -1400,7 +1400,7 @@ Adds a page (wPanel object). Page's parent must be this control. Do not delete t
 <a id="addPage,wNoteBook,string,wImage,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">addPage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">;</span> <span class="Identifier">text</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">select</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span>
             <span class="Identifier">imageId</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPanel</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span>
-    <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
+    <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
     <span class="Identifier">wBitmapError</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Adds a new page. Return the new page (wPanel object).
@@ -1510,16 +1510,10 @@ Returns the image index for the given page.
 Sets the amount of space around each page's icon and label, in pixels.
 
 </dd>
-<a id="final,wNoteBook"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wNoteBook.
-
-</dd>
 <a id="init,wNoteBook,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span>
-         <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span>
-    <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+         <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span>
+    <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializes a notebook control.
 
@@ -1527,7 +1521,7 @@ Initializes a notebook control.
 <a id="NoteBook,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">NoteBook</span><span class="Other">(</span><span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span> <span class="Identifier">pos</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">;</span> <span class="Identifier">size</span> <span class="Other">=</span> <span class="Identifier">wDefaultSize</span><span class="Other">;</span>
              <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">wStyle</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">wError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
     <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
@@ -1549,6 +1543,12 @@ Returns the size of the notebook 'client area' in pixels.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Get the origin of the client area of the window relative to the window top left corner.
+
+</dd>
+<a id="release.e,wNoteBook"></a>
+<dt><pre><span class="Keyword">method</span> <span class="Identifier">release</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wNoteBook</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Release all the resources during destroying. Used internally.
 
 </dd>
 
@@ -1573,7 +1573,7 @@ Iterate each page in this notebook control.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:38 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:51 UTC</small>
       </div>
     </div>
   </div>

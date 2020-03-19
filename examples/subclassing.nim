@@ -6,16 +6,11 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon]
+import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon]
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
-# 2. Every class have init(self: wObject) and final(self: wObject)
-#    as initializer and finalizer.
+# 2. Every class have init(self: wObject) as initializer.
 # 3. Provides an Object() proc to quickly get the ref object.
 
 # wClass (defined in wMacros) provides a convenient way to define wNim class.
@@ -39,7 +34,8 @@ wClass(wMyFrame of wFrame):
         event.veto()
 
   proc final(self: wMyFrame) =
-    wFrame(self).final()
+    # Don't need to call parent's final()
+    MessageDialog(nil, "A custom finalizer is optional.", "Finalizer").display()
 
 when isMainModule:
 

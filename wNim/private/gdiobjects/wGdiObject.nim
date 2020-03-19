@@ -21,6 +21,7 @@
 ##   `wDC <wDC.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
@@ -39,21 +40,19 @@ proc init*(self: wGdiObject) {.validate, inline.} =
 method delete*(self: wGdiObject) {.base, inline.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if self.mHandle != 0 and self.mDeletable:
-    DeleteObject(self.mHandle)
-
-  self.mHandle = 0
+  `=destroy`(self[])
 
 when not isMainModule: # hide from doc
 
   template wGDIStock*(typ: typedesc, sn: int, obj: wGdiObject): untyped =
-    if sn > wAppGetCurrentApp.mGDIStockSeq.high:
-      wAppGetCurrentApp.mGDIStockSeq.setlen(sn+1)
+    App()
+    if sn > wBaseApp.mGDIStockSeq.high:
+      wBaseApp.mGDIStockSeq.setlen(sn+1)
 
-    if wAppGetCurrentApp.mGDIStockSeq[sn] == nil:
-      wAppGetCurrentApp.mGDIStockSeq[sn] = obj
+    if wBaseApp.mGDIStockSeq[sn] == nil:
+      wBaseApp.mGDIStockSeq[sn] = obj
 
-    typ(wAppGetCurrentApp.mGDIStockSeq[sn])
+    typ(wBaseApp.mGDIStockSeq[sn])
 
   DefineIncrement(0):
     NormalFont

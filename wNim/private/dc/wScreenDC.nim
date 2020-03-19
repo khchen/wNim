@@ -13,21 +13,10 @@
 ##   `wDC <wDC.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wDC
 export wDC
-
-type
-  wScreenDC* = object of wDC
-
-proc `=destroy`(self: var wScreenDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    ReleaseDC(0, self.mHdc)
-    self.mHdc = 0
 
 proc ScreenDC*(): wScreenDC =
   ## Constructor.
@@ -35,4 +24,7 @@ proc ScreenDC*(): wScreenDC =
   result.wDC.init()
 
 proc delete*(self: var wScreenDC) =
-  self.`=destroy`()
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  `=destroy`(self)

@@ -8,11 +8,8 @@
 import std/[colors, tables]
 import resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wMacros, wFrame, wPanel, wPaintDC, wBrush, wPen, wFont, wIcon,
-    wMenuBar, wMenu, wUtils, wDataObject]
+import wNim/[wApp, wMacros, wFrame, wPanel, wPaintDC, wBrush, wPen, wFont, wIcon,
+  wMenuBar, wMenu, wUtils, wDataObject]
 
 const
   wNimColorTable = {

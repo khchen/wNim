@@ -28,6 +28,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wPrintData, wDialog
 export wDialog, wPrintData
@@ -37,17 +38,16 @@ type
     ## An error raised when wPageSetupDialog creation failed.
 
 proc getPrintData*(self: wPageSetupDialog): wPrintData {.validate, property, inline.} =
-  ## Returns a wPrintData object.
-  result = PrintData(self.mPsd.hDevMode, self.mPsd.hDevNames)
+  ## Returns the current wPrintData object for the dialog. The result may be nil.
+  result = self.mPrintData
 
 proc setPrintData*(self: wPageSetupDialog, printData: wPrintData) {.validate, property, inline.} =
   ## Sets a wPrintData object as default setting.
-  self.mPsd.hDevMode = printData.getDevMode()
+  self.mPrintData = printData
 
 proc enableHelp*(self: wPageSetupDialog, flag = true) {.validate, inline.} =
   ## Display a Help button, the dialog got wEvent_DialogHelp event when the
   ## button pressed.
-  # self.wDialog.enableHelp(flag, &self.mPsd)
   if flag:
     self.mPsd.Flags = self.mPsd.Flags or PSD_SHOWHELP
   else:
@@ -192,18 +192,6 @@ proc wPageSetupHookProc(hWnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): 
 
 wClass(wPageSetupDialog of wDialog):
 
-  proc final*(self: wPageSetupDialog) =
-    ## Default finalizer for wPageSetupDialog.
-    if self.mPsd.hDevMode != 0:
-      GlobalFree(self.mPsd.hDevMode)
-      self.mPsd.hDevMode = 0
-
-    if self.mPsd.hDevNames != 0:
-      GlobalFree(self.mPsd.hDevNames)
-      self.mPsd.hDevNames = 0
-
-    self.wDialog.final()
-
   proc init*(self: wPageSetupDialog, owner: wWindow, initDefault = false) {.validate.} =
     ## Initializer. If initDefault is true, the dialog is initialized for the
     ## system default printer.
@@ -219,18 +207,29 @@ wClass(wPageSetupDialog of wDialog):
       self.mPsd.Flags = self.mPsd.Flags or PSD_RETURNDEFAULT
       if PageSetupDlg(&self.mPsd) == 0:
         raise newException(wPageSetupDialogError, "wPageSetupDialog creation failed")
+
       self.mPsd.Flags = self.mPsd.Flags and (not PSD_RETURNDEFAULT)
+      self.mPrintData = PrintData(self.mPsd.hDevMode, self.mPsd.hDevNames)
 
   proc init*(self: wPageSetupDialog, owner: wWindow, data: wPrintData) {.validate.} =
-    ## Initializer. Uses specified printData as default setting.
+    ## Initializer. Uses specified printData as default setting. Nil to reset to
+    ## the system default setting.
     self.init(owner)
-    if not data.isNil:
-      self.setPrintData(data)
+    self.setPrintData(data)
 
 proc showModal*(self: wPageSetupDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel
   ## otherwise.
+  if self.mPrintData != nil:
+    self.mPsd.hDevMode = self.mPrintData.getDevMode()
+
   if PageSetupDlg(&self.mPsd) != 0:
     result = wIdOk
+    self.mPrintData = PrintData(self.mPsd.hDevMode, self.mPsd.hDevNames)
   else:
     result = wIdCancel
+
+proc display*(self: wPageSetupDialog): wPrintData {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning a wPrintData object or nil.
+  if self.showModal() == wIdOk:
+    result = self.getPrintData()

@@ -46,6 +46,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wPanel, ../gdiobjects/wCursor, ../dc/wPaintDC
 import wSpinButton, wControl
@@ -317,14 +318,13 @@ proc wSplitter_DoPaint(event: wEvent) =
       dc.gradientFillConcentric((x + dot * i, y, dot, dot),
         wDarkGrey, bkColor, (0, 0))
 
-method release(self: wSplitter) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mSizeConn)
-
 wClass(wSplitter of wControl):
 
-  proc final*(self: wSplitter) =
-    ## Default finalizer for wSplitter.
-    self.wControl.final()
+  method release*(self: wSplitter) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mSizeConn)
+    self.clearEventHandle()
+    free(self[])
 
   proc init*(self: wSplitter, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wSpVertical,

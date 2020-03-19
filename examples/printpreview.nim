@@ -12,12 +12,9 @@ import
   os, strutils, math, strformat,
   resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wPanel, wStatusBar, wToolBar, wSlider, wStaticText, wButton,
-    wScreenDC, wPrinterDC, wMemoryDC, wPaintDC, wRegion, wBitmap, wIcon, wFont, wImage,
-    wPageSetupDialog, wPrintDialog]
+import wNim/[wApp, wFrame, wPanel, wStatusBar, wToolBar, wSlider, wStaticText, wButton,
+  wScreenDC, wPrinterDC, wMemoryDC, wPaintDC, wRegion, wBitmap, wIcon, wFont, wImage,
+  wPageSetupDialog, wPrintDialog]
 
 const
   border = 20
@@ -416,9 +413,6 @@ proc print(self: wPreviewFrame, pd: wPrintDialog, delay: bool) {.thread.} =
 
   if info.data.kind == dkNil: return
 
-  # If run in another thread, must call App() to create a new wApp object.
-  App()
-
   var ranges = pd.pageRanges
   if ranges.len == 0:
     ranges = @[1..self.mPages.len]
@@ -464,9 +458,6 @@ proc print(self: wPreviewFrame, pd: wPrintDialog, delay: bool) {.thread.} =
 
         else:
           printer.drawImagePage(info)
-
-proc final(self: wPreviewFrame) =
-  wFrame(self).final()
 
 proc init(self: wPreviewFrame, title: string, size: wSize = (1024, 768)) =
   wFrame(self).init(title=title, size=size)
@@ -616,16 +607,14 @@ proc init(self: wPreviewFrame, title: string, size: wSize = (1024, 768)) =
         self.canvasLayout(y = self.mPages[i].position.y - border)
 
 proc PreviewFrame(title: string, size: wSize = (1024, 768)): wPreviewFrame {.inline.} =
-  new(result, final)
+  new(result)
   result.init(title, size)
 
 
 when isMainModule:
-  when defined(aio):
-    import wNim
-  else:
-    import wNim/[wApp, wAcceleratorTable, wMenuBar, wMenu,
-      wFileDialog, wFontDialog, wPageSetupDialog, wPrintDialog, wMessageDialog]
+
+  import wNim/[wApp, wAcceleratorTable, wMenuBar, wMenu,
+    wFileDialog, wFontDialog, wPageSetupDialog, wPrintDialog, wMessageDialog]
 
   type
     # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.
@@ -712,7 +701,6 @@ when isMainModule:
   frame.show()
 
   when not compileOption("threads"):
-    MessageDialog(frame, "This demo can be compiled with the --threads:on command line switch",
-      "Print and Preview Demo", wIconInformation).display()
+    frame.statusbar.setStatusText("This demo can be compiled with the --threads:on command line switch")
 
   app.mainLoop()

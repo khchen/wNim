@@ -15,15 +15,16 @@
 ##   `wControl <wControl.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import wBase, wWindow
 export wWindow
 
 wClass(wPanel of wWindow):
 
-  proc final*(self: wPanel) =
-    ## Default finalizer for wPanel.
-    self.wWindow.final()
+  method release*(self: wPanel) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wPanel, parent: wWindow, pos = wDefaultPoint, size = wDefaultSize,
       style: wStyle = 0, className = "wPanel") {.validate, inline.} =

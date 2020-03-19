@@ -39,6 +39,7 @@
 ##   `wWebViewEvent <wWebViewEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -1051,9 +1052,9 @@ method trigger(self: wWebView) {.uknlock.} =
 
 wClass(wWebView of wControl):
 
-  proc final*(self: wWebView) =
-    ## Default finalizer for wWebView.
-    self.wControl.final()
+  method release*(self: wWebView) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wWebView, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
       size = wDefaultSize, style: wStyle = 0) {.validate.} =

@@ -1289,8 +1289,6 @@ function main() {
     title="setMarginTopLeft(self: wPageSetupDialog; point: wPoint)"><wbr />set<wbr />Margin<wbr />Top<wbr />Left<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setMarginBottomRight%2CwPageSetupDialog%2CwPoint"
     title="setMarginBottomRight(self: wPageSetupDialog; point: wPoint)"><wbr />set<wbr />Margin<wbr />Bottom<wbr />Right<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwPageSetupDialog"
-    title="final(self: wPageSetupDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwPageSetupDialog%2CwWindow"
     title="init(self: wPageSetupDialog; owner: wWindow; initDefault = false)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#PageSetupDialog%2CwWindow"
@@ -1301,6 +1299,8 @@ function main() {
     title="PageSetupDialog(owner: wWindow; data: wPrintData): wPageSetupDialog"><wbr />Page<wbr />Setup<wbr />Dialog<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#showModal%2CwPageSetupDialog"
     title="showModal(self: wPageSetupDialog): wId"><wbr />show<wbr />Modal<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#display%2CwPageSetupDialog"
+    title="display(self: wPageSetupDialog): wPrintData"><wbr />display<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1338,7 +1338,7 @@ An error raised when wPageSetupDialog creation failed.
 <a id="getPrintData,wPageSetupDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getPrintData</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPrintData</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Returns a wPrintData object.
+Returns the current wPrintData object for the dialog. The result may be nil.
 
 </dd>
 <a id="setPrintData,wPageSetupDialog,wPrintData"></a>
@@ -1471,15 +1471,9 @@ Sets the left (x) and top (y) margins in millimetres.
 Sets the right (x) and bottom (y) margins in millimetres.
 
 </dd>
-<a id="final,wPageSetupDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wPageSetupDialog.
-
-</dd>
 <a id="init,wPageSetupDialog,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">initDefault</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
     <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer. If initDefault is true, the dialog is initialized for the system default printer.
@@ -1487,24 +1481,26 @@ Initializer. If initDefault is true, the dialog is initialized for the system de
 </dd>
 <a id="PageSetupDialog,wWindow"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">PageSetupDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">initDefault</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
-                        <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
 </dd>
 <a id="init,wPageSetupDialog,wWindow,wPrintData"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">wPrintData</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span>
     <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Initializer. Uses specified printData as default setting.
+Initializer. Uses specified printData as default setting. Nil to reset to the system default setting.
 
 </dd>
 <a id="PageSetupDialog,wWindow,wPrintData"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">PageSetupDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">wPrintData</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
-                        <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span>
+                        <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPageSetupDialogError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1513,6 +1509,13 @@ Constructor.
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel otherwise.
+
+</dd>
+<a id="display,wPageSetupDialog"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">display</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wPageSetupDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wPrintData</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Shows the dialog in modal mode, returning a wPrintData object or nil.
 
 </dd>
 
@@ -1526,7 +1529,7 @@ Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel otherwis
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:00 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:14 UTC</small>
       </div>
     </div>
   </div>

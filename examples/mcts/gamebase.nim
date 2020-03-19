@@ -13,7 +13,7 @@ type
     fv: FlowVar[State]
 
 proc newGame*[State](): Game[State] =
-  new(result)
+  result = Game[State]()
   result.state = State()
   result.state.init()
 

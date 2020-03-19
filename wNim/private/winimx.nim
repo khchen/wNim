@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               Winim - Nim's Windows API Module
-#                 (c) Copyright 2016-2019 Ward
+#                 (c) Copyright 2016-2020 Ward
 #
 #====================================================================
 
@@ -608,20 +608,22 @@ proc CreateBrushIndirect*(plbrush: ptr LOGBRUSH): HBRUSH {.winapi, stdcall, dynl
 proc CreateCompatibleBitmap*(hdc: HDC, cx: int32, cy: int32): HBITMAP {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateCompatibleDC*(hdc: HDC): HDC {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateEllipticRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc CreateHatchBrush*(iHatch: int32, color: COLORREF): HBRUSH {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc CreateRoundRectRgn*(x1: int32, y1: int32, x2: int32, y2: int32, w: int32, h: int32): HRGN {.winapi, stdcall, dynlib: "gdi32", importc.}
-proc CreateSolidBrush*(color: COLORREF): HBRUSH {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteDC*(hdc: HDC): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteObject*(ho: HGDIOBJ): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Ellipse*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc EqualRgn*(hrgn1: HRGN, hrgn2: HRGN): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetROP2*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc GetBkColor*(hdc: HDC): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetBkMode*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetDeviceCaps*(hdc: HDC, index: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetObjectType*(h: HGDIOBJ): DWORD {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetPixel*(hdc: HDC, x: int32, y: int32): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetRgnBox*(hrgn: HRGN, lprc: LPRECT): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetStockObject*(i: int32): HGDIOBJ {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc GetTextColor*(hdc: HDC): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetViewportOrgEx*(hdc: HDC, lppoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc LineTo*(hdc: HDC, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc OffsetRgn*(hrgn: HRGN, x: int32, y: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
@@ -821,7 +823,6 @@ type
     lpszMenuName*: LPCSTR
     lpszClassName*: LPCSTR
     hIconSm*: HICON
-  LPWNDCLASSEXA* = ptr WNDCLASSEXA
   WNDCLASSEXW* {.pure.} = object
     cbSize*: UINT
     style*: UINT
@@ -835,7 +836,6 @@ type
     lpszMenuName*: LPCWSTR
     lpszClassName*: LPCWSTR
     hIconSm*: HICON
-  LPWNDCLASSEXW* = ptr WNDCLASSEXW
   MSG* {.pure.} = object
     hwnd*: HWND
     message*: UINT
@@ -1216,7 +1216,6 @@ const
   GWL_EXSTYLE* = -20
   GWLP_USERDATA* = -21
   GWLP_ID* = -12
-  GCL_HBRBACKGROUND* = -10
   WM_NULL* = 0x0000
   WM_CREATE* = 0x0001
   WM_DESTROY* = 0x0002
@@ -1230,6 +1229,7 @@ const
   WM_PAINT* = 0x000F
   WM_CLOSE* = 0x0010
   WM_QUIT* = 0x0012
+  WM_ERASEBKGND* = 0x0014
   WM_SHOWWINDOW* = 0x0018
   WM_SETCURSOR* = 0x0020
   WM_GETMINMAXINFO* = 0x0024
@@ -1665,6 +1665,7 @@ const
   OBJID_HSCROLL* = LONG 0xFFFFFFFA'i32
   STATE_SYSTEM_PRESSED* = 0x00000008
   STATE_SYSTEM_INVISIBLE* = 0x00008000
+  GA_PARENT* = 1
   GA_ROOT* = 2
   RT_GROUP_CURSOR* = MAKEINTRESOURCE(1+DIFFERENCE)
   RT_GROUP_ICON* = MAKEINTRESOURCE(3+DIFFERENCE)
@@ -1711,6 +1712,7 @@ proc EnableWindow*(hWnd: HWND, bEnable: WINBOOL): WINBOOL {.winapi, stdcall, dyn
 proc IsWindowEnabled*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc DestroyAcceleratorTable*(hAccel: HACCEL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetSystemMetrics*(nIndex: int32): int32 {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetMenu*(hWnd: HWND): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetMenu*(hWnd: HWND, hMenu: HMENU): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc DrawMenuBar*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetSystemMenu*(hWnd: HWND, bRevert: WINBOOL): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1797,8 +1799,8 @@ when winimUnicode:
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageW".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageW".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcW".}
+  proc UnregisterClass*(lpClassName: LPCWSTR, hInstance: HINSTANCE): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "UnregisterClassW".}
   proc RegisterClassEx*(P1: ptr WNDCLASSEXW): ATOM {.winapi, stdcall, dynlib: "user32", importc: "RegisterClassExW".}
-  proc GetClassInfoEx*(hInstance: HINSTANCE, lpszClass: LPCWSTR, lpwcx: LPWNDCLASSEXW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetClassInfoExW".}
   proc CreateAcceleratorTable*(paccel: LPACCEL, cAccel: int32): HACCEL {.winapi, stdcall, dynlib: "user32", importc: "CreateAcceleratorTableW".}
   proc TranslateAccelerator*(hWnd: HWND, hAccTable: HACCEL, lpMsg: LPMSG): int32 {.winapi, stdcall, dynlib: "user32", importc: "TranslateAcceleratorW".}
   proc InsertMenuItem*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmi: LPCMENUITEMINFOW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "InsertMenuItemW".}
@@ -1828,8 +1830,8 @@ when winimAnsi:
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageA".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageA".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcA".}
+  proc UnregisterClass*(lpClassName: LPCSTR, hInstance: HINSTANCE): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "UnregisterClassA".}
   proc RegisterClassEx*(P1: ptr WNDCLASSEXA): ATOM {.winapi, stdcall, dynlib: "user32", importc: "RegisterClassExA".}
-  proc GetClassInfoEx*(hInstance: HINSTANCE, lpszClass: LPCSTR, lpwcx: LPWNDCLASSEXA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetClassInfoExA".}
   proc CreateAcceleratorTable*(paccel: LPACCEL, cAccel: int32): HACCEL {.winapi, stdcall, dynlib: "user32", importc: "CreateAcceleratorTableA".}
   proc TranslateAccelerator*(hWnd: HWND, hAccTable: HACCEL, lpMsg: LPMSG): int32 {.winapi, stdcall, dynlib: "user32", importc: "TranslateAcceleratorA".}
   proc InsertMenuItem*(hmenu: HMENU, item: UINT, fByPosition: WINBOOL, lpmi: LPCMENUITEMINFOA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "InsertMenuItemA".}
@@ -1850,19 +1852,15 @@ when winimAnsi:
 when winimUnicode and winimCpu64:
   proc GetWindowLongPtr*(hWnd: HWND, nIndex: int32): LONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "GetWindowLongPtrW".}
   proc SetWindowLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG_PTR): LONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "SetWindowLongPtrW".}
-  proc SetClassLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG_PTR): ULONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "SetClassLongPtrW".}
 when winimAnsi and winimCpu64:
   proc GetWindowLongPtr*(hWnd: HWND, nIndex: int32): LONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "GetWindowLongPtrA".}
   proc SetWindowLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG_PTR): LONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "SetWindowLongPtrA".}
-  proc SetClassLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG_PTR): ULONG_PTR {.winapi, stdcall, dynlib: "user32", importc: "SetClassLongPtrA".}
 when winimUnicode and winimCpu32:
   proc GetWindowLongPtr*(hWnd: HWND, nIndex: int32): LONG {.winapi, stdcall, dynlib: "user32", importc: "GetWindowLongW".}
   proc SetWindowLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG): LONG {.winapi, stdcall, dynlib: "user32", importc: "SetWindowLongW".}
-  proc SetClassLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG): DWORD {.winapi, stdcall, dynlib: "user32", importc: "SetClassLongW".}
 when winimAnsi and winimCpu32:
   proc GetWindowLongPtr*(hWnd: HWND, nIndex: int32): LONG {.winapi, stdcall, dynlib: "user32", importc: "GetWindowLongA".}
   proc SetWindowLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG): LONG {.winapi, stdcall, dynlib: "user32", importc: "SetWindowLongA".}
-  proc SetClassLongPtr*(hWnd: HWND, nIndex: int32, dwNewLong: LONG): DWORD {.winapi, stdcall, dynlib: "user32", importc: "SetClassLongA".}
 const
   CP_ACP* = 0
 type
@@ -4969,7 +4967,6 @@ const
   PD_NOPAGENUMS* = 0x8
   PD_COLLATE* = 0x10
   PD_PRINTTOFILE* = 0x20
-  PD_RETURNDEFAULT* = 0x400
   PD_DISABLEPRINTTOFILE* = 0x80000
   PD_CURRENTPAGE* = 0x400000
   PD_NOCURRENTPAGE* = 0x800000
@@ -5070,19 +5067,18 @@ const
   CFM_LINK* = 0x00000020
   CFM_SIZE* = 0x80000000'i32
   CFM_COLOR* = 0x40000000
-  CFM_BACKCOLOR* = 0x04000000
   CFM_FACE* = 0x20000000
   CFM_CHARSET* = 0x08000000
   CFE_UNDERLINE* = 0x00000004
   CFE_PROTECTED* = 0x00000010
   CFM_WEIGHT* = 0x00400000
+  CFM_BACKCOLOR* = 0x04000000
   CFM_EFFECTS* = CFM_BOLD or CFM_ITALIC or CFM_UNDERLINE or CFM_COLOR or CFM_STRIKEOUT or CFE_PROTECTED or CFM_LINK
-  SCF_DEFAULT* = 0x0000
   SCF_SELECTION* = 0x0001
+  SCF_DEFAULT* = 0x0000
   MAX_TAB_STOPS* = 32
   PFM_LINESPACING* = 0x00000100
   GTL_DEFAULT* = 0
-  
 type
   CHARFORMAT2W_UNION1* {.pure, union.} = object
     dwReserved*: DWORD
@@ -7496,7 +7492,6 @@ type
 const
   PRINTER_ENUM_LOCAL* = 0x00000002
   PRINTER_ENUM_CONNECTIONS* = 0x00000004
-
 proc ClosePrinter*(hPrinter: HANDLE): WINBOOL {.winapi, stdcall, dynlib: "winspool.drv", importc.}
 when winimUnicode:
   type

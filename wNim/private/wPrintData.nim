@@ -14,6 +14,7 @@
 ##   `wPageSetupDialog <wPageSetupDialog.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import math
 import wBase
@@ -154,10 +155,6 @@ type
 
 wClass(wPrintData):
 
-  proc final*(self: wPrintData) =
-    ## Default finalizer for wPrintData.
-    discard
-
   proc init*(self: wPrintData, hDevMode: HGLOBAL, hDevNames: HGLOBAL) {.validate.} =
     ## Initializer by hDevMode and hDevNames, for internal use only.
     # MSDN: If the wDeviceOffset and dmDeviceName names are not the same, use
@@ -166,7 +163,7 @@ wClass(wPrintData):
       let pDevNames = cast[ptr DEVNAMES](GlobalLock(hDevNames))
       if pDevNames != nil:
         let tstr = cast[ptr UncheckedArray[TCHAR]](pDevNames)
-        self.mDevice = ^$(&tstr[int pDevNames.wDeviceOffset])
+        self.mDevice = $(&tstr[int pDevNames.wDeviceOffset])
       GlobalUnlock(hDevNames)
 
     if hDevMode != 0:
@@ -176,7 +173,7 @@ wClass(wPrintData):
         self.mDevModeBuffer = newString(size)
         copyMem(&self.mDevModeBuffer, pDevMode, size)
         if self.mDevice.len == 0:
-          self.mDevice = ^$(cast[ptr TChar](&pDevMode.dmDeviceName))
+          self.mDevice = $(cast[ptr TChar](&pDevMode.dmDeviceName))
       GlobalUnlock(hDevMode)
 
   proc init*(self: wPrintData, device: string, devMode: string) {.validate.} =
@@ -191,7 +188,7 @@ wClass(wPrintData):
 
     # If psd.hwndOwner is null, PageSetupDlg() will steal active window for a while.
     # It makes current top-level window flicker.
-    if wAppGetCurrentApp() != nil:
+    if wBaseApp != nil:
       for hwnd in wAppTopLevelHwnd():
         psd.hwndOwner = hwnd
         break
@@ -225,6 +222,11 @@ wClass(wPrintData):
       raise newException(wPrintDataError, "wPrintData creation failed")
 
     self.mDevice = device
+
+  proc init*(self: wPrintData, printData: wPrintData) {.validate.} =
+    ## Initializer by wPrintData object, aka. copy.
+    self.mDevice = printData.mDevice
+    self.mDevModeBuffer = printData.mDevModeBuffer
 
 proc getDevMode(self: wPrintData): HGLOBAL {.shield.} =
   # convert wPrintData to movable block of memory. Used internally.
@@ -262,7 +264,7 @@ proc getPaperName*(self: wPrintData): string {.validate, property, inline.} =
   ## Returns the paper name, if any.
   if self.isOk():
     let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
-    result = ^$(cast[ptr TChar](&pDevMode.dmFormName))
+    result = $(cast[ptr TChar](&pDevMode.dmFormName))
 
 proc getPaperSize*(self: wPrintData): wSize {.validate, property, inline.} =
   ## Returns the paper size, in millimetres.

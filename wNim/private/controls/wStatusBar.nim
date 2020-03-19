@@ -15,6 +15,7 @@
 ##   `wStatusBarEvent <wStatusBarEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -139,14 +140,12 @@ method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
   else: return false
   return self.processMessage(eventKind, cast[WPARAM](id), lparam)
 
-method release(self: wStatusBar) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mSizeConn)
-
 wClass(wStatusBar of wControl):
 
-  proc final*(self: wStatusBar) =
-    ## Default finalizer for wStatusBar.
-    self.wControl.final()
+  method release*(self: wStatusBar) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mSizeConn)
+    free(self[])
 
   proc init*(self: wStatusBar, parent: wWindow, id = wDefaultID,
       style: wStyle = 0) {.validate.} =

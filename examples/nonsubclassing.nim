@@ -6,11 +6,7 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wIcon, wMessageDialog]
+import wNim/[wApp, wFrame, wIcon, wMessageDialog]
 
 let app = App()
 let frame = Frame(title="Hello World", size=(350, 200))

@@ -12,6 +12,7 @@
 ##   `wMenuBar <wMenuBar.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase
@@ -159,10 +160,6 @@ proc detach*(self: wMenuItem) {.validate.} =
 
 wClass(wMenuItem):
 
-  proc final*(self: wMenuItem) =
-    ## Default finalizer for wMenuItem.
-    wAppExclMenuId(uint16 self.mId)
-
   proc init*(self: wMenuItem, id: wCommandID = wIdAny, text = "", help = "",
       kind = wMenuItemNormal, bitmap: wBitmap = nil, submenu: wMenu = nil)
       {.validate.} =
@@ -170,7 +167,11 @@ wClass(wMenuItem):
     if id.int notin 0..0xffff and id != wIdAny:
       raise newException(wError, "Menu ID out of range")
 
-    self.mId = if id == wIdAny: wCommandID wAppNextMenuId() else: id
+    if kind != wMenuItemSeparator:
+      self.mId = if id == wIdAny: wCommandID wAppNextMenuId() else: id
+    else:
+      self.mId = wIdAny
+
     self.mText = text
     self.mHelp = help
     self.mKind = kind

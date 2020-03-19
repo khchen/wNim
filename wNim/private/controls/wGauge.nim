@@ -25,6 +25,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -117,17 +118,16 @@ proc getTaskBar(self: wGauge) =
 
     self.mTaskBar.SetProgressState(self.getTopParent().mHwnd, TBPF_NORMAL)
 
-method release(self: wGauge) {.uknlock.} =
-  self.getTopParent().systemDisconnect(self.mTaskBarCreatedConn)
-
-  if self.mTaskBar != nil:
-    self.mTaskBar.Release()
-
 wClass(wGauge of wControl):
 
-  proc final*(self: wGauge) =
-    ## Default finalizer for wGauge.
-    self.wControl.final()
+  method release*(self: wGauge) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.getTopParent().systemDisconnect(self.mTaskBarCreatedConn)
+
+    if self.mTaskBar != nil:
+      self.mTaskBar.Release()
+
+    free(self[])
 
   proc init*(self: wGauge, parent: wWindow, id = wDefaultID,
       range = 100, value = 0, pos = wDefaultPoint, size = wDefaultSize,

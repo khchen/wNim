@@ -42,6 +42,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wGdiObject
 export wGdiObject
@@ -83,10 +84,6 @@ proc setup(self: wPen, elp: EXTLOGPEN) =
   self.mWidth = elp.elpWidth
 
 wClass(wPen of wGdiObject):
-
-  proc final*(self: wPen) =
-    ## Default finalizer for wPen.
-    self.delete()
 
   proc init*(self: wPen, elp: EXTLOGPEN) {.validate.} =
     ## Initializes a pen from EXTLOGPEN struct. Used internally.

@@ -73,7 +73,8 @@ macro validate*(x: untyped): untyped =
 macro shield*(x: untyped): untyped =
   ## Add export marker to proc but hide it in the document. Used internally.
   when defined(Nimdoc):
-    x[0] = ident($x[0] & "__")
+    if $x[0] != "=": # start with "=" is destructor
+      x[0] = ident($x[0] & "__")
 
   x[0] = postfix(x[0], "*")
   result = x
@@ -82,8 +83,7 @@ macro uknlock(x: untyped): untyped {.shield.} =
   x.addPragma(newColonExpr(ident("locks"), newStrLitNode("unknown")))
   result = x
 
-proc createCtor(procdef: NimNode, className: string, hasFinal: bool,
-    isExport: bool): NimNode =
+proc createCtor(procdef: NimNode, className: string, isExport: bool): NimNode =
 
   # var comment: NimNode
   # if procdef[procdef.len-1][0].kind == nnkCommentStmt:
@@ -113,31 +113,44 @@ proc createCtor(procdef: NimNode, className: string, hasFinal: bool,
       line1 = newCall(ident("new"), ident("result"))
       line2 = newCall(newDotExpr(ident("result"), ident("init")))
 
-    if hasFinal:
-      line1.add ident("final")
-
     for i in 1..<params.len:
       for j in 0..<params[i].len - 2: # ^1: default value, ^2: param type
         line2.add params[i][j]
 
     result.body = newStmtList(newCommentStmtNode("Constructor."), line1, line2)
 
+template releaseOrDestroy*(T: typedesc, P: typedesc, hasFinal: bool): untyped =
+  ## Used internally.
+  when T is wWindow and T isnot wDialog:
+    method release(self: T) =
+      when hasFinal:
+        final(self)
+      procCall P(self).release()
+  else:
+    proc `=destroy`(self: var type(T()[])) =
+      when hasFinal:
+        final(cast[T](addr self))
+      `=destroy`((type(P()[]))(self))
+
 macro wClass*(name: untyped, body: untyped): untyped =
-  ## A macro for building class following wNim's naming convention.
-  ## Constructor is generated from initializer and finalizer automatically.
+  ## A macro for building class following wNim's naming convention. The user can
+  ## use *wClass* to subclass the built-in classes in wNim. Constructor is
+  ## generated from initializer automatically. *final()* proc is optional.
+  ## If provided, it will be called when the object being destroyed automatically.
+  ## In *final()* proc, it don't need to call final() in superclass.
   ##
   ## Example:
   ##
   ## .. code-block:: Nim
   ##   wClass(wMyFrame of wFrame):
+  ##     proc final(self: wMyFrame) =
+  ##       echo "release some resource..."
+  ##
   ##     proc init(self: wMyFrame) =
   ##       wFrame(self).init()
   ##
   ##     proc init(self: wMyFrame, title: string) =
   ##       wFrame(self).init(title=title)
-  ##
-  ##     proc final(self: wMyFrame) =
-  ##       wFrame(self).final()
   ##
   ## Output:
   ##
@@ -146,21 +159,18 @@ macro wClass*(name: untyped, body: untyped): untyped =
   ##     type
   ##       wMyFrame = ref object of wFrame
   ##
-  ##   proc final(self: wMyFrame) =
-  ##     wFrame(self).final()
-  ##
   ##   proc init(self: wMyFrame) =
   ##     wFrame(self).init()
   ##
   ##   proc MyFrame(): wMyFrame {.inline, discardable.} =
-  ##     new(result, final)
+  ##     new(result)
   ##     result.init()
   ##
   ##   proc init(self: wMyFrame; title: string) =
   ##     wFrame(self).init(title=title)
   ##
   ##   proc MyFrame(title: string): wMyFrame {.inline, discardable.} =
-  ##     new(result, final)
+  ##     new(result)
   ##     result.init(title)
 
   result = newStmtList()
@@ -170,7 +180,7 @@ macro wClass*(name: untyped, body: untyped): untyped =
       ($name[1], $name[2])
 
     else: # wClass(wFrame)
-      ($name, "RootObj")
+      ($name, "RootRef")
 
   # assert className[0] == 'w'
 
@@ -188,6 +198,17 @@ macro wClass*(name: untyped, body: untyped): untyped =
       hasFinal = true
       result.add procdef
 
+  let node = parseExpr """
+    when compiles(wBase.$1):
+      discard
+    elif compiles(wApp.$2):
+      releaseOrDestroy($1, wApp.$2, $3)
+    else:
+      releaseOrDestroy($1, $2, $3)
+  """.unindent(4) % [className, parentName, $hasFinal]
+
+  result.add node
+
   for procdef in body:
     var ctor: NimNode
 
@@ -196,7 +217,7 @@ macro wClass*(name: untyped, body: untyped): untyped =
 
     elif procdef.kind == nnkProcDef and procdef.name.eqIdent("init"):
       let isExport = procdef[0].kind == nnkPostfix
-      ctor = procdef.createCtor(className, hasFinal, isExport)
+      ctor = procdef.createCtor(className, isExport)
 
     result.add procdef
     if not ctor.isNil: result.add ctor
@@ -241,11 +262,11 @@ when not defined(release):
     # don't check seq isnil anymore (for v0.19)
     (cast[pointer](1), x.type.name)
 
-  when not isMainModule: # hide from doc
-    template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
-      for tup in vargs:
-        if tup[0] == nil:
-          raise newException(NilAccessError, " not allow nil " & tup[1])
+  template wValidate*(vargs: varargs[(pointer, string), wValidateToPointer]): untyped =
+    ## Used internally.
+    for tup in vargs:
+      if tup[0] == nil:
+        raise newException(NilAccessError, " not allow nil " & tup[1])
 
 else:
   proc wValidateToPointer*[T](x: T): pointer = nil

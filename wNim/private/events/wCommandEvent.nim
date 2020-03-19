@@ -121,6 +121,9 @@
 ##   wEvent_HotkeyChanged            The hotkey was changed.
 ##   ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
+
 import ../wBase
 
 import wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,

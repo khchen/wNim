@@ -6,26 +6,28 @@
 #====================================================================
 
 ## The wApp object represents the application itself. It allow only one instance
-## for a thread. Because every wNim app needs to import this module. So wTypes,
-## wColors, and wKeyCodes are exported by this module for convenience.
+## for a thread. For convenience, *wTypes*, *wColors*, and *wKeyCodes* are
+## exported by this module automatically. The users don't need to import these
+## three modules directly.
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import tables, sets
-import winim/[utils], winim/inc/windef, winimx
+import winim/[utils, winstr], winim/inc/windef, winimx
 import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]
 
 # Every wNim app needs wTypes, so export these in wApp to the user for convenience.
 export wTypes, wColors, wKeyCodes
 
 const wEvent_AppQuit* = wEventId()
-var wTheApp {.threadvar.}: wApp
+const wEvent_WindowUnregister* = wEventId()
 
 proc App*(): wApp {.discardable.} =
   ## Constructor.
-  if not wTheApp.isNil:
+  if not wBaseApp.isNil:
     # "allow only one instance of wApp"
-    return wTheApp
+    return wBaseApp
 
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES or ICC_INTERNET_CLASSES or
@@ -37,126 +39,139 @@ proc App*(): wApp {.discardable.} =
   result.mInstance = GetModuleHandle(nil)
   result.mExitCode = 0
   result.mAccelExists = false
+  result.mClassAtomTable = initTable[string, ATOM]()
   result.mTopLevelWindowTable = initTable[HWND, wWindow]()
   result.mWindowTable = initTable[HWND, wWindow]()
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initTable[UINT, int]()
+  result.mPropagationSet = initHashSet[UINT]()
   result.mWinVersion = wGetWinVersionImpl()
   result.mUsingTheme = usingTheme()
 
-  # initSet is deprecated since v0.20
-  when declared(initHashSet):
-    result.mPropagationSet = initHashSet[UINT]()
-  else:
-    result.mPropagationSet = initSet[UINT]()
-
-  wTheApp = result
-
-template wAppGetCurrentApp*(): wApp =
-  ## Gets the current wApp instance.
-  wTheApp
+  wBaseApp = result
 
 proc wAppGetInstance(): HANDLE {.inline, shield.} =
-  result = wTheApp.mInstance
+  App()
+  result = wBaseApp.mInstance
 
 proc wAppWinVersion(): float {.inline, shield.} =
-  result = wTheApp.mWinVersion
+  App()
+  result = wBaseApp.mWinVersion
 
 proc wUsingTheme(): bool {.inline, shield.} =
-  result = wTheApp.mUsingTheme
+  App()
+  result = wBaseApp.mUsingTheme
 
 proc wAppGetDpi(): int {.shield.} =
-  if wTheApp.mDpi == 0:
+  App()
+  if wBaseApp.mDpi == 0:
     var hdc = GetDC(0)
-    wTheApp.mDpi = GetDeviceCaps(hdc, LOGPIXELSY)
+    wBaseApp.mDpi = GetDeviceCaps(hdc, LOGPIXELSY)
     ReleaseDC(0, hdc)
 
-  result = wTheApp.mDpi
+  result = wBaseApp.mDpi
 
 proc wAppHasTopLevelWindow(): bool {.inline, shield.} =
-  result = (wTheApp.mTopLevelWindowTable.len != 0)
+  App()
+  result = (wBaseApp.mTopLevelWindowTable.len != 0)
 
 proc wAppWindowAdd(win: wWindow) {.inline, shield.} =
-  wTheApp.mWindowTable[win.mHwnd] = win
+  App()
+  wBaseApp.mWindowTable[win.mHwnd] = win
 
 proc wAppWindowFindByHwnd(hwnd: HWND): wWindow {.inline, shield.} =
-  result = wTheApp.mWindowTable.getOrDefault(hwnd)
+  App()
+  result = wBaseApp.mWindowTable.getOrDefault(hwnd)
 
 proc wAppTopLevelWindowAdd(win: wWindow) {.inline, shield.} =
-  wTheApp.mTopLevelWindowTable[win.mHwnd] = win
+  App()
+  wBaseApp.mTopLevelWindowTable[win.mHwnd] = win
 
 proc wAppTopLevelWindowAdd(hwnd: HWND) {.inline, shield.} =
-  wTheApp.mTopLevelWindowTable[hwnd] = nil
+  App()
+  wBaseApp.mTopLevelWindowTable[hwnd] = nil
 
 iterator wAppTopLevelHwnd(): HWND {.inline, shield.} =
-  for hwnd in wTheApp.mTopLevelWindowTable.keys:
+  App()
+  for hwnd in wBaseApp.mTopLevelWindowTable.keys:
     yield hwnd
 
-proc wAppWindowDelete(win: wWindow) {.inline, shield.} =
-  wTheApp.mWindowTable.del(win.mHwnd)
-  wTheApp.mTopLevelWindowTable.del(win.mHwnd)
-
 proc wAppWindowDelete(hwnd: HWND) {.inline, shield.} =
-  wTheApp.mWindowTable.del(hwnd)
-  wTheApp.mTopLevelWindowTable.del(hwnd)
+  App()
+  wBaseApp.mWindowTable.del(hwnd)
+  wBaseApp.mTopLevelWindowTable.del(hwnd)
+
+proc wAppRegisterClassAtom(className: string, atom: ATOM) {.inline, shield.} =
+  App()
+  if atom != 0:
+    wBaseApp.mClassAtomTable[className] = atom
 
 proc wAppIsMessagePropagation(msg: UINT): bool {.inline, shield.} =
-  result = msg in wTheApp.mPropagationSet
+  App()
+  result = msg in wBaseApp.mPropagationSet
 
 proc wAppIncMessage(msg: UINT) {.inline, shield.} =
-  wTheApp.mMessageCountTable.inc(msg)
+  App()
+  wBaseApp.mMessageCountTable.inc(msg)
 
 proc wAppDecMessage(msg: UINT) {.inline, shield.} =
-  wTheApp.mMessageCountTable.dec(msg)
+  App()
+  wBaseApp.mMessageCountTable.dec(msg)
 
 proc wAppHasMessage(msg: UINT): bool {.inline, shield.} =
-  msg in wTheApp.mMessageCountTable
+  App()
+  msg in wBaseApp.mMessageCountTable
 
 proc wAppAccelOn() {.inline, shield.} =
-  wTheApp.mAccelExists = true
+  App()
+  wBaseApp.mAccelExists = true
 
 proc wAppMenuBaseAdd(menu: wMenuBase) {.inline, shield.} =
-  wTheApp.mMenuBaseTable[menu.mHmenu] = cast[pointer](menu)
+  App()
+  wBaseApp.mMenuBaseTable[menu.mHmenu] = cast[pointer](menu)
 
 proc wAppMenuBaseDelete(menu: wMenuBase) {.inline, shield.} =
-  wTheApp.mMenuBaseTable.del(menu.mHmenu)
+  App()
+  wBaseApp.mMenuBaseTable.del(menu.mHmenu)
 
-# template wAppGDIStock(typ: typedesc, sn: int, obj: wGdiObject): untyped =
-#   if sn > wTheApp.mGDIStockSeq.high:
-#     wTheApp.mGDIStockSeq.setlen(sn+1)
+proc wAppExclMenuId(menuId: uint16) {.inline, shield.} =
+  App()
+  wBaseApp.mMenuIdSet.excl menuId
 
-#   if wTheApp.mGDIStockSeq[sn] == nil:
-#     wTheApp.mGDIStockSeq[sn] = obj
+proc wAppInclMenuId(menuId: uint16) {.inline, shield.} =
+  App()
+  wBaseApp.mMenuIdSet.incl menuId
 
-#   typ(wTheApp.mGDIStockSeq[sn])
+proc wAppNextMenuId(): uint16 {.inline, shield.} =
+  App()
+  for i in countdown(uint16.high - 1, wIdUser.uint16):
+    if i notin wBaseApp.mMenuIdSet:
+      return i
 
 iterator wAppWindows(): wWindow {.inline, shield.} =
-  for hwnd, win in wTheApp.mWindowTable:
+  App()
+  for hwnd, win in wBaseApp.mWindowTable:
+    yield win
+
+iterator wAppTopLevelWindows(): wWindow {.inline, shield.} =
+  App()
+  for hwnd, win in wBaseApp.mTopLevelWindowTable:
     yield win
 
 iterator wAppMenuBase(): wMenuBase {.shield.} =
-  for hMenu in wTheApp.mMenuBaseTable.keys:
+  App()
+  for hMenu in wBaseApp.mMenuBaseTable.keys:
     if IsMenu(hMenu):
-      let menuBase = cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
+      let menuBase = cast[wMenuBase](wBaseApp.mMenuBaseTable[hMenu])
       yield menuBase
 
 proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline, shield.} =
-  if hMenu in wTheApp.mMenuBaseTable:
-    return cast[wMenuBase](wTheApp.mMenuBaseTable[hMenu])
+  App()
+  if hMenu in wBaseApp.mMenuBaseTable:
+    return cast[wMenuBase](wBaseApp.mMenuBaseTable[hMenu])
 
-proc wAppExclMenuId(menuId: uint16) {.inline, shield.} =
-  wTheApp.mMenuIdSet.excl menuId
-
-proc wAppInclMenuId(menuId: uint16) {.inline, shield.} =
-  wTheApp.mMenuIdSet.incl menuId
-
-proc wAppNextMenuId(): uint16 {.inline, shield.} =
-  for i in wIdUser.uint16 .. uint16.high:
-    if i notin wTheApp.mMenuIdSet:
-      return i
-
-proc wAppProcessDialogMessage(msg: var MSG): bool {.shield.} =
+proc wAppProcessDialogMessage(msg: var MSG): bool =
   # find the top-level non-child window.
   var hwnd = GetAncestor(msg.hwnd, GA_ROOT)
 
@@ -166,8 +181,8 @@ proc wAppProcessDialogMessage(msg: var MSG): bool {.shield.} =
     # but is it necessary?
     return IsDialogMessage(hwnd, msg)
 
-proc wAppProcessAcceleratorMessage(msg: var MSG): bool {.shield.}=
-  if wTheApp.mAccelExists:
+proc wAppProcessAcceleratorMessage(msg: var MSG): bool {.shield.} =
+  if wBaseApp.mAccelExists:
     var win = wAppWindowFindByHwnd(msg.hwnd)
     while win != nil:
       if win.mAcceleratorTable != nil:
@@ -178,7 +193,25 @@ proc wAppProcessAcceleratorMessage(msg: var MSG): bool {.shield.}=
       win = win.mParent
   return false
 
+proc wAppPostUnregisterMessage(win: wWindow) {.shield, inline.} =
+  # we cannot call UnregisterClass in WM_NCDESTROY, so let the mainloop do it.
+  wBaseApp.mClassAtomTable.withValue(win.mClassName, atom):
+    PostMessage(0, wEvent_WindowUnregister, WPARAM atom[], 0)
+
+proc wAppProcessWindowUnregister(msg: var MSG): bool =
+  if msg.message == wEvent_WindowUnregister:
+    result = true
+
+    let atom = ATOM msg.wParam
+    if UnregisterClass(cast[LPCTSTR](atom), wAppGetInstance()) != 0:
+
+      for key, value in wBaseApp.mClassAtomTable:
+        if value == atom:
+          wBaseApp.mClassAtomTable.del(key)
+          break
+
 proc messageLoop(modalWin: HWND = 0): int {.shield.} =
+  App()
   var msg: MSG
   while true:
     if GetMessage(msg, 0, 0, 0) == 0 or msg.message == wEvent_AppQuit:
@@ -192,6 +225,9 @@ proc messageLoop(modalWin: HWND = 0): int {.shield.} =
       continue
 
     if wAppProcessAcceleratorMessage(msg):
+      continue
+
+    if wAppProcessWindowUnregister(msg):
       continue
 
     # we can use IsDialogMessage here to handle key navigation
@@ -214,9 +250,6 @@ proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
     result = messageLoop()
-
-  for win in wAppWindows():
-    discard DestroyWindow(win.mHwnd)
 
 proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) {.validate.} =
   # Events of the classes deriving from wCommandEvent are propagated by default

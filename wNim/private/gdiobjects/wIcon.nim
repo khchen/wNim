@@ -16,6 +16,7 @@
 ##   `wIconImage <wIconImage.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wIconImage, ../wImage, wGdiObject
 export wGdiObject
@@ -42,16 +43,9 @@ proc getHeight*(self: wIcon): int {.validate, property, inline.} =
 method delete*(self: wIcon) {.inline.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if self.mHandle != 0 and self.mDeletable:
-    DestroyIcon(self.mHandle)
-
-  self.mHandle = 0
+  `=destroy`(self[])
 
 wClass(wIcon of wGdiObject):
-
-  proc final*(self: wIcon) =
-    ## Default finalizer for wIcon.
-    self.delete()
 
   proc init*(self: wIcon, iconImage: wIconImage, size = wDefaultSize) {.validate.} =
     ## Initializes an icon from a wIconImage object.

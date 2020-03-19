@@ -11,6 +11,7 @@
 ##   `wWindow <wWindow.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import wBase, wWindow
 export wWindow
@@ -69,9 +70,9 @@ proc setToolTip*(self: wToolTip, maxWidth = wDefault, autoPop = wDefault,
 
 wClass(wToolTip of wWindow):
 
-  proc final*(self: wToolTip) =
-    ## Default finalizer for wToolTip.
-    self.wWindow.final()
+  method release*(self: wToolTip) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wToolTip, text = "", pos = wDefaultPoint, title = "",
       icon: wIcon = nil) {.validate.} =

@@ -22,6 +22,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl, wDatePickerCtrl
 export wControl
@@ -52,9 +53,9 @@ proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int])
 
 wClass(wTimePickerCtrl of wDatePickerCtrl):
 
-  proc final*(self: wTimePickerCtrl) =
-    ## Default finalizer for wTimePickerCtrl.
-    self.wDatePickerCtrl.final()
+  method release*(self: wTimePickerCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wTimePickerCtrl, parent: wWindow, id = wDefaultID,
       time = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,

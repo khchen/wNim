@@ -32,6 +32,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -89,14 +90,12 @@ proc click*(self: wCheckBox) {.validate, inline.} =
   ## Simulates the user clicking a checkbox.
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
-method release(self: wCheckBox) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 wClass(wCheckBox of wControl):
 
-  proc final*(self: wCheckBox) =
-    ## Default finalizer for wCheckBox.
-    self.wControl.final()
+  method release*(self: wCheckBox) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wCheckBox, parent: wWindow, id = wDefaultID,
       label: string = "", pos = wDefaultPoint, size = wDefaultSize,

@@ -19,6 +19,7 @@
 ##   `wIconImage <wIconImage.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 from ../winimx import nil # For BITMAP
 import ../wBase, ../wImage, wGdiObject
@@ -32,10 +33,6 @@ proc error(self: wBitmap) {.inline.} =
   raise newException(wBitmapError, "wBitmap creation failed")
 
 wClass(wBitmap of wGdiObject):
-
-  proc final*(self: wBitmap) =
-    ## Default finalizer for wBitmap.
-    self.delete()
 
   proc init*(self: wBitmap, width, height: int, depth: int = 0) {.validate.} =
     ## Initializes a new bitmap. A depth of 0 indicates the depth of the current

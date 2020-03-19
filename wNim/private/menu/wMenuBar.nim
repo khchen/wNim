@@ -15,8 +15,9 @@
 ##   `wMenuItem <wMenuItem.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
-import sets, strutils
+import strutils
 import ../wBase
 
 # For recursive module dependencies
@@ -32,9 +33,9 @@ export wMenuBase
 
 proc refresh*(self: wMenuBar) {.validate.} =
   ## Redraw the menubar.
-  for frame in self.mParentFrameSet:
-    if frame.mMenuBar == self:
-      DrawMenuBar(frame.mHwnd)
+  for hwnd in wAppTopLevelHwnd():
+    if GetMenu(hwnd) == self.mHmenu:
+      DrawMenuBar(hwnd)
 
 proc attach*(self: wMenuBar, frame: wFrame) {.validate.} =
   ## Attach a menubar to frame window.
@@ -42,7 +43,6 @@ proc attach*(self: wMenuBar, frame: wFrame) {.validate.} =
   frame.mMenuBar = self
   if SetMenu(frame.mHwnd, self.mHmenu) != 0:
     DrawMenuBar(frame.mHwnd)
-    self.mParentFrameSet.incl frame
 
 proc detach*(self: wMenuBar, frame: wFrame) {.validate.} =
   ## Detach a menubar from the frame.
@@ -51,22 +51,27 @@ proc detach*(self: wMenuBar, frame: wFrame) {.validate.} =
     frame.mMenuBar = nil
     SetMenu(frame.mHwnd, 0)
     DrawMenuBar(frame.mHwnd)
-  if frame in self.mParentFrameSet:
-    self.mParentFrameSet.excl frame
 
 proc detach*(self: wMenuBar) {.validate.} =
   ## Detach a menubar from all frames.
-  for frame in self.mParentFrameSet:
-    self.detach(frame)
+  for win in wAppTopLevelWindows():
+    if win of wBase.wFrame:
+      let frame = wBase.wFrame(win)
+      if frame.mMenuBar == self:
+        self.detach(frame)
 
 proc isAttached*(self: wMenuBar): bool {.validate.} =
   ## Return true if a menubar is attached to some frame window.
-  result = self.mParentFrameSet.len > 0
+  for win in wAppTopLevelWindows():
+    if win of wBase.wFrame:
+      let frame = wBase.wFrame(win)
+      if frame.mMenuBar == self:
+        return true
 
 proc isAttached*(self: wMenuBar, frame: wFrame): bool {.validate.} =
   ## Return true if a menubar is attached to the frame window.
   wValidate(frame)
-  result = frame in self.mParentFrameSet
+  result = (frame.mMenuBar == self)
 
 proc insert*(self: wMenuBar, pos: int, menu: wMenu, text: string,
     bitmap: wBitmap = nil) {.validate.} =
@@ -237,6 +242,12 @@ proc remove*(self: wMenuBar, menu: wMenu) {.validate.} =
     if pos == wNotFound: break
     self.remove(pos)
 
+proc removeAll*(self: wMenuBar) {.validate.} =
+  ## Removes all the menu from the menubar.
+  for i in 0..<GetMenuItemCount(self.mHmenu):
+    RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+  self.mMenuList.setLen(0)
+
 proc replace*(self: wMenuBar, pos: int, menu: wMenu, text: string,
     bitmap: wBitmap = nil): wMenu {.validate, discardable.} =
   ## Replaces the menu at the given position with another one.
@@ -278,19 +289,9 @@ proc delete*(self: wMenuBar) {.validate.} =
   ## Delete the menubar.
   if self.mHmenu != 0:
     self.detach()
-    self.wAppMenuBaseDelete()
-    for i in 0..<self.getCount():
-      RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-    DestroyMenu(self.mHmenu)
-
-    self.mMenuList = @[]
-    self.mHmenu = 0
+    `=destroy`(self[])
 
 wClass(wMenuBar of wMenuBase):
-
-  proc final*(self: wMenuBar) =
-    ## Default finalizer for wMenuBar.
-    self.delete()
 
   proc init*(self: wMenuBar) {.validate.} =
     ## Initializes an empty menubar.
@@ -302,12 +303,6 @@ wClass(wMenuBar of wMenuBase):
     SetMenuInfo(self.mHmenu, menuInfo)
     self.mMenuList = @[]
     self.wAppMenuBaseAdd()
-
-    # initSet is deprecated since v0.20
-    when declared(initHashSet):
-      self.mParentFrameSet = initHashSet[wFrame]()
-    else:
-      self.mParentFrameSet = initSet[wFrame]()
 
   proc init*(self: wMenuBar, menus: openarray[(wMenu, string)]) {.validate.} =
     ## Initializes a menubar from arrays of menus and titles.

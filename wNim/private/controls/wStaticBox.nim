@@ -15,6 +15,7 @@
 ##   `wControl <wControl.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -49,9 +50,9 @@ method getClientSize*(self: wStaticBox): wSize {.property, uknlock.} =
 
 wClass(wStaticBox of wControl):
 
-  proc final*(self: wStaticBox) =
-    ## Default finalizer for wStaticBox.
-    self.wControl.final()
+  method release*(self: wStaticBox) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wStaticBox, parent: wWindow, id = wDefaultID, label: string = "",
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =

@@ -15,6 +15,7 @@
 ##   `wMenuItem <wMenuItem.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase
@@ -66,11 +67,20 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = wIdAny, text = "",
   ## Inserts the given item before the position.
   ## Kind is one of wMenuItemNormal, wMenuItemCheck, wMenuItemRadio
   ## or wMenuItemSeparator.
+
   var
     pos = pos
-    item = MenuItem(id=id, text=text, help=help, kind=kind, bitmap=bitmap,
-      submenu=submenu)
+    kind = kind
     count = self.mItemList.len
+    submenu = submenu
+
+  # check separator before MenuItem ctor, so that separator's id can be -1
+  if text.len == 0:
+    kind = wMenuItemSeparator
+    submenu = nil # separator don't allow submenu
+
+  var item = MenuItem(id=id, text=text, help=help, kind=kind, bitmap=bitmap,
+      submenu=submenu)
 
   if pos < 0: pos = count
   elif pos > count: pos = count
@@ -81,8 +91,7 @@ proc insert*(self: wMenu, pos: int = -1, id: wCommandID = wIdAny, text = "",
     dwItemData: cast[ULONG_PTR](item),
     wID: UINT item.mId) # for wIdAny, item.mId != id
 
-  if kind == wMenuItemSeparator or text.len == 0:
-    item.mKind = wMenuItemSeparator
+  if kind == wMenuItemSeparator:
     menuItemInfo.fType = MFT_SEPARATOR
 
   else:
@@ -268,6 +277,12 @@ proc remove*(self: wMenu, submenu: wMenu) {.validate.} =
     let pos = self.find(submenu)
     if pos == wNotFound: break
     self.remove(pos)
+
+proc removeAll*(self: wMenu) {.validate.} =
+  ## Removes all the menu items from the menu.
+  for i in 0..<GetMenuItemCount(self.mHmenu):
+    RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+  self.mItemList.setLen(0)
 
 proc delete*(self: wMenu, pos: int) {.validate.} =
   ## Deletes the menu item from the menu. Same as remove().
@@ -485,24 +500,11 @@ proc len*(self: wMenu): int {.validate, inline.} =
   ## This shoud be equal to getCount() in most case.
   result = self.mItemList.len
 
-proc deleteImpl(self: wMenu) {.validate.} =
-  # Clear self.mItemList in final() will let GC crash somehow.
-  # So, only clear it in real delete().
-  # For final(), let GC clear it later automatically.
-  if self.mHmenu != 0:
-    self.detach()
-    self.wAppMenuBaseDelete()
-    if self.mDeletable:
-      for i in 0..<self.getCount():
-        RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-      DestroyMenu(self.mHmenu)
-    # self.mItemList.setLen(0)
-    self.mHmenu = 0
-
 proc delete*(self: wMenu) {.validate.} =
   ## Delete the menu.
-  self.deleteImpl()
-  self.mItemList.setLen(0)
+  if self.mHmenu != 0:
+    self.detach()
+    `=destroy`(self[])
 
 proc destroy*(self: wMenu, pos: int) {.validate.} =
   ## Destroy the menu item from the menu.
@@ -514,10 +516,6 @@ proc destroy*(self: wMenu, pos: int) {.validate.} =
     self.mItemList.delete(pos)
 
 wClass(wMenu of wMenuBase):
-
-  proc final*(self: wMenu) =
-    ## Default finalizer for wMenu.
-    self.deleteImpl()
 
   proc init*(self: wMenu) {.validate.} =
     ## Initializes an empty menu.

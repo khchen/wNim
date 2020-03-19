@@ -36,6 +36,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -328,20 +329,19 @@ method getBestSize*(self: wListBox): wSize {.property, inline, uknlock.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method release(self: wListBox) {.uknlock.} =
-  # self.mParent may be nil for wrapped wListBox.
-  if not self.mParent.isNil:
-    self.mParent.systemDisconnect(self.mCommandConn)
-
 method trigger(self: wListBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
 wClass(wListBox of wControl):
 
-  proc final*(self: wListBox) =
-    ## Default finalizer for wListBox.
-    self.wControl.final()
+  method release*(self: wListBox) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    # self.mParent may be nil for wrapped wListBox.
+    if not self.mParent.isNil:
+      self.mParent.systemDisconnect(self.mCommandConn)
+
+    free(self[])
 
   proc init*(self: wListBox, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, choices: openarray[string] = [],

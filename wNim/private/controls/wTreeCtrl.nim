@@ -41,10 +41,11 @@
 ##   `wTreeEvent <wTreeEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import tables
-import ../wBase, ../wImageList, wControl, wListCtrl
-export wControl, wListCtrl
+import ../wBase, wControl, wListCtrl, wTextCtrl
+export wControl, wListCtrl, wTextCtrl
 
 const
   # TreeCtrl styles and consts
@@ -1195,15 +1196,11 @@ proc wTreeCtrl_RightDown(event: wEvent) =
     item.select()
     event.skip
 
-method release(self: wTreeCtrl) {.uknlock.} =
-  self.mImageListNormal = nil
-  self.mImageListState = nil
-
 wClass(wTreeCtrl of wControl):
 
-  proc final*(self: wTreeCtrl) =
-    ## Default finalizer for wTreeCtrl.
-    self.wControl.final()
+  method release*(self: wTreeCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wTreeCtrl, parent: wWindow, id: wCommandID = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wTrNoButtons) {.validate.} =

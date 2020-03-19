@@ -23,6 +23,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../gdiobjects/wFont, wDialog
 export wDialog, wFont
@@ -115,10 +116,6 @@ proc wFontHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT_
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
 wClass(wFontDialog of wDialog):
-
-  proc final*(self: wFontDialog) =
-    ## Default finalizer for wFontDialog.
-    self.wDialog.final()
 
   proc init*(self: wFontDialog, owner: wWindow = nil, font: wFont = nil) {.validate.} =
     ## Initializer.

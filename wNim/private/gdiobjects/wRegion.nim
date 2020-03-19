@@ -14,6 +14,7 @@
 ##    `wDC <wDC.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wImage, wGdiObject
 export wGdiObject
@@ -27,10 +28,6 @@ type
     wRegionCopy = RGN_COPY
 
 wClass(wRegion of wGdiObject):
-
-  proc final*(self: wRegion) =
-    ## Default finalizer for wRegion.
-    self.delete()
 
   proc init*(self: wRegion) {.validate, inline.} =
     ## Initializes am empty region.

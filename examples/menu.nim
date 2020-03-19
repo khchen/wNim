@@ -9,10 +9,7 @@ import
   strformat,
   resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage]
 
 type
   # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.

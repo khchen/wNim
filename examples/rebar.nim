@@ -6,12 +6,8 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wImageList, wImage, wBitmap, wIcon, wFrame, wPanel,
-    wStatusBar, wRebar, wToolBar, wButton, wComboBox]
+import wNim/[wApp, wImageList, wImage, wBitmap, wIcon, wFrame, wPanel,
+  wStatusBar, wRebar, wToolBar, wButton, wComboBox]
 
 type
   MenuID = enum

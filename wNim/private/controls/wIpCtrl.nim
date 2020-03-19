@@ -37,6 +37,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import net
 import ../wBase, wControl, wTextCtrl
@@ -119,9 +120,9 @@ method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wIpCtrl of wControl):
 
-  proc final*(self: wIpCtrl) =
-    ## Default finalizer for wIpCtrl.
-    self.wControl.final()
+  method release*(self: wIpCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wIpCtrl, parent: wWindow, id = wDefaultID, value: int = 0,
       pos = wDefaultPoint, size = wDefaultSize, font: wFont = nil,

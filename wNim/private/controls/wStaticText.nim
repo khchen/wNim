@@ -35,6 +35,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -68,14 +69,12 @@ proc wStaticText_DoCommand(self: wControl, event: wEvent) {.shield.} =
       self.processMessage(wEvent_CommandLeftDoubleClick, event.mWparam, event.mLparam)
     else: discard
 
-method release(self: wStaticText) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 wClass(wStaticText of wControl):
 
-  proc final*(self: wStaticText) =
-    ## Default finalizer for wStaticText.
-    self.wControl.final()
+  method release*(self: wStaticText) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wStaticText, parent: wWindow, id = wDefaultID,
       label: string = "", pos = wDefaultPoint, size = wDefaultSize,

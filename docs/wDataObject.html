@@ -1279,8 +1279,6 @@ function main() {
     title="doDragDrop(self: wDataObject; flags: int = 3 or 4): int"><wbr />do<wbr />Drag<wbr />Drop<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#delete%2CwDataObject"
     title="delete(self: wDataObject)"><wbr />delete<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwDataObject"
-    title="final(self: wDataObject)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwDataObject%2Cptr.IDataObject"
     title="init(self: wDataObject; dataObj: ptr IDataObject)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#DataObject%2Cptr.IDataObject"
@@ -1417,12 +1415,6 @@ Starts the drag-and-drop operation which will terminate when the user releases t
 Nim's garbage collector will delete this object by default. However, sometimes you maybe want do that by yourself. Moreover, if the data object is still on the clipboard, delete it will force to flush it.
 
 </dd>
-<a id="final,wDataObject"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wDataObject.
-
-</dd>
 <a id="init,wDataObject,ptr.IDataObject"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">;</span> <span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1431,7 +1423,7 @@ Initializes a dataObject from IDataObject COM interface. Used internally.
 </dd>
 <a id="DataObject,ptr.IDataObject"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">IDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1459,7 +1451,7 @@ Initializes a dataObject from files. The path must exist.
 </dd>
 <a id="DataObject,openArray[string]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">files</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1473,7 +1465,7 @@ Initializes a dataObject from bitmap.
 </dd>
 <a id="DataObject,wBitmap"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">bmp</span><span class="Other">:</span> <span class="Identifier">wBitmap</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -1487,7 +1479,7 @@ Initializes a dataObject from a wDataObject, aka. copy.
 </dd>
 <a id="DataObject,wDataObject"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">DataObject</span><span class="Other">(</span><span class="Identifier">dataObj</span><span class="Other">:</span> <span class="Identifier">wDataObject</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span>
-    <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wDataObjectError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
@@ -1515,7 +1507,7 @@ Iterate each file in this file list.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:34 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:14 UTC</small>
       </div>
     </div>
   </div>

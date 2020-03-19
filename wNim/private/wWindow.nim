@@ -51,6 +51,7 @@
 ##   - `wDragDropEvent <wDragDropEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import macros, dynlib, tables, lists
 import wBase, wUtils, wDataObject, gdiobjects/[wFont, wBrush, wCursor]
@@ -60,6 +61,10 @@ proc screenToClient*(self: wWindow, pos: wPoint): wPoint
 
 import wEvent, wResizable
 export wEvent, wResizable
+
+type
+  wWindowError* = object of wError
+    ## An error raised when wWindow creation failed.
 
 # Forward declarations
 proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.}
@@ -249,11 +254,14 @@ proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete().
   self.delete()
 
-method release(self: wWindow) {.base, inline, shield, uknlock.} =
-  # override this if a window need extra code to release the resource
-  # delete only destroy the window
-  # really resoruce clear is in WM_NCDESTROY
-  discard
+method release*(self: wWindow) {.base, inline, uknlock.} =
+  ## Release all the resources during destroying. Used internally.
+
+  # override this if a window needs extra code to release the resource
+  # make sure that all reference are freed by release()
+  # include child controls, event connections, etc.
+  # so that gc:arc won't have memory leaks
+  free(self[])
 
 method trigger(self: wWindow) {.base, inline, shield, uknlock.} =
   # override this if a window need extra init after window create.
@@ -849,8 +857,6 @@ method setBackgroundColor*(self: wWindow, color: wColor) {.base, property.} =
   else:
     self.mBackgroundBrush = Brush(color)
 
-  SetClassLongPtr(self.mHwnd, GCL_HBRBACKGROUND,
-    cast[LONG_PTR](self.mBackgroundBrush.mHandle))
   self.refresh()
 
 proc setId*(self: wWindow, id: wCommandID)  {.validate, property, inline.} =
@@ -1118,6 +1124,13 @@ proc popupMenu*(self: wWindow, menu: wMenu, pos: wPoint = wDefaultPoint,
     SetMenuInfo(menu.mHmenu, menuInfo)
     result = wCommandID ret
 
+  else:
+    when defined(gcDestructors):
+      # Sometimes the menu will be out of scope before WM_MENUCOMMAND occurring.
+      # Here we make sure the menu will be alive.
+      # Traditional GC is lazy, so this situation won't happen.
+      self.mPopupMenu = menu
+
 proc popupMenu*(self: wWindow, menu: wMenu, x: int, y: int, flag = 0): wCommandID
     {.validate, inline, discardable.}=
   ## Pops up the given menu at the specified coordinates.
@@ -1364,49 +1377,43 @@ proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventProc = nil,
 
 proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.} =
   # Used internally: a default behavior cannot be changed by user
-  var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
-  self.mSystemConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, handler=handler, undeletable=true)
+  self.mSystemConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc hardConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.} =
   # Used internally: a default behavior can be changed by user but cannot be deleted
-  var connection = EventConnection(msg=msg, handler=handler, undeletable=true)
-  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, handler=handler, undeletable=true)
+  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc connect*(self: wWindow, msg: UINT, handler: wEventProc,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=false)
-  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, handler=handler, userData=userData, undeletable=false)
+  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc connect*(self: wWindow, msg: UINT, handler: wEventNeatProc,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type with the event handler defined as "proc ()".
-  var connection = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=false)
-  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, neatHandler=handler, userData=userData, undeletable=false)
+  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventProc,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc (event: wEvent)".
-  var connection = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=false)
-  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, id=id, handler=handler, userData=userData, undeletable=false)
+  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc connect*(self: wWindow, msg: UINT, id: wCommandID, handler: wEventNeatProc,
     userData: int = 0): wEventConnection {.validate, discardable.} =
   ## Connects the given event type and specified ID with the event handler defined as "proc ()".
-  var connection = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=false)
-  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(connection)
+  result = EventConnection(msg=msg, id=id, neatHandler=handler, userData=userData, undeletable=false)
+  self.mConnectionTable.mgetOrPut(msg, initDoublyLinkedList[wEventConnection]()).append(result)
   wAppIncMessage(msg)
-  result = connection
 
 proc getCommandEvent(window: wWindow): UINT =
   if window of wFrame:
@@ -1993,18 +2000,23 @@ proc wWindow_DoNcDestroy(event: wEvent) =
     DestroyWindow(self.mTipHwnd)
     self.mTipHwnd = 0
 
-  self.release()
-
-  # add this to avoid GC not delete the object who has reference to itself in the
-  # event table.
-  self.mConnectionTable.clear()
-  self.mSystemConnectionTable.clear()
-
-  wAppWindowDelete(self)
   if self.mParent != nil:
     let index = self.mParent.mChildren.find(self)
     if index != -1:
       self.mParent.mChildren.delete(index)
+
+  wAppWindowDelete(self.mHwnd)
+
+  # tell wApp.messageLoop() to try to unregister the window class
+  if self.mRegistered:
+    wAppPostUnregisterMessage(self)
+
+  # release() must be last use of this object, it clean all the resource
+  self.release()
+
+proc wWindow_DoSubProcDestroy(event: wEvent) =
+  event.mWindow.processMessage(wEvent_Destroy)
+  event.wWindow_DoNcDestroy()
 
 proc wWindow_OnCommand(event: wEvent) =
   let self = event.mWindow
@@ -2060,6 +2072,29 @@ proc wWindow_OnCtlColor(event: wEvent) =
       SetTextColor(hdc, win.mForegroundColor)
 
     event.mResult = LRESULT win.mBackgroundBrush.mHandle
+    processed = true
+
+proc wWindow_OnEraseBackground(event: wEvent) =
+  var processed = false
+  defer:
+    # MSDN: An application should return nonzero in response to WM_ERASEBKGND
+    # if it processes the message and erases the background
+    if processed: event.mResult = TRUE
+    event.skip(if processed: false else: true)
+
+  var
+    hdc = HDC event.mWparam
+    self = event.mWindow
+    rect: RECT
+
+  if self.mRegistered:
+
+    if self.mBackgroundColor != -1: # -1 means Transparent
+      let oldColor = SetBkColor(hdc, self.mBackgroundColor)
+      GetClientRect(self.mHwnd, &rect)
+      ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, nil, 0, nil)
+      SetBkColor(hdc, oldColor)
+
     processed = true
 
 proc wWindow_OnSetCursor(event: wEvent) =
@@ -2203,6 +2238,7 @@ proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT
     if self.processMessage(msg, wParam, lParam, result):
       return result
 
+    # notice: mHookProc cannot handle WM_NCDESTROY
     if self.mHookProc != nil:
       if self.mHookProc(self, msg, wParam, lParam):
         return result
@@ -2223,13 +2259,17 @@ proc wSubProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM,
   if msg == WM_NCDESTROY:
     RemoveWindowSubclass(hwnd, wSubProc, uIdSubclass)
 
+  # notice: mHookProc cannot handle WM_NCDESTROY
   if self.mHookProc != nil:
     if self.mHookProc(self, msg, wParam, lParam):
       return result
 
   return DefSubclassProc(hwnd, msg, wParam, lParam)
 
-proc initBase(self: wWindow) {.shield.} =
+proc initBase(self: wWindow, className: string) {.shield.} =
+  if className.len == 0:
+    raise newException(wWindowError, "wWindow creation failed")
+
   self.wResizable.init()
   self.mConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
   self.mSystemConnectionTable = initTable[UINT, DoublyLinkedList[wEventConnection]]()
@@ -2237,13 +2277,14 @@ proc initBase(self: wWindow) {.shield.} =
   self.mMaxSize = wDefaultSize
   self.mMinSize = wDefaultSize
   self.mCursor = wNilCursor
+  self.mClassName = className
 
 proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     title = "", pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0,
     bgColor: wColor = wDefaultColor, fgColor: wColor = wDefaultColor,
-    className = "wWindow", owner: wWindow = nil,  regist = true) {.shield.} =
+    className = "wWindow", owner: wWindow = nil, regist = true) {.shield.} =
   # Used internally
-  self.initBase()
+  self.initBase(className)
   self.mParent = parent
 
   var
@@ -2261,30 +2302,20 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   self.mBackgroundColor = bgColor
   self.mForegroundColor = fgColor
 
-  proc unusedClassName(base: string): string =
-    var
-      count = 1
-      wc: WNDCLASSEX
-
-    while true:
-      result = base & $count
-      count.inc
-      if GetClassInfoEx(wAppGetInstance(), result, wc) == 0: break
-
-  var className = className
   if regist:
-    className = unusedClassName(className)
+    self.mRegistered = true
+
     var wc: WNDCLASSEX
     wc.cbSize = sizeof(wc)
     wc.style = CS_HREDRAW or CS_VREDRAW or CS_DBLCLKS
     wc.lpfnWndProc = wWndProc
     wc.hInstance = wAppGetInstance()
     wc.hCursor = LoadCursor(0, IDC_ARROW)
-    wc.hbrBackground = self.mBackgroundBrush.mHandle
     wc.lpszClassName = className
 
-    if RegisterClassEx(wc) == 0:
-      raise newException(wError, className & " class register failure")
+    let atom = RegisterClassEx(wc)
+    if atom != 0:
+      wAppRegisterClassAtom(className, atom)
 
   let
     isHideTaskbar = (style and wHideTaskbar) != 0
@@ -2332,7 +2363,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
     initWidth, initHeight, parentHwnd, int id, wAppGetInstance(), cast[LPVOID](self))
 
   if self.mHwnd == 0:
-    raise newException(wError, className & " window creation failed")
+    raise newException(wWindowError, "wWindow creation failed")
 
   # preapre something after window creation asap but before set size.
   # aka WM_CREATE for wnim window.
@@ -2380,6 +2411,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
   self.hardConnect(WM_CTLCOLOREDIT, wWindow_OnCtlColor)
   self.hardConnect(WM_CTLCOLORSTATIC, wWindow_OnCtlColor)
   self.hardConnect(WM_CTLCOLORLISTBOX, wWindow_OnCtlColor)
+  self.hardConnect(WM_ERASEBKGND, wWindow_OnEraseBackground)
   self.hardConnect(WM_SETCURSOR, wWindow_OnSetCursor)
 
   # Since a wWindow can popupMenu, it should be able to handle the menu message
@@ -2392,14 +2424,15 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
 
 wClass(wWindow of wResizable):
 
-  proc final*(self: wWindow) =
-    ## Default finalizer for wWindow.
-    # Basically, a window should clear it's resource in WM_NCDESTROY event.
-    self.wResizable.final()
-
   proc init*(self: wWindow, hWnd: HWND) {.validate.} =
     ## Initializes a wWindow by subclassing the hWnd.
-    self.initBase()
+    if hWnd == 0:
+      raise newException(wWindowError, "wWindow creation failed")
+
+    var className = T(256)
+    className.setLen(GetClassName(hWnd, &className, 256))
+
+    self.initBase($className)
     self.mHwnd = hWnd
     self.mParent = wAppWindowFindByHwnd(GetParent(hwnd))
     self.mBackgroundColor = wDefaultColor
@@ -2421,8 +2454,10 @@ wClass(wWindow of wResizable):
 
     self.systemConnect(WM_MOUSEMOVE, wWindow_DoMouseMove)
     self.systemConnect(WM_MOUSELEAVE, wWindow_DoMouseLeave)
-    self.systemConnect(WM_DESTROY, wWindow_DoDestroy)
-    self.systemConnect(WM_NCDESTROY, wWindow_DoNcDestroy)
+
+    # we cannot catch WM_NCDESTROY for some window (for example. wIpCtrl's edit)
+    # let WM_DESTROY do the release
+    self.systemConnect(WM_DESTROY, wWindow_DoSubProcDestroy)
     # dont' WM_VSCROLL/WM_HSCROLL, we let subwindow handle it's own scroll
 
     SetWindowSubclass(hwnd, wSubProc, cast[UINT_PTR](self), cast[DWORD_PTR](self))

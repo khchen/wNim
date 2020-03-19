@@ -24,6 +24,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wFrame, ../wPanel, ../wAcceleratorTable, wDialog,
   ../controls/[wTextCtrl, wStaticText, wButton, wStaticLine]
@@ -92,10 +93,6 @@ proc setOKCancelLabels*(self: wTextEntryDialog, ok: string, cancel: string)
 
 wClass(wTextEntryDialog of wDialog):
 
-  proc final*(self: wTextEntryDialog) =
-    ## Default finalizer for wTextEntryDialog.
-    self.wDialog.final()
-
   proc init*(self: wTextEntryDialog, owner: wWindow = nil, message = "Input text",
       caption = "", value = "", style: wStyle = wDefaultDialogStyle,
       pos = wDefaultPoint) {.validate.} =
@@ -125,10 +122,14 @@ proc wTextEntryHookProc(win: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM)
     # memory leak only apper in "WC_EDIT" under "win10"
     frame.mChildren[0].delete # mChildren[0] is wPanel here
 
-  elif msg == WM_NCDESTROY:
-    self.mFrame = nil
-
+  # wDialogHookProc sent wEvent_DialogClosed if msg == WM_DESTROY
+  # Send that after endModal()
   result = bool self.wDialogHookProc(frame.mHwnd, msg, wParam, lParam)
+
+  # notice: mHookProc cannot handle WM_NCDESTROY
+  # so clear the resource in WM_DESTROY
+  if msg == WM_DESTROY:
+    self.mFrame = nil
 
 proc create(self: wTextEntryDialog): wFrame =
   let
@@ -211,7 +212,7 @@ proc display*(self: wTextEntryDialog): string {.validate, inline, discardable.} 
     result = self.getValue()
 
 proc showModaless*(self: wTextEntryDialog) {.validate.} =
-  ## Shows the dialog in modaless mode. The frame of this dialog will recieve
+  ## Shows the dialog in modaless mode. The dialog will recieve
   ## wEvent_DialogClosed event when the dialog is closed.
   if self.mFrame == nil:
     self.mFrame = self.create()

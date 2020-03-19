@@ -20,6 +20,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wDialog
 export wDialog
@@ -29,10 +30,6 @@ const
   wDdChangeDir* = 2
 
 wClass(wDirDialog of wDialog):
-
-  proc final*(self: wDirDialog) =
-    ## Default finalizer for wDirDialog.
-    self.wDialog.final()
 
   proc init*(self: wDirDialog, owner: wWindow = nil, message = "",
       defaultPath = "", style: wStyle = 0) {.validate.} =
@@ -76,37 +73,34 @@ proc showModal_VistaLaster(self: wDirDialog): wId =
     folder: ptr IShellItem
     filePath: PWSTR
 
-  try:
+  block:
     if CoCreateInstance(&CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
-      &IID_IFileOpenDialog, cast[ptr PVOID](&dialog)).FAILED: raise
-    defer: dialog.Release()
+      &IID_IFileOpenDialog, cast[ptr PVOID](&dialog)).FAILED: break
 
-    if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: raise
+    if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: break
 
     if self.mMessage.len != 0:
-      if dialog.SetTitle(self.mMessage).FAILED: raise
+      if dialog.SetTitle(self.mMessage).FAILED: break
 
     if self.mPath.len != 0:
-      {.gcsafe.}:
-        if shCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
-          cast[ptr PVOID](&folder)).FAILED: raise
+      if shCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
+        cast[ptr PVOID](&folder)).FAILED: break
 
-      if dialog.SetFolder(folder).FAILED: raise
+      if dialog.SetFolder(folder).FAILED: break
 
     # include HRESULT_FROM_WIN32(ERROR_CANCELLED)
-    if dialog.Show(if self.mOwner == nil: 0 else: self.mOwner.mHwnd).FAILED: raise
+    if dialog.Show(if self.mOwner == nil: 0 else: self.mOwner.mHwnd).FAILED: break
 
-    if dialog.GetResult(&item).FAILED: raise
+    if dialog.GetResult(&item).FAILED: break
     defer: item.Release()
 
-    if item.GetDisplayName(SIGDN_FILESYSPATH, &filePath).FAILED: raise
+    if item.GetDisplayName(SIGDN_FILESYSPATH, &filePath).FAILED: break
     defer: CoTaskMemFree(filePath)
 
     self.mPath = $filePath
-    result = wIdOk
+    return wIdOk
 
-  except:
-    result = wIdCancel
+  result = wIdCancel
 
 when defined(useWinXP):
 

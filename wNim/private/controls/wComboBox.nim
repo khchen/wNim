@@ -49,6 +49,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl, wTextCtrl, wListBox
 export wControl, wTextCtrl, wListBox
@@ -262,14 +263,12 @@ method trigger(self: wComboBox) {.uknlock.} =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
-method release(self: wComboBox) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 wClass(wComboBox of wControl):
 
-  proc final*(self: wComboBox) =
-    ## Default finalizer for wComboBox.
-    self.wControl.final()
+  method release*(self: wComboBox) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wComboBox, parent: wWindow, id = wDefaultID,
       value: string = "", pos = wDefaultPoint, size = wDefaultSize,

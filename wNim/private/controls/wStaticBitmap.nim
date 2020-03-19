@@ -32,6 +32,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../gdiobjects/wBitmap, wControl, wStaticText
 export wControl
@@ -62,14 +63,12 @@ proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
   ## Returns the bitmap currently used in the control.
   result = self.mBitmap
 
-method release(self: wStaticBitmap) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 wClass(wStaticBitmap of wControl):
 
-  proc final*(self: wStaticBitmap) =
-    ## Default finalizer for wStaticBitmap.
-    self.wControl.final()
+  method release*(self: wStaticBitmap) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wStaticBitmap, parent: wWindow, id = wDefaultID,
       bitmap: wBitmap = nil, pos = wDefaultPoint, size = wDefaultSize,

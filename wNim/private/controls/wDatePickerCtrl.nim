@@ -32,6 +32,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import times # this line only for nim 0.19.0
 import ../wBase, wControl
@@ -102,9 +103,9 @@ method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPA
 
 wClass(wDatePickerCtrl of wControl):
 
-  proc final*(self: wDatePickerCtrl) =
-    ## Default finalizer for wDatePickerCtrl.
-    self.wControl.final()
+  method release*(self: wDatePickerCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wDatePickerCtrl, parent: wWindow, id = wDefaultID,
       date = wDefaultTime, pos = wDefaultPoint, size = wDefaultSize,

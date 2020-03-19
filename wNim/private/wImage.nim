@@ -52,6 +52,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import wBase
@@ -110,6 +111,9 @@ const
 proc error(self: wImage) {.inline.} =
   raise newException(wImageError, "wImage creation failed")
 
+proc fail() {.inline.} =
+  raise newException(wImageError, "")
+
 type
   SHCreateMemStreamType = proc (pInit: pointer, cbInit: UINT): ptr IStream {.stdcall.}
 
@@ -136,16 +140,16 @@ proc wGdipCreateStreamOnMemory(data: pointer, length: int = 0): ptr IStream =
 
 proc wGdipReadStream(stream: ptr IStream, data: var string) =
   var stg: STATSTG
-  if stream.Stat(&stg, STATFLAG_NONAME) != S_OK: raise
+  if stream.Stat(&stg, STATFLAG_NONAME) != S_OK: fail()
 
   var dlibMove = LARGE_INTEGER(QuadPart: 0)
-  if stream.Seek(dlibMove, STREAM_SEEK_SET, nil) != S_OK: raise
+  if stream.Seek(dlibMove, STREAM_SEEK_SET, nil) != S_OK: fail()
 
   var length = stg.cbSize.LowPart
   data = newString(length)
 
   var bytesRead: ULONG
-  if stream.Read(&data, length, &bytesRead) != S_OK: raise
+  if stream.Read(&data, length, &bytesRead) != S_OK: fail()
   data.setLen(bytesRead)
 
 proc wGdipAlign(x, y: var int32, width1, height1, width2, height2: int32, align: int) =
@@ -165,24 +169,24 @@ proc wGdipAlign(x, y: var int32, width1, height1, width2, height2: int32, align:
 
 iterator wGdipEncoderExtClsids(): tuple[ext: string, clsid: CLSID] =
   var count, size: UINT
-  if GdipGetImageEncodersSize(&count, &size) != Ok: raise
+  if GdipGetImageEncodersSize(&count, &size) != Ok: fail()
 
   var encoders = cast[ptr UncheckedArray[ImageCodecInfo]](alloc(size))
   defer: dealloc(encoders)
 
-  if GdipGetImageEncoders(count, size, &encoders[0]) != Ok: raise
+  if GdipGetImageEncoders(count, size, &encoders[0]) != Ok: fail()
   for i in 0..<count:
     for ext in ($encoders[i].FilenameExtension).split({';'}):
       yield (ext.replace("*.", ""), encoders[i].Clsid)
 
 iterator wGdipDecoderExt(): string =
   var count, size: UINT
-  if GdipGetImageDecodersSize(&count, &size) != Ok: raise
+  if GdipGetImageDecodersSize(&count, &size) != Ok: fail()
 
   var decoders = cast[ptr UncheckedArray[ImageCodecInfo]](alloc(size))
   defer: dealloc(decoders)
 
-  if GdipGetImageDecoders(count, size, &decoders[0]) != Ok: raise
+  if GdipGetImageDecoders(count, size, &decoders[0]) != Ok: fail()
   for i in 0..<count:
     for ext in ($decoders[i].FilenameExtension).split({';'}):
       yield ext.replace("*.", "")
@@ -192,7 +196,7 @@ proc wGdipGetEncoderCLSID(fileType: string): CLSID =
     if fileType.cmpIgnoreCase(tup.ext) == 0:
       return tup.clsid
 
-  raise
+  fail()
 
 proc wGdipScale(gdipbmp: ptr GpBitmap, width, height: int,
     quality: InterpolationMode): ptr GpBitmap =
@@ -200,10 +204,10 @@ proc wGdipScale(gdipbmp: ptr GpBitmap, width, height: int,
   var graphic: ptr GpGraphics
   try:
     if GdipCreateBitmapFromScan0(width, height, 4 * width,
-        pixelFormat32bppARGB, nil, &result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
-    if GdipSetInterpolationMode(graphic, quality) != Ok: raise
-    if GdipDrawImageRectI(graphic, gdipbmp, 0, 0, width, height) != Ok: raise
+        pixelFormat32bppARGB, nil, &result) != Ok: fail()
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: fail()
+    if GdipSetInterpolationMode(graphic, quality) != Ok: fail()
+    if GdipDrawImageRectI(graphic, gdipbmp, 0, 0, width, height) != Ok: fail()
   except:
     if result != nil:
       GdipDisposeImage(result)
@@ -224,16 +228,16 @@ proc wGdipSize(gdipbmp: ptr GpBitmap, size: wSize, pos: wPoint,
       x = int32 pos.x
       y = int32 pos.y
 
-    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width2)) != Ok: raise
-    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height2)) != Ok: raise
+    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width2)) != Ok: fail()
+    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height2)) != Ok: fail()
 
-    if width2 <= 0 or height2 <= 0: raise
+    if width2 <= 0 or height2 <= 0: fail()
     if align != 0: wGdipAlign(x, y, width, height, width2, height2, align)
 
     if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
-      nil, &result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
-    if GdipDrawImageRectI(graphic, gdipbmp, x, y, width2, height2) != Ok: raise
+      nil, &result) != Ok: fail()
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: fail()
+    if GdipDrawImageRectI(graphic, gdipbmp, x, y, width2, height2) != Ok: fail()
   except:
     if result != nil:
       GdipDisposeImage(result)
@@ -248,14 +252,14 @@ proc wGdipTransform(gdipbmp: ptr GpBitmap, scaleX, scaleY, angle,
   var graphic: ptr GpGraphics
   try:
     var width, height: int32
-    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width)) != Ok: raise
-    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height)) != Ok: raise
-    if width <= 0 or height <= 0: raise
+    if GdipGetImageWidth(gdipbmp, cast[ptr UINT](&width)) != Ok: fail()
+    if GdipGetImageHeight(gdipbmp, cast[ptr UINT](&height)) != Ok: fail()
+    if width <= 0 or height <= 0: fail()
 
     if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
-      nil, &result) != Ok: raise
-    if GdipGetImageGraphicsContext(result, &graphic) != Ok: raise
-    if GdipSetInterpolationMode(graphic, quality) != Ok: raise
+      nil, &result) != Ok: fail()
+    if GdipGetImageGraphicsContext(result, &graphic) != Ok: fail()
+    if GdipSetInterpolationMode(graphic, quality) != Ok: fail()
 
     var
       newWidth = int32(width.float * scaleX)
@@ -266,12 +270,12 @@ proc wGdipTransform(gdipbmp: ptr GpBitmap, scaleX, scaleY, angle,
       centerY = height / 2
 
     if GdipTranslateWorldTransform(graphic, centerX + deltaX, centerY + deltaY,
-      matrixOrderPrepend) != Ok: raise
-    if GdipRotateWorldTransform(graphic, angle, matrixOrderPrepend) != Ok: raise
+      matrixOrderPrepend) != Ok: fail()
+    if GdipRotateWorldTransform(graphic, angle, matrixOrderPrepend) != Ok: fail()
     if GdipTranslateWorldTransform(graphic, -centerX, -centerY,
-      matrixOrderPrepend) != Ok: raise
+      matrixOrderPrepend) != Ok: fail()
     if GdipDrawImageRectI(graphic, gdipbmp, diffX div 2, diffY div 2,
-      newWidth, newHeight) != Ok: raise
+      newWidth, newHeight) != Ok: fail()
 
   except:
     if result != nil:
@@ -312,9 +316,7 @@ proc wGdipGetQualityParameters(quality: var LONG): EncoderParameters =
 proc delete*(self: wImage) {.validate.} =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if self.mGdipBmp != nil:
-    GdipDisposeImage(self.mGdipBmp)
-    self.mGdipBmp = nil
+  `=destroy`(self[])
 
 proc getHandle*(self: wImage): ptr GpBitmap {.validate, property, inline.} =
   ## Gets the real resource handle of gdiplus bitmap.
@@ -427,17 +429,17 @@ proc saveFile*(self: wImage, filename: string, fileType = "",
     var ext = fileType
     if ext.len == 0:
       let dot = filename.rfind('.')
-      if dot == -1: raise
+      if dot == -1: fail()
 
       ext = filename.substr(dot + 1)
-      if ext.len == 0: raise
+      if ext.len == 0: fail()
 
     var
       quality: LONG = quality
       encoderParameters = wGdipGetQualityParameters(quality)
       clsid = wGdipGetEncoderCLSID(ext)
 
-    if GdipSaveImageToFile(self.mGdipBmp, +$filename, clsid, &encoderParameters) != Ok: raise
+    if GdipSaveImageToFile(self.mGdipBmp, +$filename, clsid, &encoderParameters) != Ok: fail()
 
   except:
     raise newException(wImageError, "wImage saveFile failure")
@@ -457,17 +459,13 @@ proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): str
       if stream != nil: stream.Release()
 
     if stream == nil or GdipSaveImageToStream(self.mGdipBmp, stream, clsid,
-      &encoderParameters) != Ok: raise
+      &encoderParameters) != Ok: fail()
     wGdipReadStream(stream, result)
 
   except:
     raise newException(wImageError, "wImage saveData failure")
 
 wClass(wImage):
-
-  proc final*(self: wImage) =
-    ## Default finalizer for wImage.
-    self.delete()
 
   proc init*(self: wImage, gdip: ptr GpBitmap, copy = true) {.validate.} =
     ## Initializes an image from a gdiplus bitmap handle.
@@ -495,7 +493,7 @@ wClass(wImage):
     # otherwise the result will loss the alpha channel data.
     try:
       var dibSection: DIBSECTION
-      if GetObject(bmp.mHandle, sizeof(dibSection), &dibSection) == 0: raise
+      if GetObject(bmp.mHandle, sizeof(dibSection), &dibSection) == 0: fail()
 
       var
         scan0 = cast[ptr BYTE](dibSection.dsBm.bmBits)
@@ -503,12 +501,12 @@ wClass(wImage):
         width = dibSection.dsBmih.biWidth
         height = dibSection.dsBmih.biHeight
 
-      if bitCount != 32: raise
+      if bitCount != 32: fail()
 
       if GdipCreateBitmapFromScan0(width, height, 4 * width, pixelFormat32bppARGB,
-        scan0, &self.mGdipBmp) != Ok: raise
+        scan0, &self.mGdipBmp) != Ok: fail()
 
-      if GdipImageRotateFlip(self.mGdipBmp, rotateNoneFlipY) != Ok: raise
+      if GdipImageRotateFlip(self.mGdipBmp, rotateNoneFlipY) != Ok: fail()
 
     except:
       if GdipCreateBitmapFromHBITMAP(bmp.mHandle, 0, &self.mGdipBmp) != Ok:
@@ -744,16 +742,16 @@ when not defined(useWinXP):
     rect.right = self.getWidth()
     rect.bottom = self.getHeight()
 
-    if GdipCreateEffect(guid, &effect) != Ok: raise
+    if GdipCreateEffect(guid, &effect) != Ok: fail()
     defer: GdipDeleteEffect(effect)
 
-    if GdipSetEffectParameters(effect, pParam, size.UINT) != Ok: raise
-    # if GdipBitmapApplyEffect(mGdipBmp, effect, nil, false, nil, nil) != Ok: raise
+    if GdipSetEffectParameters(effect, pParam, size.UINT) != Ok: fail()
+    # if GdipBitmapApplyEffect(mGdipBmp, effect, nil, false, nil, nil) != Ok: fail()
     # GdipBitmapApplyEffect sometimes crash due to unknow reason (only 64bit)
 
     # if don't set rect, the image size will change?
     if GdipBitmapCreateApplyEffect(&self.mGdipBmp, 1, effect, &rect, nil, &newGdipbmp,
-      false, nil, nil) != Ok: raise
+      false, nil, nil) != Ok: fail()
 
     GdipDisposeImage(self.mGdipBmp)
     self.mGdipBmp = newGdipbmp

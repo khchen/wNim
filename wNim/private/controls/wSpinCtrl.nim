@@ -42,6 +42,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -205,17 +206,16 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
       # Return nonzero to prevent the change, or zero to allow the change, same as our mResult
       event.mResult = spinEvent.mResult
 
-method release(self: wSpinCtrl) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mCommandConn)
-  self.mParent.disconnect(self.mNotifyConn)
-  DestroyWindow(self.mUpdownHwnd)
-  self.mUpdownHwnd = 0
-
 wClass(wSpinCtrl of wControl):
 
-  proc final*(self: wSpinCtrl) =
-    ## Default finalizer for wSpinCtrl.
-    self.wControl.final()
+  method release*(self: wSpinCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mCommandConn)
+    self.mParent.disconnect(self.mNotifyConn)
+    if self.mUpdownHwnd != 0:
+      DestroyWindow(self.mUpdownHwnd)
+      self.mUpdownHwnd = 0
+    free(self[])
 
   proc init*(self: wSpinCtrl, parent: wWindow, id = wDefaultID,
       value: string = "0", pos = wDefaultPoint, size = wDefaultSize,

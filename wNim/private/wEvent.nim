@@ -41,8 +41,8 @@
 ## own event type, create the event object, and pass to a window by
 ## wWindow.processEvent().
 ##
-## Notice: Event() is the only constructor for all event objects in wNim.
-## `import wNim/wEvent` will import all of its subclasses automatically.
+## **Notice: Event() is the only constructor for all event objects in wNim**.
+## `import wNim/wEvent` **will import all of its subclasses automatically.**
 #
 ## :Subclasses:
 ##   `wMouseEvent <wMouseEvent.html>`_
@@ -86,6 +86,7 @@
 ##   ================================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import wBase
 
@@ -363,7 +364,7 @@ method getErrorCode*(self: wEvent): int {.base, property.} = discard
 
 method shouldPropagate*(self: wEvent): bool {.base.} = self.mPropagationLevel > 0
   ## Test if this event should be propagated or not, i.e. if the propagation
-  ## level is currently greater than 0.This method can be override, for example:
+  ## level is currently greater than 0. This method can be override, for example:
   ##
   ## .. code-block:: Nim
   ##   method shouldPropagate(event: wKeyEvent): bool =

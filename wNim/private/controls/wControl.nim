@@ -43,6 +43,7 @@
 ##   `wRebar <wRebar.html>`_  (experimental)
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase, ../wWindow, ../wEvent
@@ -117,19 +118,18 @@ proc setBuddy*(self: wControl, buddy: wControl, direction: int = wRight,
     let prect = cast[ptr RECT](event.mLparam)
     var oldRect: RECT = prect[]
 
-    when not defined(Nimdoc):
-      event.postDefaultHandler:
-        bEdge.left = prect.left - oldrect.left + indent
-        bEdge.right = oldrect.right - prect.right + indent
-        bEdge.top = prect.top - oldrect.top + indent
-        bEdge.bottom = oldrect.bottom - prect.bottom + indent
+    event.postDefaultHandler:
+      bEdge.left = prect.left - oldrect.left + indent
+      bEdge.right = oldrect.right - prect.right + indent
+      bEdge.top = prect.top - oldrect.top + indent
+      bEdge.bottom = oldrect.bottom - prect.bottom + indent
 
-        case direction
-        of wRight: prect[].right -= buddyWidth
-        of wLeft: prect[].left += buddyWidth
-        of wUp: prect[].top += buddyHeight
-        of wDown: prect[].bottom -= buddyHeight
-        else: discard
+      case direction
+      of wRight: prect[].right -= buddyWidth
+      of wLeft: prect[].left += buddyWidth
+      of wUp: prect[].top += buddyHeight
+      of wDown: prect[].bottom -= buddyHeight
+      else: discard
 
   proc onSize(event: wEvent) =
     event.skip
@@ -182,19 +182,6 @@ proc showAndNotifyParent(self: wControl, flag = true) {.shield.} =
     let rect = self.mParent.getWindowRect(sizeOnly=true)
     self.mParent.processMessage(wEvent_Size, SIZE_RESTORED,
       MAKELPARAM(rect.width, rect.height))
-
-proc wControl_DoMenuCommand(event: wEvent) =
-  # relay control's WM_MENUCOMMAND to any wFrame
-  # for example, wToolBar or wButton's submenu
-  # or any popup menu from control
-  let self = event.mWindow
-
-  var win = self.mParent
-  while win != nil:
-    if win of wFrame:
-      win.processMessage(WM_MENUCOMMAND, event.mWparam, event.mLparam)
-      break
-    win = win.mParent
 
 proc getNextGroup(self: wControl, previous: bool): wControl =
   var hWnd = self.mHwnd
@@ -277,7 +264,7 @@ proc wControl_DoKillFocus(event: wEvent) =
 
   # always save current focus to top level window
   # if top level window get focus after window switch, the control can get focus again
-  self.getTopParent().mSaveFocus = self
+  self.getTopParent().mSaveFocusHwnd = self.mHwnd
 
   # who will get focus is not siblings => clear all default button
   let winGotFocus = wAppWindowFindByHwnd(HWND event.mWparam)
@@ -443,9 +430,9 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wControl of wWindow):
 
-  proc final*(self: wControl) =
-    ## Default finalizer for wControl.
-    self.wWindow.final()
+  method release*(self: wControl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wControl, className: string, parent: wWindow,
       id: wCommandID = -1, label: string = "", pos = wDefaultPoint,
@@ -480,7 +467,6 @@ wClass(wControl of wWindow):
 
     self.systemConnect(WM_KILLFOCUS, wControl_DoKillFocus)
     self.systemConnect(WM_SETFOCUS, wControl_DoSetFocus)
-    self.systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
     self.hardConnect(WM_CHAR, wControl_OnNavigation)
     self.hardConnect(WM_KEYDOWN, wControl_OnNavigation)
     self.hardConnect(WM_SYSCHAR, wControl_OnNavigation)

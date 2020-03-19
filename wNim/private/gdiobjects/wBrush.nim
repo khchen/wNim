@@ -30,6 +30,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wGdiObject
 export wGdiObject
@@ -55,10 +56,6 @@ proc setup(self: wBrush, lb: LOGBRUSH) =
   self.mStyle = lb.lbStyle or (lb.lbHatch.DWORD shl 16)
 
 wClass(wBrush of wGdiObject):
-
-  proc final*(self: wBrush) =
-    ## Default finalizer for wBrush.
-    self.delete()
 
   proc init*(self: wBrush, lb: var LOGBRUSH) =
     ## Initializes a brush from LOGBRUSH struct. Used internally.

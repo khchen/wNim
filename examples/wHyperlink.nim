@@ -9,18 +9,16 @@
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
-# 2. Every class have init(self: wObject) and final(self: wObject)
-#    as initializer and finalizer.
+# 2. Every class have init(self: wObject) as initializer.
 # 3. Provides an Object() proc to quickly get the ref object.
+
+# wClass (defined in wMacros) provides a convenient way to define wNim class.
 
 import
   winim/[winstr, utils],
   winim/inc/[winuser, shellapi]
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wMacros, wStaticText, wFont, wCursor]
+import wNim/[wApp, wMacros, wStaticText, wFont, wCursor]
 
 # Define event message starting from wEvent_App.
 const
@@ -45,7 +43,7 @@ type
 # then we can just write self.font = Font(10)
 
 wClass(wHyperlink of wStaticText):
-  # Constructor is generated from initializer and finalizer automatically.
+  # Constructor is generated from initializer automatically.
 
   proc getVisitedOrNormalColor(self: wHyperlink): wColor {.validate, property.} =
     result = if self.mIsVisited: self.mVisitedColor else: self.mNormalColor
@@ -103,9 +101,6 @@ wClass(wHyperlink of wStaticText):
   proc getVisited*(self: wHyperlink): bool {.validate, property.} =
     result = self.mIsVisited
 
-  proc final*(self: wHyperlink) =
-    self.wStaticText.final()
-
   proc init*(self: wHyperlink, parent: wWindow, id = wDefaultID, label: string,
       url: string, pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) =
 
@@ -127,7 +122,7 @@ wClass(wHyperlink of wStaticText):
     self.mHoverFont.underlined = true
 
     # Assume this event will propagated like other command event.
-    wAppGetCurrentApp().setMessagePropagation(wEvent_OpenUrl)
+    App().setMessagePropagation(wEvent_OpenUrl)
 
     self.wEvent_MouseEnter do ():
       self.mIsMouseHover = true
@@ -169,11 +164,7 @@ wClass(wHyperlink of wStaticText):
 
 when isMainModule:
   import resource/resource
-
-  when defined(aio):
-    import wNim
-  else:
-    import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont]
+  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont]
 
   let app = App()
   let frame = Frame(title="wHyperlink custom control")

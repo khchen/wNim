@@ -25,6 +25,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import ../wBase, wDialog
@@ -41,10 +42,6 @@ const
   wFdMaxPath = 65536
 
 wClass(wFileDialog of wDialog):
-
-  proc final*(self: wFileDialog) =
-    ## Default finalizer for wFileDialog.
-    self.wDialog.final()
 
   proc init*(self: wFileDialog, owner: wWindow = nil, message = "", defaultDir = "",
       defaultFile = "", wildcard = "*.*", style: wStyle = wFdOpen) {.validate.} =
@@ -120,7 +117,6 @@ proc showModal*(self: wFileDialog): wId {.validate, discardable.} =
   # There seems no way to hook the "Common Item Dialog", so we just let
   # the system decide the position of this dialog.
   # todo: provide hook to center this dialog in winxp?
-
   var
     buffer = T(wFdMaxPath)
     ofn = OPENFILENAME(

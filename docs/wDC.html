@@ -1382,7 +1382,7 @@ function main() {
   <li><a class="reference" href="#getTextBackground%2CwDC"
     title="getTextBackground(self: wDC): wColor"><wbr />get<wbr />Text<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBackground%2CwDC"
-    title="getBackground(self: wDC): wBrush"><wbr />get<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="getBackground(self: wDC): wColor"><wbr />get<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBackgroundMode%2CwDC"
     title="getBackgroundMode(self: wDC): int"><wbr />get<wbr />Background<wbr />Mode<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getBackgroundTransparent%2CwDC"
@@ -1405,10 +1405,10 @@ function main() {
     title="setTextBackground(self: var wDC; color: wColor)"><wbr />set<wbr />Text<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setTextForeground%2CwDC%2CwColor"
     title="setTextForeground(self: var wDC; color: wColor)"><wbr />set<wbr />Text<wbr />Foreground<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#setBackground%2CwDC%2CwBrush"
-    title="setBackground(self: var wDC; brush: wBrush)"><wbr />set<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBackground%2CwDC%2CwColor"
     title="setBackground(self: var wDC; color: wColor)"><wbr />set<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#setBackground%2CwDC%2CwBrush"
+    title="setBackground(self: var wDC; brush: wBrush)"><wbr />set<wbr />Background<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBackgroundMode%2CwDC%2Cint"
     title="setBackgroundMode(self: var wDC; mode: int)"><wbr />set<wbr />Background<wbr />Mode<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#setBackgroundTransparent%2CwDC%2Cbool"
@@ -1425,8 +1425,8 @@ function main() {
     title="crossHair(self: var wDC; x: int; y: int)"><wbr />cross<wbr />Hair<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#crossHair%2CwDC%2CwPoint"
     title="crossHair(self: var wDC; point: wPoint)"><wbr />cross<wbr />Hair<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#clear%2CwDC"
-    title="clear(self: var wDC)"><wbr />clear<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#clear%2CwDC%2CwBrush"
+    title="clear(self: var wDC; brush: wBrush = nil)"><wbr />clear<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#blit%2CwDC%2Cint%2Cint%2Cint%2Cint%2CwDC%2Cint%2Cint%2Cint"
     title="blit(self: wDC; xdest, ydest, width, height: int = 0; source: wDC; xsrc, ysrc: int = 0;
      rop: int = wCopy)"><wbr />blit<span class="attachedType" style="visibility:hidden"></span></a></li>
@@ -1461,10 +1461,7 @@ function main() {
                                externalLeading, averageWidth: int]"><wbr />get<wbr />Font<wbr />Metrics<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwDC%2CwColor%2CwColor"
     title="init(self: var wDC; fgColor: wColor = wBLACK; bgColor: wColor = wWHITE;
-     font = wDefaultFont; pen = wDefaultPen; brush = wDefaultBrush;
-     background = wDefaultBrush)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwDC"
-    title="final(self: var wDC)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
+     font = wDefaultFont; pen = wDefaultPen; brush = wDefaultBrush; background = wWHITE)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1787,7 +1784,7 @@ Draws a spline between all given points using the current pen. There are at leas
 <a id="gradientFillLinear,wDC,wRect,wColor,wColor"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">gradientFillLinear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">rect</span><span class="Other">:</span> <span class="Identifier">wRect</span><span class="Other">;</span> <span class="Identifier">initialColor</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">;</span>
                        <span class="Identifier">destColor</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">;</span> <span class="Identifier">direction</span> <span class="Other">=</span> <span class="Identifier">wRight</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPenError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Fill the area specified by rect with a linear gradient, starting from initialColor and eventually fading to destColor. The direction can be one of wUp, wDown, wLeft, wRight.
 
@@ -1879,9 +1876,9 @@ Gets the current text background color.
 
 </dd>
 <a id="getBackground,wDC"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBackground</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wBrush</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getBackground</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Gets the brush used for painting the background.
+Gets the color used for painting the background.
 
 </dd>
 <a id="getBackgroundMode,wDC"></a>
@@ -1951,18 +1948,17 @@ Sets the current text background color for the DC.
 Sets the current text foreground color for the DC.
 
 </dd>
+<a id="setBackground,wDC,wColor"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setBackground</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Sets the current background color for the DC.
+
+</dd>
 <a id="setBackground,wDC,wBrush"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">setBackground</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">brush</span><span class="Other">:</span> <span class="Identifier">wBrush</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Sets the current background brush for the DC.
-
-</dd>
-<a id="setBackground,wDC,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">setBackground</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">color</span><span class="Other">:</span> <span class="Identifier">wColor</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Sets the current background brush for the DC, use the color to create the brush.
+Sets the current background color by a sold brush for the DC.
 
 </dd>
 <a id="setBackgroundMode,wDC,int"></a>
@@ -2013,10 +2009,10 @@ Displays a cross hair using the current pen.
 Displays a cross hair using the current pen.
 
 </dd>
-<a id="clear,wDC"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">clear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="clear,wDC,wBrush"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">clear</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">brush</span><span class="Other">:</span> <span class="Identifier">wBrush</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Clears the device context using the current background brush.
+Clears the device context using the current background color. A custom brush can be use to fill the background.
 
 </dd>
 <a id="blit,wDC,int,int,int,int,wDC,int,int,int"></a>
@@ -2074,14 +2070,14 @@ Draw a bitmap on the device context at the specified point.
 </dd>
 <a id="drawImage,wDC,wImage,int,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">drawImage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Draw a image on the device context at the specified point.
 
 </dd>
 <a id="drawImage,wDC,wImage,wPoint"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">drawImage</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">wImage</span><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">wBitmapError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Draw a image on the device context at the specified point.
 
@@ -2115,16 +2111,11 @@ Returns the various font characteristics.
 <a id="init,wDC,wColor,wColor"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">fgColor</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wBLACK</span><span class="Other">;</span> <span class="Identifier">bgColor</span><span class="Other">:</span> <span class="Identifier">wColor</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">;</span>
          <span class="Identifier">font</span> <span class="Other">=</span> <span class="Identifier">wDefaultFont</span><span class="Other">;</span> <span class="Identifier">pen</span> <span class="Other">=</span> <span class="Identifier">wDefaultPen</span><span class="Other">;</span> <span class="Identifier">brush</span> <span class="Other">=</span> <span class="Identifier">wDefaultBrush</span><span class="Other">;</span>
-         <span class="Identifier">background</span> <span class="Other">=</span> <span class="Identifier">wDefaultBrush</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
-    <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+         <span class="Identifier">background</span> <span class="Other">=</span> <span class="Identifier">wWHITE</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">NilAccessError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span>
+                                     <span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">wPenError</span><span class="Other">,</span> <span class="Identifier">wBrushError</span><span class="Other">]</span><span class="Other">,</span>
+                             <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
-
-</dd>
-<a id="final,wDC"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wDC</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wDC.
 
 </dd>
 
@@ -2148,7 +2139,7 @@ Gets the size of the device context.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:40:08 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:22 UTC</small>
       </div>
     </div>
   </div>

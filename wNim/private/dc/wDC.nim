@@ -59,42 +59,10 @@
 ##   ============================== =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils, math
 import ../wBase, ../gdiobjects/[wPen, wBrush, wBitmap, wFont, wRegion]
-
-when not isMainModule: # hide from doc
-  type
-    wDC* = object of RootObj
-      mHdc*: HDC
-      mTextBackgroundColor*: wColor
-      mTextForegroundColor*: wColor
-      mFont*: wFont
-      mPen*: wPen
-      mBrush*: wBrush
-      mBackground*: wBrush
-      mRegion*: wRegion
-      mScale*: tuple[x, y: float]
-      mhOldFont*: HANDLE
-      mhOldPen*: HANDLE
-      mhOldBrush*: HANDLE
-      mhOldBitmap*: HANDLE
-else:
-  type
-    wDC = object of RootObj
-      mHdc: HDC
-      mTextBackgroundColor: wColor
-      mTextForegroundColor: wColor
-      mFont: wFont
-      mPen: wPen
-      mBrush: wBrush
-      mBackground: wBrush
-      mRegion: wRegion
-      mScale: tuple[x, y: float]
-      mhOldFont: HANDLE
-      mhOldPen: HANDLE
-      mhOldBrush: HANDLE
-      mhOldBitmap: HANDLE
 
 const
   # for logicalFunction and blit, use logicalFunction value as default
@@ -585,15 +553,15 @@ proc getRegion*(self: wDC): wRegion {.inline, property.} =
 
 proc getTextForeground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text foreground color.
-  result = self.mTextForegroundColor
+  result = GetTextColor(self.mHdc)
 
 proc getTextBackground*(self: wDC): wColor {.inline, property.} =
   ## Gets the current text background color.
   result = self.mTextBackgroundColor
 
-proc getBackground*(self: wDC): wBrush {.inline, property.} =
-  ## Gets the brush used for painting the background.
-  result = self.mBackground
+proc getBackground*(self: wDC): wColor {.inline, property.} =
+  ## Gets the color used for painting the background.
+  result = GetBkColor(self.mHdc)
 
 proc getBackgroundMode*(self: wDC): int {.inline, property.} =
   ## Returns the current background mode: wPenStyleSolid or wPenStyleTransparent.
@@ -657,19 +625,16 @@ proc setTextBackground*(self: var wDC, color: wColor) {.inline, property.} =
 
 proc setTextForeground*(self: var wDC, color: wColor) {.inline, property.} =
   ## Sets the current text foreground color for the DC.
-  self.mTextForegroundColor = color
   SetTextColor(self.mHdc, color)
 
-proc setBackground*(self: var wDC, brush: wBrush) {.inline, property.} =
-  ## Sets the current background brush for the DC.
-  wValidate(brush)
-  self.mBackground = brush
-  SetBkColor(self.mHdc, brush.mColor)
-
 proc setBackground*(self: var wDC, color: wColor) {.inline, property.} =
-  ## Sets the current background brush for the DC, use the color to create the
-  ## brush.
-  self.setBackground(Brush(color=color))
+  ## Sets the current background color for the DC.
+  SetBkColor(self.mHdc, color)
+
+proc setBackground*(self: var wDC, brush: wBrush) {.inline, property.} =
+  ## Sets the current background color by a sold brush for the DC.
+  wValidate(brush)
+  self.setBackground(brush.mColor)
 
 proc setBackgroundMode*(self: var wDC, mode: int) {.inline, property.} =
   ## *mode* may be one of wPenStyleSolid and wPenStyleTransparent. This setting
@@ -736,8 +701,9 @@ proc crossHair*(self: var wDC, point: wPoint) =
   ## Displays a cross hair using the current pen.
   self.crossHair(point.x, point.y)
 
-proc clear*(self: var wDC) =
-  ## Clears the device context using the current background brush.
+proc clear*(self: var wDC, brush: wBrush = nil) =
+  ## Clears the device context using the current background color.
+  ## A custom brush can be use to fill the background.
   var rect: RECT
   let
     origin = self.getOrigin()
@@ -749,7 +715,10 @@ proc clear*(self: var wDC) =
   rect.bottom = size.height
 
   let prev = SetMapMode(self.mHdc, MM_TEXT)
-  FillRect(self.mHdc, rect, self.mBackground.mHandle)
+  if brush.isNil:
+    ExtTextOut(self.mHdc, 0, 0, ETO_OPAQUE, rect, nil, 0, nil)
+  else:
+    FillRect(self.mHdc, rect, brush.mHandle)
 
   if prev != MM_TEXT:
     self.setScale(self.mScale)
@@ -864,30 +833,12 @@ proc getFontMetrics*(self: wDC): tuple[height, ascent, descent, internalLeading,
 
 proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
     font = wDefaultFont, pen = wDefaultPen, brush = wDefaultBrush,
-    background = wDefaultBrush) =
+    background = wWHITE) =
   ## Initializer.
   self.setTextForeground(fgColor)
   self.setTextBackground(bgColor)
   self.setFont(if font != nil: font else: wDefaultFont)
   self.setPen(if pen != nil: pen else: wDefaultPen)
   self.setBrush(if brush != nil: brush else: wDefaultBrush)
-  self.setBackground(if background != nil: background else: wDefaultBrush)
+  self.setBackground(background)
   self.setRegion(wNilRegion)
-
-proc final*(self: var wDC) =
-  ## Default finalizer for wDC.
-  if self.mhOldFont != 0:
-    SelectObject(self.mHdc, self.mhOldFont)
-    self.mhOldFont = 0
-
-  if self.mhOldPen != 0:
-    SelectObject(self.mHdc, self.mhOldPen)
-    self.mhOldPen = 0
-
-  if self.mhOldBrush != 0:
-    SelectObject(self.mHdc, self.mhOldBrush)
-    self.mhOldBrush = 0
-
-  if self.mhOldBitmap != 0:
-    SelectObject(self.mHdc, self.mhOldBitmap)
-    self.mhOldBitmap = 0

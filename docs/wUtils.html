@@ -1587,13 +1587,14 @@ For normal keys, returns true if the specified key is currently down. For toggla
 
 </dd>
 <a id="wFindWindowAtPoint,wPoint"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wFindWindowAtPoint</span><span class="Other">(</span><span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wFindWindowAtPoint</span><span class="Other">(</span><span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">wPoint</span> <span class="Other">=</span> <span class="Identifier">wDefaultPoint</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Find the deepest window at the given mouse position in screen coordinates, returning the window if found, or nil if not.
 
 </dd>
 <a id="wGetFocusWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wGetFocusWindow</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wGetFocusWindow</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Gets the currently focus window.
 
@@ -1612,7 +1613,7 @@ Places a specific data object onto the clipboard.
 
 </dd>
 <a id="wGetClipboard"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wGetClipboard</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">wGetClipboard</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wDataObject</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Retrieves a data object that you can use to access the contents of the clipboard.
 
@@ -1689,7 +1690,7 @@ Get Windows release version number.<table border="1" class="docutils"><tr><th>Wi
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:52 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:29 UTC</small>
       </div>
     </div>
   </div>

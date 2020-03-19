@@ -48,6 +48,7 @@
 ##   - `wCommandEvent <wCommandEvent.html>`_  - wEvent_Menu
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import wBase, wWindow, wAcceleratorTable
 export wWindow, wAcceleratorTable
@@ -346,21 +347,29 @@ proc findFocusableChild(self: wWindow): wWindow =
       result = win.findFocusableChild()
       if result != nil: return
 
+proc findFirstExistsParentWin(hwnd: HWND): wWindow {.inline.} =
+  var hwnd = hwnd
+  while hwnd != 0:
+    result = wAppWindowFindByHwnd(hwnd)
+    if result != nil: return
+    hwnd = GetAncestor(hwnd, GA_PARENT) # not include the owner
+
 proc wFrame_OnSetFocus(event: wEvent) =
-  # when a frame got focus, try to pass focus to mSaveFocus or first focusable
+  # when a frame got focus, try to pass focus to mSaveFocusHwnd or first focusable
   # control
   let self = event.mWindow
   var processed = false
   defer: event.skip(if processed: false else: true)
 
-  if self.mSaveFocus != nil:
+  var win = findFirstExistsParentWin(self.mSaveFocusHwnd)
+  if win != nil:
     # sometimes, the saved focus window will not exist anymore
     # for example: textctrl for treectrl's rename editor
-    var win = self.mSaveFocus
     while IsWindow(win.mHwnd) == 0:
       win = win.mParent
-      if win == nil: return
+      if win == nil: break
 
+  if win != nil:
     win.setFocus()
     processed = true
 
@@ -369,7 +378,7 @@ proc wFrame_OnSetFocus(event: wEvent) =
     let win = self.findFocusableChild()
     if win != nil:
       win.setFocus()
-      self.mSaveFocus = win
+      self.mSaveFocusHwnd = win.mHwnd
       processed = true
 
 proc wFrame_OnMenuHighlight(event: wEvent) =
@@ -406,15 +415,12 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
     SendMessage(self.mStatusBar.mHwnd, SB_SETTEXT, LOBYTE(self.mStatusBar.mHelpIndex), &T(text))
     processed = true
 
-method release(self: wFrame) {.uknlock.} =
-  # delete the tray icon (if any)
-  self.removeTrayIcon()
-
 wClass(wFrame of wWindow):
 
-  proc final*(self: wFrame) =
-    ## Default finalizer for wFrame.
-    self.wWindow.final()
+  method release*(self: wFrame) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.removeTrayIcon() # delete the tray icon (if any)
+    free(self[])
 
   proc init*(self: wFrame, owner: wWindow = nil, title = "", pos = wDefaultPoint,
       size = wDefaultSize, style: wStyle = wDefaultFrameStyle,

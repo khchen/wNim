@@ -7,11 +7,8 @@
 
 import resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
-    wStaticText, wTextCtrl, wToolBar, wButton, wStatusBar, wMessageDialog]
+import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
+  wStaticText, wTextCtrl, wToolBar, wButton, wStatusBar, wMessageDialog]
 
 proc passwordDialog(owner: wWindow): string =
   var password = ""

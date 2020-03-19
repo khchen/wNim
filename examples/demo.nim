@@ -7,15 +7,12 @@
 
 import resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu,
-    wIcon, wBitmap, wPen, wBrush, wPaintDC,
-    wStaticBox, wStaticLine, wStaticBitmap, wStaticText,
-    wButton, wRadioButton, wCheckBox, wComboBox, wCheckComboBox, wListBox,
-    wNoteBook, wTextCtrl, wSpinCtrl, wHotKeyCtrl, wSlider, wGauge,
-    wCalendarCtrl, wDatePickerCtrl, wTimePickerCtrl]
+import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu,
+  wIcon, wBitmap, wPen, wBrush, wPaintDC,
+  wStaticBox, wStaticLine, wStaticBitmap, wStaticText,
+  wButton, wRadioButton, wCheckBox, wComboBox, wCheckComboBox, wListBox,
+  wNoteBook, wTextCtrl, wSpinCtrl, wHotKeyCtrl, wSlider, wGauge,
+  wCalendarCtrl, wDatePickerCtrl, wTimePickerCtrl]
 
 let app = App()
 let frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)

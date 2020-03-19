@@ -31,6 +31,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wDialog
 export wDialog
@@ -86,10 +87,6 @@ proc wColorHookProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): UINT
     result = self.wDialogHookProc(hwnd, msg, wParam, lParam)
 
 wClass(wColorDialog of wDialog):
-
-  proc final*(self: wColorDialog) =
-    ## Default finalizer for wColorDialog.
-    self.wDialog.final()
 
   proc init*(self: wColorDialog, owner: wWindow = nil, defaultColor = wBlack,
       style: wStyle = 0) {.validate.} =

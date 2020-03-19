@@ -18,29 +18,10 @@
 ##   `wDC <wDC.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wWindow, wDC
 export wDC
-
-when not isMainModule: # hide from doc
-  type
-    wPaintDC* = object of wDC
-      mPs*: PAINTSTRUCT
-      mCanvas*: wWindow
-else:
-  type
-    wPaintDC = object of wDC
-      mPs: PAINTSTRUCT
-      mCanvas: wWindow
-
-proc `=destroy`(self: var wPaintDC) =
-  ## Nim's destructors will delete this object by default.
-  ## However, sometimes you maybe want to do that by yourself.
-  ## (Nim's destructors don't work in some version?)
-  if self.mHdc != 0:
-    self.wDC.final()
-    EndPaint(self.mCanvas.mHwnd, self.mPs)
-    self.mHdc = 0
 
 method getSize*(self: wPaintDC): wSize {.property, uknlock.} =
   ## Gets the size of the device context.
@@ -57,11 +38,14 @@ proc PaintDC*(canvas: wWindow): wPaintDC =
   result.mCanvas = canvas
   result.mHdc = BeginPaint(canvas.mHwnd, result.mPs)
   result.wDC.init(fgColor=canvas.mForegroundColor, bgColor=canvas.mBackgroundColor,
-    background=canvas.mBackgroundBrush, font=canvas.mFont)
+    background=canvas.mBackgroundColor, font=canvas.mFont)
 
 proc getPaintRect*(self: wPaintDC): wRect {.property.} =
   ## Gets the rectangle in which the painting is requested.
   result = self.mPs.rcPaint.toWRect()
 
 proc delete*(self: var wPaintDC) =
-  self.`=destroy`()
+  ## Nim's destructors will delete this object by default.
+  ## However, sometimes you maybe want to do that by yourself.
+  ## (Nim's destructors don't work in some version?)
+  `=destroy`(self)

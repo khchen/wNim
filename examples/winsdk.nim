@@ -5,16 +5,13 @@
 #
 #====================================================================
 
-# This example demonstrates how wNim works with Windows SDK via winim.
+# This example demonstrates how wNim works with Windows SDK.
 
 import
   resource/resource,
   winim/lean
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush, wMessageDialog]
+import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush, wMessageDialog]
 
 let
   app = App()
@@ -47,9 +44,9 @@ frame.wEvent_Paint do ():
   defer: delete dc
 
   # Wraps the system brush handle to wBrush object for drawing.
-  let hBrush = CreateSolidBrush(wGrey)
-  dc.background = Brush(hBrush, copy=false)
-  dc.clear()
+  let hBrush = CreateHatchBrush(HS_CROSS, wBlack)
+  dc.background = wGrey
+  dc.clear(Brush(hBrush, copy=false))
 
   # Gets the system DC handle from the wPaintDC object.
   let hDc = dc.handle

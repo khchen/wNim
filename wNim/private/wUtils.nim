@@ -8,9 +8,10 @@
 ## wNim's utilities and convenience functions.
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import dynlib
-import wBase, wApp, wDataObject
+import wBase, wDataObject
 
 const
   wSysBorderX* = SM_CXBORDER ## Width of single border.

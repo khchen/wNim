@@ -6,12 +6,8 @@
 #====================================================================
 
 import resource/resource
-
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel,
-    wMenu, wMenuBar, wButton, wStatusBar, wStaticText, wTextEntryDialog, wFontDialog]
+import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel,
+  wMenu, wMenuBar, wButton, wStatusBar, wStaticText, wTextEntryDialog, wFontDialog]
 
 let app = App()
 let frame = Frame(title="wNim Frame Demo")

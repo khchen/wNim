@@ -30,16 +30,13 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wPrintData, wDialog
 export wDialog, wPrintData
 
-type
-  wPrintDialogError* = object of wError
-    ## An error raised when wPrintDialog creation failed.
-
 proc getPrintData*(self: wPrintDialog): wPrintData {.validate, property, inline.} =
-  ## Returns a wPrintData object. The result may be nil.
+  ## Returns the current wPrintData object for the dialog. The result may be nil.
   result = self.mPrintData
 
 proc setPrintData*(self: wPrintDialog, printData: wPrintData) {.validate, property, inline.} =
@@ -153,146 +150,110 @@ proc setCollate*(self: wPrintDialog, flag: bool) {.validate, property, inline.} 
   else:
     self.mPd.Flags = self.mPd.Flags and (not PD_COLLATE)
 
-type
-  wPrintDialogOle = object
-    lpVtbl: ptr IPrintDialogCallbackVtbl
-    vtbl: IPrintDialogCallbackVtbl
-    withSite: IObjectWithSite
-    services: ptr IPrintDialogServices
-    dialog: wPrintDialog
-    refs: LONG
-
-proc newPrintDialogOle(self: wPrintDialog): ptr wPrintDialogOle =
-  var withSiteVtbl {.global.} = IObjectWithSiteVtbl(
-    QueryInterface: proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} = E_NOINTERFACE,
-    AddRef: proc(self: ptr IUnknown): ULONG {.stdcall.} = 1,
-    Release: proc(self: ptr IUnknown): ULONG {.stdcall.} = 1,
-    GetSite: proc(self: ptr IObjectWithSite, riid: REFIID, ppvSite: ptr pointer): HRESULT {.stdcall.} = E_NOTIMPL,
-    SetSite: proc(self: ptr IObjectWithSite, pUnkSite: ptr IUnknown): HRESULT {.stdcall.} =
-      # NOTICE: PrintDlgEx call SetSite(nil) AFTER wPrintDialogOle dealloc, so do nothing in that case
-      if pUnkSite != nil:
-        let obj = cast[ptr wPrintDialogOle](cast[int](self) - objectOffset(wPrintDialogOle, withSite))
-        obj.services = cast[ptr IPrintDialogServices](pUnkSite)
-    )
-
-  result = cast[ptr wPrintDialogOle](alloc0(sizeof(wPrintDialogOle)))
-  if result == nil: return
-
-  result.lpVtbl = &result.vtbl
-  result.dialog = self
-  result.refs = 0
-  result.withSite.lpVtbl = &withSiteVtbl
-
-  result.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
-    if IsEqualIID(riid, &IID_IObjectWithSite):
-      let obj = cast[ptr wPrintDialogOle](self)
-      ppvObject[] = &obj.withSite
-      return S_OK
-
-    elif IsEqualIID(riid, &IID_IPrintDialogCallback):
-      ppvObject[] = self
-      self.AddRef()
-      return S_OK
-
-    else:
-      ppvObject[] = nil
-      return E_NOINTERFACE
-
-  result.vtbl.AddRef = proc(self: ptr IUnknown): ULONG {.stdcall.} =
-    let obj = cast[ptr wPrintDialogOle](self)
-    discard InterlockedIncrement(&obj.refs)
-    return obj.refs
-
-  result.vtbl.Release = proc(self: ptr IUnknown): ULONG {.stdcall.} =
-    let obj = cast[ptr wPrintDialogOle](self)
-    discard InterlockedDecrement(&obj.refs)
-    if obj.refs == 0:
-      dealloc(obj)
-      return 0
-
-    return obj.refs
-
-  result.vtbl.InitDone = proc (self: ptr IPrintDialogCallback): HRESULT {.stdcall.} = E_NOTIMPL
-
-  result.vtbl.SelectionChange = proc (self: ptr IPrintDialogCallback): HRESULT {.stdcall.} =
-    let obj = cast[ptr wPrintDialogOle](self)
-
-    if obj.services != nil:
-      var pcchSize, pcbSize: UINT
-      var device, devMode: string
-
-      if obj.services.GetCurrentPrinterName(nil, &pcchSize) == S_OK:
-        var buffer = T(pcchSize)
-        if obj.services.GetCurrentPrinterName(&buffer, &pcchSize) == S_OK:
-          device = $buffer
-
-      if obj.services.GetCurrentDevMode(nil, &pcbSize) == S_OK:
-        var buffer = newString(pcbSize)
-        if obj.services.GetCurrentDevMode(cast[ptr DEVMODE](&buffer), &pcbSize) == S_OK:
-          devMode = buffer
-
-      if device.len != 0 and devMode.len != 0:
-        obj.dialog.mPrintData = PrintData(device, devMode)
-        # only trigger the event if everything is right, so that dialog.getPrintData()
-        # can be used to get the current selected printer.
-        let event = Event(window=obj.dialog, msg=wEvent_PrinterChanged)
-        obj.dialog.processEvent(event)
-
-    # MSDN: Return S_FALSE to allow PrintDlgEx to perform its default actions
-    return S_FALSE
-
-  result.vtbl.HandleMessage = proc (self: ptr IPrintDialogCallback, hWnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM, pResult: ptr LRESULT): HRESULT {.stdcall.} =
-    let obj = cast[ptr wPrintDialogOle](self)
-    # wDialogHookProc return TRUE means processed
-    # MSDN:
-    #  pResult: The value pointed to should be TRUE if you process the message
-    #  HRESULT: Return S_FALSE to perform its default message handling.
-    pResult[] = LRESULT obj.dialog.wDialogHookProc(hWnd, msg, wParam, lParam)
-    result = (if pResult[] == 0: S_FALSE else: S_OK)
-
 wClass(wPrintDialog of wDialog):
 
-  proc final*(self: wPrintDialog) =
-    ## Default finalizer for wPrintDialog.
-    if self.mPd.hDevMode != 0:
-      GlobalFree(self.mPd.hDevMode)
-      self.mPd.hDevMode = 0
-
-    if self.mPd.hDevNames != 0:
-      GlobalFree(self.mPd.hDevNames)
-      self.mPd.hDevNames = 0
-
-    self.wDialog.final()
-
-  proc init*(self: wPrintDialog, owner: wWindow, initDefault = false) {.validate.} =
-    ## Initializer. If initDefault is true, the dialog is initialized for the
-    ## system default printer.
+  proc init*(self: wPrintDialog, owner: wWindow) {.validate.} =
+    ## Initializer.
     wValidate(owner)
     self.wDialog.init(owner)
     self.mPd.lStructSize = sizeof(TPRINTDLGEX)
     self.mPd.nMaxPageRanges = self.mRanges.len
     self.mPd.lpPageRanges = &self.mRanges[0]
     self.mPd.nStartPage = START_PAGE_GENERAL
-    self.mPd.lpCallback = cast[ptr IUnknown](self.newPrintDialogOle())
     self.mPd.hwndOwner = owner.mHwnd
 
-    if initDefault:
-      self.mPd.Flags = PD_RETURNDEFAULT
-      if PrintDlgEx(&self.mPd) != S_OK:
-        raise newException(wPrintDialogError, "wPrintDialog creation failed")
-      self.mPd.Flags = 0
+    # IPrintDialogCallback + IObjectWithSite
+
+    # 1.0.0 bug: output c source cannot be compiled. devel don't has this problem.
+    # var withSiteVtbl {.global.} = IObjectWithSiteVtbl(
+
+    var withSiteVtbl {.global.}: IObjectWithSiteVtbl
+    if withSiteVtbl.QueryInterface.isNil:
+      withSiteVtbl = IObjectWithSiteVtbl(
+        QueryInterface: proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} = E_NOINTERFACE,
+        AddRef: proc(self: ptr IUnknown): ULONG {.stdcall.} = 1,
+        Release: proc(self: ptr IUnknown): ULONG {.stdcall.} = 1,
+        GetSite: proc(self: ptr IObjectWithSite, riid: REFIID, ppvSite: ptr pointer): HRESULT {.stdcall.} = E_NOTIMPL,
+        SetSite: proc(self: ptr IObjectWithSite, pUnkSite: ptr IUnknown): HRESULT {.stdcall.} =
+          let callBack = cast[ptr wPrintDialogCallback](cast[int](self) - objectOffset(wPrintDialogCallback, withSite))
+          callBack.services = cast[ptr IPrintDialogServices](pUnkSite)
+        )
+
+    self.mPd.lpCallback = cast[ptr IUnknown](&self.mCallBack)
+    self.mCallBack.lpVtbl = &self.mCallBack.vtbl
+    self.mCallBack.withSite.lpVtbl = &withSiteVtbl
+
+    self.mCallBack.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
+
+      if IsEqualIID(riid, &IID_IObjectWithSite):
+        let callBack = cast[ptr wPrintDialogCallback](self)
+        ppvObject[] = &callBack.withSite
+        return S_OK
+
+      elif IsEqualIID(riid, &IID_IPrintDialogCallback):
+        ppvObject[] = self
+        self.AddRef()
+        return S_OK
+
+      else:
+        ppvObject[] = nil
+        return E_NOINTERFACE
+
+    self.mCallBack.vtbl.AddRef = proc(self: ptr IUnknown): ULONG {.stdcall.} = 1
+
+    self.mCallBack.vtbl.Release = proc(self: ptr IUnknown): ULONG {.stdcall.} = 1
+
+    self.mCallBack.vtbl.InitDone = proc (self: ptr IPrintDialogCallback): HRESULT {.stdcall.} = E_NOTIMPL
+
+    self.mCallBack.vtbl.SelectionChange = proc (self: ptr IPrintDialogCallback): HRESULT {.stdcall.} =
+      let dialog = cast[wBase.wPrintDialog](cast[int](self) - objectOffset(wBase.wPrintDialog, mCallBack))
+      let services = dialog.mCallBack.services
+
+      if services != nil:
+        var pcchSize, pcbSize: UINT
+        var device, devMode: string
+
+        if services.GetCurrentPrinterName(nil, &pcchSize) == S_OK:
+          var buffer = T(pcchSize)
+          if services.GetCurrentPrinterName(&buffer, &pcchSize) == S_OK:
+            device = $buffer
+
+        if services.GetCurrentDevMode(nil, &pcbSize) == S_OK:
+          var buffer = newString(pcbSize)
+          if services.GetCurrentDevMode(cast[ptr DEVMODE](&buffer), &pcbSize) == S_OK:
+            devMode = buffer
+
+        if device.len != 0 and devMode.len != 0:
+          dialog.mPrintData = PrintData(device, devMode)
+          # only trigger the event if everything is right, so that dialog.getPrintData()
+          # can be used to get the current selected printer.
+          let event = Event(window=dialog, msg=wEvent_PrinterChanged)
+          dialog.processEvent(event)
+
+      # MSDN: Return S_FALSE to allow PrintDlgEx to perform its default actions
+      return S_FALSE
+
+    self.mCallBack.vtbl.HandleMessage = proc (self: ptr IPrintDialogCallback, hWnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM, pResult: ptr LRESULT): HRESULT {.stdcall.} =
+      let dialog = cast[wBase.wPrintDialog](cast[int](self) - objectOffset(wBase.wPrintDialog, mCallBack))
+      # wDialogHookProc return TRUE means processed
+      # MSDN:
+      #  pResult: The value pointed to should be TRUE if you process the message
+      #  HRESULT: Return S_FALSE to perform its default message handling.
+      pResult[] = LRESULT dialog.wDialogHookProc(hWnd, msg, wParam, lParam)
+      result = (if pResult[] == 0: S_FALSE else: S_OK)
 
   proc init*(self: wPrintDialog, owner: wWindow, data: wPrintData) {.validate.} =
-    ## Initializer. Uses specified printData as default setting.
+    ## Initializer. Uses specified printData as default setting. Nil to reset to
+    ## the system default setting.
     self.init(owner)
-    if not data.isNil:
-      self.setPrintData(data)
+    self.setPrintData(data)
 
 proc showModal*(self: wPrintDialog): wId {.validate, discardable.} =
   ## Shows the dialog, returning wIdOk if the user pressed Print, wIdApply if
   ## the user pressed Apply, and wIdCancel otherwise.
-  if self.mPrintData != nil:
-    self.mPd.hDevMode = self.mPrintData.getDevMode()
+  var defaultPrintData = self.mPrintData
+  if defaultPrintData != nil:
+    self.mPd.hDevMode = defaultPrintData.getDevMode()
 
   result = wIdCancel
   if PrintDlgEx(&self.mPd) == S_OK:
@@ -305,4 +266,12 @@ proc showModal*(self: wPrintDialog): wId {.validate, discardable.} =
   if result in {wIdOk, wIdApply}:
     self.mPrintData = PrintData(self.mPd.hDevMode, self.mPd.hDevNames)
   else:
-    self.mPrintData = nil
+    # the "SelectionChange" handler may modify self.mPrintData. So reset it to
+    # user's default or nil.
+    self.mPrintData = defaultPrintData
+
+proc display*(self: wPrintDialog): wPrintData {.validate, inline, discardable.} =
+  ## Shows the dialog in modal mode, returning a wPrintData object if the user
+  ## pressed Print, and nil otherwise.
+  if self.showModal() == wIdOk:
+    result = self.getPrintData()

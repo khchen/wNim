@@ -36,6 +36,9 @@
 ##    wCursorHelp                     Arrow and question mark
 ##    ==============================  =============================================================
 
+{.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
+
 import ../wBase, ../wIconImage, wGdiObject
 export wGdiObject
 
@@ -90,19 +93,9 @@ proc getHeight*(self: wCursor): int {.validate, property, inline.} =
 method delete*(self: wCursor) =
   ## Nim's garbage collector will delete this object by default.
   ## However, sometimes you maybe want do that by yourself.
-  if self.mHandle != 0 and self.mDeletable:
-    if self.mIconResource:
-      DestroyIcon(self.mHandle)
-    else:
-      DestroyCursor(self.mHandle)
-
-  self.mHandle = 0
+  `=destroy`(self[])
 
 wClass(wCursor of wGdiObject):
-
-  proc final*(self: wCursor) =
-    ## Default finalizer for wCursor.
-    self.delete()
 
   proc init*(self: wCursor, hCursor: HCURSOR, copy = true, shared = false,
       hotspot = wDefaultPoint) {.validate.} =

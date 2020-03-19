@@ -28,6 +28,7 @@
 ##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -108,13 +109,13 @@ proc getUrl*(self: wHyperlinkCtrl, index = -1): string {.validate, property, inl
   ## Returns the URL associated with the hyperlink.
   ## Index == -1 means the current focused item.
   var item = self.getItem(index)
-  result = nullTerminated(^$item.szUrl)
+  result = nullTerminated(%$item.szUrl)
 
 proc getLinkId*(self: wHyperlinkCtrl, index = -1): string {.validate, property, inline.} =
   ## Returns the link ID associated with the hyperlink.
   ## Index == -1 means the current focused item.
   var item = self.getItem(index)
-  result = nullTerminated(^$item.szID)
+  result = nullTerminated(%$item.szID)
 
 proc getVisited*(self: wHyperlinkCtrl, index = -1): bool {.validate, property, inline.} =
   ## Returns true if the hyperlink has already been clicked by the user at least one time.
@@ -160,9 +161,9 @@ method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR,
 
 wClass(wHyperlinkCtrl of wControl):
 
-  proc final*(self: wHyperlinkCtrl) =
-    ## Default finalizer for wHyperlinkCtrl.
-    self.wControl.final()
+  method release*(self: wHyperlinkCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wHyperlinkCtrl, parent: wWindow, id = wDefaultID,
       label: string = "", pos = wDefaultPoint, size = wDefaultSize,

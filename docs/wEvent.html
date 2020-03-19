@@ -1262,11 +1262,11 @@ function main() {
   <li><a class="reference" href="#wEvent_DpiChanged"
     title="wEvent_DpiChanged = 0x000002E0"><wbr />w<wbr />Event_<wbr />Dpi<wbr />Changed<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_Close"
-    title="wEvent_Close = 32770"><wbr />w<wbr />Event_<wbr />Close<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent_Close = 32771"><wbr />w<wbr />Event_<wbr />Close<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_Destroy"
-    title="wEvent_Destroy = 32771"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent_Destroy = 32772"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wEvent_App"
-    title="wEvent_App = 32943&apos;i32"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wEvent_App = 32944&apos;i32"><wbr />w<wbr />Event_<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1460,7 +1460,7 @@ function main() {
 <pre class="listing"><span class="Keyword">var</span> <span class="Identifier">frame</span> <span class="Operator">=</span> <span class="Identifier">Frame</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">wIdExit</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Keyword">discard</span></pre><p>An event is usually generated from system. However, the user may define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
-<p>Notice: Event() is the only constructor for all event objects in wNim. <tt class="docutils literal"><span class="pre">import wNim/wEvent</span></tt> will import all of its subclasses automatically.</p>
+<p><strong>Notice: Event() is the only constructor for all event objects in wNim</strong>. <tt class="docutils literal"><span class="pre">import wNim/wEvent</span></tt> <strong>will import all of its subclasses automatically.</strong></p>
 <table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wDragDropEvent.html">wDragDropEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wStatusBarEvent.html">wStatusBarEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a> <a class="reference external" href="wScrollEvent.html">wScrollEvent</a> <a class="reference external" href="wSpinEvent.html">wSpinEvent</a> <a class="reference external" href="wHyperlinkEvent.html">wHyperlinkEvent</a> <a class="reference external" href="wListEvent.html">wListEvent</a> <a class="reference external" href="wTreeEvent.html">wTreeEvent</a> <a class="reference external" href="wIpEvent.html">wIpEvent</a> <a class="reference external" href="wWebViewEvent.html">wWebViewEvent</a> <a class="reference external" href="wDialogEvent.html">wDialogEvent</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wEvent</th><th>Description</th></tr>
 <tr><td>wEvent_SetFocus</td><td>A window has gained the keyboard focus.</td></tr>
@@ -1519,13 +1519,13 @@ function main() {
 <dt><pre><span class="Identifier">wEvent_DpiChanged</span> <span class="Other">=</span> <span class="DecNumber">0x000002E0</span></pre></dt>
 
 <a id="wEvent_Close"></a>
-<dt><pre><span class="Identifier">wEvent_Close</span> <span class="Other">=</span> <span class="DecNumber">32770</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_Close</span> <span class="Other">=</span> <span class="DecNumber">32771</span></pre></dt>
 
 <a id="wEvent_Destroy"></a>
-<dt><pre><span class="Identifier">wEvent_Destroy</span> <span class="Other">=</span> <span class="DecNumber">32771</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_Destroy</span> <span class="Other">=</span> <span class="DecNumber">32772</span></pre></dt>
 
 <a id="wEvent_App"></a>
-<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">32943'i32</span></pre></dt>
+<dt><pre><span class="Identifier">wEvent_App</span> <span class="Other">=</span> <span class="DecNumber">32944'i32</span></pre></dt>
 
 
 </dl></div>
@@ -1789,7 +1789,8 @@ Get coordinate of the cursor. The coordinate is relative to the screen.
 </dd>
 <a id="Event,wWindow,UINT,wWparam,wLparam,HWND,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">Event</span><span class="Other">(</span><span class="Identifier">window</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">wWparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">wLparam</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
-          <span class="Identifier">origin</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEvent</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+          <span class="Identifier">origin</span><span class="Other">:</span> <span class="Identifier">HWND</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">userData</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wEvent</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
 
@@ -2012,7 +2013,7 @@ Method needs to be overridden.
 <a id="shouldPropagate.e,wEvent"></a>
 <dt><pre><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0.This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
+Test if this event should be propagated or not, i.e. if the propagation level is currently greater than 0. This method can be override, for example:<pre class="listing"><span class="Keyword">method</span> <span class="Identifier">shouldPropagate</span><span class="Punctuation">(</span><span class="Identifier">event</span><span class="Punctuation">:</span> <span class="Identifier">wKeyEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">bool</span> <span class="Operator">=</span>
   <span class="Keyword">if</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">eventType</span> <span class="Operator">==</span> <span class="Identifier">wEvent_Char</span><span class="Punctuation">:</span>
     <span class="Identifier">result</span> <span class="Operator">=</span> <span class="Identifier">true</span>
   <span class="Keyword">else</span><span class="Punctuation">:</span>
@@ -2030,7 +2031,7 @@ Test if this event should be propagated or not, i.e. if the propagation level is
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:36 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:15 UTC</small>
       </div>
     </div>
   </div>

@@ -7,7 +7,7 @@
 
 ## This class encapsulates a Windows icon image. Unlike wImage, wBitmap,
 ## wIcon, wCursor, etc., wIconImage doesn't store any Windows resource handle,
-## but only an icon image in binary format. Except the binary image data,
+## but only an icon image in binary format. In addition to the binary image data,
 ## wIconImage also stores the hotspot for cursor if the icon image is created
 ## from a cursor resource.
 ##
@@ -15,7 +15,7 @@
 ## or icon files (.ico or .cur). It also can be created by wImage, wBitmap,
 ## wIcon, or wCursor. Furthermore, wIconImage can be converted to wImage,
 ## wBitmap, wIcon, wCursor, or .ico/.cur files. In summary, it is easy to deal
-## with Windows' image-like resource and image files with wIconImage.
+## with Windows' image-like resource and image files by wIconImage.
 ##
 ## The wIconImage class use the same binary format as an image inside the icon
 ## files. So there are two possible format of wIconImage object: BMP or PNG.
@@ -36,6 +36,7 @@
 # proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): string
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import strutils
 import wBase
@@ -453,10 +454,6 @@ proc error(self: wIconImage) {.inline.} =
 
 wClass(wIconImage):
 
-  proc final*(self: wIconImage) =
-    ## Default finalizer for wIconImage.
-    discard
-
   proc init*(self: wIconImage, icon: wIcon) {.validate.} =
     ## Initializes an icon image from a wIcon object.
     wValidate(icon)
@@ -612,7 +609,7 @@ proc IconImages*(data: pointer, length: int): seq[wIconImage] =
       length = int iconDir.idEntries[i].dwBytesInRes
       p = cast[pointer](cast[int](data) + iconDir.idEntries[i].dwImageOffset)
 
-    new(result[i], final)
+    new(result[i])
     result[i].mIcon = newString(length)
     copyMem(&result[i].mIcon, p, length)
 
@@ -644,7 +641,7 @@ proc IconImagesModuleGroupId(module: HMODULE, groupId: LPTSTR, isIcon: bool): se
 
       if resource != 0 and handle != 0 and length != 0 and p != nil:
         var iconImage: wIconImage
-        new(iconImage, final)
+        new(iconImage)
 
         if isIcon:
           iconImage.mHotspot = wDefaultPoint

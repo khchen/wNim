@@ -1239,6 +1239,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#wEvent_AppQuit"
     title="wEvent_AppQuit = 32769"><wbr />w<wbr />Event_<wbr />App<wbr />Quit<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wEvent_WindowUnregister"
+    title="wEvent_WindowUnregister = 32770"><wbr />w<wbr />Event_<wbr />Window<wbr />Unregister<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1286,14 +1288,6 @@ function main() {
   </ul>
 </li>
 
-<li>
-  <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wAppGetCurrentApp.t"
-    title="wAppGetCurrentApp(): wApp"><wbr />w<wbr />App<wbr />Get<wbr />Current<wbr />App<span class="attachedType" style="visibility:hidden"></span></a></li>
-
-  </ul>
-</li>
 
 
 </ul>
@@ -1301,13 +1295,16 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">The wApp object represents the application itself. It allow only one instance for a thread. Because every wNim app needs to import this module. So wTypes, wColors, and wKeyCodes are exported by this module for convenience.</p>
+  <p class="module-desc">The wApp object represents the application itself. It allow only one instance for a thread. For convenience, <em>wTypes</em>, <em>wColors</em>, and <em>wKeyCodes</em> are exported by this module automatically. The users don't need to import these three modules directly.</p>
   
 <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
 <a id="wEvent_AppQuit"></a>
 <dt><pre><span class="Identifier">wEvent_AppQuit</span> <span class="Other">=</span> <span class="DecNumber">32769</span></pre></dt>
+
+<a id="wEvent_WindowUnregister"></a>
+<dt><pre><span class="Identifier">wEvent_WindowUnregister</span> <span class="Other">=</span> <span class="DecNumber">32770</span></pre></dt>
 
 
 </dl></div>
@@ -1396,7 +1393,7 @@ Constructor.
 
 
 <a id="mainLoop,wApp"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">mainLoop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wApp</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">mainLoop</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wApp</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Execute the main GUI event loop. The loop will exit after all top-level windows is deleted.
 
@@ -1430,17 +1427,6 @@ Broadcast a event to all windows.
 
 </dl></div>
 
-<div class="section" id="18">
-<h1><a class="toc-backref" href="#18">Templates</a></h1>
-<dl class="item">
-<a id="wAppGetCurrentApp.t"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">wAppGetCurrentApp</span><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wApp</span></pre></dt>
-<dd>
-Gets the current wApp instance.
-
-</dd>
-
-</dl></div>
 
 
   </div>
@@ -1450,7 +1436,7 @@ Gets the current wApp instance.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:38:32 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:22:13 UTC</small>
       </div>
     </div>
   </div>

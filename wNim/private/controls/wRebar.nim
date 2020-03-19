@@ -15,6 +15,7 @@
 ##   `wControl <wControl.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl, wToolBar
 export wControl, wToolBar
@@ -119,15 +120,12 @@ method processNotify(self: wRebar, code: INT, id: UINT_PTR, lParam: LPARAM,
     return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 
-method release(self: wRebar) {.uknlock.} =
-  self.mImageList = nil
-  self.mParent.systemDisconnect(self.mSizeConn)
-
 wClass(wRebar of wControl):
 
-  proc final*(self: wRebar) =
-    ## Default finalizer for wRebar.
-    self.wControl.final()
+  method release*(self: wRebar) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mSizeConn)
+    free(self[])
 
   proc init*(self: wRebar, parent: wWindow, id = wDefaultID,
       imageList: wImageList = nil, style: wStyle = 0) {.validate.} =

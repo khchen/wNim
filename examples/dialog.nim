@@ -9,13 +9,10 @@ import
   strformat, math, strutils,
   resource/resource
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wPanel, wEvent, wPrintData, wIcon,
-    wStaticBox, wButton, wRadioButton, wMessageDialog, wDirDialog, wFileDialog,
-    wColorDialog, wFontDialog, wTextEntryDialog, wPasswordEntryDialog,
-    wFindReplaceDialog, wPageSetupDialog, wPrintDialog]
+import wNim/[wApp, wFrame, wPanel, wEvent, wPrintData, wIcon,
+  wStaticBox, wButton, wRadioButton, wMessageDialog, wDirDialog, wFileDialog,
+  wColorDialog, wFontDialog, wTextEntryDialog, wPasswordEntryDialog,
+  wFindReplaceDialog, wPageSetupDialog, wPrintDialog]
 
 const
   wEvent_RadioButtonOn = wEvent_App + 1

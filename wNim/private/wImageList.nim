@@ -13,6 +13,9 @@
 ##   `wBitmap <wBitmap.html>`_
 ##   `wIcon <wIcon.html>`_
 
+{.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
+
 from winimx import nil # For BITMAP
 import wBase, gdiobjects/[wBitmap, wIcon]
 
@@ -113,16 +116,11 @@ proc len*(self: wImageList): int {.validate.} =
   result = self.getImageCount()
 
 proc delete*(self: wImageList) {.validate.} =
-  ## Delete the imagelist.
-  if self.mHandle != 0:
-    ImageList_Destroy(self.mHandle)
-    self.mHandle = 0
+  ## Nim's garbage collector will delete this object by default.
+  ## However, sometimes you maybe want do that by yourself.
+  `=destroy`(self[])
 
 wClass(wImageList):
-
-  proc final*(self: wImageList) =
-    ## Default finalizer for wImageList.
-    self.delete()
 
   proc init*(self: wImageList, width: int, height: int, mask = false,
       initialCount = 1) {.validate, inline.} =

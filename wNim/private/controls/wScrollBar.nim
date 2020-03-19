@@ -25,6 +25,7 @@
 ##   `wScrollEvent <wScrollEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -84,15 +85,13 @@ proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
   let info = self.getScrollInfo()
   result = info.nPos
 
-method release(self: wScrollBar) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mHScrollConn)
-  self.mParent.systemDisconnect(self.mVScrollConn)
-
 wClass(wScrollBar of wControl):
 
-  proc final*(self: wScrollBar) =
-    ## Default finalizer for wScrollBar.
-    self.wControl.final()
+  method release*(self: wScrollBar) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mHScrollConn)
+    self.mParent.systemDisconnect(self.mVScrollConn)
+    free(self[])
 
   proc init*(self: wScrollBar, parent: wWindow, id = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = 0) {.validate.} =

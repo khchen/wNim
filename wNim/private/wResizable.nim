@@ -59,7 +59,7 @@
 ##     H:|-[col1(col2)]-[col2]-|
 ##   """
 ##
-## See autolayout module for details.
+## See `autolayout <autolayout.html>`_ module for details.
 #
 ## :Subclass:
 ##   `wWindow <wWindow.html>`_
@@ -69,9 +69,10 @@
 ##   `autolayout <autolayout.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import macros, math, strutils
-import wBase, autolayout, kiwi/kiwi
+import wBase, autolayout
 
 proc getLayoutSize*(self: wResizable): wSize {.validate, property.} =
   ## Returns the current layout size.
@@ -103,10 +104,6 @@ method getClientSize(self: wResizable): wSize {.base, property, uknlock.} =
   result = self.getLayoutSize()
 
 wClass(wResizable):
-
-  proc final*(self: wResizable) =
-    ## Default finalizer for wResizable.
-    discard
 
   proc init*(self: wResizable) =
     ## Initializer.

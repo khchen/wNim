@@ -38,6 +38,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import tables
 import ../wBase, ../wFrame, wDialog
@@ -70,10 +71,6 @@ const
   # wStayOnTop* = WS_EX_TOPMOST.int64 shl 32
 
 wClass(wMessageDialog of wDialog):
-
-  proc final*(self: wMessageDialog) =
-    ## Default finalizer for wMessageDialog.
-    self.wDialog.final()
 
   proc init*(self: wMessageDialog, owner: wWindow = nil, message: string = "" ,
       caption: string = "", style: wStyle = wOK) {.validate.} =
@@ -200,8 +197,7 @@ proc showModal*(self: wMessageDialog): wId {.validate, discardable.} =
   of IDYES: wIdYes
   else: wIdOk
 
-  # we don't need this because we let messagebox always in Modal mode (MB_APPLMODAL or MB_TASKMODAL)
-  # self.dialogQuit()
+  self.dialogQuit()
 
 proc display*(self: wMessageDialog): wId {.validate, inline, discardable.} =
   ## Shows the dialog in modal mode, returning the selected button id.

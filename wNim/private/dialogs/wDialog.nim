@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-## This is the base class for a common dialogs.
+## This is the base class for common dialogs.
 #
 ## :Superclass:
 ##   `wWindow <wWindow.html>`_
@@ -26,6 +26,7 @@
 ##   `wDialogEvent <wDialogEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../wWindow, ../gdiobjects/wFont
 export wWindow
@@ -41,6 +42,17 @@ proc dialogQuit(self: wDialog) {.shield.} =
   if self.mOwner == nil:
     PostMessage(0, wEvent_AppQuit, 0, self.mHwnd)
 
+  # For a dialog, clear the resource here is convenience and necessary.
+  # Because a dialog may have the event handler that reference to itself.
+  # If not released, the destructor for the dialog won't be called.
+
+  # The drawback to clear the resource here is: after the dialog closed,
+  # the event table need to be reset. It means a dialog object should not reuse.
+
+  # Here invoke wWindow.release() only. The fields beyond wWindow should be kept,
+  # it have information about the dialog result.
+  procCall self.wWindow.release()
+
 proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
     lParam: LPARAM): UINT_PTR {.shield.} =
 
@@ -53,7 +65,7 @@ proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
   of WM_COMMAND:
     # handle help button here is much better than "commdlg_help" message
     # 1. don't need connect/disconnect to owner's event table
-    # 2. avoid but in PageSetupDlg (lparam don't point to TPAGESETUPDLG)
+    # 2. avoid bug in PageSetupDlg (lparam don't point to TPAGESETUPDLG)
     # 3. don't even need a owner to work
     # only drawback is: wFileDialog not support becasue no way to hook
     if HIWORD(int32 wParam) == BN_CLICKED and LOWORD(int32 wParam) == 1038:
@@ -65,9 +77,6 @@ proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
     self.processEvent(event)
     self.dialogQuit()
 
-  of WM_NCDESTROY:
-    self.release()
-
   else: discard
 
   # MSDN: If the hook procedure returns zero, the default dialog box procedure processes the message.
@@ -75,13 +84,9 @@ proc wDialogHookProc(self: wDialog, hwnd: HWND, msg: UINT, wParam: WPARAM,
   if self.processMessage(msg, wParam, lParam):
     return TRUE
 
-proc final(self: wDialog) {.shield.} =
-  # Default finalizer for wDialog.
-  discard
-
 proc init(self: wDialog, owner: wWindow) {.shield.} =
   # Initializer.
-  self.initBase()
+  self.initBase("wDialog")
   self.mOwner = owner # may be nil
   self.mBackgroundColor = wDefaultColor
   self.mForegroundColor = wDefaultColor

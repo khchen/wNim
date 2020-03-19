@@ -23,6 +23,7 @@
 ##   ==============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -55,9 +56,9 @@ proc isVertical*(self: wStaticLine): bool {.validate.} =
 
 wClass(wStaticLine of wControl):
 
-  proc final*(self: wStaticLine) =
-    ## Default finalizer for wStaticLine.
-    self.wControl.final()
+  method release*(self: wStaticLine) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wStaticLine, parent: wWindow, id = wDefaultID, pos = wDefaultPoint,
       size = wDefaultSize, style: wStyle = wLiHorizontal) {.validate.} =

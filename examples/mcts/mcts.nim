@@ -62,9 +62,11 @@ proc mcts*[State](rootState: State, itermax: int, timeout: float = 0,
     node.wins += result
 
   proc clone[T](x: T): T {.inline.} =
-    var tmp: T
-    deepCopy(tmp, x)
-    tmp
+    when not defined(gcDestructors):
+      deepCopy(result, x)
+    else:
+      result = T()
+      copyMem(cast[pointer](result), cast[pointer](x), sizeof(type(x[])))
 
   var moves = rootState.getMoves()
   if moves.card == 1:

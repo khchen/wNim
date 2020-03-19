@@ -10,11 +10,8 @@ import
   resource/resource,
   mcts/[gamebase, engine_reversi]
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wMacros, wIcon, wImage, wFrame, wStatusBar, wMenuBar, wMenu,
-    wMemoryDC, wPaintDC, wBitmap, wBrush]
+import wNim/[wApp, wMacros, wIcon, wImage, wFrame, wStatusBar, wMenuBar, wMenu,
+  wMemoryDC, wPaintDC, wBitmap, wBrush]
 
 type
   MenuId = enum idNew = 100, idExit, idAi1, idAi2,
@@ -78,9 +75,6 @@ wClass(wBoard of wFrame):
 
     self.refresh(eraseBackground=false)
     self.information()
-
-  proc final(self: wBoard) =
-    wFrame(self).final()
 
   proc init(self: wBoard, title: string) =
     wFrame(self).init(title=title,

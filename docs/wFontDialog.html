@@ -1259,8 +1259,6 @@ function main() {
     title="enableApply(self: wFontDialog; flag = true)"><wbr />enable<wbr />Apply<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#enableHelp%2CwFontDialog"
     title="enableHelp(self: wFontDialog; flag = true)"><wbr />enable<wbr />Help<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#final%2CwFontDialog"
-    title="final(self: wFontDialog)"><wbr />final<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#init%2CwFontDialog%2CwWindow%2CwFont"
     title="init(self: wFontDialog; owner: wWindow = nil; font: wFont = nil)"><wbr />init<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#FontDialog%2CwWindow%2CwFont"
@@ -1357,22 +1355,18 @@ Display a Apply button, the dialog got wEvent_DialogApply event when the button 
 Display a Help button, the dialog got wEvent_DialogHelp event when the button pressed.
 
 </dd>
-<a id="final,wFontDialog"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">final</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFontDialog</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-Default finalizer for wFontDialog.
-
-</dd>
 <a id="init,wFontDialog,wWindow,wFont"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">init</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFontDialog</span><span class="Other">;</span> <span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Initializer.
 
 </dd>
 <a id="FontDialog,wWindow,wFont"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">FontDialog</span><span class="Other">(</span><span class="Identifier">owner</span><span class="Other">:</span> <span class="Identifier">wWindow</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFontDialog</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wWindowError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wCursorError</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Constructor.
@@ -1380,7 +1374,7 @@ Constructor.
 </dd>
 <a id="showModal,wFontDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">showModal</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFontDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wId</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span>
-                                     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel otherwise.
@@ -1388,7 +1382,7 @@ Shows the dialog, returning wIdOk if the user pressed OK, and wIdCancel otherwis
 </dd>
 <a id="display,wFontDialog"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">display</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wFontDialog</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">wFont</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-                                     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wFontError</span><span class="Other">]</span><span class="Other">,</span>
+                                     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wFontError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
                                      <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Shows the dialog in modal mode, returning the user-selected font or nil.
@@ -1405,7 +1399,7 @@ Shows the dialog in modal mode, returning the user-selected font or nil.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-02-28 08:39:57 UTC</small>
+        <small>Made with Nim. Generated: 2020-03-18 21:23:11 UTC</small>
       </div>
     </div>
   </div>

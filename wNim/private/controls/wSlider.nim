@@ -34,6 +34,7 @@
 ##   `wScrollEvent <wScrollEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl
 export wControl
@@ -189,15 +190,13 @@ proc clearTicks*(self: wSlider) {.validate, property, inline.} =
   ## Clears the ticks.
   SendMessage(self.mHwnd, TBM_CLEARTICS, TRUE, 0)
 
-method release(self: wSlider) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mHScrollConn)
-  self.mParent.systemDisconnect(self.mVScrollConn)
-
 wClass(wSlider of wControl):
 
-  proc final*(self: wSlider) =
-    ## Default finalizer for wSlider.
-    self.wControl.final()
+  method release*(self: wSlider) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mHScrollConn)
+    self.mParent.systemDisconnect(self.mVScrollConn)
+    free(self[])
 
   proc init*(self: wSlider, parent: wWindow, id = wDefaultID,
       value = 0, range: Slice[int] = 0..100, pos = wDefaultPoint,

@@ -38,6 +38,7 @@
 ##   ===============================  =============================================================
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, ../gdiobjects/wBitmap, wControl, wStatusBar
 export wControl
@@ -378,15 +379,13 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
     self.popupMenu(menu, rect.left, rect.bottom)
     processed = true
 
-method release(self: wToolBar) {.uknlock.} =
-  self.mParent.systemDisconnect(self.mSizeConn)
-  self.mParent.systemDisconnect(self.mCommandConn)
-
 wClass(wToolBar of wControl):
 
-  proc final*(self: wToolBar) =
-    ## Default finalizer for wToolBar.
-    self.wControl.final()
+  method release*(self: wToolBar) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    self.mParent.systemDisconnect(self.mSizeConn)
+    self.mParent.systemDisconnect(self.mCommandConn)
+    free(self[])
 
   proc init*(self: wToolBar, parent: wWindow, id = wDefaultID,
       style: wStyle = wTbDefaultStyle) {.validate.} =

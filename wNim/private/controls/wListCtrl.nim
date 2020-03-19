@@ -37,6 +37,7 @@
 ##   `wListEvent <wListEvent.html>`_
 
 {.experimental, deadCodeElim: on.}
+when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase, wControl, wTextCtrl
 export wControl, wTextCtrl
@@ -924,17 +925,11 @@ proc wListCtrl_OnPaint(event: wEvent) =
     SendMessage(hwnd, LVM_SETTEXTBKCOLOR, 0, self.mBackgroundColor)
     SendMessage(hwnd, LVM_SETBKCOLOR, 0, self.mBackgroundColor)
 
-method release(self: wListCtrl) {.uknlock.} =
-  self.mImageListNormal = nil
-  self.mImageListSmall = nil
-  self.mImageListState = nil
-  self.mTextCtrl = nil
-
 wClass(wListCtrl of wControl):
 
-  proc final*(self: wListCtrl) =
-    ## Default finalizer for wListCtrl.
-    self.wControl.final()
+  method release*(self: wListCtrl) {.uknlock.} =
+    ## Release all the resources during destroying. Used internally.
+    free(self[])
 
   proc init*(self: wListCtrl, parent: wWindow, id: wCommandID = wDefaultID,
       pos = wDefaultPoint, size = wDefaultSize, style: wStyle = wLcIcon) {.validate.} =

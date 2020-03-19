@@ -6,17 +6,12 @@
 #====================================================================
 
 import
-  strutils, os,
+  strutils, os, strformat,
   resource/resource,
   winim/[winstr, utils], winim/inc/[windef, winuser, shellapi]
 
-when defined(aio):
-  import wNim
-else:
-  import wNim/[wApp, wFrame, wPanel, wMenu, wWindowDC, wImageList, wIcon, wUtils,
-    wStaticText, wButton, wListCtrl, wComboBox, wButton, wFileDialog]
-
-import strformat except `&`
+import wNim/[wApp, wFrame, wPanel, wMenu, wWindowDC, wImageList, wIcon, wUtils,
+  wStaticText, wButton, wListCtrl, wComboBox, wButton, wFileDialog]
 
 proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   const iconFiles = ["accessibilitycpl.dll", "comres.dll", "explorer.exe",
@@ -199,11 +194,9 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   return ret
 
 when isMainModule:
-  when defined(aio):
-    import wNim
-  else:
-    import wNim/[wTypes, wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu,
-      wPaintDC, wIcon]
+
+  import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu,
+    wPaintDC]
 
   type
     MenuID = enum
@@ -216,8 +209,8 @@ when isMainModule:
   else:
     # Nim compiler correctly recognizes wIcon as type in most time. However,
     # sometimes (generic instantiation, etc) it confused wIcon type with wIcon module.
-    # We can specify wTypes.wIcon to avoid this problem.
-    var backgroundIcons = newSeq[wTypes.wIcon]()
+    # We can specify wApp.wIcon to avoid this problem.
+    var backgroundIcons = newSeq[wApp.wIcon]()
 
   let app = App()
   let frame = Frame(title="wNim PickIconDialog", size=(650, 380))
