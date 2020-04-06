@@ -273,4 +273,5 @@ else:
   template wValidate*(vargs: varargs[pointer, wValidateToPointer]): untyped = discard
 
 static:
-  wEventId(0x8000) # WM_APP
+  # avoid WM_APP + 2 that used by embedded IE ActiveX
+  wEventId(0x8010) # WM_APP + 16

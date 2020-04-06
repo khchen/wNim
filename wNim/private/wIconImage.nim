@@ -162,38 +162,37 @@ proc toDefaultSize(size: wSize): wSize =
 
 proc loadIconLibrary(str: string): tuple[module: HMODULE, index: int, isIcon: bool] =
   var
-    found = false
     pefile: string
     index: int
     isIcon: bool
 
-  try:
-    var tailSplit = rsplit(str, ",", maxsplit=1)
-    if tailSplit.len >= 2:
-      index = parseInt(tailSplit[1])
-      pefile = tailSplit[0]
-      isIcon = true
-      found = true
-  except ValueError: discard
+  proc splitBy(str: string, sep: char, pefile: var string, index: var int): bool =
+    try:
+      var tailSplit = rsplit(str, sep, maxsplit=1)
+      if tailSplit.len >= 2:
+        index = parseInt(tailSplit[1])
+        pefile = tailSplit[0]
+        return true
 
-  try:
-    var tailSplit = rsplit(str, ":", maxsplit=1)
-    if tailSplit.len >= 2:
-      index = parseInt(tailSplit[1])
-      pefile = tailSplit[0]
-      isIcon = false
-      found = true
-  except ValueError: discard
+    except ValueError: discard
+    return false
 
-  if found:
-    if pefile.len != 0:
-      var module = LoadLibraryEx(pefile, 0, LOAD_LIBRARY_AS_DATAFILE)
-      if module != 0:
-        return (module, index, isIcon)
-    else: # for current process.
-      return (0, index, isIcon)
+  if str.splitBy(',', pefile, index):
+    isIcon = true
 
-  return (-1, 0, false)
+  elif str.splitBy(':', pefile, index):
+    isIcon = false
+
+  else:
+    return (-1, 0, false)
+
+  if pefile.len != 0:
+    var module = LoadLibraryEx(pefile, 0, LOAD_LIBRARY_AS_DATAFILE)
+    if module != 0:
+      return (module, index, isIcon)
+
+  else: # for current process.
+    return (0, index, isIcon)
 
 proc initRaw(self: wIconImage, width: int32, height: int32, bitCount: WORD,
   colorSize: int32, colorBit: pointer, maskSize: int32, maskBit: pointer,

@@ -144,7 +144,7 @@ proc wWebViewSubClass(web: ptr wWeb) =
     message.pt.y = GET_Y_LPARAM(pos)
 
     # if it's wNim's accelerator key?
-    if wAppProcessAcceleratorMessage(message):
+    if wAppProcessAcceleratorMessage(message) > 0:
       return true
 
     message.hwnd = web.hwndIe
@@ -242,6 +242,9 @@ proc initDispatchVtbl(): ptr IDispatchVtbl =
       args = cast[ptr UncheckedArray[VARIANT]](pDispParams.rgvarg)
       web = WEB
 
+    # remove codes about avoiding stealing focus
+    #  -> not always work and induce strange result sometimes
+
     case dispIdMember
     of DISPID_BEFORENAVIGATE2:
       let
@@ -254,14 +257,6 @@ proc initDispatchVtbl(): ptr IDispatchVtbl =
       event.mUrl = url
       if win.processEvent(event) and not event.isAllowed:
         cancel[] = VARIANT_TRUE
-
-      else:
-        # avoid embedded IE stealing focus
-        # web.hwnd should reenable before wEvent_WebViewLoaded event
-        EnableWindow(web.hwnd, FALSE)
-
-    of DISPID_DOWNLOADCOMPLETE:
-      EnableWindow(web.hwnd, TRUE)
 
     of DISPID_NAVIGATECOMPLETE2:
       # subclass the embedded browser asap.

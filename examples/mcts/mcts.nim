@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-import random, algorithm, math, strutils, sets, times, hashes, strformat
+import random, algorithm, math, sets, times, strformat
 
 # http://mcts.ai/code/python.html
 
@@ -61,12 +61,9 @@ proc mcts*[State](rootState: State, itermax: int, timeout: float = 0,
     node.visits += 1
     node.wins += result
 
-  proc clone[T](x: T): T {.inline.} =
-    when not defined(gcDestructors):
-      deepCopy(result, x)
-    else:
-      result = T()
-      copyMem(cast[pointer](result), cast[pointer](x), sizeof(type(x[])))
+  proc clone(state: State): State {.inline.} =
+    result = State(move: state.move, rate: state.rate, rounds: state.rounds,
+      playerJustMoved: state.playerJustMoved, board: state.board)
 
   var moves = rootState.getMoves()
   if moves.card == 1:

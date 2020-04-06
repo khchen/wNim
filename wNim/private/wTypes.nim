@@ -137,8 +137,21 @@ type
 # So we collect all type definition in this module.
 type
   wEventProc* = proc (event: wEvent)
+    ## Event handler with event object as parameter.
+
   wEventNeatProc* = proc ()
+    ## Event handler without parameter.
+
   wHookProc* = proc (self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM): bool
+    ## Used internally.
+
+  wMessageLoopHookProc* = proc (msg: var wMsg, modalHwnd: HWND): int
+    ## Hook procedure to the message loop. *modalHwnd* is not 0 if it is a modal
+    ## window message loop instead of main loop. Returns > 0 to continue the loop,
+    ## and returns < 0 to break the loop.
+
+  wMsg* = MSG
+    ## Binary compatibility with Win32 MSG structure.
 
   wApp* = ref object of RootObj
     mInstance*: HANDLE
@@ -150,6 +163,7 @@ type
     mPropagationSet*: HashSet[UINT]
     mMenuIdSet*: set[uint16]
     mMessageCountTable*: Table[UINT, int]
+    mMessageLoopHookProcs*: seq[wMessageLoopHookProc]
     mExitCode*: uint
     mAccelExists*: bool
     mDpi*: int
@@ -776,6 +790,11 @@ when not isMainModule: # hide from doc
       else:
         DestroyCursor(self.mHandle)
     self.mHandle = 0
+
+  # In the last devel version, =destroy is inherited.
+  # https://github.com/nim-lang/Nim/issues/13810
+  # However, the the release version (1.0.6), it's not.
+  # So here we must call parent's `=destroy` for every type.
 
   proc `=destroy`(self: var type(wPen()[])) {.shield.} =
     `=destroy`(type(wGdiObject()[])(self))

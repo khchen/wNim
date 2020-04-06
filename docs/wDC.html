@@ -1341,10 +1341,10 @@ function main() {
   <li><a class="reference" href="#drawPolyPolygon%2CwDC%2CopenArray%5Bint%5D%2CopenArray%5BwPoint%5D%2Cint%2Cint"
     title="drawPolyPolygon(self: wDC; counts: openArray[int]; points: openArray[wPoint];
                 xoffset: int = 0; yoffset: int = 0; style = wOddevenRule)"><wbr />draw<wbr />Poly<wbr />Polygon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#drawPolyPolygon%2CwDC%2CopenArray%5Bseq%5BT%5D%5BwPoint%5D%5D%2Cint%2Cint"
+  <li><a class="reference" href="#drawPolyPolygon%2CwDC%2CopenArray%5Bseq%5BwPoint%5D%5D%2Cint%2Cint"
     title="drawPolyPolygon(self: wDC; points: openArray[seq[wPoint]]; xoffset: int = 0;
                 yoffset: int = 0; style = wOddevenRule)"><wbr />draw<wbr />Poly<wbr />Polygon<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#drawPolyPolygon%2CwDC%2Cint%2Cint%2Cint%2Cvarargs%5Bseq%5BT%5D%5BwPoint%5D%2C%5D"
+  <li><a class="reference" href="#drawPolyPolygon%2CwDC%2Cint%2Cint%2Cint%2Cvarargs%5Bseq%5BwPoint%5D%2C%5D"
     title="drawPolyPolygon(self: wDC; xoffset: int; yoffset: int; style: int;
                 points: varargs[seq[wPoint], `@`])"><wbr />draw<wbr />Poly<wbr />Polygon<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#drawSpline%2CwDC%2Cvarargs%5BwPoint%5D"
@@ -1761,14 +1761,14 @@ Draws a filled polygon using an array of points, adding the optional offset coor
 Draws two or more filled polygons using an array of points, adding the optional offset coordinates.
 
 </dd>
-<a id="drawPolyPolygon,wDC,openArray[seq[T][wPoint]],int,int"></a>
+<a id="drawPolyPolygon,wDC,openArray[seq[wPoint]],int,int"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">drawPolyPolygon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">points</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wPoint</span><span class="Other">]</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">xoffset</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span>
                     <span class="Identifier">yoffset</span><span class="Other">:</span> <span class="Identifier">int</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">style</span> <span class="Other">=</span> <span class="Identifier">wOddevenRule</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Draws two or more filled polygons using an array of points, adding the optional offset coordinates.
 
 </dd>
-<a id="drawPolyPolygon,wDC,int,int,int,varargs[seq[T][wPoint],]"></a>
+<a id="drawPolyPolygon,wDC,int,int,int,varargs[seq[wPoint],]"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">drawPolyPolygon</span><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wDC</span><span class="Other">;</span> <span class="Identifier">xoffset</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">yoffset</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span>
                     <span class="Identifier">points</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wPoint</span><span class="Other">]</span><span class="Other">,</span> <span class="Other">`</span><span class="Operator">@</span><span class="Other">`</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -2139,7 +2139,7 @@ Gets the size of the device context.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-03-18 21:23:22 UTC</small>
+        <small>Made with Nim. Generated: 2020-04-06 13:01:26 UTC</small>
       </div>
     </div>
   </div>

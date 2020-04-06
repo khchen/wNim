@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-import sets, strformat
+import sets
 
 type
   Player* = enum

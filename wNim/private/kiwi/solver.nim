@@ -21,13 +21,13 @@ type
         constraint: Constraint
         constant: float
 
-    DuplicateConstraintException = object of Exception
-    UnsatisfiableConstraintException = object of Exception
-    UnknownConstraintException = object of Exception
-    InternalSolverError = object of Exception
-    DuplicateEditVariableException = object of Exception
-    RequiredFailureException = object of Exception
-    UnknownEditVariableException = object of Exception
+    DuplicateConstraintException = object of CatchableError
+    UnsatisfiableConstraintException = object of CatchableError
+    UnknownConstraintException = object of CatchableError
+    InternalSolverError = object of CatchableError
+    DuplicateEditVariableException = object of CatchableError
+    RequiredFailureException = object of CatchableError
+    UnknownEditVariableException = object of CatchableError
 
 template isNil(t: Tag): bool = t.marker.invalid
 

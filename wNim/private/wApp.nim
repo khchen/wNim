@@ -20,8 +20,30 @@ import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]
 # Every wNim app needs wTypes, so export these in wApp to the user for convenience.
 export wTypes, wColors, wKeyCodes
 
-const wEvent_AppQuit* = wEventId()
-const wEvent_WindowUnregister* = wEventId()
+const
+  wEvent_AppQuit* = wEventId()
+  wEvent_WindowUnregister* = wEventId()
+
+  wAppMainLoopBreak = -1
+  wAppMainLoopContinue = 1
+
+# Forward declarations
+proc wAppProcessQuitMessage(msg: var wMsg, modalHwnd: HWND = 0): int
+proc wAppProcessDialogMessage(msg: var wMsg, modalHwnd: HWND = 0): int
+proc wAppProcessAcceleratorMessage(msg: var wMsg, modalHwnd: HWND = 0): int {.shield.}
+proc wAppProcessWindowUnregister(msg: var wMsg, modalHwnd: HWND = 0): int
+
+proc addMessageLoopHook*(self: wApp, hookProc: wMessageLoopHookProc) =
+  ## Add hook procedure to app's message loop. The definition of wMessageLoopHookProc
+  ## is in `wTypes <wTypes.html>`_.
+  self.mMessageLoopHookProcs.insert(hookProc, 0)
+
+proc removeMessageLoopHook*(self: wApp, hookProc: wMessageLoopHookProc) =
+  ## Remove hook procedure to app's message loop.
+  for index, hp in self.mMessageLoopHookProcs:
+    if hp == hookProc:
+      self.mMessageLoopHookProcs.delete(index)
+      break
 
 proc App*(): wApp {.discardable.} =
   ## Constructor.
@@ -45,9 +67,17 @@ proc App*(): wApp {.discardable.} =
   result.mMenuBaseTable = initTable[HMENU, pointer]()
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initTable[UINT, int]()
+  result.mMessageLoopHookProcs = newSeq[wMessageLoopHookProc]()
   result.mPropagationSet = initHashSet[UINT]()
   result.mWinVersion = wGetWinVersionImpl()
   result.mUsingTheme = usingTheme()
+
+  # add last, run first
+  {.gcsafe.}:
+    result.addMessageLoopHook(wAppProcessWindowUnregister)
+    result.addMessageLoopHook(wAppProcessAcceleratorMessage)
+    result.addMessageLoopHook(wAppProcessDialogMessage)
+    result.addMessageLoopHook(wAppProcessQuitMessage)
 
   wBaseApp = result
 
@@ -171,7 +201,8 @@ proc wAppGetMenuBase(hMenu: HMENU): wMenuBase {.inline, shield.} =
   if hMenu in wBaseApp.mMenuBaseTable:
     return cast[wMenuBase](wBaseApp.mMenuBaseTable[hMenu])
 
-proc wAppProcessDialogMessage(msg: var MSG): bool =
+proc wAppProcessDialogMessage(msg: var wMsg, modalHwnd: HWND = 0): int =
+  # let system modeless dialog (find/replace) works.
   # find the top-level non-child window.
   var hwnd = GetAncestor(msg.hwnd, GA_ROOT)
 
@@ -179,56 +210,70 @@ proc wAppProcessDialogMessage(msg: var MSG): bool =
   if hwnd != 0 and wAppWindowFindByHwnd(hwnd) == nil:
     # here we can use GetClassName() to check if the class name == "#32770",
     # but is it necessary?
-    return IsDialogMessage(hwnd, msg)
+    if IsDialogMessage(hwnd, msg) != 0:
+      return wAppMainLoopContinue
 
-proc wAppProcessAcceleratorMessage(msg: var MSG): bool {.shield.} =
+proc wAppProcessAcceleratorMessage(msg: var wMsg, modalHwnd: HWND = 0): int {.shield.} =
   if wBaseApp.mAccelExists:
     var win = wAppWindowFindByHwnd(msg.hwnd)
     while win != nil:
       if win.mAcceleratorTable != nil:
         let hAccel = win.mAcceleratorTable.getHandle()
         if hAccel != 0 and TranslateAccelerator(win.mHwnd, hAccel, msg) != 0:
-          return true
+          return wAppMainLoopContinue
 
       win = win.mParent
-  return false
 
 proc wAppPostUnregisterMessage(win: wWindow) {.shield, inline.} =
   # we cannot call UnregisterClass in WM_NCDESTROY, so let the mainloop do it.
   wBaseApp.mClassAtomTable.withValue(win.mClassName, atom):
     PostMessage(0, wEvent_WindowUnregister, WPARAM atom[], 0)
 
-proc wAppProcessWindowUnregister(msg: var MSG): bool =
+proc wAppProcessWindowUnregister(msg: var wMsg, modalHwnd: HWND = 0): int =
   if msg.message == wEvent_WindowUnregister:
-    result = true
+    result = wAppMainLoopContinue
 
     let atom = ATOM msg.wParam
     if UnregisterClass(cast[LPCTSTR](atom), wAppGetInstance()) != 0:
-
       for key, value in wBaseApp.mClassAtomTable:
         if value == atom:
           wBaseApp.mClassAtomTable.del(key)
           break
 
-proc messageLoop(modalWin: HWND = 0): int {.shield.} =
+proc wAppProcessQuitMessage(msg: var wMsg, modalHwnd: HWND = 0): int =
+  if msg.message == WM_QUIT or msg.message == wEvent_AppQuit:
+    if not wAppHasTopLevelWindow() or
+        (msg.message == wEvent_AppQuit and
+          modalHwnd != 0 and modalHwnd == msg.lParam):
+      return wAppMainLoopBreak
+
+proc messageLoop(modalHwnd: HWND = 0): int {.shield.} =
   App()
-  var msg: MSG
+  var msg: wMsg
+  var condition: int
+
   while true:
-    if GetMessage(msg, 0, 0, 0) == 0 or msg.message == wEvent_AppQuit:
-      if not wAppHasTopLevelWindow() or
-          (msg.message == wEvent_AppQuit and
-            modalWin != 0 and modalWin == msg.lParam):
+    GetMessage(msg, 0, 0, 0)
+
+    for hookProc in wBaseApp.mMessageLoopHookProcs:
+      # > 0: continue(skip), < 0: break(exit), == 0: do nothing(default)
+      let ret = hookProc(msg, modalHwnd)
+      if likely(ret == 0):
+        condition = 0
+
+      elif ret > 0:
+        condition = wAppMainLoopContinue
         break
 
-    # let system modeless dialog (find/replace) works.
-    if wAppProcessDialogMessage(msg):
+      else: # ret < 0
+        condition = wAppMainLoopBreak
+        break
+
+    if unlikely(condition == wAppMainLoopContinue):
       continue
 
-    if wAppProcessAcceleratorMessage(msg):
-      continue
-
-    if wAppProcessWindowUnregister(msg):
-      continue
+    elif unlikely(condition == wAppMainLoopBreak):
+      break
 
     # we can use IsDialogMessage here to handle key navigation
     # however, it is not flexible enouth
@@ -236,12 +281,6 @@ proc messageLoop(modalWin: HWND = 0): int {.shield.} =
 
     TranslateMessage(msg)
     DispatchMessage(msg)
-
-    # In some case (wFrame.showWindowModal() reenter), wEvent_AppQuit will miss
-    # the handle. So check whether the window is alive or not for a modal loop
-    # and break it anyway if the window is dead.
-    if modalWin != 0 and IsWindow(modalWin) == 0:
-      break
 
   result = int msg.wParam
 

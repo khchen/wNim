@@ -14,6 +14,7 @@ import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
   wRebar, wWebView, wTextCtrl, wMessageDialog]
 
 when false:
+  ## https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730%28v%3dvs.85%29
   import os
 
   var hkey: HKEY
@@ -38,6 +39,9 @@ proc aboutDialog(owner: wWindow) =
     event.veto
     if event.url == "wnim:close":
       dialog.close()
+
+  dialog.shortcut(wAccelNormal, wKey_Esc) do ():
+    dialog.close()
 
   dialog.wEvent_Close do ():
     dialog.endModal()

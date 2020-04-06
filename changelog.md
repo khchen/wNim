@@ -3,7 +3,8 @@ Version 0.11.0
 * Don't maintain compatibility with Nim Compiler 0.20.
 * Use destructor instead of finalizer internally. Now wNim works with --gc:arc.
 * wApp: Don't need to call App() to create a wApp object at thread begining anymore.
-* wDC: getBackground() returns wColor instead of wBrush for now **(Breaking Change)**.
+* wApp: Add addMessageLoopHook()/removeMessageLoopHook() to add the hook proc to the message loop.
+* wDC: getBackground() returns wColor instead of wBrush **(Breaking Change)**.
 * WDC: clear() has an additional parameter to specify the custom brush as the background.
 * wPrintDialog: Add display() and remove useless initDefault parameter in initializer.
 * wMenu: Fix bug about using wIdAny in wMenu/wMenuItem.
@@ -11,6 +12,7 @@ Version 0.11.0
 * wMenuBar: Add removeAll() to remove all the menus.
 * wDialog: After a dialog closed, the event handler connected to the dialog will be cleared **(Breaking Change)**.
 * wMacros: In wClass macro, final() proc is optional. And all final() for superclasses (if exists) will be invoked automatically **(Breaking Change)**.
+* wWebView: Remove codes to avoid stealing focus.
 * Fix other bugs.
 
 Version 0.10.2

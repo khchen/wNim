@@ -5,7 +5,7 @@
 #
 #====================================================================
 
-import threadpool, mcts, sets, strformat
+import threadpool, mcts, sets
 
 type
   Game*[State] = ref object
@@ -74,9 +74,10 @@ proc aiPlay*[State](self: Game[State]) =
 
 when isMainModule:
   import os, random
+  import engine_reversi
   # import engine_nim
   # import engine_tictactoe
-  import engine_reversi
+
   randomize()
   var game = newGame[State]()
   echo game.getBoard.repr

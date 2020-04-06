@@ -19,7 +19,7 @@ proc `*`*(expression: Expression, coefficient: float): Expression =
     # TODO Do we need to make a copy of the term objects in the array?
     newExpression(terms, expression.constant * coefficient)
 
-type NonlinearExpressionException* = object of Exception
+type NonlinearExpressionException* = object of CatchableError
 
 proc `*`*(expression1, expression2: Expression): Expression =
     if expression1.isConstant:

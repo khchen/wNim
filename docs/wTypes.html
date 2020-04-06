@@ -1278,6 +1278,10 @@ function main() {
     title="wEventNeatProc = proc ()"><wbr />w<wbr />Event<wbr />Neat<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wHookProc"
     title="wHookProc = proc (self: wWindow; msg: UINT; wParam: WPARAM; lParam: LPARAM): bool"><wbr />w<wbr />Hook<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMessageLoopHookProc"
+    title="wMessageLoopHookProc = proc (msg: var wMsg; modalHwnd: HWND): int"><wbr />w<wbr />Message<wbr />Loop<wbr />Hook<wbr />Proc<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#wMsg"
+    title="wMsg = MSG"><wbr />w<wbr />Msg<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wApp"
     title="wApp = ref object of RootObj
   mInstance*: HANDLE
@@ -1289,6 +1293,7 @@ function main() {
   mPropagationSet*: HashSet[UINT]
   mMenuIdSet*: set[uint16]
   mMessageCountTable*: Table[UINT, int]
+  mMessageLoopHookProcs*: seq[wMessageLoopHookProc]
   mExitCode*: uint
   mAccelExists*: bool
   mDpi*: int
@@ -1833,7 +1838,7 @@ function main() {
       <li><a class="reference" href="#wDefault"
     title="wDefault = -2147483648"><wbr />w<wbr />Default<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultFloat"
-    title="wDefaultFloat = 0x0000000000000000&apos;f64"><wbr />w<wbr />Default<wbr />Float<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="wDefaultFloat = 0x7FF7FFFFFFFFFFFF&apos;f64"><wbr />w<wbr />Default<wbr />Float<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultColor"
     title="wDefaultColor: wColor = 0xFFFFFFFF&apos;i32"><wbr />w<wbr />Default<wbr />Color<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#wDefaultPoint"
@@ -1982,13 +1987,34 @@ Predefined names to use as menus or controls ID.
 </dd>
 <a id="wEventProc"></a>
 <dt><pre><span class="Identifier">wEventProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">event</span><span class="Other">:</span> <span class="Identifier">wEvent</span><span class="Other">)</span></pre></dt>
+<dd>
+Event handler with event object as parameter.
 
+</dd>
 <a id="wEventNeatProc"></a>
 <dt><pre><span class="Identifier">wEventNeatProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Other">)</span></pre></dt>
+<dd>
+Event handler without parameter.
 
+</dd>
 <a id="wHookProc"></a>
 <dt><pre><span class="Identifier">wHookProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Identifier">wWindow</span><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">wParam</span><span class="Other">:</span> <span class="Identifier">WPARAM</span><span class="Other">;</span> <span class="Identifier">lParam</span><span class="Other">:</span> <span class="Identifier">LPARAM</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+Used internally.
 
+</dd>
+<a id="wMessageLoopHookProc"></a>
+<dt><pre><span class="Identifier">wMessageLoopHookProc</span> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">msg</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">wMsg</span><span class="Other">;</span> <span class="Identifier">modalHwnd</span><span class="Other">:</span> <span class="Identifier">HWND</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
+<dd>
+Hook procedure to the message loop. <em>modalHwnd</em> is not 0 if it is a modal window message loop instead of main loop. Returns &gt; 0 to continue the loop, and returns &lt; 0 to break the loop.
+
+</dd>
+<a id="wMsg"></a>
+<dt><pre><span class="Identifier">wMsg</span> <span class="Other">=</span> <span class="Identifier">MSG</span></pre></dt>
+<dd>
+Binary compatibility with Win32 MSG structure.
+
+</dd>
 <a id="wApp"></a>
 <dt><pre><span class="Identifier">wApp</span> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
   <span class="Identifier">mInstance</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HANDLE</span>
@@ -2000,6 +2026,7 @@ Predefined names to use as menus or controls ID.
   <span class="Identifier">mPropagationSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">]</span>
   <span class="Identifier">mMenuIdSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">uint16</span><span class="Other">]</span>
   <span class="Identifier">mMessageCountTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">]</span>
+  <span class="Identifier">mMessageLoopHookProcs</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">wMessageLoopHookProc</span><span class="Other">]</span>
   <span class="Identifier">mExitCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">uint</span>
   <span class="Identifier">mAccelExists</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
   <span class="Identifier">mDpi</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
@@ -2726,7 +2753,7 @@ Used in wNim as default value.
 
 </dd>
 <a id="wDefaultFloat"></a>
-<dt><pre><span class="Identifier">wDefaultFloat</span> <span class="Other">=</span> <span class="FloatNumber">0x0000000000000000'f64</span></pre></dt>
+<dt><pre><span class="Identifier">wDefaultFloat</span> <span class="Other">=</span> <span class="FloatNumber">0x7FF7FFFFFFFFFFFF'f64</span></pre></dt>
 <dd>
 Used in wNim as default float value.
 
@@ -2845,7 +2872,7 @@ We usually use the enum for where need a command ID. see the examples.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-03-18 21:22:28 UTC</small>
+        <small>Made with Nim. Generated: 2020-04-06 14:53:20 UTC</small>
       </div>
     </div>
   </div>

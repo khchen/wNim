@@ -1,3 +1,4 @@
+{.used.}
 when defined(cpu64):
   when defined(tcc):
     {.link: "wWebViewTcc64.res".}
