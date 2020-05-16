@@ -81,7 +81,7 @@ proc `[]`*(self: wListBox, index: int): string {.validate, inline.} =
   ## Raise error if index out of bounds.
   result = self.getText(index)
   if result.len == 0:
-    raise newException(IndexError, "index out of bounds")
+    raise newException(IndexDefect, "index out of bounds")
 
 iterator items*(self: wListBox): string {.validate, inline.} =
   ## Iterate each item in this list box.

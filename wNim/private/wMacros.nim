@@ -250,6 +250,8 @@ macro DefineIncrement(start: int, x: untyped): untyped {.shield.} =
 
 when not defined(release):
   import typetraits
+  type
+    wNilAccess* = object of Defect
 
   proc wValidateToPointer(x: ref): (pointer, string) {.shield.} =
     (cast[pointer](unsafeaddr x[]), x.type.name)
@@ -266,7 +268,7 @@ when not defined(release):
     ## Used internally.
     for tup in vargs:
       if tup[0] == nil:
-        raise newException(NilAccessError, " not allow nil " & tup[1])
+        raise newException(wNilAccess, " not allow nil " & tup[1])
 
 else:
   proc wValidateToPointer*[T](x: T): pointer = nil

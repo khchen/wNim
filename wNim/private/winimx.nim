@@ -1362,6 +1362,7 @@ const
   ODA_SELECT* = 0x0002
   ODS_SELECTED* = 0x0001
   ODS_COMBOBOXEDIT* = 0x1000
+  PM_REMOVE* = 0x0001
   MOD_ALT* = 0x0001
   MOD_CONTROL* = 0x0002
   MOD_SHIFT* = 0x0004
@@ -1796,6 +1797,7 @@ when winimUnicode:
   proc RegisterWindowMessage*(lpString: LPCWSTR): UINT {.winapi, stdcall, dynlib: "user32", importc: "RegisterWindowMessageW".}
   proc GetMessage*(lpMsg: LPMSG, hWnd: HWND, wMsgFilterMin: UINT, wMsgFilterMax: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetMessageW".}
   proc DispatchMessage*(lpMsg: ptr MSG): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DispatchMessageW".}
+  proc PeekMessage*(lpMsg: LPMSG, hWnd: HWND, wMsgFilterMin: UINT, wMsgFilterMax: UINT, wRemoveMsg: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PeekMessageW".}
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageW".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageW".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcW".}
@@ -1827,6 +1829,7 @@ when winimAnsi:
   proc RegisterWindowMessage*(lpString: LPCSTR): UINT {.winapi, stdcall, dynlib: "user32", importc: "RegisterWindowMessageA".}
   proc GetMessage*(lpMsg: LPMSG, hWnd: HWND, wMsgFilterMin: UINT, wMsgFilterMax: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetMessageA".}
   proc DispatchMessage*(lpMsg: ptr MSG): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DispatchMessageA".}
+  proc PeekMessage*(lpMsg: LPMSG, hWnd: HWND, wMsgFilterMin: UINT, wMsgFilterMax: UINT, wRemoveMsg: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PeekMessageA".}
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageA".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageA".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcA".}
@@ -3720,6 +3723,7 @@ type
     uStateEx*: UINT
     hwnd*: HWND
     iExpandedImage*: int32
+    iReserved*: int32
   TVITEMEXW* {.pure.} = object
     mask*: UINT
     hItem*: HTREEITEM
@@ -3735,6 +3739,7 @@ type
     uStateEx*: UINT
     hwnd*: HWND
     iExpandedImage*: int32
+    iReserved*: int32
   TVINSERTSTRUCTA_UNION1* {.pure, union.} = object
     itemex*: TVITEMEXA
     item*: TV_ITEMA
@@ -5051,6 +5056,8 @@ const
   EM_SETCHARFORMAT* = WM_USER+68
   EM_SETEVENTMASK* = WM_USER+69
   EM_SETPARAFORMAT* = WM_USER+71
+  EM_STREAMIN* = WM_USER+73
+  EM_STREAMOUT* = WM_USER+74
   EM_GETTEXTRANGE* = WM_USER+75
   EM_REDO* = WM_USER+84
   EM_CANREDO* = WM_USER+85
@@ -5075,10 +5082,13 @@ const
   CFM_EFFECTS* = CFM_BOLD or CFM_ITALIC or CFM_UNDERLINE or CFM_COLOR or CFM_STRIKEOUT or CFE_PROTECTED or CFM_LINK
   SCF_SELECTION* = 0x0001
   SCF_DEFAULT* = 0x0000
+  SF_RTF* = 0x0002
+  SFF_SELECTION* = 0x8000
   MAX_TAB_STOPS* = 32
   PFM_LINESPACING* = 0x00000100
   GTL_DEFAULT* = 0
 type
+  EDITSTREAMCALLBACK* = proc (dwCookie: DWORD_PTR, pbBuff: LPBYTE, cb: LONG, pcb: ptr LONG): DWORD {.stdcall.}
   CHARFORMAT2W_UNION1* {.pure, union.} = object
     dwReserved*: DWORD
     dwCookie*: DWORD
@@ -5133,6 +5143,10 @@ type
   TEXTRANGEW* {.pure.} = object
     chrg*: CHARRANGE
     lpstrText*: LPWSTR
+  EDITSTREAM* {.pure, packed.} = object
+    dwCookie*: DWORD_PTR
+    dwError*: DWORD
+    pfnCallback*: EDITSTREAMCALLBACK
   PARAFORMAT2_UNION1* {.pure, union.} = object
     wReserved*: WORD
     wEffects*: WORD

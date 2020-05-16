@@ -45,6 +45,16 @@ proc removeMessageLoopHook*(self: wApp, hookProc: wMessageLoopHookProc) =
       self.mMessageLoopHookProcs.delete(index)
       break
 
+proc setMessageLoopWait*(self: wApp, flag = true) {.inline, property.} =
+  ## If set to false, the message loop won't wait for next message. It means
+  ## the hook procedure will be called very frequently. By default (flag = true),
+  ## it only be called when a message is coming.
+  self.mWaitMessage = flag
+
+proc getMessageLoopWait*(self: wApp): bool {.inline, property.} =
+  ## Gets the current setting.
+  result = self.mWaitMessage
+
 proc App*(): wApp {.discardable.} =
   ## Constructor.
   if not wBaseApp.isNil:
@@ -71,6 +81,7 @@ proc App*(): wApp {.discardable.} =
   result.mPropagationSet = initHashSet[UINT]()
   result.mWinVersion = wGetWinVersionImpl()
   result.mUsingTheme = usingTheme()
+  result.mWaitMessage = true
 
   # add last, run first
   {.gcsafe.}:
@@ -249,15 +260,21 @@ proc wAppProcessQuitMessage(msg: var wMsg, modalHwnd: HWND = 0): int =
 
 proc messageLoop(modalHwnd: HWND = 0): int {.shield.} =
   App()
-  var msg: wMsg
-  var condition: int
-
   while true:
-    GetMessage(msg, 0, 0, 0)
+    var
+      condition: int
+      msg: wMsg
+
+    let dispatch = if wBaseApp.mWaitMessage:
+      GetMessage(msg, 0, 0, 0)
+      true
+    else:
+      bool PeekMessage(msg, 0, 0, 0, PM_REMOVE)
 
     for hookProc in wBaseApp.mMessageLoopHookProcs:
       # > 0: continue(skip), < 0: break(exit), == 0: do nothing(default)
       let ret = hookProc(msg, modalHwnd)
+
       if likely(ret == 0):
         condition = 0
 
@@ -273,16 +290,17 @@ proc messageLoop(modalHwnd: HWND = 0): int {.shield.} =
       continue
 
     elif unlikely(condition == wAppMainLoopBreak):
-      break
+      return int msg.wParam
 
     # we can use IsDialogMessage here to handle key navigation
     # however, it is not flexible enouth
     # so we handle all the navigation by ourself in wControl
 
-    TranslateMessage(msg)
-    DispatchMessage(msg)
-
-  result = int msg.wParam
+    if dispatch:
+      TranslateMessage(msg)
+      DispatchMessage(msg)
+    else:
+      Sleep(1)
 
 proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## Execute the main GUI event loop.

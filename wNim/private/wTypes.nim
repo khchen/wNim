@@ -20,6 +20,10 @@ import winim/[winstr, utils], winim/inc/windef, winimx, kiwi/kiwi
 when defined(wNimDebug):
   import strformat
 
+when not declared(IndexDefect):
+  type
+    IndexDefect* = object of IndexError
+
 type
   wSize* = tuple
     ## A data structure contains integer width and height.
@@ -164,6 +168,7 @@ type
     mMenuIdSet*: set[uint16]
     mMessageCountTable*: Table[UINT, int]
     mMessageLoopHookProcs*: seq[wMessageLoopHookProc]
+    mWaitMessage*: bool
     mExitCode*: uint
     mAccelExists*: bool
     mDpi*: int

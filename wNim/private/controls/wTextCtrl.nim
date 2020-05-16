@@ -31,7 +31,7 @@
 ##   wTeCenter                       The text in the control will be centered.
 ##   wTeRight                        The text in the control will be right-justified.
 ##   wTeDontWrap                     Don't wrap at all, show horizontal scrollbar instead.
-##   wTeRich                         Use rich text control under, this allows to have more than 64KB
+##   wTeRich                         Use rich text control, this allows to have more than 64KB
 ##                                   of text in the control.
 ##   wTeProcessTab                   With this style, press TAB key to insert a TAB character instead
 ##                                   of switches focus to the next control. Only works with wTeMultiLine.
@@ -51,7 +51,7 @@
 {.experimental, deadCodeElim: on.}
 when defined(gcDestructors): {.push sinkInference: off.}
 
-import strutils
+import strutils, streams
 import ../wBase, wControl
 export wControl
 
@@ -179,7 +179,7 @@ proc positionToXY*(self: wTextCtrl, pos: int): wPoint {.validate.} =
   result.y = line
 
   if result.x > self.getLineLength(line):
-    raise newException(IndexError, "index out of bounds")
+    raise newException(IndexDefect, "index out of bounds")
 
 proc showPosition*(self: wTextCtrl, pos: int) {.validate.} =
   ## Makes the line containing the given position visible.
@@ -379,7 +379,7 @@ proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
 proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.validate, inline.} =
   ## Format the selected text if wTeRich style is specified
   if self.mRich:
-    var charformat = CHARFORMAT2(cbSize:int32 sizeof(CHARFORMAT2))
+    var charformat = CHARFORMAT2(cbSize: sizeof(CHARFORMAT2))
     charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS or CFM_BACKCOLOR or CFM_COLOR
     charformat.yHeight = LONG(font.mPointSize * 20)
     charformat.wWeight = WORD font.mWeight
@@ -407,6 +407,50 @@ method setFont*(self: wTextCtrl, font: wFont) {.validate, property, uknlock.} =
     if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
     if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
     SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_DEFAULT, cast[LPARAM](&charformat))
+
+proc StreamInCallback(dwCookie: DWORD_PTR, pbBuff: LPBYTE, cb: LONG, pcb: ptr LONG): DWORD {.stdcall.} =
+  let pstrm = cast[ptr Stream](dwCookie)
+  if pstrm[].atEnd:
+    pcb[] = 0
+  else:
+    pcb[] = pstrm[].readData(pbBuff, cb)
+  return 0
+
+proc StreamOutCallback(dwCookie: DWORD_PTR, pbBuff: LPBYTE, cb: LONG, pcb: ptr LONG): DWORD {.stdcall.} =
+  let pstrm = cast[ptr Stream](dwCookie)
+  pstrm[].writeData(pbBuff, cb)
+  pcb[] = cb
+  return 0
+
+proc loadRtf*(self: wTextCtrl, rtf: string) {.validate.} =
+  ## Loads and displays Rich Text Format (RTF) string. Only works for rich text control.
+  if self.mRich:
+    var
+      strm = newStringStream(rtf)
+      es = EDITSTREAM(pfnCallback: StreamInCallback, dwCookie: cast[DWORD_PTR](addr strm))
+
+    SendMessage(self.mHwnd, EM_STREAMIN, SF_RTF, cast[LPARAM](&es))
+
+proc saveRtf*(self: wTextCtrl, selectionOnly = false): string {.validate.} =
+  ## Saves the all or selected text in Rich Text Format (RTF) string. Only works for rich text control.
+  if self.mRich:
+    var
+      strm = newStringStream()
+      es = EDITSTREAM(pfnCallback: StreamOutCallback, dwCookie: cast[DWORD_PTR](addr strm))
+      flag = SF_RTF or (if selectionOnly: SFF_SELECTION else: 0)
+
+    SendMessage(self.mHwnd, EM_STREAMOUT, flag, cast[LPARAM](&es))
+
+    strm.setPosition(0)
+    result = strm.readAll()
+
+proc loadRtfFile*(self: wTextCtrl, filename: string) {.validate.} =
+  ## Loads and displays Rich Text Format (RTF) file. Only works for rich text control.
+  self.loadRtf(readFile(filename))
+
+proc saveRtfFile*(self: wTextCtrl, filename: string, selectionOnly = false) {.validate.} =
+  ## Saves the all or selected text in Rich Text Format (RTF) file. Only works for rich text control.
+  writeFile(filename, self.saveRtf())
 
 iterator lines*(self: wTextCtrl): string {.validate.} =
   ## Iterates over each line in the control.

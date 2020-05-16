@@ -69,7 +69,7 @@ type
 # Forward declarations
 proc systemConnect(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection {.discardable, shield.}
 proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc) {.shield.}
-proc isShown*(self: wWindow): bool {.inline.}
+proc isShown*(self: wWindow): bool {.inline, gcsafe.}
 
 const
   wBorderSimple* = WS_BORDER
@@ -886,8 +886,8 @@ method setFont*(self: wWindow, font: wFont) {.base, validate, property, uknlock.
   SendMessage(self.mHwnd, WM_SETFONT, font.mHandle, 1)
 
 proc setTransparent*(self: wWindow, alpha: range[0..255]) {.validate, property.} =
-  # Set the window to be translucent. A value of 0 sets the window to be fully
-  # transparent.
+  ## Set the window to be translucent. A value of 0 sets the window to be fully
+  ## transparent.
   SetWindowLongPtr(self.mHwnd, GWL_EXSTYLE,
     WS_EX_LAYERED or GetWindowLongPtr(self.mHwnd, GWL_EXSTYLE))
 
@@ -1264,10 +1264,15 @@ proc queueEvent*(self: wWindow, event: wEvent) {.validate, inline.} =
   wValidate(event)
   PostMessage(self.mHwnd, event.mMsg, event.mWparam, event.mLparam)
 
-proc queueMessage*(self: wWindow, msg: UINT, wParam: wWparam, lParam: wLparam)
+proc queueMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0, lParam: wLparam = 0)
     {.validate, inline.} =
   ## Queue message for a later processing.
   PostMessage(self.mHwnd, msg, wParam, lParam)
+
+proc sendMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0, lParam: wLparam = 0)
+    {.validate, inline.} =
+  ## Send specified message to a window.
+  SendMessage(self.mHwnd, msg, wParam, lParam)
 
 proc processMessage(self: wWindow, msg: UINT, wParam: WPARAM, lParam: LPARAM,
     ret: var LRESULT, origin: HWND): bool {.discardable, shield.} =
@@ -1356,17 +1361,22 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
 
     # sent wEvent_ScrollWin/wEvent_ScrollBar first, if this is processed,
     # skip other event
-    let event = Event(self, if isControl: wEvent_ScrollBar else: wEvent_ScrollWin,
-      wParam, dataPtr)
+    let
+      firstEventKind = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
+      firstEvent = Event(self, firstEventKind, wParam, dataPtr)
+      secondEvent = Event(self, eventKind, wParam, dataPtr)
 
     if isControl:
       let info = self.getScrollInfo()
-      event.wScrollEvent.mScrollPos = info.nPos
+      firstEvent.wScrollEvent.mScrollPos = info.nPos
+      secondEvent.wScrollEvent.mScrollPos = info.nPos
     else:
-      event.wScrollWinEvent.mScrollPos = self.getScrollPos(orientation)
+      let pos = self.getScrollPos(orientation)
+      firstEvent.wScrollWinEvent.mScrollPos = pos
+      secondEvent.wScrollWinEvent.mScrollPos = pos
 
-    if not self.processEvent(event):
-      self.processMessage(eventKind, wParam, dataPtr)
+    if not self.processEvent(firstEvent):
+      self.processEvent(secondEvent)
 
 proc EventConnection(msg: UINT, id: wCommandID = 0, handler: wEventProc = nil,
     neatHandler: wEventNeatProc = nil, userData = 0,
@@ -2337,7 +2347,7 @@ proc initVerbosely(self: wWindow, parent: wWindow = nil, id: wCommandID = 0,
       parentHwnd = owner.mHwnd
 
     elif isHideTaskbar:
-      # create a dummy parent window wiht WS_EX_TOOLWINDOW will hide the taskbar
+      # create a dummy parent window with WS_EX_TOOLWINDOW will hide the taskbar
       # button
       parentHwnd = CreateWindowEx(WS_EX_TOOLWINDOW, className, nil,
         0, 0, 0, 0, 0, parentHwnd, 0, wAppGetInstance(), nil)

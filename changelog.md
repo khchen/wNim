@@ -1,3 +1,12 @@
+Version 0.11.1
+--------------
+* Update for Nim Compiler 1.3.5 (devel).
+* wApp: Add setMessageLoopWait(), getMessageLoopWait().
+* wTextCtrl: Add loadRtf(), saveRtf(), loadRtfFile(), saveRtfFile().
+* wWindow: Add sendMessage().
+* Add example: calendar.nim.
+* Fix bugs.
+
 Version 0.11.0
 --------------
 * Don't maintain compatibility with Nim Compiler 0.20.
@@ -57,7 +66,7 @@ Version 0.9.0
 * wMacros: add wClass macro.
 * Remove wPredefined.nim. Predefined objects are moved into corresponding modules.
 * Rename and rewrite examples/lowlevel.nim to winsdk.nim.
-* Add examples: colors.nim.
+* Add example: colors.nim.
 * Fix bugs.
 
 Version 0.8.0

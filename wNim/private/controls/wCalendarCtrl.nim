@@ -135,10 +135,8 @@ proc enableMonthChange*(self: wCalendarCtrl, flag = true) {.validate.} =
   if flag:
     self.setDateRange()
   else:
-    var first = now()
-    var last = first
-    first.monthday = 1
-    last.monthday = getDaysInMonth(last.month, last.year)
+    var first = now() - days(now().monthday - 1)
+    var last = first + days(getDaysInMonth(first.month, first.year) - 1)
     self.setDateRange(first.toTime(), last.toTime())
 
 proc setMaxSelectCount*(self: wCalendarCtrl, max: int) {.validate, property.} =

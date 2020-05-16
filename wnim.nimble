@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.11.0"
+version       = "0.11.1"
 author        = "Ward"
 description   = "wNim - Nim\'s Windows GUI framework"
 license       = "MIT"
@@ -8,7 +8,7 @@ skipDirs      = @["examples", "docs"]
 
 # Dependencies
 
-requires "nim >= 1.0.0", "winim >= 3.3.1"
+requires "nim >= 1.0.0", "winim >= 3.3.4"
 
 # Examples
 
