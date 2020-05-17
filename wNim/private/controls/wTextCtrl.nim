@@ -162,7 +162,7 @@ proc getLastPosition*(self: wTextCtrl): int {.validate, property.} =
     result = int SendMessage(self.mHwnd, EM_LINELENGTH, 0, 0)
 
 proc isEmpty*(self: wTextCtrl): bool {.validate, inline.} =
-  # Returns true if the control is currently empty.
+  ## Returns true if the control is currently empty.
   result = self.getLastPosition() == 0
 
 proc positionToXY*(self: wTextCtrl, pos: int): wPoint {.validate.} =

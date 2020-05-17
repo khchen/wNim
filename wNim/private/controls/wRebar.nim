@@ -82,6 +82,7 @@ proc addControl*(self: wRebar, control: wControl, image = -1, label = "",
   SendMessage(self.mHwnd, RB_INSERTBAND, -1, &rbBand)
 
 proc minimize*(self: wRebar, band: int) {.validate, inline.} =
+  ## Resizes a band to its smallest size.
   SendMessage(self.mHwnd, RB_MINIMIZEBAND, band, 0)
 
 proc len*(self: wRebar): int {.validate, inline.} =

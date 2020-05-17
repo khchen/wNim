@@ -113,6 +113,7 @@ proc getIcon*(self: wImageList, index: int): wIcon {.validate, property.} =
     result = Icon(hIcon, copy=false)
 
 proc len*(self: wImageList): int {.validate.} =
+  ## Returns the number of images in the list.
   result = self.getImageCount()
 
 proc delete*(self: wImageList) {.validate.} =

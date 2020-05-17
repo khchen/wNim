@@ -111,6 +111,7 @@ proc setMax*(self: wSlider, max: int) {.validate, property, inline.} =
   self.setRange(self.mMin..max)
 
 proc setRange*(self: wSlider, min: int, max: int) {.validate, property, inline.} =
+  ## Sets the minimum and maximum slider value.
   self.setRange(min..max)
 
 proc getMax*(self: wSlider): int {.validate, property, inline.} =

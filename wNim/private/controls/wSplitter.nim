@@ -199,6 +199,7 @@ proc reattach(self: wSplitter) =
   if self.mAttach2: self.bindEventHandle(2)
 
 proc isVertical*(self: wSplitter): bool {.validate, inline.} =
+  ## Returns true if the splitter is vertical and false otherwise.
   result = self.mIsVertical
 
 proc getPanel1*(self: wSplitter): wPanel {.validate, property, inline.} =

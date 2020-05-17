@@ -81,7 +81,7 @@ proc getToolById(self: wToolBar, toolId: wCommandID): wToolBarTool =
     result = cast[wToolBarTool](buttonInfo.lParam)
 
 proc getToolsCount*(self: wToolBar): int {.validate, property, inline.} =
-  # Returns the number of tools in the toolbar.
+  ## Returns the number of tools in the toolbar.
   result = int SendMessage(self.mHwnd, TB_BUTTONCOUNT, 0, 0)
 
 proc getToolPos*(self: wToolBar, toolId: wCommandID): int {.validate, property.} =
