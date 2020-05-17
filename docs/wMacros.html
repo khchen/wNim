@@ -140,7 +140,7 @@ function main() {
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="wNilAccess"></a>
-<dt><pre><span class="Identifier">wNilAccess</span> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Defect</span></pre></dt>
+<dt><pre><a href="wMacros.html#wNilAccess"><span class="Identifier">wNilAccess</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Defect</span></pre></dt>
 
 
 </dl></div>
@@ -149,21 +149,21 @@ function main() {
 <h1><a class="toc-backref" href="#17">Macros</a></h1>
 <dl class="item">
 <a id="property.m,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <span class="Identifier">property</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">macro</span> <a href="#property.m%2Cuntyped"><span class="Identifier">property</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Add property macro to proc as pragma so that getters/setters can access as nim's style.
 
 </dd>
 <a id="validate.m,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <span class="Identifier">validate</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">macro</span> <a href="#validate.m%2Cuntyped"><span class="Identifier">validate</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Add validate macro to a proc as pragma to ensure <em>self</em> is not nil.
 
 </dd>
 <a id="shield.m,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <span class="Identifier">shield</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">macro</span> <a href="#shield.m%2Cuntyped"><span class="Identifier">shield</span></a><span class="Other">(</span><span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Add export marker to proc but hide it in the document. Used internally.
@@ -173,7 +173,7 @@ Add export marker to proc but hide it in the document. Used internally.
 
 
 <a id="wClass.m,untyped,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <span class="Identifier">wClass</span><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">macro</span> <a href="#wClass.m%2Cuntyped%2Cuntyped"><span class="Identifier">wClass</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 <p>A macro for building class following wNim's naming convention. The user can use <em>wClass</em> to subclass the built-in classes in wNim. Constructor is generated from initializer automatically. <em>final()</em> proc is optional. If provided, it will be called when the object being destroyed automatically. In <em>final()</em> proc, it don't need to call final() in superclass.</p>
@@ -218,14 +218,14 @@ Add export marker to proc but hide it in the document. Used internally.
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
 <a id="releaseOrDestroy.t,typedesc,typedesc,bool"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">releaseOrDestroy</span><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">P</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">hasFinal</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">template</span> <a href="#releaseOrDestroy.t%2Ctypedesc%2Ctypedesc%2Cbool"><span class="Identifier">releaseOrDestroy</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">P</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">hasFinal</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Used internally.
 
 </dd>
 <a id="wValidate.t,varargs[,wValidateToPointer]"></a>
-<dt><pre><span class="Keyword">template</span> <span class="Identifier">wValidate</span><span class="Other">(</span><span class="Identifier">vargs</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Other">(</span><span class="Identifier">pointer</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">wValidateToPointer</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dt><pre><span class="Keyword">template</span> <a href="#wValidate.t%2Cvarargs%5B%2CwValidateToPointer%5D"><span class="Identifier">wValidate</span></a><span class="Other">(</span><span class="Identifier">vargs</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Other">(</span><span class="Identifier">pointer</span><span class="Other">,</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">wValidateToPointer</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
 Used internally.
