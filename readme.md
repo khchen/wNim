@@ -130,6 +130,7 @@ However, it only support Windows system.
 
 ## Docs
 * https://khchen.github.io/wNim/wNim.html
+* https://github.com/khchen/wNim/wiki
 
 ## License
 Read license.txt for more details.
