@@ -11,7 +11,7 @@
 when defined(gcDestructors): {.push sinkInference: off.}
 
 import dynlib
-import wBase, wDataObject
+import wBase, wDataObject, wApp
 
 const
   wSysBorderX* = SM_CXBORDER ## Width of single border.
@@ -98,22 +98,26 @@ proc wGetScreenSize*(): wSize =
 proc wSetClipboard*(dataObject: wDataObject): bool {.discardable.} =
   ## Places a specific data object onto the clipboard.
   wValidate(dataObject)
+  App()
   result = OleSetClipboard(dataObject.mObj) == S_OK
 
 proc wGetClipboard*(): wDataObject =
   ## Retrieves a data object that you can use to access the contents of the
   ## clipboard.
+  App()
   var pDataObj: ptr IDataObject
   if OleGetClipboard(&pDataObj) == S_OK:
     result = DataObject(pDataObj)
 
 proc wClearClipboard*() =
   ## Clears the clipboard.
+  App()
   OleSetClipboard(nil)
 
 proc wFlushClipboard*() =
   ## Flushes the clipboard: this means that the data which is currently on
   ## clipboard will stay available even after the application exits.
+  App()
   OleFlushClipboard()
 
 proc wGetSystemMetric*(index: int): int {.inline.} =

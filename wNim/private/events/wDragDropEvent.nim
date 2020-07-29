@@ -28,16 +28,13 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wDragDropEvent):
   wEvent_DragDropFirst
   wEvent_DragEnter
   wEvent_DragOver
   wEvent_DragLeave
   wEvent_Drop
   wEvent_DragDropLast
-
-proc isDragDropEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_DragDropFirst..wEvent_DragDropLast
 
 method getDataObject*(self: wDragDropEvent): wDataObject {.property, inline.} =
   ## Returns the wDataObject object associated with the drop target.

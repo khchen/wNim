@@ -208,6 +208,8 @@ function main() {
                 points: varargs[seq[wPoint], `@`])"><wbr />draw<wbr />Poly<wbr />Polygon<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#drawSpline%2CwDC%2Cvarargs%5BwPoint%5D"
     title="drawSpline(self: wDC; points: varargs[wPoint])"><wbr />draw<wbr />Spline<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#drawRegion%2CwDC%2CwRegion%2Cint%2CwBrush"
+    title="drawRegion(self: wDC; region: wRegion; border = 0; borderBrush: wBrush = nil)"><wbr />draw<wbr />Region<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#gradientFillLinear%2CwDC%2CwRect%2CwColor%2CwColor"
     title="gradientFillLinear(self: wDC; rect: wRect; initialColor: wColor; destColor: wColor;
                    direction = wRight)"><wbr />gradient<wbr />Fill<wbr />Linear<span class="attachedType"></span></a></li>
@@ -672,6 +674,14 @@ Draws two or more filled polygons using an array of points, adding the optional 
 <dd>
 
 Draws a spline between all given points using the current pen. There are at least 3 points in the openarray. Hint: points is varargs so it can be array, seq, or list of points.
+
+</dd>
+<a id="drawRegion,wDC,wRegion,int,wBrush"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#drawRegion%2CwDC%2CwRegion%2Cint%2CwBrush"><span class="Identifier">drawRegion</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wDC"><span class="Identifier">wDC</span></a><span class="Other">;</span> <span class="Identifier">region</span><span class="Other">:</span> <a href="wTypes.html#wRegion"><span class="Identifier">wRegion</span></a><span class="Other">;</span> <span class="Identifier">border</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">borderBrush</span><span class="Other">:</span> <a href="wTypes.html#wBrush"><span class="Identifier">wBrush</span></a> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Draws a region. A custom border size and brush can be specified to draws the border.
 
 </dd>
 <a id="gradientFillLinear,wDC,wRect,wColor,wColor"></a>

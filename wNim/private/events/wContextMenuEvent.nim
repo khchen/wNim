@@ -26,11 +26,8 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-const
-  wEvent_ContextMenu* = WM_CONTEXTMENU
-
-proc isContextMenuEvent(msg: UINT): bool {.inline, shield.} =
-  msg == wEvent_ContextMenu
+wEventRegister(wContextMenuEvent):
+  wEvent_ContextMenu = WM_CONTEXTMENU
 
 method getPosition*(self: wContextMenuEvent): wPoint {.property.} =
   ## Returns the position in screen coordinates at which the menu should be shown.

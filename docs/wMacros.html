@@ -92,6 +92,7 @@ function main() {
     </ul>
   </div>
   <ul class="simple simple-toc" id="toc-list">
+
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
@@ -113,6 +114,9 @@ function main() {
   
   <li><a class="reference" href="#wClass.m%2Cuntyped%2Cuntyped"
     title="wClass(name: untyped; body: untyped): untyped"><wbr />w<wbr />Class<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wEventRegister.m%2Cuntyped%2Cuntyped"
+    title="wEventRegister(event, list: untyped): untyped"><wbr />w<wbr />Event<wbr />Register<span class="attachedType"></span></a></li>
+  
   
   
 
@@ -136,7 +140,8 @@ function main() {
   <div id="tocRoot"></div>
   
   <p class="module-desc">Some macros used in wNim.</p>
-  <div class="section" id="7">
+  
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="wNilAccess"></a>
@@ -206,6 +211,22 @@ Add export marker to proc but hide it in the document. Used internally.
   <span class="Identifier">result</span><span class="Operator">.</span><span class="Identifier">init</span><span class="Punctuation">(</span><span class="Identifier">title</span><span class="Punctuation">)</span></pre>
 
 </dd>
+<a id="wEventRegister.m,untyped,untyped"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#wEventRegister.m%2Cuntyped%2Cuntyped"><span class="Identifier">wEventRegister</span></a><span class="Other">(</span><span class="Identifier">event</span><span class="Other">,</span> <span class="Identifier">list</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+A macro to register event message ID so that the Event() constructor can return the corresponding object of the class. The event class must be the subclass of the wEvent. For example:<pre class="listing"><span class="Keyword">type</span> <span class="Identifier">wMyLinkEvent</span> <span class="Operator">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">wCommandEvent</span>
+
+<span class="Identifier">wEventRegister</span><span class="Punctuation">(</span><span class="Identifier">wMyLinkEvent</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
+  <span class="Identifier">wEvent_OpenUrl</span>
+
+<span class="Keyword">var</span> <span class="Identifier">e</span> <span class="Operator">=</span> <span class="Identifier">Event</span><span class="Punctuation">(</span><span class="Identifier">msg</span><span class="Operator">=</span><span class="Identifier">wEvent_OpenUrl</span><span class="Punctuation">)</span>
+<span class="Identifier">doAssert</span><span class="Punctuation">(</span><span class="Identifier">e</span> <span class="Keyword">of</span> <span class="Identifier">wMyLinkEvent</span><span class="Punctuation">)</span></pre>
+
+</dd>
+
+
+
 
 
 

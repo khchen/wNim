@@ -29,11 +29,8 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wSetCursorEvent):
   wEvent_SetCursor
-
-proc isSetCursorEvent(msg: UINT): bool {.inline, shield.} =
-  msg == wEvent_SetCursor
 
 method getCursor*(self: wSetCursorEvent): wCursor {.property, inline.} =
   ## Returns a reference to the cursor specified by this event.

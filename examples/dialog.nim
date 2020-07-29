@@ -9,13 +9,13 @@ import
   strformat, math, strutils,
   resource/resource
 
-import wNim/[wApp, wFrame, wPanel, wEvent, wPrintData, wIcon,
+import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon,
   wStaticBox, wButton, wRadioButton, wMessageDialog, wDirDialog, wFileDialog,
   wColorDialog, wFontDialog, wTextEntryDialog, wPasswordEntryDialog,
   wFindReplaceDialog, wPageSetupDialog, wPrintDialog]
 
-const
-  wEvent_RadioButtonOn = wEvent_App + 1
+wEventRegister(wEvent):
+  wEvent_RadioButtonOn
 
 let app = App()
 let frame = Frame(title="Dialog Demo", size=(500, 520))

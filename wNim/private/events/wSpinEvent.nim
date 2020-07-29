@@ -30,7 +30,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wSpinEvent):
   wEvent_SpinFirst
   wEvent_Spin
   wEvent_SpinUp
@@ -38,9 +38,6 @@ DefineEvent:
   wEvent_SpinLeft
   wEvent_SpinRight
   wEvent_SpinLast
-
-proc isSpinEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_SpinFirst..wEvent_SpinLast
 
 method getSpinPos*(self: wSpinEvent): int {.property, inline.} =
   ## Gets the current value (before change).

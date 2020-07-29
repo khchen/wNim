@@ -40,7 +40,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wScrollWinEvent):
   wEvent_ScrollWinFirst
   wEvent_ScrollWin
   wEvent_ScrollWinTop
@@ -53,9 +53,6 @@ DefineEvent:
   wEvent_ScrollWinThumbRelease
   wEvent_ScrollWinChanged
   wEvent_ScrollWinLast
-
-proc isScrollWinEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_ScrollWinFirst..wEvent_ScrollWinLast
 
 method getKind*(self: wScrollWinEvent): int {.property, inline.} =
   ## Returns what kind of event type this is. Basically used in wEvent_ScrollWin.

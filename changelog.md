@@ -1,3 +1,22 @@
+Version 0.11.2
+--------------
+* Slightly modify the event system. wNim now uses the new wEventRegister() macro to define all the event.
+  A newly-defined event don't need to use `const wEvent_MyNewEvent = wEvent_App + 1` anymore.
+  The constructor of wEvent `Event()` can return the corresponding object of the subclass that registered
+  by wEventRegister. All of this means that the GUI controls and their event can be designd as plugin
+  module more easily **(Breaking Change)**.
+* wMacro: Add wEventRegister() macro.
+* wEvent: Add wEventBase as superclass to wEvent so that shouldPropagate(self: wEvent) can be overridden.
+* wApp: Remove setMessagePropagation(), isMessagePropagation(). Override shouldPropagate() method instead.
+* wTextCtrl: Add enableAutoComplete(), disableAutoComplete() to use the Windows built-in autocomplete feature.
+* wDC: Add drawRegion().
+* autolayout: Fix bugs. Now the syntax and behavior of *view stacks* are the same as autolayout.js.
+  The old curly brackets syntax is also available for backward compatibility.
+* wResizable: A wResizable object supports all the layout DSL template like a wWindow object now.
+* Modify examples/wHyperlink.nim to demonstrate wEventRegister().
+* Modify examples/webView.nim to demonstrate wTextCtrl.enableAutoComplete().
+* Fix bugs.
+
 Version 0.11.1
 --------------
 * Update for Nim Compiler 1.3.5 (devel).
@@ -37,12 +56,12 @@ Version 0.10.1
 
 Version 0.10.0
 --------------
-* wPrintDialog: rename wEvent_PrintChanged to wEvent_PrinterChanged **(Breaking Change)**.
+* wPrintDialog: Rename wEvent_PrintChanged to wEvent_PrinterChanged **(Breaking Change)**.
 * Add wToolTip class (a standalone tooltip anywhere on the screen).
-* wControl: add setBuddy(). This function can achieve a text control with a "Browse" button.
+* wControl: Add setBuddy(). This function can achieve a text control with a "Browse" button.
 * wToolBar: setBackgroundColor() works for toolbar now (transparent by default).
-* wStatusBar: add setHelpIndex(), getHelpIndex().
-* wDirDialog: remove wDdXpCompatible (WinXP compatible code only exists with -d:useWinXp).
+* wStatusBar: Add setHelpIndex(), getHelpIndex().
+* wDirDialog: Remove wDdXpCompatible (WinXP compatible code only exists with -d:useWinXp).
 * Modify examples/customdialog.nim and pickicondialog.nim to demonstrate setBuddy().
 * Fix bugs.
 
@@ -50,20 +69,20 @@ Version 0.9.0
 -------------
 * wNim modules can be imported one by one to speed up compilation (Requires nim version >= 0.20.0).
 * wNim don't export symbols in winim/[winstr, utils] anymore **(Breaking Change)**.
-* wBitmap: constructor rename to Bitmap() now (old name is Bmp()) **(Breaking Change)**.
-* wApp: add broadcastTopLevelMessage() and broadcastMessage().
-* wWindow: add activate(), isMouseInWindow(), setRedraw(), and queueMessage().
-* wWindow: add getToolBar().
-* wFrame: remove setMenuBar(). Use MenuBar(frame) constructor or MenuBar.attach(frame) instead.
-* wFrame: remove createStatusBar(). Use StatusBar(frame) constructor instead.
-* wFrame: remove getStatusBar(). Use wWindow.getStatusBar() instead.
-* wToolBar, wStatusBar, wRebar: showing or hiding generates wEvent_Size for parent window.
-* wMenu: add Menu(hMenu: HMENU) constructor for wrap system menu handle.
-* wComboBox: add isPopup().
-* wCheckComboBox: add changeStyle(), isPopup(), and wCcNormalColor style.
-* wHyperlinkCtrl: remove the *url* parameter from constructor. Use setUrl() instead.
-* wUtils: remove wGetMessagePosition(). Use wGetMousePosition() instead.
-* wMacros: add wClass macro.
+* wBitmap: Constructor rename to Bitmap() now (old name is Bmp()) **(Breaking Change)**.
+* wApp: Add broadcastTopLevelMessage() and broadcastMessage().
+* wWindow: Add activate(), isMouseInWindow(), setRedraw(), and queueMessage().
+* wWindow: Add getToolBar().
+* wFrame: Remove setMenuBar(). Use MenuBar(frame) constructor or MenuBar.attach(frame) instead.
+* wFrame: Remove createStatusBar(). Use StatusBar(frame) constructor instead.
+* wFrame: Remove getStatusBar(). Use wWindow.getStatusBar() instead.
+* wToolBar, wStatusBar, wRebar: Showing or hiding generates wEvent_Size for parent window.
+* wMenu: Add Menu(hMenu: HMENU) constructor for wrap system menu handle.
+* wComboBox: Add isPopup().
+* wCheckComboBox: Add changeStyle(), isPopup(), and wCcNormalColor style.
+* wHyperlinkCtrl: Remove the *url* parameter from constructor. Use setUrl() instead.
+* wUtils: Remove wGetMessagePosition(). Use wGetMousePosition() instead.
+* wMacros: Add wClass macro.
 * Remove wPredefined.nim. Predefined objects are moved into corresponding modules.
 * Rename and rewrite examples/lowlevel.nim to winsdk.nim.
 * Add example: colors.nim.
@@ -72,15 +91,15 @@ Version 0.9.0
 Version 0.8.0
 -------------
 * Add wCheckComboBox and wHotkeyCtrl.
-* wEvent: add getHotkeyId() and getHotkey().
-* wWindow: add getData(), setData(), wModNoRepeat const for registerHotKey().
+* wEvent: Add getHotkeyId() and getHotkey().
+* wWindow: Add getData(), setData(), wModNoRepeat const for registerHotKey().
 * wWindow: setBackgroundColor() supports transparent.
-* wDC: add drawLabel().
-* wPaintDC: add getPaintRect().
-* wListBox: add selectAll(), deselectAll().
-* wUtil: add wGetWinVersion().
-* wNoteBook: theme background is used by default.
-* wComboBox: press enter key to popup/dismiss drop-down.
+* wDC: Add drawLabel().
+* wPaintDC: Add getPaintRect().
+* wListBox: Add selectAll(), deselectAll().
+* wUtil: Add wGetWinVersion().
+* wNoteBook: Theme background is used by default.
+* wComboBox: Press enter key to popup/dismiss drop-down.
 * Fix bugs.
 
 Version 0.7.0
@@ -88,27 +107,27 @@ Version 0.7.0
 * Add wRegion, wPrinterDC, wPrintData, wPageSetupDialog, and wPrintDialog.
 * Add wDialog class. All common dialogs are now subclasses of wWindow.
 * Add new events for dialogs: wEvent_DialogCreated, wEvent_DialogHelp, wEvent_DialogApply, etc.
-* wWidnow: add setShape(), hasScrollbar(), scrollLines(), scrollPages(), disableFocus(), getDpi(), getDpiScaleRatio(), dpiScale(), dpiAutoScale().
+* wWidnow: Add setShape(), hasScrollbar(), scrollLines(), scrollPages(), disableFocus(), getDpi(), getDpiScaleRatio(), dpiScale(), dpiAutoScale().
 * wWidnow: setDraggable() can be used by top-level window now.
-* wWidnow: event handler can be disconnected from window by given proc now.
-* wWindow: can use specified command to show a window.
-* wWindow: exports processMessage() for convenient.
-* wFrame: add isModal(), getStatusBar().
-* wFrame: the default event handler for wEvent_Size can be changed now **(Breaking Change)**.
-* wToolBar: add wTbNoAlign, wTbNoResize.
-* wDC: add getRegion(), setRegion(), getCharHeight(), getCharWidth(), getFontMetrics(), stretchBlitQuality().
-* wEvent: add wWparam and wLparam types. In case we need "cast" for creation event object.
-* wUtil: add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSysemDpiAware(), wSetPerMonitorDpiAware().
-* wPredefined: add wNilRegion.
+* wWidnow: Event handler can be disconnected from window by given proc now.
+* wWindow: Can use specified command to show a window.
+* wWindow: Exports processMessage() for convenient.
+* wFrame: Add isModal(), getStatusBar().
+* wFrame: The default event handler for wEvent_Size can be changed now **(Breaking Change)**.
+* wToolBar: Add wTbNoAlign, wTbNoResize.
+* wDC: Add getRegion(), setRegion(), getCharHeight(), getCharWidth(), getFontMetrics(), stretchBlitQuality().
+* wEvent: Add wWparam and wLparam types. In case we need "cast" for creation event object.
+* wUtil: Add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSysemDpiAware(), wSetPerMonitorDpiAware().
+* wPredefined: Add wNilRegion.
 * Add examples: shapewin.nim and printpreview.nim.
 * Fix bugs.
 
 Version 0.6.0
 -------------
 * Add wWebView, wFontDialog, wTextEntryDialog, wPasswordEntryDialog, and wFindReplaceDialog.
-* wFont: add getStrikeOut(), setStrikeOut().
-* wFrame: add showWindowModal(), wDefaultDialogStyle.
-* wCheckBox, wRadioButton: add click().
+* wFont: Add getStrikeOut(), setStrikeOut().
+* wFrame: Add showWindowModal(), wDefaultDialogStyle.
+* wCheckBox, wRadioButton: Add click().
 * Remove show() for dialogs. Use showModal() instead.
 * Rename showModalResult() to display().
 * Rewrite examples/frame.nim and examples/dialog.nim to demonstrate the dialogs.
@@ -118,14 +137,14 @@ Version 0.6.0
 Version 0.5.0
 -------------
 * Update for Nim Compiler 0.20.0.
-* wWindow: add hasFocus(), improve popupMenu().
-* wListBox: add setData(), getData(), getRect(), getFocused(), setFocused().
-* wMenuItem: add detach(), getData(), setData().
-* wImageList: add getBitmap(), getIcon().
-* wSplitter: add wSpVertical, wSpHorizontal.
-* wTreeCtrl: add wTrShowSelectAlways.
-* wUtils: add wSetMousePosition().
-* Docs: add wUtils.html page.
+* wWindow: Add hasFocus(), improve popupMenu().
+* wListBox: Add setData(), getData(), getRect(), getFocused(), setFocused().
+* wMenuItem: Add detach(), getData(), setData().
+* wImageList: Add getBitmap(), getIcon().
+* wSplitter: Add wSpVertical, wSpHorizontal.
+* wTreeCtrl: Add wTrShowSelectAlways.
+* wUtils: Add wSetMousePosition().
+* Docs: Add wUtils.html page.
 * Fix: TCC don't support size of UncheckArray.
 * Fix: wMenu/wMenuItem let the GC crash.
 * Fix: Menu event sent to wWindow instead of wFrame.

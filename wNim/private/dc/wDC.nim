@@ -420,6 +420,12 @@ proc drawSpline*(self: wDC, points: varargs[wPoint]) =
 
   PolyBezier(self.mHdc, addr pseq[0], pseq.len)
 
+proc drawRegion*(self: wDC, region: wRegion, border = 0, borderBrush: wBrush = nil) =
+  ## Draws a region. A custom border size and brush can be specified to draws the border.
+  PaintRgn(self.mHdc, region.mHandle)
+  if border != 0 and borderBrush != nil:
+    FrameRgn(self.mHdc, region.mHandle, borderBrush.mHandle, border, border)
+
 proc gradientFillLinear*(self: wDC, rect: wRect, initialColor: wColor,
     destColor: wColor, direction = wRight) =
   ## Fill the area specified by rect with a linear gradient, starting from

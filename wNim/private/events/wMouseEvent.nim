@@ -57,43 +57,41 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-const
-  # WM_MOUSEFIRST
-  wEvent_Motion* = WM_MOUSEMOVE
-  wEvent_MouseMove* = WM_MOUSEMOVE
-  wEvent_LeftDown* = WM_LBUTTONDOWN
-  wEvent_LeftUp* = WM_LBUTTONUP
-  wEvent_LeftDoubleClick* = WM_LBUTTONDBLCLK
-  wEvent_RightDown* = WM_RBUTTONDOWN
-  wEvent_RightUp* = WM_RBUTTONUP
-  wEvent_RightDoubleClick* = WM_RBUTTONDBLCLK
-  wEvent_MiddleDown* = WM_MBUTTONDOWN
-  wEvent_MiddleUp* = WM_MBUTTONUP
-  wEvent_MiddleDoubleClick* = WM_MBUTTONDBLCLK
-  wEvent_MouseWheel* = WM_MOUSEWHEEL
-  wEvent_MouseHorizontalWheel* = WM_MOUSEHWHEEL
-  #WM_MOUSELAST
+wEventRegister(wMouseEvent):
+  wEvent_MouseFirst = WM_MOUSEFIRST
+  wEvent_Motion = WM_MOUSEMOVE
+  wEvent_MouseMove = WM_MOUSEMOVE
+  wEvent_LeftDown = WM_LBUTTONDOWN
+  wEvent_LeftUp = WM_LBUTTONUP
+  wEvent_LeftDoubleClick = WM_LBUTTONDBLCLK
+  wEvent_RightDown = WM_RBUTTONDOWN
+  wEvent_RightUp = WM_RBUTTONUP
+  wEvent_RightDoubleClick = WM_RBUTTONDBLCLK
+  wEvent_MiddleDown = WM_MBUTTONDOWN
+  wEvent_MiddleUp = WM_MBUTTONUP
+  wEvent_MiddleDoubleClick = WM_MBUTTONDBLCLK
+  wEvent_MouseWheel = WM_MOUSEWHEEL
+  wEvent_MouseHorizontalWheel = WM_MOUSEHWHEEL
+  wEvent_MouseLast = WM_MOUSELAST
 
-  wEvent_NcMouseMove* = WM_NCMOUSEMOVE # 0xA0
-  wEvent_NcMotion* = WM_NCMOUSEMOVE
-  wEvent_NcLeftDown* = WM_NCLBUTTONDOWN
-  wEvent_NcLeftUp* = WM_NCLBUTTONUP
-  wEvent_NcLeftDoubleClick* = WM_NCLBUTTONDBLCLK
-  wEvent_NcRightDown* = WM_NCRBUTTONDOWN
-  wEvent_NcRightUp* = WM_NCRBUTTONUP
-  wEvent_NcRightDoubleClick* = WM_NCRBUTTONDBLCLK
-  wEvent_NcMiddleDown* = WM_NCMBUTTONDOWN
-  wEvent_NcMiddleUp* = WM_NCMBUTTONUP
-  wEvent_NcMiddleDoubleClick* = WM_NCMBUTTONDBLCLK
-  # WM_NCXBUTTONDBLCLK == 0xAD
+  wEvent_NcMouseMove = WM_NCMOUSEMOVE
+  wEvent_NcMotion = WM_NCMOUSEMOVE
+  wEvent_NcLeftDown = WM_NCLBUTTONDOWN
+  wEvent_NcLeftUp = WM_NCLBUTTONUP
+  wEvent_NcLeftDoubleClick = WM_NCLBUTTONDBLCLK
+  wEvent_NcRightDown = WM_NCRBUTTONDOWN
+  wEvent_NcRightUp = WM_NCRBUTTONUP
+  wEvent_NcRightDoubleClick = WM_NCRBUTTONDBLCLK
+  wEvent_NcMiddleDown = WM_NCMBUTTONDOWN
+  wEvent_NcMiddleUp = WM_NCMBUTTONUP
+  wEvent_NcMiddleDoubleClick = WM_NCMBUTTONDBLCLK
+  wEvent_NcXDown = WM_NCXBUTTONDOWN
+  wEvent_NcXUp = WM_NCXBUTTONUP
+  wEvent_NcXDoubleClick = WM_NCXBUTTONDBLCLK
 
-  wEvent_MouseLeave* = WM_MOUSELEAVE # 0x02A3
-  wEvent_MouseHover* = WM_MOUSEHOVER # 0x02A1
-  wEvent_MouseEnter* = wEventId()
-
-proc isMouseEvent(msg: UINT): bool {.inline, shield.} =
-  (msg in WM_MOUSEFIRST..WM_MOUSELAST) or (msg in 0xA0..0xAD) or
-    msg in {wEvent_MouseLeave, wEvent_MouseHover, wEvent_MouseEnter}
+  wEvent_MouseLeave = WM_MOUSELEAVE
+  wEvent_MouseHover = WM_MOUSEHOVER
+  wEvent_MouseEnter
 
 method getWheelRotation*(self: wMouseEvent): int {.property.} =
   ## Get wheel rotation, positive or negative indicates direction of rotation.

@@ -34,7 +34,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wWebViewEvent):
   wEvent_WebViewFirst
   wEvent_WebViewNavigating
   wEvent_WebViewContextMenu
@@ -45,9 +45,6 @@ DefineEvent:
   wEvent_WebViewStatusChanged
   wEvent_WebViewHistoryChanged
   wEvent_WebViewLast
-
-proc isWebViewEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_WebViewFirst..wEvent_WebViewLast
 
 method getUrl*(self: wWebViewEvent): string {.property, inline.} =
   ## Returns the url (valid for wEvent_WebViewNavigating, wEvent_WebViewNewWindow,

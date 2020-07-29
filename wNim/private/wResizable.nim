@@ -98,9 +98,19 @@ proc setLayoutRect*(self: wResizable, rect: wRect) {.validate, property.} =
   self.mWidth.value = float rect.width
   self.mHeight.value = float rect.height
 
+# Following base method used in wResizer.
+# These methods should be not public, only the wWindow.xxx() is public.
+
+method getClientMargin(self: wResizable, direction: int): int {.base, property, uknlock.} =
+  result = 0
+
 method getClientSize(self: wResizable): wSize {.base, property, uknlock.} =
-  # The base method used in wResizer.
-  # This method should be not public, only the wWindow.getClientSize() is public.
+  result = self.getLayoutSize()
+
+method getDefaultSize(self: wResizable): wSize {.base, property, uknlock.} =
+  result = self.getLayoutSize()
+
+method getBestSize(self: wResizable): wSize {.base, property, uknlock.} =
   result = self.getLayoutSize()
 
 wClass(wResizable):
@@ -123,16 +133,16 @@ template attributeTempaltes(): untyped =
   template down(name: wResizable): untyped {.used.} = name.bottom
   template centerX(name: wResizable): untyped {.used.} = name.mWidth / 2 + name.mLeft
   template centerY(name: wResizable): untyped {.used.} = name.mHeight / 2 + name.mTop
-  template defaultWidth(name: wResizable): untyped {.used.} = name.wWindow.defaultSize.width
-  template defaultHeight(name: wResizable): untyped {.used.} = name.wWindow.defaultSize.height
-  template bestWidth(name: wResizable): untyped {.used.} = name.wWindow.bestSize.width
-  template bestHeight(name: wResizable): untyped {.used.} = name.wWindow.bestSize.height
-  template innerLeft(name: wResizable): untyped {.used.} = name.left + name.wWindow.clientMargin(wLeft)
-  template innerTop(name: wResizable): untyped {.used.} = name.top + name.wWindow.clientMargin(wTop)
-  template innerRight(name: wResizable): untyped {.used.} = name.right - name.wWindow.clientMargin(wRight)
-  template innerBottom(name: wResizable): untyped {.used.} = name.bottom - name.wWindow.clientMargin(wBottom)
-  template innerUp(name: wResizable): untyped {.used.} = name.top + name.wWindow.clientMargin(wTop)
-  template innerDown(name: wResizable): untyped {.used.} = name.bottom - name.wWindow.clientMargin(wBottom)
+  template defaultWidth(name: wResizable): untyped {.used.} = name.defaultSize.width
+  template defaultHeight(name: wResizable): untyped {.used.} = name.defaultSize.height
+  template bestWidth(name: wResizable): untyped {.used.} = name.bestSize.width
+  template bestHeight(name: wResizable): untyped {.used.} = name.bestSize.height
+  template innerLeft(name: wResizable): untyped {.used.} = name.left + name.clientMargin(wLeft)
+  template innerTop(name: wResizable): untyped {.used.} = name.top + name.clientMargin(wTop)
+  template innerRight(name: wResizable): untyped {.used.} = name.right - name.clientMargin(wRight)
+  template innerBottom(name: wResizable): untyped {.used.} = name.bottom - name.clientMargin(wBottom)
+  template innerUp(name: wResizable): untyped {.used.} = name.top + name.clientMargin(wTop)
+  template innerDown(name: wResizable): untyped {.used.} = name.bottom - name.clientMargin(wBottom)
   template innerWidth(name: wResizable): untyped {.used.} = name.innerRight - name.innerLeft
   template innerHeight(name: wResizable): untyped {.used.} = name.innerBottom - name.innerTop
 

@@ -28,16 +28,13 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wStatusBarEvent):
   wEvent_StatusBarFirst
   wEvent_StatusBarLeftClick
   wEvent_StatusBarLeftDoubleClick
   wEvent_StatusBarRightClick
   wEvent_StatusBarRightDoubleClick
   wEvent_StatusBarLast
-
-proc isStatusBarEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_StatusBarFirst..wEvent_StatusBarLast
 
 method getIndex*(self: wStatusBarEvent): int {.property.} =
   ## Return the index of the field that was clicked.

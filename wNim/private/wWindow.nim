@@ -368,7 +368,7 @@ proc getPosition*(self: wWindow): wPoint {.validate, property.} =
   result.y = rect.y
   self.adjustForParentClientOriginSub(result.x, result.y)
 
-proc getClientMargin*(self: wWindow, direction: int): int {.validate, property.} =
+method getClientMargin*(self: wWindow, direction: int): int {.property, uknlock.} =
   ## Returns the client margin of the specified direction.
   ## This function basically exists for wNim's layout DSL.
   result = case direction
@@ -407,13 +407,13 @@ proc clientToWindow(self: wWindow, size: wSize): wSize {.validate.} =
   if size.height != wDefault:
     result.height += windowSize.height - clientSize.height
 
-method getDefaultSize*(self: wWindow): wSize {.base, property, inline, uknlock.} =
+method getDefaultSize*(self: wWindow): wSize {.property, inline, uknlock.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
   # window's default size is it's parent's clientSize, or 0, 0 by default
   if self.mParent != nil:
     result = self.mParent.getClientSize()
 
-method getBestSize*(self: wWindow): wSize {.base, property, uknlock.} =
+method getBestSize*(self: wWindow): wSize {.property, uknlock.} =
   ## Returns the best acceptable minimal size for the window
   ## (usually used for GUI controls).
   if self.mChildren.len == 0:
@@ -1254,7 +1254,7 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
         if processed: break
 
     this = this.mParent
-    if this == nil or processed or event.shouldPropagate() == false:
+    if this == nil or processed or event.mPropagationLevel <= 0:
       break
     else:
       event.mPropagationLevel.dec
@@ -1361,17 +1361,19 @@ proc wScroll_DoScrollImpl(self: wWindow, orientation: int, wParam: WPARAM,
 
     # sent wEvent_ScrollWin/wEvent_ScrollBar first, if this is processed,
     # skip other event
-    let
-      firstEventKind = if isControl: wEvent_ScrollBar else: wEvent_ScrollWin
-      firstEvent = Event(self, firstEventKind, wParam, dataPtr)
+    var
+      firstEvent: wEvent
       secondEvent = Event(self, eventKind, wParam, dataPtr)
 
     if isControl:
       let info = self.getScrollInfo()
+      firstEvent = Event(self, wEvent_ScrollBar, wParam, dataPtr)
       firstEvent.wScrollEvent.mScrollPos = info.nPos
       secondEvent.wScrollEvent.mScrollPos = info.nPos
+
     else:
       let pos = self.getScrollPos(orientation)
+      firstEvent = Event(self, wEvent_ScrollWin, wParam, dataPtr)
       firstEvent.wScrollWinEvent.mScrollPos = pos
       secondEvent.wScrollWinEvent.mScrollPos = pos
 

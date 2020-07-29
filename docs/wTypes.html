@@ -149,7 +149,6 @@ function main() {
   mWindowTable*: Table[HWND, wWindow]
   mMenuBaseTable*: Table[HMENU, pointer]
   mGDIStockSeq*: seq[wGdiObject]
-  mPropagationSet*: HashSet[UINT]
   mMenuIdSet*: set[uint16]
   mMessageCountTable*: Table[UINT, int]
   mMessageLoopHookProcs*: seq[wMessageLoopHookProc]
@@ -159,8 +158,10 @@ function main() {
   mDpi*: int
   mWinVersion*: float
   mUsingTheme*: bool"><wbr />w<wbr />App<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wEventBase"
+    title="wEventBase = ref object of RootObj"><wbr />w<wbr />Event<wbr />Base<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wEvent"
-    title="wEvent = ref object of RootObj
+    title="wEvent = ref object of wEventBase
   mWindow*: wWindow
   mOrigin*: HWND
   mMsg*: UINT
@@ -402,12 +403,22 @@ function main() {
   mInitCount*: int
   mDrawItemConn*: wEventConnection
   mCommandConn*: wEventConnection"><wbr />w<wbr />Check<wbr />Combo<wbr />Box<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wEnumString"
+    title="wEnumString = object
+  lpVtbl*: ptr IEnumStringVtbl
+  vtbl*: IEnumStringVtbl
+  window*: wTextCtrl
+  provider*: proc (self: wTextCtrl): seq[string]
+  list*: seq[string]
+  index*: int"><wbr />w<wbr />Enum<wbr />String<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wTextCtrl"
     title="wTextCtrl = ref object of wControl
   mRich*: bool
   mDisableTextEvent*: bool
   mBestSize*: wSize
-  mCommandConn*: wEventConnection"><wbr />w<wbr />Text<wbr />Ctrl<span class="attachedType"></span></a></li>
+  mCommandConn*: wEventConnection
+  mPac*: ptr IAutoComplete
+  mEnumString*: wEnumString"><wbr />w<wbr />Text<wbr />Ctrl<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wNoteBook"
     title="wNoteBook = ref object of wControl
   mTheme*: HTHEME
@@ -899,7 +910,6 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mWindowTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HWND</span><span class="Other">,</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">]</span>
   <span class="Identifier">mMenuBaseTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">HMENU</span><span class="Other">,</span> <span class="Identifier">pointer</span><span class="Other">]</span>
   <span class="Identifier">mGDIStockSeq</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="wTypes.html#wGdiObject"><span class="Identifier">wGdiObject</span></a><span class="Other">]</span>
-  <span class="Identifier">mPropagationSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HashSet</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">]</span>
   <span class="Identifier">mMenuIdSet</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">uint16</span><span class="Other">]</span>
   <span class="Identifier">mMessageCountTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">int</span><span class="Other">]</span>
   <span class="Identifier">mMessageLoopHookProcs</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="wTypes.html#wMessageLoopHookProc"><span class="Identifier">wMessageLoopHookProc</span></a><span class="Other">]</span>
@@ -911,8 +921,11 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mUsingTheme</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
 </pre></dt>
 
+<a id="wEventBase"></a>
+<dt><pre><a href="wTypes.html#wEventBase"><span class="Identifier">wEventBase</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span></pre></dt>
+
 <a id="wEvent"></a>
-<dt><pre><a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+<dt><pre><a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="wTypes.html#wEventBase"><span class="Identifier">wEventBase</span></a>
   <span class="Identifier">mWindow</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a>
   <span class="Identifier">mOrigin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
   <span class="Identifier">mMsg</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">UINT</span>
@@ -1235,12 +1248,24 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wEventConnection"><span class="Identifier">wEventConnection</span></a>
 </pre></dt>
 
+<a id="wEnumString"></a>
+<dt><pre><a href="wTypes.html#wEnumString"><span class="Identifier">wEnumString</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">lpVtbl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <a href="winimx.html#IEnumStringVtbl"><span class="Identifier">IEnumStringVtbl</span></a>
+  <span class="Identifier">vtbl</span><span class="Operator">*</span><span class="Other">:</span> <a href="winimx.html#IEnumStringVtbl"><span class="Identifier">IEnumStringVtbl</span></a>
+  <span class="Identifier">window</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a>
+  <span class="Identifier">provider</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">list</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">index</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
 <a id="wTextCtrl"></a>
 <dt><pre><a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="wTypes.html#wControl"><span class="Identifier">wControl</span></a>
   <span class="Identifier">mRich</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
   <span class="Identifier">mDisableTextEvent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
   <span class="Identifier">mBestSize</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a>
   <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wEventConnection"><span class="Identifier">wEventConnection</span></a>
+  <span class="Identifier">mPac</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <a href="winimx.html#IAutoComplete"><span class="Identifier">IAutoComplete</span></a>
+  <span class="Identifier">mEnumString</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wEnumString"><span class="Identifier">wEnumString</span></a>
 </pre></dt>
 
 <a id="wNoteBook"></a>

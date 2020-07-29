@@ -20,9 +20,13 @@ import
 
 import wNim/[wApp, wMacros, wStaticText, wFont, wCursor]
 
-# Define event message starting from wEvent_App.
-const
-  wEvent_OpenUrl* = wEvent_App + 1
+# Define ourself event type, wCommandEvent-derived event by default propagate upward
+type
+  wMyLinkEvent = ref object of wCommandEvent
+
+# Use wEventRegister macro to define the event message
+wEventRegister(wMyLinkEvent):
+  wEvent_OpenUrl
 
 # Use wStaticText as a base class to develop the contorl.
 type
@@ -121,9 +125,6 @@ wClass(wHyperlink of wStaticText):
     self.mHoverFont = Font(self.mNormalFont)
     self.mHoverFont.underlined = true
 
-    # Assume this event will propagated like other command event.
-    App().setMessagePropagation(wEvent_OpenUrl)
-
     self.wEvent_MouseEnter do ():
       self.mIsMouseHover = true
       self.wWindow.setFont(self.mHoverFont)
@@ -178,7 +179,8 @@ when isMainModule:
   hyperlink.font = Font(18)
   hyperlink.hoverFont = Font(18, weight=wFontWeightBold, underline=true)
 
-  hyperlink.wEvent_OpenUrl do (event: wEvent):
+  # wEvent_OpenUrl will propagate upward, so we can catch it from it's parent window.
+  panel.wEvent_OpenUrl do (event: wEvent):
     if not event.ctrlDown:
       event.veto
       statusBar.setStatusText("press ctrl key and then click to open the url.")

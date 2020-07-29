@@ -281,8 +281,10 @@ proc usingTheme*(): bool =
     var dllGetVersion = cast[DLLGETVERSIONPROC](GetProcAddress(hDll, "DllGetVersion"))
     if not dllGetVersion.isNil:
       var vi = DLLVERSIONINFO(cbSize: int32 sizeof(DLLVERSIONINFO))
-      {.gcsafe.}: discard dllGetVersion(vi)
-      result = vi.dwMajorVersion >= 6
+      try: {.gcsafe.}: # to avoid observable warning
+        discard dllGetVersion(vi)
+        result = vi.dwMajorVersion >= 6
+      except: discard
 
 proc getSize*(iconInfo: ICONINFO): wSize =
   var bitmapInfo: BITMAP
@@ -323,8 +325,10 @@ proc wGetWinVersionImpl*(): float =
 
     var rtlGetVersion = cast[RtlGetVersion](GetProcAddress(hDll, "RtlGetVersion"))
     if not rtlGetVersion.isNil:
-      {.gcsafe.}: rtlGetVersion(osv)
-      return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
+      try: {.gcsafe.}: # to avoid observable warning
+        rtlGetVersion(osv)
+        return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
+      except: discard
 
   GetVersionEx(osv)
   return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10

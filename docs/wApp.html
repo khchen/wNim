@@ -140,13 +140,8 @@ function main() {
   
   
   
-  
   <li><a class="reference" href="#mainLoop%2CwApp"
     title="mainLoop(self: wApp): int"><wbr />main<wbr />Loop<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#setMessagePropagation%2CwApp%2CUINT"
-    title="setMessagePropagation(self: wApp; msg: UINT; flag = true)"><wbr />set<wbr />Message<wbr />Propagation<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#isMessagePropagation%2CwApp%2CUINT"
-    title="isMessagePropagation(self: wApp; msg: UINT): bool"><wbr />is<wbr />Message<wbr />Propagation<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#broadcastTopLevelMessage%2CwApp%2CUINT%2CwWparam%2CwLparam"
     title="broadcastTopLevelMessage(self: wApp; msg: UINT; wParam: wWparam; lParam: wLparam)"><wbr />broadcast<wbr />Top<wbr />Level<wbr />Message<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#broadcastMessage%2CwApp%2CUINT%2CwWparam%2CwLparam"
@@ -288,28 +283,11 @@ Constructor.
 
 
 
-
-
-
 <a id="mainLoop,wApp"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#mainLoop%2CwApp"><span class="Identifier">mainLoop</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wApp"><span class="Identifier">wApp</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Execute the main GUI event loop. The loop will exit after all top-level windows is deleted.
-
-</dd>
-<a id="setMessagePropagation,wApp,UINT"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#setMessagePropagation%2CwApp%2CUINT"><span class="Identifier">setMessagePropagation</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wApp"><span class="Identifier">wApp</span></a><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Regist a message associated event to propagate upward by default. Control events (wEvent_Menu, wEvent_Button, etc) will always propagate by default. To overdie shouldPropagate() method is a more gentle way.
-
-</dd>
-<a id="isMessagePropagation,wApp,UINT"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#isMessagePropagation%2CwApp%2CUINT"><span class="Identifier">isMessagePropagation</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wApp"><span class="Identifier">wApp</span></a><span class="Other">;</span> <span class="Identifier">msg</span><span class="Other">:</span> <span class="Identifier">UINT</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Checks whether the msg is propagated by default.
 
 </dd>
 <a id="broadcastTopLevelMessage,wApp,UINT,wWparam,wLparam"></a>

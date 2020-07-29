@@ -32,7 +32,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wDialogEvent):
   wEvent_DialogFirst
   wEvent_DialogCreated
   wEvent_DialogClosed
@@ -43,6 +43,3 @@ DefineEvent:
   wEvent_ReplaceAll
   wEvent_PrinterChanged
   wEvent_DialogLast
-
-proc isDialogEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_DialogFirst..wEvent_DialogLast

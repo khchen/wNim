@@ -88,7 +88,7 @@ generateExamples:
 
   "View Stacks":
     """
-      V:|-{column:[view1(50)]-[view2]-[view3(50)]}-|
+      V:|-[column:[view1(50)]-[view2]-[view3(50)]]-|
       H:|-[column]-|
     """
 
@@ -114,8 +114,7 @@ generateExamples:
 
   "Disconnections":
     """
-      H:|-{column:[left1]-[left2]->[right1]-[right2]}-|
-      H:[column(50)]
+      H:|-[column:[left1(50)]-[left2(50)]->[right1(50)]-[right2(50)]]-|
       V:|-[column]-|
     """
 
@@ -152,6 +151,13 @@ generateExamples:
       HV:|-(10@WEAK)-[view(100@STRONG)]-(10@WEAK)|
     """
 
+  "Batch Operation":
+    """
+      H:|~{views:[viewA]~[viewB]~[viewC]}~|
+      V:|~[viewA,viewB,viewC]~|
+      HV:[views(100)]
+    """
+
   "Comments, Space, and Newline":
     """
       // Single line comments
@@ -173,8 +179,8 @@ generateExamples:
 
   "Autolayout.js Example 2":
     """
-      V:|-{col1:[child1(child2)]-[child2]}-|
-      V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+      V:|-[col1:[child1(child2)]-[child2]]-|
+      V:|-[col2:[child3(child4,child5)]-[child4]-[child5]]-|
       H:|-[col1(col2)]-[col2]-|
     """
 

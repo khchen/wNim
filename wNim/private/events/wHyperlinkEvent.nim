@@ -28,11 +28,8 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wHyperlinkEvent):
   wEvent_Hyperlink
-
-proc isHyperlinkEvent(msg: UINT): bool {.inline, shield.} =
-  msg == wEvent_Hyperlink
 
 method getIndex*(self: wHyperlinkEvent): int {.property, inline.} =
   ## Returns the index of the hyperlink.

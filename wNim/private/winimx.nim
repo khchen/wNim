@@ -5,6 +5,8 @@
 #
 #====================================================================
 
+when defined(nimHasUsed): {.used.}
+
 import winim/inc/winimbase
 import winim/inc/windef
 const
@@ -14,6 +16,7 @@ const
   E_UNEXPECTED* = HRESULT 0x8000FFFF'i32
   E_NOTIMPL* = HRESULT 0x80004001'i32
   E_NOINTERFACE* = HRESULT 0x80004002'i32
+  E_POINTER* = HRESULT 0x80004003'i32
   E_FAIL* = HRESULT 0x80004005'i32
 template HRESULT_FROM_WIN32*(x: untyped): HRESULT = (if x <= 0: HRESULT x else: HRESULT(x and 0x0000ffff) or HRESULT(FACILITY_WIN32 shl 16) or HRESULT(0x80000000'i32))
 const
@@ -73,7 +76,6 @@ when winimUnicode:
   proc GetModuleHandle*(lpModuleName: LPCWSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "GetModuleHandleW".}
   proc LoadLibraryEx*(lpLibFileName: LPCWSTR, hFile: HANDLE, dwFlags: DWORD): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryExW".}
   proc SetCurrentDirectory*(lpPathName: LPCWSTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "SetCurrentDirectoryW".}
-  proc CreateEvent*(lpEventAttributes: LPSECURITY_ATTRIBUTES, bManualReset: WINBOOL, bInitialState: WINBOOL, lpName: LPCWSTR): HANDLE {.winapi, stdcall, dynlib: "kernel32", importc: "CreateEventW".}
   proc GetVersionEx*(lpVersionInformation: LPOSVERSIONINFOW): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "GetVersionExW".}
   proc LoadLibrary*(lpLibFileName: LPCWSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryW".}
   proc FindResource*(hModule: HMODULE, lpName: LPCWSTR, lpType: LPCWSTR): HRSRC {.winapi, stdcall, dynlib: "kernel32", importc: "FindResourceW".}
@@ -83,7 +85,6 @@ when winimAnsi:
   proc GetModuleHandle*(lpModuleName: LPCSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "GetModuleHandleA".}
   proc LoadLibraryEx*(lpLibFileName: LPCSTR, hFile: HANDLE, dwFlags: DWORD): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryExA".}
   proc SetCurrentDirectory*(lpPathName: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "SetCurrentDirectoryA".}
-  proc CreateEvent*(lpEventAttributes: LPSECURITY_ATTRIBUTES, bManualReset: WINBOOL, bInitialState: WINBOOL, lpName: LPCSTR): HANDLE {.winapi, stdcall, dynlib: "kernel32", importc: "CreateEventA".}
   proc GetVersionEx*(lpVersionInformation: LPOSVERSIONINFOA): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "GetVersionExA".}
   proc LoadLibrary*(lpLibFileName: LPCSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryA".}
   proc FindResource*(hModule: HMODULE, lpName: LPCSTR, lpType: LPCSTR): HRSRC {.winapi, stdcall, dynlib: "kernel32", importc: "FindResourceA".}
@@ -615,6 +616,7 @@ proc DeleteDC*(hdc: HDC): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc DeleteObject*(ho: HGDIOBJ): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Ellipse*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc EqualRgn*(hrgn1: HRGN, hrgn2: HRGN): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc FrameRgn*(hdc: HDC, hrgn: HRGN, hbr: HBRUSH, w: int32, h: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetROP2*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetBkColor*(hdc: HDC): COLORREF {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc GetBkMode*(hdc: HDC): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
@@ -628,6 +630,7 @@ proc GetViewportOrgEx*(hdc: HDC, lppoint: LPPOINT): WINBOOL {.winapi, stdcall, d
 proc LineTo*(hdc: HDC, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc OffsetRgn*(hrgn: HRGN, x: int32, y: int32): int32 {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc Pie*(hdc: HDC, left: int32, top: int32, right: int32, bottom: int32, xr1: int32, yr1: int32, xr2: int32, yr2: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
+proc PaintRgn*(hdc: HDC, hrgn: HRGN): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc PolyPolygon*(hdc: HDC, apt: ptr POINT, asz: ptr INT, csz: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc PtInRegion*(hrgn: HRGN, x: int32, y: int32): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
 proc RectInRegion*(hrgn: HRGN, lprect: ptr RECT): WINBOOL {.winapi, stdcall, dynlib: "gdi32", importc.}
@@ -1255,6 +1258,8 @@ const
   WM_NCMBUTTONDOWN* = 0x00A7
   WM_NCMBUTTONUP* = 0x00A8
   WM_NCMBUTTONDBLCLK* = 0x00A9
+  WM_NCXBUTTONDOWN* = 0x00AB
+  WM_NCXBUTTONUP* = 0x00AC
   WM_NCXBUTTONDBLCLK* = 0x00AD
   WM_KEYFIRST* = 0x0100
   WM_KEYDOWN* = 0x0100
@@ -2600,6 +2605,7 @@ const
   VT_BSTR* = 8
   VT_VARIANT* = 12
   IID_IUnknown* = DEFINE_GUID(0x00000000'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
+  IID_IEnumString* = DEFINE_GUID(0x00000101'i32, 0x0000, 0x0000, [0xc0'u8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46])
   STREAM_SEEK_SET* = 0
   TYMED_HGLOBAL* = 1
   TYMED_GDI* = 16
@@ -2736,6 +2742,7 @@ proc OleIsCurrentClipboard*(pDataObj: LPDATAOBJECT): HRESULT {.winapi, stdcall, 
 proc ReleaseStgMedium*(P1: LPSTGMEDIUM): void {.winapi, stdcall, dynlib: "ole32", importc.}
 proc CoDisconnectObject*(pUnk: LPUNKNOWN, dwReserved: DWORD): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
 proc CoCreateInstance*(rclsid: REFCLSID, pUnkOuter: LPUNKNOWN, dwClsContext: DWORD, riid: REFIID, ppv: ptr LPVOID): HRESULT {.winapi, stdcall, dynlib: "ole32", importc.}
+proc CoTaskMemAlloc*(cb: SIZE_T): LPVOID {.winapi, stdcall, dynlib: "ole32", importc.}
 proc CoTaskMemFree*(pv: LPVOID): void {.winapi, stdcall, dynlib: "ole32", importc.}
 proc `Lo=`*(self: var CY, x: int32) {.inline.} = self.struct1.Lo = x
 proc Lo*(self: CY): int32 {.inline.} = self.struct1.Lo
@@ -5262,6 +5269,16 @@ type
     guidItem*: GUID
     hBalloonIcon*: HICON
   PNOTIFYICONDATAW* = ptr NOTIFYICONDATAW
+  IAutoComplete* {.pure.} = object
+    lpVtbl*: ptr IAutoCompleteVtbl
+  IAutoCompleteVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Init*: proc(self: ptr IAutoComplete, hwndEdit: HWND, punkACL: ptr IUnknown, pwszRegKeyPath: LPCWSTR, pwszQuickComplete: LPCWSTR): HRESULT {.stdcall.}
+    Enable*: proc(self: ptr IAutoComplete, fEnable: WINBOOL): HRESULT {.stdcall.}
+  IAutoComplete2* {.pure.} = object
+    lpVtbl*: ptr IAutoComplete2Vtbl
+  IAutoComplete2Vtbl* {.pure, inheritable.} = object of IAutoCompleteVtbl
+    SetOptions*: proc(self: ptr IAutoComplete2, dwFlag: DWORD): HRESULT {.stdcall.}
+    GetOptions*: proc(self: ptr IAutoComplete2, pdwFlag: ptr DWORD): HRESULT {.stdcall.}
   THUMBBUTTON* {.pure.} = object
     dwMask*: THUMBBUTTONMASK
     iId*: UINT
@@ -5306,6 +5323,16 @@ const
   NIIF_INFO* = 0x00000001
   NIIF_WARNING* = 0x00000002
   NIIF_ERROR* = 0x00000003
+  IID_IAutoComplete* = DEFINE_GUID(0x00bb2762'i32, 0x6a77, 0x11d0, [0xa5'u8, 0x35, 0x00, 0xc0, 0x4f, 0xd7, 0xd0, 0x62])
+  ACO_AUTOSUGGEST* = 0x1
+  IID_IAutoComplete2* = DEFINE_GUID(0xeac04bc0'i32, 0x3791, 0x11d2, [0xbb'u8, 0x95, 0x00, 0x60, 0x97, 0x7b, 0x46, 0x4c])
+  IID_IObjMgr* = DEFINE_GUID(0x00bb2761'i32, 0x6a77, 0x11d0, [0xa5'u8, 0x35, 0x00, 0xc0, 0x4f, 0xd7, 0xd0, 0x62])
+  IID_IACList2* = DEFINE_GUID(0x470141a0'i32, 0x5186, 0x11d2, [0xbb'u8, 0xb6, 0x00, 0x60, 0x97, 0x7b, 0x46, 0x4c])
+  CLSID_AutoComplete* = DEFINE_GUID(0x00bb2763'i32, 0x6a77, 0x11d0, [0xa5'u8, 0x35, 0x00, 0xc0, 0x4f, 0xd7, 0xd0, 0x62])
+  CLSID_ACLHistory* = DEFINE_GUID(0x00bb2764'i32, 0x6a77, 0x11d0, [0xa5'u8, 0x35, 0x00, 0xc0, 0x4f, 0xd7, 0xd0, 0x62])
+  CLSID_ACListISF* = DEFINE_GUID(0x03c036f1'i32, 0xa186, 0x11d0, [0x82'u8, 0x4a, 0x00, 0xaa, 0x00, 0x5b, 0x43, 0x83])
+  CLSID_ACLMRU* = DEFINE_GUID(0x6756a641'i32, 0xde71, 0x11d0, [0x83'u8, 0x1b, 0x0, 0xaa, 0x0, 0x5b, 0x43, 0x83])
+  CLSID_ACLMulti* = DEFINE_GUID(0x00bb2765'i32, 0x6a77, 0x11d0, [0xa5'u8, 0x35, 0x00, 0xc0, 0x4f, 0xd7, 0xd0, 0x62])
   SIGDN_FILESYSPATH* = int32 0x80058000'i32
   IID_IShellItem* = DEFINE_GUID(0x43826d1e'i32, 0xe718, 0x42ee, [0xbc'u8, 0x55, 0xa1, 0xe2, 0x61, 0xc3, 0x7b, 0xfe])
   TBPF_NOPROGRESS* = 0x0
@@ -5331,6 +5358,8 @@ const
   BFFM_INITIALIZED* = 1
   BFFM_SETSELECTIONA* = WM_USER+102
   BFFM_SETSELECTIONW* = WM_USER+103
+  ACLO_FILESYSONLY* = 16
+  ACLO_FILESYSDIRS* = 32
 type
   DLLVERSIONINFO* {.pure.} = object
     cbSize*: DWORD
@@ -5441,6 +5470,20 @@ type
   IFileOpenDialogVtbl* {.pure, inheritable.} = object of IFileDialogVtbl
     GetResults*: proc(self: ptr IFileOpenDialog, ppenum: ptr ptr IShellItemArray): HRESULT {.stdcall.}
     GetSelectedItems*: proc(self: ptr IFileOpenDialog, ppsai: ptr ptr IShellItemArray): HRESULT {.stdcall.}
+  IObjMgr* {.pure.} = object
+    lpVtbl*: ptr IObjMgrVtbl
+  IObjMgrVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Append*: proc(self: ptr IObjMgr, punk: ptr IUnknown): HRESULT {.stdcall.}
+    Remove*: proc(self: ptr IObjMgr, punk: ptr IUnknown): HRESULT {.stdcall.}
+  IACList* {.pure.} = object
+    lpVtbl*: ptr IACListVtbl
+  IACListVtbl* {.pure, inheritable.} = object of IUnknownVtbl
+    Expand*: proc(self: ptr IACList, pszExpand: PCWSTR): HRESULT {.stdcall.}
+  IACList2* {.pure.} = object
+    lpVtbl*: ptr IACList2Vtbl
+  IACList2Vtbl* {.pure, inheritable.} = object of IACListVtbl
+    SetOptions*: proc(self: ptr IACList2, dwFlag: DWORD): HRESULT {.stdcall.}
+    GetOptions*: proc(self: ptr IACList2, pdwFlag: ptr DWORD): HRESULT {.stdcall.}
 proc SHCreateItemFromParsingName*(pszPath: PCWSTR, pbc: ptr IBindCtx, riid: REFIID, ppv: ptr pointer): HRESULT {.winapi, stdcall, dynlib: "shell32", importc.}
 proc ILFree*(pidl: PIDLIST_RELATIVE): void {.winapi, stdcall, dynlib: "shell32", importc.}
 proc SHGetSpecialFolderLocation*(hwnd: HWND, csidl: int32, ppidl: ptr PIDLIST_ABSOLUTE): HRESULT {.winapi, stdcall, dynlib: "shell32", importc.}
@@ -5459,6 +5502,10 @@ proc uTimeout*(self: var NOTIFYICONDATAW): var UINT {.inline.} = self.union1.uTi
 proc `uVersion=`*(self: var NOTIFYICONDATAW, x: UINT) {.inline.} = self.union1.uVersion = x
 proc uVersion*(self: NOTIFYICONDATAW): UINT {.inline.} = self.union1.uVersion
 proc uVersion*(self: var NOTIFYICONDATAW): var UINT {.inline.} = self.union1.uVersion
+proc Init*(self: ptr IAutoComplete, hwndEdit: HWND, punkACL: ptr IUnknown, pwszRegKeyPath: LPCWSTR, pwszQuickComplete: LPCWSTR): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.Init(self, hwndEdit, punkACL, pwszRegKeyPath, pwszQuickComplete)
+proc Enable*(self: ptr IAutoComplete, fEnable: WINBOOL): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.Enable(self, fEnable)
+proc SetOptions*(self: ptr IAutoComplete2, dwFlag: DWORD): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.SetOptions(self, dwFlag)
+proc GetOptions*(self: ptr IAutoComplete2, pdwFlag: ptr DWORD): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetOptions(self, pdwFlag)
 proc BindToHandler*(self: ptr IShellItem, pbc: ptr IBindCtx, bhid: REFGUID, riid: REFIID, ppv: ptr pointer): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.BindToHandler(self, pbc, bhid, riid, ppv)
 proc GetParent*(self: ptr IShellItem, ppsi: ptr ptr IShellItem): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetParent(self, ppsi)
 proc GetDisplayName*(self: ptr IShellItem, sigdnName: SIGDN, ppszName: ptr LPWSTR): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetDisplayName(self, sigdnName, ppszName)
@@ -5528,6 +5575,14 @@ proc GetResults*(self: ptr IFileOpenDialog, ppenum: ptr ptr IShellItemArray): HR
 proc GetSelectedItems*(self: ptr IFileOpenDialog, ppsai: ptr ptr IShellItemArray): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetSelectedItems(self, ppsai)
 proc IncludeItem*(self: ptr IShellItemFilter, psi: ptr IShellItem): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.IncludeItem(self, psi)
 proc GetEnumFlagsForItem*(self: ptr IShellItemFilter, psi: ptr IShellItem, pgrfFlags: ptr SHCONTF): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetEnumFlagsForItem(self, psi, pgrfFlags)
+proc Append*(self: ptr IObjMgr, punk: ptr IUnknown): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.Append(self, punk)
+proc Remove*(self: ptr IObjMgr, punk: ptr IUnknown): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.Remove(self, punk)
+proc Expand*(self: ptr IACList, pszExpand: PCWSTR): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.Expand(self, pszExpand)
+proc SetOptions*(self: ptr IACList2, dwFlag: DWORD): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.SetOptions(self, dwFlag)
+proc GetOptions*(self: ptr IACList2, pdwFlag: ptr DWORD): HRESULT {.winapi, inline.} = {.gcsafe.}: self.lpVtbl.GetOptions(self, pdwFlag)
+converter winimConverterIAutoCompleteToIUnknown*(x: ptr IAutoComplete): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIAutoComplete2ToIAutoComplete*(x: ptr IAutoComplete2): ptr IAutoComplete = cast[ptr IAutoComplete](x)
+converter winimConverterIAutoComplete2ToIUnknown*(x: ptr IAutoComplete2): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIShellItemToIUnknown*(x: ptr IShellItem): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIEnumShellItemsToIUnknown*(x: ptr IEnumShellItems): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIShellItemArrayToIUnknown*(x: ptr IShellItemArray): ptr IUnknown = cast[ptr IUnknown](x)
@@ -5545,6 +5600,10 @@ converter winimConverterIFileOpenDialogToIFileDialog*(x: ptr IFileOpenDialog): p
 converter winimConverterIFileOpenDialogToIModalWindow*(x: ptr IFileOpenDialog): ptr IModalWindow = cast[ptr IModalWindow](x)
 converter winimConverterIFileOpenDialogToIUnknown*(x: ptr IFileOpenDialog): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIShellItemFilterToIUnknown*(x: ptr IShellItemFilter): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIObjMgrToIUnknown*(x: ptr IObjMgr): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIACListToIUnknown*(x: ptr IACList): ptr IUnknown = cast[ptr IUnknown](x)
+converter winimConverterIACList2ToIACList*(x: ptr IACList2): ptr IACList = cast[ptr IACList](x)
+converter winimConverterIACList2ToIUnknown*(x: ptr IACList2): ptr IUnknown = cast[ptr IUnknown](x)
 when winimUnicode:
   type
     NOTIFYICONDATA* = NOTIFYICONDATAW

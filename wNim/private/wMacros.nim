@@ -8,8 +8,9 @@
 ## Some macros used in wNim.
 
 {.experimental, deadCodeElim: on.}
+{.experimental: "dynamicBindSym".}
 
-import macros, strutils, strformat
+import macros, strutils, strformat, tables, sets, hashes, winimx
 
 macro property*(x: untyped): untyped =
   ## Add property macro to proc as pragma so that getters/setters can access
@@ -236,10 +237,90 @@ proc wEventId(initId: cint = -1): cint {.discardable, shield.} =
     id.inc
     result = id
 
-macro DefineEvent(x: untyped): untyped {.shield.} =
+proc wEventStorage(name: string = "", msg: cint = 0): (Table[string, HashSet[cint]], string)
+    {.discardable, shield.} =
+
+  var
+    eventSetTable {.global.}: Table[string, HashSet[cint]]
+    msgEventTable {.global.}: Table[cint, string]
+
+  if name == "":
+    if msg == 0:
+      return (eventSetTable, "")
+
+    elif msg in msgEventTable:
+      return (eventSetTable, msgEventTable[msg])
+
+    else:
+      error("Unregistered event message ID: " & $msg)
+
+  msgEventTable[msg] = name
+  if name in eventSetTable:
+    eventSetTable[name].incl msg
+  else:
+    eventSetTable[name] = [msg].toHashSet
+
+macro wEventRegister*(event, list: untyped): untyped =
+  ## A macro to register event message ID so that the Event() constructor can
+  ## return the corresponding object of the class. The event class must be the
+  ## subclass of the wEvent. For example:
+  ##
+  ## .. code-block:: Nim
+  ##   type wMyLinkEvent = ref object of wCommandEvent
+  ##
+  ##   wEventRegister(wMyLinkEvent):
+  ##     wEvent_OpenUrl
+  ##
+  ##   var e = Event(msg=wEvent_OpenUrl)
+  ##   doAssert(e of wMyLinkEvent)
   result = newStmtList()
-  for name in x:
-    result.add newConstStmt(postfix(name, "*"), newCall("wEventId"))
+  for msg in list:
+    case msg.kind
+    of nnkAsgn:
+      result.add newConstStmt(postfix(msg[0], "*"), msg[1])
+      case msg[1].kind
+      of nnkIntLit .. nnkUInt64Lit:
+        wEventStorage($event, cint msg[1].intVal())
+
+      of nnkIdent:
+        wEventStorage($event, cint bindSym(msg[1]).getImpl().intVal())
+
+      else:
+        error("Unexpected a node of kind " & $msg[1].kind, msg[1])
+
+    of nnkIdent:
+      let id = wEventId()
+      result.add newConstStmt(postfix(msg, "*"), newLit(id))
+      wEventStorage($event, id)
+
+    else:
+      error("Unexpected a node of kind " & $msg.kind, msg)
+
+proc newEventNode(event: NimNode): NimNode =
+  result = newStmtList(
+    newTree(nnkVarSection, newTree(nnkIdentDefs, ident("e"), event, newEmptyNode())),
+    newCall(ident("new"), ident("e")),
+    ident("e")
+  )
+
+macro wEventCtor(msg: static[cint]): untyped {.shield.} =
+  let (_, name) = wEventStorage("", msg)
+  result = newEventNode(ident(name))
+
+macro wEventCtor(msg: cint): untyped {.shield.} =
+  result = newTree(nnkCaseStmt, msg)
+
+  let (table, _) = wEventStorage()
+  for name, list in table:
+    if name == "wEvent":
+      continue # goto else
+
+    var branch = newTree(nnkOfBranch, newEventNode(ident(name)))
+    for m in list:
+      branch.insert(0, newLit(m))
+    result.add branch
+
+  result.add newTree(nnkElse, newEventNode(ident("wEvent")))
 
 macro DefineIncrement(start: int, x: untyped): untyped {.shield.} =
   var index = int start.intVal

@@ -45,7 +45,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wListEvent):
   wEvent_ListFirst
   wEvent_ListBeginDrag
   wEvent_ListBeginRightDrag
@@ -69,9 +69,6 @@ DefineEvent:
   wEvent_ListColBeginMove
   wEvent_ListColEndMove
   wEvent_ListLast
-
-proc isListEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_ListFirst..wEvent_ListLast
 
 method getIndex*(self: wListEvent): int {.property, inline.} =
   ## The item index.

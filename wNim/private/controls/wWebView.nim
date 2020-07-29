@@ -88,7 +88,10 @@ proc Release(web: ptr wWeb): ULONG  {.discardable.} =
     dealloc(web)
 
 proc QueryInterface(web: ptr wWeb, riid: REFIID, ppvObject: ptr pointer): HRESULT {.discardable.} =
-  if IsEqualIID(riid, &IID_IUnknown):
+  if ppvObject.isNil:
+    return E_POINTER
+
+  elif IsEqualIID(riid, &IID_IUnknown):
     ppvObject[] = &web.dispatch
 
   elif IsEqualIID(riid, &IID_IDispatch) or

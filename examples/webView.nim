@@ -68,6 +68,7 @@ toolBar.disableTool(idGoForward)
 rebar.addControl(toolBar)
 
 var textctrl = TextCtrl(rebar, value="about:blank", style=wBorderSunken)
+textctrl.enableAutoComplete(wAcUrl)
 rebar.addControl(textctrl, label="Address")
 rebar.minimize(0)
 

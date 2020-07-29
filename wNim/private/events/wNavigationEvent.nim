@@ -26,15 +26,8 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wNavigationEvent):
   wEvent_Navigation
-
-proc isNavigationEvent(msg: UINT): bool {.inline, shield.} =
-  msg == wEvent_Navigation
-
-method shouldPropagate*(event: wNavigationEvent): bool =
-  ## A navigation event should be never propagated.
-  result = false
 
 method getKeyCode*(self: wNavigationEvent): int {.property, inline.} =
   ## Returns the key code of the key that generated this event.

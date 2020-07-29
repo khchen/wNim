@@ -184,8 +184,10 @@ wClass(wPrintDialog of wDialog):
     self.mCallBack.withSite.lpVtbl = &withSiteVtbl
 
     self.mCallBack.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
+      if ppvObject.isNil:
+        return E_POINTER
 
-      if IsEqualIID(riid, &IID_IObjectWithSite):
+      elif IsEqualIID(riid, &IID_IObjectWithSite):
         let callBack = cast[ptr wPrintDialogCallback](self)
         ppvObject[] = &callBack.withSite
         return S_OK

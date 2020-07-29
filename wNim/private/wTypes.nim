@@ -164,7 +164,6 @@ type
     mWindowTable*: Table[HWND, wWindow]
     mMenuBaseTable*: Table[HMENU, pointer]
     mGDIStockSeq*: seq[wGdiObject]
-    mPropagationSet*: HashSet[UINT]
     mMenuIdSet*: set[uint16]
     mMessageCountTable*: Table[UINT, int]
     mMessageLoopHookProcs*: seq[wMessageLoopHookProc]
@@ -175,7 +174,9 @@ type
     mWinVersion*: float
     mUsingTheme*: bool
 
-  wEvent* = ref object of RootObj
+  wEventBase* = ref object of RootObj
+
+  wEvent* = ref object of wEventBase
     mWindow*: wWindow
     mOrigin*: HWND
     mMsg*: UINT
@@ -433,11 +434,21 @@ type
     mDrawItemConn*: wEventConnection
     mCommandConn*: wEventConnection
 
+  wEnumString* = object
+    lpVtbl*: ptr IEnumStringVtbl
+    vtbl*: IEnumStringVtbl
+    window*: wTextCtrl
+    provider*: proc (self: wTextCtrl): seq[string]
+    list*: seq[string]
+    index*: int
+
   wTextCtrl* = ref object of wControl
     mRich*: bool
     mDisableTextEvent*: bool
     mBestSize*: wSize
     mCommandConn*: wEventConnection
+    mPac*: ptr IAutoComplete
+    mEnumString*: wEnumString
 
   wNoteBook* = ref object of wControl
     mTheme*: HTHEME
@@ -820,12 +831,20 @@ when not isMainModule: # hide from doc
   # wBaseApp
 
   var wBaseApp* {.threadvar.}: wApp
-  addQuitProc() do:
+
+  proc wNimAtExit() {.noconv.} =
     if wBaseApp != nil:
       for hwnd in toSeq(wBaseApp.mWindowTable.keys):
         DestroyWindow(hwnd)
 
       free(wBaseApp[])
+
+  when NimMajor >= 1 and NimMinor >= 3:
+    import std/exitprocs
+    addExitProc(wNimAtExit)
+
+  else:
+    addQuitProc(wNimAtExit)
 
   # wMenu
 

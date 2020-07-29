@@ -69,6 +69,16 @@ const
   wTeRich* = 0x10000000.int64 shl 32
   wTeProcessTab* = 0x4000 # not used in ES_XXXX
 
+  # flags for autocomplete
+  wAcFile* = 1
+  wAcDir* = 2
+  wAcMru* = 4
+  wAcUrl* = 8
+
+type
+  wAutoCompleteProvider* = proc (self: wTextCtrl): seq[string]
+    ## Callback function to provide the custom source for autocomplete
+
 proc isMultiLine*(self: wTextCtrl): bool {.validate, inline.} =
   ## Returns true if this is a multi line edit control and false otherwise.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and ES_MULTILINE) != 0
@@ -497,6 +507,142 @@ method setBackgroundColor*(self: wTextCtrl, color: wColor) {.property.} =
   if self.mRich: SendMessage(self.mHwnd, EM_SETBKGNDCOLOR, 0, color)
   procCall wWindow(self).setBackgroundColor(color)
 
+proc onAutoCompleteKeyDown(event: wEvent) =
+  # Autocompletion will eat the enter key event (WM_CHAR/VK_RETURN),
+  # detect it in WM_KEYDOWN instead.
+  let flag = event.ctrlDown or event.shiftDown or event.altDown or event.winDown
+  if event.getKeyCode() == VK_RETURN and not flag:
+    event.mWindow.processMessage(wEvent_TextEnter, 0, 0)
+  event.skip()
+
+proc disableAutoComplete*(self: wTextCtrl) =
+  ## Disable the autocompletion.
+  if not self.mPac.isNil:
+    self.disconnect(WM_KEYDOWN, onAutoCompleteKeyDown)
+    self.mPac.Enable(false)
+    self.mPac.Release()
+    self.mPac = nil
+
+proc enableAutoComplete*(self: wTextCtrl, flags = wAcFile or wAcMru or wAcUrl): bool {.discardable.} =
+  ## Enable the autocompletion and use system predefined sources. *flags* is a bitwise combination
+  ## of wAcFile, wAcDir, wAcMru, wAcUrl.
+  ## ==========  =================================================================================
+  ## Flags       Description
+  ## ==========  =================================================================================
+  ## wAcFile     Include the file system and directories.
+  ## wAcDir      Include the file directories only.
+  ## wAcMru      Include the URLs in the user's **Recently Used** list.
+  ## wAcUrl      Include the URLs in the user's **History** list.
+  self.disableAutoComplete()
+
+  block:
+    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break
+
+    var pac2: ptr IAutoComplete2
+    if self.mPac.QueryInterface(&IID_IAutoComplete2, &pac2).SUCCEEDED:
+      pac2.SetOptions(ACO_AUTOSUGGEST)
+      pac2.Release()
+
+    var pom: ptr IObjMgr
+    if CoCreateInstance(&CLSID_ACLMulti, nil, CLSCTX_INPROC_SERVER, &IID_IObjMgr, &pom).FAILED: break
+    defer: pom.Release()
+
+    var punkSourceIsf: ptr IUnknown
+    if CoCreateInstance(&CLSID_ACListISF, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceIsf).FAILED: break
+    defer: punkSourceIsf.Release()
+
+    var punkSourceMru: ptr IUnknown
+    if CoCreateInstance(&CLSID_ACLMRU, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceMru).FAILED: break
+    defer: punkSourceMru.Release()
+
+    var punkSourceUrl: ptr IUnknown
+    if CoCreateInstance(&CLSID_ACLHistory, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceUrl).FAILED: break
+    defer: punkSourceUrl.Release()
+
+    var pal2: ptr IACList2
+    if punkSourceIsf.QueryInterface(&IID_IACList2, &pal2).SUCCEEDED:
+      pal2.SetOptions(if (flags and wAcDir) != 0: ACLO_FILESYSDIRS else: ACLO_FILESYSONLY)
+      pal2.Release()
+
+    if (flags and (wAcDir or wAcFile)) != 0:
+      pom.Append(punkSourceIsf)
+
+    if (flags and wAcMru) != 0:
+      pom.Append(punkSourceMru)
+
+    if (flags and wAcUrl) != 0:
+      pom.Append(punkSourceUrl)
+
+    if self.mPac.Init(self.mHwnd, pom, nil, nil).FAILED: break
+    self.connect(WM_KEYDOWN, onAutoCompleteKeyDown)
+    return true
+
+  return false
+
+proc enableAutoComplete*(self: wTextCtrl, provider: wAutoCompleteProvider): bool {.discardable.} =
+  ## Enable the autocompletion and use custom source.
+  self.disableAutoComplete()
+
+  if self.mEnumString.lpVtbl.isNil:
+    self.mEnumString.lpVtbl = &self.mEnumString.vtbl
+    self.mEnumString.window = self
+    self.mEnumString.vtbl.AddRef = proc(self: ptr IUnknown): ULONG {.stdcall.} = 1
+    self.mEnumString.vtbl.Release = proc(self: ptr IUnknown): ULONG {.stdcall.} = 1
+    self.mEnumString.vtbl.Clone = proc(self: ptr IEnumString, ppenum: ptr ptr IEnumString): HRESULT {.stdcall.} = E_NOTIMPL
+    self.mEnumString.vtbl.Skip = proc(self: ptr IEnumString, celt: ULONG): HRESULT {.stdcall.} = E_NOTIMPL
+
+    self.mEnumString.vtbl.Next = proc(self: ptr IEnumString, celt: ULONG, rgelt: ptr LPOLESTR, pceltFetched: ptr ULONG): HRESULT {.stdcall.} =
+      let pes = cast[ptr wEnumString](self)
+      var fetched: ULONG = 0
+      defer:
+        if not pceltFetched.isNil:
+          pceltFetched[] = fetched
+
+      if pes.index < pes.list.len:
+        let ws = +$(pes.list[pes.index])
+        rgelt[] = cast[LPOLESTR](CoTaskMemAlloc(SIZE_T (ws.len + 2) * 2))
+        if not rgelt[].isNil:
+          rgelt[] <<< ws
+          fetched.inc
+          pes.index.inc
+
+      return if fetched == 0: S_FALSE else: S_OK
+
+    self.mEnumString.vtbl.Reset = proc(self: ptr IEnumString): HRESULT {.stdcall.} =
+      let pes = cast[ptr wEnumString](self)
+      pes.list = pes.provider(pes.window)
+      pes.index = 0
+      return S_OK
+
+    self.mEnumString.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
+      if ppvObject.isNil:
+        return E_POINTER
+
+      elif IsEqualIID(riid, &IID_IEnumString):
+        ppvObject[] = self
+        self.AddRef()
+        return S_OK
+
+      else:
+        ppvObject[] = nil
+        return E_NOINTERFACE
+
+  self.mEnumString.provider = provider
+
+  block:
+    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break
+
+    var pac2: ptr IAutoComplete2
+    if self.mPac.QueryInterface(&IID_IAutoComplete2, &pac2).SUCCEEDED:
+      pac2.SetOptions(ACO_AUTOSUGGEST)
+      pac2.Release()
+
+    if self.mPac.Init(self.mHwnd, cast[ptr IUnknown](&self.mEnumString), nil, nil).FAILED: break
+    self.connect(WM_KEYDOWN, onAutoCompleteKeyDown)
+    return true
+
+  return false
+
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool {.uknlock.} =
 
@@ -525,6 +671,7 @@ wClass(wTextCtrl of wControl):
   method release*(self: wTextCtrl) {.uknlock.} =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
+    self.disableAutoComplete()
     free(self[])
 
   proc init*(self: wTextCtrl, parent: wWindow, id = wDefaultID,

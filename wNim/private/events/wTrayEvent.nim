@@ -34,7 +34,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wTrayEvent):
   wEvent_TrayFirst
   wEvent_TrayIcon
   wEvent_TrayLeftDown
@@ -47,6 +47,3 @@ DefineEvent:
   wEvent_TrayBalloonTimeout
   wEvent_TrayBalloonClick
   wEvent_TrayLast
-
-proc isTrayEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_TrayFirst..wEvent_TrayLast

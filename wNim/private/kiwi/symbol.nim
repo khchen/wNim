@@ -1,14 +1,14 @@
 type
-    SymbolKind* = enum
-        EXTERNAL,
-        SLACK,
-        ERROR,
-        DUMMY
+  SymbolKind* = enum
+    EXTERNAL,
+    SLACK,
+    ERROR,
+    DUMMY
 
-    Symbol* = distinct uint32
+  Symbol* = distinct uint32
 
 proc newSymbol*(uniqueId: uint32, kind: SymbolKind): Symbol {.inline.} =
-    Symbol(uint32(uniqueId and 0x3fffffff'u32) or (ord(kind).uint32 shl 30))
+  Symbol(uint32(uniqueId and 0x3fffffff'u32) or (ord(kind).uint32 shl 30))
 
 proc `==`*(a, b: Symbol): bool {.borrow.}
 

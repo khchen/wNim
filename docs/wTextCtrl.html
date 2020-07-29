@@ -94,6 +94,14 @@ function main() {
   <ul class="simple simple-toc" id="toc-list">
 
 <li>
+  <a class="reference reference-toplevel" href="#7" id="57">Types</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#wAutoCompleteProvider"
+    title="wAutoCompleteProvider = proc (self: wTextCtrl): seq[string]"><wbr />w<wbr />Auto<wbr />Complete<wbr />Provider<span class="attachedType"></span></a></li>
+
+  </ul>
+</li>
+<li>
   <a class="reference reference-toplevel" href="#10" id="60">Consts</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#wTeMultiLine"
@@ -118,6 +126,14 @@ function main() {
     title="wTeRich = 1152921504606846976&apos;i64"><wbr />w<wbr />Te<wbr />Rich<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wTeProcessTab"
     title="wTeProcessTab = 0x00004000"><wbr />w<wbr />Te<wbr />Process<wbr />Tab<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wAcFile"
+    title="wAcFile = 1"><wbr />w<wbr />Ac<wbr />File<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wAcDir"
+    title="wAcDir = 2"><wbr />w<wbr />Ac<wbr />Dir<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wAcMru"
+    title="wAcMru = 4"><wbr />w<wbr />Ac<wbr />Mru<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wAcUrl"
+    title="wAcUrl = 8"><wbr />w<wbr />Ac<wbr />Url<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -238,6 +254,12 @@ function main() {
     title="loadRtfFile(self: wTextCtrl; filename: string)"><wbr />load<wbr />Rtf<wbr />File<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#saveRtfFile%2CwTextCtrl%2Cstring"
     title="saveRtfFile(self: wTextCtrl; filename: string; selectionOnly = false)"><wbr />save<wbr />Rtf<wbr />File<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#disableAutoComplete%2CwTextCtrl"
+    title="disableAutoComplete(self: wTextCtrl)"><wbr />disable<wbr />Auto<wbr />Complete<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#enableAutoComplete%2CwTextCtrl"
+    title="enableAutoComplete(self: wTextCtrl; flags = 5 or 8): bool"><wbr />enable<wbr />Auto<wbr />Complete<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#enableAutoComplete%2CwTextCtrl%2CwAutoCompleteProvider"
+    title="enableAutoComplete(self: wTextCtrl; provider: wAutoCompleteProvider): bool"><wbr />enable<wbr />Auto<wbr />Complete<span class="attachedType">wAutoCompleteProvider</span></a></li>
   <li><a class="reference" href="#init%2CwTextCtrl%2CwWindow%2Cstring%2CwStyle"
     title="init(self: wTextCtrl; parent: wWindow; id = wDefaultID; value: string = &quot;&quot;;
      pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wTeLeft)"><wbr />init<span class="attachedType"></span></a></li>
@@ -308,6 +330,18 @@ function main() {
 </table></td></tr>
 </tbody></table></p>
   
+<div class="section" id="7">
+<h1><a class="toc-backref" href="#7">Types</a></h1>
+<dl class="item">
+<a id="wAutoCompleteProvider"></a>
+<dt><pre><a href="wTextCtrl.html#wAutoCompleteProvider"><span class="Identifier">wAutoCompleteProvider</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<dd>
+
+Callback function to provide the custom source for autocomplete
+
+</dd>
+
+</dl></div>
 <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
@@ -343,6 +377,18 @@ function main() {
 
 <a id="wTeProcessTab"></a>
 <dt><pre><a href="wTextCtrl.html#wTeProcessTab"><span class="Identifier">wTeProcessTab</span></a> <span class="Other">=</span> <span class="DecNumber">0x00004000</span></pre></dt>
+
+<a id="wAcFile"></a>
+<dt><pre><a href="wTextCtrl.html#wAcFile"><span class="Identifier">wAcFile</span></a> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+
+<a id="wAcDir"></a>
+<dt><pre><a href="wTextCtrl.html#wAcDir"><span class="Identifier">wAcDir</span></a> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+
+<a id="wAcMru"></a>
+<dt><pre><a href="wTextCtrl.html#wAcMru"><span class="Identifier">wAcMru</span></a> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+
+<a id="wAcUrl"></a>
+<dt><pre><a href="wTextCtrl.html#wAcUrl"><span class="Identifier">wAcUrl</span></a> <span class="Other">=</span> <span class="DecNumber">8</span></pre></dt>
 
 
 </dl></div>
@@ -754,6 +800,34 @@ Loads and displays Rich Text Format (RTF) file. Only works for rich text control
 <dd>
 
 Saves the all or selected text in Rich Text Format (RTF) file. Only works for rich text control.
+
+</dd>
+<a id="disableAutoComplete,wTextCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#disableAutoComplete%2CwTextCtrl"><span class="Identifier">disableAutoComplete</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Disable the autocompletion.
+
+</dd>
+<a id="enableAutoComplete,wTextCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#enableAutoComplete%2CwTextCtrl"><span class="Identifier">enableAutoComplete</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">flags</span> <span class="Other">=</span> <span class="DecNumber">5</span> <span class="Keyword">or</span> <span class="DecNumber">8</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Enable the autocompletion and use system predefined sources. <em>flags</em> is a bitwise combination of wAcFile, wAcDir, wAcMru, wAcUrl.<table border="1" class="docutils"><tr><th>Flags</th><th>Description</th></tr>
+<tr><td>wAcFile</td><td>Include the file system and directories.</td></tr>
+<tr><td>wAcDir</td><td>Include the file directories only.</td></tr>
+<tr><td>wAcMru</td><td>Include the URLs in the user's <strong>Recently Used</strong> list.</td></tr>
+<tr><td>wAcUrl</td><td>Include the URLs in the user's <strong>History</strong> list.</td></tr>
+</table>
+
+</dd>
+<a id="enableAutoComplete,wTextCtrl,wAutoCompleteProvider"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#enableAutoComplete%2CwTextCtrl%2CwAutoCompleteProvider"><span class="Identifier">enableAutoComplete</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">provider</span><span class="Other">:</span> <a href="wTextCtrl.html#wAutoCompleteProvider"><span class="Identifier">wAutoCompleteProvider</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Enable the autocompletion and use custom source.
 
 </dd>
 <a id="init,wTextCtrl,wWindow,string,wStyle"></a>

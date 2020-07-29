@@ -76,7 +76,9 @@ proc newBmpDataObject(bmp: HBITMAP): ptr BmpDataObject =
     return obj.refCount
 
   result.vtbl.QueryInterface = proc(self: ptr IUnknown, riid: REFIID, ppvObject: ptr pointer): HRESULT {.stdcall.} =
-    if IsEqualIID(riid, &IID_IUnknown) or IsEqualIID(riid, &IID_IDataObject):
+    if ppvObject.isNil:
+      return E_POINTER
+    elif IsEqualIID(riid, &IID_IUnknown) or IsEqualIID(riid, &IID_IDataObject):
       ppvObject[] = self
       self.AddRef()
       return S_OK

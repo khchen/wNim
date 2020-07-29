@@ -13,7 +13,7 @@
 {.experimental, deadCodeElim: on.}
 when defined(gcDestructors): {.push sinkInference: off.}
 
-import tables, sets
+import tables
 import winim/[utils, winstr], winim/inc/windef, winimx
 import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]
 
@@ -78,17 +78,17 @@ proc App*(): wApp {.discardable.} =
   result.mGDIStockSeq = newSeq[wGdiObject]()
   result.mMessageCountTable = initTable[UINT, int]()
   result.mMessageLoopHookProcs = newSeq[wMessageLoopHookProc]()
-  result.mPropagationSet = initHashSet[UINT]()
   result.mWinVersion = wGetWinVersionImpl()
   result.mUsingTheme = usingTheme()
   result.mWaitMessage = true
 
   # add last, run first
-  {.gcsafe.}:
+  try: {.gcsafe.}: # to avoid observable warning
     result.addMessageLoopHook(wAppProcessWindowUnregister)
     result.addMessageLoopHook(wAppProcessAcceleratorMessage)
     result.addMessageLoopHook(wAppProcessDialogMessage)
     result.addMessageLoopHook(wAppProcessQuitMessage)
+  except: discard
 
   wBaseApp = result
 
@@ -147,10 +147,6 @@ proc wAppRegisterClassAtom(className: string, atom: ATOM) {.inline, shield.} =
   App()
   if atom != 0:
     wBaseApp.mClassAtomTable[className] = atom
-
-proc wAppIsMessagePropagation(msg: UINT): bool {.inline, shield.} =
-  App()
-  result = msg in wBaseApp.mPropagationSet
 
 proc wAppIncMessage(msg: UINT) {.inline, shield.} =
   App()
@@ -307,23 +303,6 @@ proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
     result = messageLoop()
-
-proc setMessagePropagation*(self: wApp, msg: UINT, flag = true) {.validate.} =
-  # Events of the classes deriving from wCommandEvent are propagated by default
-  # to the parent window if they are not processed in this window itself.
-
-  ## Regist a message associated event to propagate upward by default.
-  ## Control events (wEvent_Menu, wEvent_Button, etc) will always propagate by default.
-  ## To overdie shouldPropagate() method is a more gentle way.
-
-  if flag:
-    self.mPropagationSet.incl msg
-  else:
-    self.mPropagationSet.excl msg
-
-proc isMessagePropagation*(self: wApp, msg: UINT): bool =
-  ## Checks whether the msg is propagated by default.
-  result = msg in self.mPropagationSet
 
 proc broadcastTopLevelMessage*(self: wApp, msg: UINT, wParam: wWparam, lParam: wLparam) =
   ## Broadcast a event to all toplevel windows.

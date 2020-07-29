@@ -27,13 +27,10 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-const
-  wEvent_Move* = WM_MOVE
-  wEvent_Moving* = WM_MOVING
-  wEvent_Dragging* = wEventId()
-
-proc isMoveEvent(msg: UINT): bool {.inline, shield.} =
-  msg in {wEvent_Move, wEvent_Moving, wEvent_Dragging}
+wEventRegister(wMoveEvent):
+  wEvent_Move = WM_MOVE
+  wEvent_Moving = WM_MOVING
+  wEvent_Dragging
 
 method getPosition*(self: wMoveEvent): wPoint {.property.} =
   ## Returns the entire size of the window generating the size change event.

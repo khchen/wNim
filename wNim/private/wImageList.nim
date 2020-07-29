@@ -125,13 +125,13 @@ wClass(wImageList):
 
   proc init*(self: wImageList, width: int, height: int, mask = false,
       initialCount = 1) {.validate, inline.} =
-    ## Initializes a image list by specifying the image size, whether image masks
+    ## Initializes an image list by specifying the image size, whether image masks
     ## should be created, and the initial size of the list.
     let flag = if mask: ILC_COLOR32 or ILC_MASK else: ILC_COLOR32
     self.mHandle = ImageList_Create(width, height, flag, initialCount, 1)
 
   proc init*(self: wImageList, size: wSize, mask = false,
       initialCount = 1) {.validate, inline.} =
-    ## Initializes a image list by specifying the image size, whether image masks
+    ## Initializes an image list by specifying the image size, whether image masks
     ## should be created, and the initial size of the list.
     self.init(size.width, size.height, mask, initialCount)

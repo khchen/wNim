@@ -30,7 +30,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wSizeEvent):
   wEvent_Size
   wEvent_Minimize
   wEvent_Maximize
@@ -38,9 +38,6 @@ DefineEvent:
 
 const
   wEvent_Iconize* = wEvent_Minimize
-
-proc isSizeEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_Size..wEvent_Sizing
 
 method getSize*(self: wSizeEvent): wSize {.property.} =
   ## Returns the entire size of the window generating the size change event.

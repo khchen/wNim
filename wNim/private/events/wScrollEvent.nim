@@ -38,7 +38,7 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wScrollEvent):
   wEvent_ScrollFirst
   wEvent_Slider
   wEvent_ScrollBar
@@ -52,9 +52,6 @@ DefineEvent:
   wEvent_ScrollThumbRelease
   wEvent_ScrollChanged
   wEvent_ScrollLast
-
-proc isScrollEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_ScrollFirst..wEvent_ScrollLast
 
 method getKind*(self: wScrollEvent): int {.property, inline.} =
   ## Returns what kind of event type this is. Basically used in wEvent_ScrollBar

@@ -232,8 +232,6 @@ function main() {
     title="getRect(self: wWindow): wRect"><wbr />get<wbr />Rect<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getPosition%2CwWindow"
     title="getPosition(self: wWindow): wPoint"><wbr />get<wbr />Position<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getClientMargin%2CwWindow%2Cint"
-    title="getClientMargin(self: wWindow; direction: int): int"><wbr />get<wbr />Client<wbr />Margin<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getClientMargins%2CwWindow"
     title="getClientMargins(self: wWindow): tuple[left, top, right, bottom: int]"><wbr />get<wbr />Client<wbr />Margins<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#fit%2CwWindow"
@@ -522,6 +520,8 @@ function main() {
   <li><a class="reference" href="#release.e%2CwWindow"
     title="release(self: wWindow)"><wbr />release<span class="attachedType"></span></a></li>
   
+  <li><a class="reference" href="#getClientMargin.e%2CwWindow%2Cint"
+    title="getClientMargin(self: wWindow; direction: int): int"><wbr />get<wbr />Client<wbr />Margin<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getDefaultSize.e%2CwWindow"
     title="getDefaultSize(self: wWindow): wSize"><wbr />get<wbr />Default<wbr />Size<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getBestSize.e%2CwWindow"
@@ -897,14 +897,6 @@ Returns the position and size of the window as a wRect object.
 <dd>
 
 Gets the position of the window in pixels.
-
-</dd>
-<a id="getClientMargin,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getClientMargin%2CwWindow%2Cint"><span class="Identifier">getClientMargin</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">direction</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Returns the client margin of the specified direction. This function basically exists for wNim's layout DSL.
 
 </dd>
 <a id="getClientMargins,wWindow"></a>
@@ -1602,8 +1594,8 @@ Returns true if the window contents is double-buffered by the system
 
 </dd>
 <a id="processEvent,wWindow,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#processEvent%2CwWindow%2CwEvent"><span class="Identifier">processEvent</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#processEvent%2CwWindow%2CwEvent"><span class="Identifier">processEvent</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">event</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Processes an event: searching event tables and calling event handler. Returned true if a suitable event handler function was executed and it did not call wEvent.skip().
@@ -1942,8 +1934,16 @@ Release all the resources during destroying. Used internally.
 
 
 
+<a id="getClientMargin.e,wWindow,int"></a>
+<dt><pre><span class="Keyword">method</span> <a href="#getClientMargin.e%2CwWindow%2Cint"><span class="Identifier">getClientMargin</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">direction</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the client margin of the specified direction. This function basically exists for wNim's layout DSL.
+
+</dd>
 <a id="getDefaultSize.e,wWindow"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#getDefaultSize.e%2CwWindow"><span class="Identifier">getDefaultSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">method</span> <a href="#getDefaultSize.e%2CwWindow"><span class="Identifier">getDefaultSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span>
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -1951,7 +1951,7 @@ Returns the system suggested size of a window (usually used for GUI controls).
 
 </dd>
 <a id="getBestSize.e,wWindow"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#getBestSize.e%2CwWindow"><span class="Identifier">getBestSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">method</span> <a href="#getBestSize.e%2CwWindow"><span class="Identifier">getBestSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 

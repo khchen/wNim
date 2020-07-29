@@ -14,8 +14,8 @@
 ## Visual Format Language looking like this:
 ##
 ## .. code-block:: Nim
-##   V:|-{col1:[child1(child2)]-[child2]}-|
-##   V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+##   V:|-[col1:[child1(child2)]-[child2]]-|
+##   V:|-[col2:[child3(child4,child5)]-[child4]-[child5]]-|
 ##   H:|-[col1(col2)]-[col2]-|
 ##
 ## Thanks to nim's powerful metaprogramming features. Now *wNim* can use Visual
@@ -27,7 +27,7 @@
 ## * Operators (H:\|-[view1(=view2/2-10)]-[view2]-\|)
 ## * Attributes (V:\|[view2(view1.width)])
 ## * Equal size spacers/centering(H:\|~[center(100)]~\|)
-## * View stacks (V:\|{column:[header(50)][content][footer(50)]}\|, use {} instead of [].)
+## * View stacks (V:\|[column:[header(50)][content][footer(50)]]\|)
 ## * View ranges (spread operator) (H:[view1..8(10)]\|)
 ## * Multiple views (H:\|[text1,text2,text3]\|)
 ## * Multiple orientations (HV:\|[background]\|)
@@ -38,18 +38,21 @@
 ## * Comments (H:[view1(view1.height/3)] # enfore aspect ratio 1/3)
 ##
 ## Some more features:
+## * Batch operation (H:\|{elems:[a][b][c]}\|, H:[elems(25)] = HV:[a,b,c(25)] )
 ## * Space and newline are allowed in most position.
 ## * Parse everything as much as posible and never throw an error.
 ## * "spacing:" to specify the default spacing.
 ## * "variable:" to specify the variable name used in equal size spacers.
 ## * "outer:" to specify the outer object.
 ##
+## The name of the *view stack* will be injected into current scope as a wResizable
+## object, so name conflict should be avoided.
 ## To see more examples and try VFL, run examples/autolayoutEditor.nim
 #
 ## :Seealso:
 ##   `wResizable <wResizable.html>`_
 
-import strutils, parseutils, tables, strformat
+import strutils, parseutils, tables, strformat, sets
 
 type
   VflRule = object
@@ -59,12 +62,19 @@ type
 
   VflMode = enum modeH, modeV
 
+  VlfStack = object
+    mode: VflMode
+    leftSpace: string
+    rightSpace: string
+    children: seq[string]
+
   VflParser = object
     rules: OrderedTable[string, seq[VflRule]]
-    # HashSet has some problem when run in vm, use Table instead
-    stacks: Table[string, Table[string, bool]]
+    stacks: OrderedTable[string, VlfStack]
+    batches: OrderedTable[string, HashSet[string]]
     aliases: Table[string, string]
     currentStack: string
+    currentBatch: string
     rawRules: seq[string]
     lastItems: seq[string]
     lastSpace: string
@@ -81,6 +91,12 @@ type
     hvValue: string
     mode: VflMode
 
+proc parse*(parser: var VflParser, input: string)
+proc addChild(parser: var VflParser, child: string, value: string)
+
+proc reverse(mode: VflMode): VflMode =
+  result = if mode == modeH: modeV else: modeH
+
 proc remove(str: string, chars = Whitespace): string =
   result = newStringOfCap(str.len)
   for c in str:
@@ -95,6 +111,7 @@ proc resetHV(parser: var VflParser, mode: VflMode, value = "") =
   parser.mode = mode
   parser.leftEdge = true
   parser.lastItems = @[]
+  parser.lastSpace = "0"
 
   if parser.variableUsed:
     parser.variableCount.inc
@@ -102,12 +119,20 @@ proc resetHV(parser: var VflParser, mode: VflMode, value = "") =
 
   parser.barSpacing = if value.len != 0: value else: parser.defaultSpacing
 
+proc initVlfStack(mode = modeH): VlfStack =
+  result.mode = mode
+  result.leftSpace = "0"
+  result.rightSpace = "0"
+  result.children = @[]
+
 proc initVflParser*(parent = "panel", spacing = 10, variable = "variable"): VflParser =
   ## Initializer.
   result.rules = initOrderedTable[string, seq[VflRule]]()
-  result.stacks = initTable[string, Table[string, bool]]()
+  result.stacks = initOrderedTable[string, VlfStack]()
+  result.batches = initOrderedTable[string, HashSet[string]]()
   result.aliases = initTable[string, string]()
   result.currentStack = ""
+  result.currentBatch = ""
   result.rawRules = @[]
   result.lastSpace = "0"
   result.parent = parent
@@ -127,8 +152,6 @@ proc right(parser: VflParser): string = ["right", "bottom"][parser.mode.ord]
 proc innerRight(parser: VflParser): string = ["innerRight", "innerBottom"][parser.mode.ord]
 proc width(parser: VflParser): string = ["width", "height"][parser.mode.ord]
 proc innerWidth(parser: VflParser): string = ["innerWidth", "innerHeight"][parser.mode.ord]
-
-proc parse*(parser: var VflParser, input: string)
 
 proc closeHV(parser: var VflParser, raw: string, pos: int) =
   if parser.hvStart:
@@ -185,10 +208,24 @@ proc setup(parser: var VflParser, input: string, raw: string, pos: int) =
 
 proc openStack(parser: var VflParser, name: string) =
   parser.currentStack = name
-  parser.stacks[name] = initTable[string, bool]()
+  parser.stacks[name] = initVlfStack(parser.mode)
+  parser.addChild(name, "")
+  parser.lastItems = @[]
+  parser.lastSpace = "0"
 
 proc closeStack(parser: var VflParser) =
-  parser.currentStack = ""
+  if parser.currentStack.len != 0:
+    parser.stacks[parser.currentStack].rightSpace = parser.lastSpace
+    parser.lastItems = @[parser.currentStack]
+    parser.lastSpace = "0"
+    parser.currentStack = ""
+
+proc openBatch(parser: var VflParser, name: string) =
+  parser.currentBatch = name
+  parser.batches[name] = initHashSet[string]()
+
+proc closeBatch(parser: var VflParser) =
+  parser.currentBatch = ""
 
 proc addNewChild(parser: var VflParser, item: string) =
   if item notin parser.rules:
@@ -315,7 +352,7 @@ proc addChild(parser: var VflParser, child: string, value: string) =
       parser.addRule(child, parser.width, fmt" {op} {value}", priority)
 
 proc parseChild(parser: var VflParser, input: string) =
-  proc replaceStack(parser: var VflParser, input: var string) =
+  proc replaceBatch(parser: var VflParser, input: var string) =
     var replacements = newSeq[(int, int, string)]()
     for start, last in input.catchIdent(IdentChars + {'.'}):
       var
@@ -328,8 +365,8 @@ proc parseChild(parser: var VflParser, input: string) =
         attrib = token[dot..^1]
         token = token[0..<dot]
 
-      if token in parser.stacks:
-        for name in parser.stacks[token].keys:
+      if token in parser.batches:
+        for name in parser.batches[token]:
           items.add name & attrib
 
         replacements.add (start, last, items.join(","))
@@ -366,7 +403,7 @@ proc parseChild(parser: var VflParser, input: string) =
 
   var input = input
   parser.replaceRange(input)
-  parser.replaceStack(input)
+  parser.replaceBatch(input)
 
   var
     open = input.find('(')
@@ -387,10 +424,17 @@ proc parseChild(parser: var VflParser, input: string) =
     of IdentStartChars:
       pos += input.parseWhile(token, IdentChars, pos)
       items.add token
-      parser.addChild(token, value)
 
       if parser.currentStack.len != 0:
-        parser.stacks[parser.currentStack][token] = true
+        if parser.stacks[parser.currentStack].children.len == 0:
+          parser.stacks[parser.currentStack].leftSpace = parser.lastSpace
+        parser.stacks[parser.currentStack].children.add token
+
+      if parser.currentBatch.len != 0:
+        parser.batches[parser.currentBatch].incl token
+
+      parser.addChild(token, value)
+
     else: pos.inc
 
   parser.lastItems = items
@@ -421,6 +465,32 @@ proc parseSpace(parser: var VflParser, input: string) =
     else:
       parser.lastSpace = input
 
+proc addStackRules(parser: var VflParser) =
+  for name, stack in parser.stacks:
+    if stack.children.len == 0: continue
+
+    parser.mode = stack.mode
+    var (op, space, priority) = parser.parseExpr(stack.leftSpace, quote=true, reverse=false)
+    if space.len != 0:
+      let edge = fmt"{name}.{parser.left}"
+      if space == "0":
+        parser.addRule(stack.children[0], parser.left, fmt" {op} {edge}", priority)
+      else:
+        parser.addRule(stack.children[0], parser.left, fmt" {op} {edge} + {space}", priority)
+
+    (op, space, priority) = parser.parseExpr(stack.rightSpace, quote=true, reverse=true)
+    if space.len != 0:
+      let edge = fmt"{name}.{parser.right}"
+      if space == "0":
+        parser.addRule(stack.children[^1], parser.right, fmt" {op} {edge}", priority)
+      else:
+        parser.addRule(stack.children[^1], parser.right, fmt" {op} {edge} - {space}", priority)
+
+    parser.mode = stack.mode.reverse()
+    for child in stack.children:
+      parser.addRule(child, parser.left, fmt" = {name}.{parser.left}")
+      parser.addRule(child, parser.right, fmt" = {name}.{parser.right}")
+
 proc parseEnd(parser: var VflParser) =
   if parser.variableUsed: parser.variableCount.inc
 
@@ -434,6 +504,17 @@ proc parseEnd(parser: var VflParser) =
         if v in rule.value:
           rule.value = rule.value.replace(v, n)
 
+proc parseIdentColon(input: string, token: var string, start = 0): int =
+  var pos = start
+  pos += input.skipWhitespace(pos)
+  pos += input.parseIdent(token, pos)
+  pos += input.skipWhitespace(pos)
+  if pos < input.len and input[pos] == ':':
+    result = pos - start + 1
+  else:
+    token = ""
+    result = 0
+
 proc parse*(parser: var VflParser, input: string) =
   ## The main parser function.
   var
@@ -443,6 +524,7 @@ proc parse*(parser: var VflParser, input: string) =
 
   defer:
     parser.closeHV(input, pos)
+    parser.addStackRules()
     parser.parseEnd()
 
   while pos < input.len:
@@ -456,28 +538,36 @@ proc parse*(parser: var VflParser, input: string) =
       parser.parseEdge()
     of '{':
       pos.inc
-      pos += input.skipWhitespace(pos)
-      pos += input.parseIdent(token, pos)
-      parser.openStack(token)
+      pos += input.parseIdentColon(token, pos)
+      if token != "":
+        parser.openBatch(token)
     of '}':
       pos.inc
-      parser.closeStack()
+      parser.closeBatch()
     of '[':
       pos.inc
-      count = input.parseUntil(token, {']'}, pos)
-      pos += count
-      parser.parseChild(token)
+      pos += input.parseIdentColon(token, pos)
+      if token != "":
+        parser.openStack(token)
+      else:
+        count = input.parseUntil(token, {']'}, pos)
+        pos += count + 1
+        parser.parseChild(token)
+    of ']':
+      pos.inc
+      parser.closeStack()
     of '-', '~':
-      count = input.parseUntil(token, {'|', '[', '{', '\n', '\r'}, pos)
+      count = input.parseUntil(token, {'|', '[', '{', '\n', '\r', ']'}, pos)
       pos += count
       parser.parseSpace(token)
     of '#', '/':
       pos.inc input.skipUntil({'\n', '\r'}, pos)
     else: pos.inc
 
-iterator names*(parser: VflParser): string =
+iterator names*(parser: VflParser, skipStacks = true): string =
   ## Iterates over item names in the parser.
   for key in parser.rules.keys:
+    if skipStacks and key in parser.stacks: continue
     yield key
 
 proc toString*(parser: VflParser, indent = 2, extraIndent = 0, templ = "layout"): string =
@@ -487,8 +577,15 @@ proc toString*(parser: VflParser, indent = 2, extraIndent = 0, templ = "layout")
     for i in 0..<parser.variableCount:
       let n = parser.variableName & $(i + 1)
       result.add spaces(extraIndent)
-      result.add fmt"var {n} = newVariable()"
+      result.add fmt"var {n} = newVariable()" & "\n"
+
+    if parser.variableCount != 0:
       result.add "\n"
+
+    for n in parser.stacks.keys:
+      result.add spaces(extraIndent)
+      result.add fmt"when not declaredInScope({n}):" & "\n"
+      result.add fmt"  var {n} = Resizable()" & "\n\n"
 
     result.add spaces(extraIndent)
     result.add parser.parent & "." & templ & ":\n"

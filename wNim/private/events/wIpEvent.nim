@@ -26,11 +26,8 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-DefineEvent:
+wEventRegister(wIpEvent):
   wEvent_IpChanged
-
-proc isIpEvent(msg: UINT): bool {.inline, shield.} =
-  msg == wEvent_IpChanged
 
 method getIndex*(self: wIpEvent): int {.property, inline.} =
   ## The zero-based number of the field that was changed.

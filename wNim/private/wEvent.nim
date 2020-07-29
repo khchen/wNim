@@ -6,7 +6,7 @@
 #====================================================================
 
 ## *wEvent* and it's subclass hold information about an event passed to
-## a event handler. A object of wWindow can be bound to an event handler
+## an event handler. An object of wWindow can be bound to an event handler
 ## by ``connect`` proc. For example:
 ##
 ## .. code-block:: Nim
@@ -91,23 +91,20 @@ when defined(gcDestructors): {.push sinkInference: off.}
 import wBase
 
 const
-  WM_DPICHANGED = 0x02E0
-
   wEvent_PropagateMax* = int INT_PTR.high
   wEvent_PropagateNone* = 0
 
-  wEvent_SetFocus* = WM_SETFOCUS
-  wEvent_KillFocus* = WM_KILLFOCUS
-  wEvent_Show* = WM_SHOWWINDOW
-  wEvent_Activate* = WM_ACTIVATE
-  wEvent_Timer* = WM_TIMER
-  wEvent_MenuHighlight* = WM_MENUSELECT
-  wEvent_Paint* = WM_PAINT
-  wEvent_NcPaint* = WM_NCPAINT
-  wEvent_HotKey* = WM_HOTKEY
-  wEvent_DpiChanged* = WM_DPICHANGED
-
-DefineEvent:
+wEventRegister(wEvent):
+  wEvent_SetFocus= WM_SETFOCUS
+  wEvent_KillFocus = WM_KILLFOCUS
+  wEvent_Show = WM_SHOWWINDOW
+  wEvent_Activate = WM_ACTIVATE
+  wEvent_Timer = WM_TIMER
+  wEvent_MenuHighlight = WM_MENUSELECT
+  wEvent_Paint = WM_PAINT
+  wEvent_NcPaint = WM_NCPAINT
+  wEvent_HotKey = WM_HOTKEY
+  wEvent_DpiChanged = 0x02E0 # WM_DPICHANGED
   wEvent_Close
   wEvent_Destroy
 
@@ -165,17 +162,17 @@ proc setResult*(self: wEvent, ret: LRESULT) {.validate, property, inline.} =
   self.mResult = ret
 
 proc getUserData*(self: wEvent): int {.validate, property, inline.} =
-  ## Return the userdata associated with a event.
+  ## Return the userdata associated with an event.
   result = self.mUserData
 
 proc setUserData*(self: wEvent, userData: int) {.validate, property, inline.} =
-  ## Set the userdata associated with a event.
+  ## Set the userdata associated with an event.
   self.mUserData = userData
 
 proc skip*(self: wEvent, skip = true) {.validate, inline.} =
   ## This proc can be used inside an event handler to control whether further
   ## event handlers bound to this event will be called after the current one
-  ## returns. It sometimes means skip the default behavior for a event.
+  ## returns. It sometimes means skip the default behavior for an event.
   self.mSkip = skip
 
 proc `skip=`*(self: wEvent, skip: bool) {.validate, inline.} =
@@ -339,9 +336,9 @@ method getColumn*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 method getText*(self: wEvent): string {.base, property.} = discard
   ## Method needs to be overridden.
-method getItem*(self: wEvent): wTreeItem {.base, property.} = discard
+method getItem*(self: wEvent): wTreeItem {.base, property, raises: [].} = discard
   ## Method needs to be overridden.
-method getOldItem*(self: wEvent): wTreeItem {.base, property.} = discard
+method getOldItem*(self: wEvent): wTreeItem {.base, property, raises: [].} = discard
   ## Method needs to be overridden.
 method getInsertMark*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
@@ -362,16 +359,17 @@ method getMenuItem*(self: wEvent): wMenuItem {.base, property.} = discard
 method getErrorCode*(self: wEvent): int {.base, property.} = discard
   ## Method needs to be overridden.
 
-method shouldPropagate*(self: wEvent): bool {.base.} = self.mPropagationLevel > 0
-  ## Test if this event should be propagated or not, i.e. if the propagation
-  ## level is currently greater than 0. This method can be override, for example:
+method shouldPropagate*(self: wEventBase): bool {.base.} =
+  ## Test if this event should be propagated or not.
+  ## This method can be override, for example:
   ##
   ## .. code-block:: Nim
-  ##   method shouldPropagate(event: wKeyEvent): bool =
-  ##     if event.eventType == wEvent_Char:
+  ##   method shouldPropagate(self: wEvent): bool =
+  ##     if self.eventType == wEvent_Char:
   ##       result = true
   ##     else:
-  ##       result = procCall wEvent(event).shouldPropagate()
+  ##       result = procCall shouldPropagate(wEventBase self)
+  result = if self of wCommandEvent: true else: false
 
 # Importing wEvent will also import (and export) all the subclasses automatically.
 
@@ -383,101 +381,41 @@ export wMouseEvent, wKeyEvent, wSizeEvent, wMoveEvent, wContextMenuEvent,
   wScrollWinEvent, wTrayEvent, wDragDropEvent, wDialogEvent, wNavigationEvent,
   wSetCursorEvent, wCommandEvent
 
-const
-  wEvent_App* = wEvent_CommandLast + 1
+# Still proveding wEvent_App for backward compatible
+wEventRegister(wEvent):
+  wEvent_App
 
-# For recursive module dependencies.
-proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
-    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent
+proc init*(self: wEvent, window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
+    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0) =
+  ## Initializes an event.
+  self.mWindow = window
+  self.mOrigin = origin
+  self.mMsg = msg
+  self.mWparam = wParam
+  self.mLparam = lParam
+  self.mUserData = userData
 
-import wWindow
+  if self of wBase.wCommandEvent:
+    self.mId = wCommandID LOWORD(wParam)
 
-proc defaultPropagationLevel(msg: UINT): int =
-  if msg.isCommandEvent() or wAppIsMessagePropagation(msg):
-    result = wEvent_PropagateMax
+  if self.shouldPropagate():
+    self.mPropagationLevel = wEvent_PropagateMax
   else:
-    result = 0
-
-proc Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
-    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent =
-  ## Constructor.
-
-  template CreateEvent(Constructor: untyped): untyped =
-    Constructor(mWindow: window, mMsg: msg, mWparam: wParam, mLparam: lParam,
-      mOrigin: origin, mUserData: userData)
-
-  if msg.isMouseEvent():
-    result = CreateEvent(wMouseEvent)
-
-  elif msg.isKeyEvent():
-    result = CreateEvent(wKeyEvent)
-
-  elif msg.isSizeEvent():
-    result = CreateEvent(wSizeEvent)
-
-  elif msg.isMoveEvent():
-    result = CreateEvent(wMoveEvent)
-
-  elif msg.isContextMenuEvent():
-    result = CreateEvent(wContextMenuEvent)
-
-  elif msg.isScrollWinEvent():
-    result = CreateEvent(wScrollWinEvent)
-
-  elif msg.isTrayEvent():
-    result = CreateEvent(wTrayEvent)
-
-  elif msg.isDragDropEvent():
-    result = CreateEvent(wDragDropEvent)
-
-  elif msg.isDialogEvent():
-    result = CreateEvent(wDialogEvent)
-
-  elif msg.isNavigationEvent():
-    result = CreateEvent(wNavigationEvent)
-
-  elif msg.isSetCursorEvent():
-    result = CreateEvent(wSetCursorEvent)
-
-  elif msg.isScrollEvent():
-    result = CreateEvent(wScrollEvent)
-
-  elif msg.isSpinEvent():
-    result = CreateEvent(wSpinEvent)
-
-  elif msg.isHyperlinkEvent():
-    result = CreateEvent(wHyperlinkEvent)
-
-  elif msg.isIpEvent():
-    result = CreateEvent(wIpEvent)
-
-  elif msg.isWebViewEvent():
-    result = CreateEvent(wWebViewEvent)
-
-  elif msg.isListEvent():
-    result = CreateEvent(wListEvent)
-
-  elif msg.isTreeEvent():
-    result = CreateEvent(wTreeEvent)
-
-  elif msg.isStatusBarEvent():
-    result = CreateEvent(wStatusBarEvent)
-
-  elif msg.isCommandEvent(): # must last check
-    result = CreateEvent(wCommandEvent)
-
-  else:
-    result = CreateEvent(wOtherEvent)
-
-  if result of wBase.wCommandEvent:
-    result.mId = wCommandID LOWORD(wParam)
-
-  result.mPropagationLevel = msg.defaultPropagationLevel()
+    self.mPropagationLevel = wEvent_PropagateNone
 
   # save the status for the last message occured
-  GetKeyboardState(cast[PBYTE](&result.mKeyStatus[0]))
-  result.mMousePos = wGetMessagePosition()
-  result.mClientPos = wDefaultPoint
+  GetKeyboardState(cast[PBYTE](&self.mKeyStatus[0]))
+  self.mMousePos = wGetMessagePosition()
+  self.mClientPos = wDefaultPoint
+
+template Event*(window: wWindow = nil, msg: UINT = 0, wParam: wWparam = 0,
+    lParam: wLparam = 0, origin: HWND = 0, userData: int = 0): wEvent =
+  ## Constructor.
+  var self: wEvent = wEventCtor(msg)
+  self.init(window, msg, wParam, lParam, origin, userData)
+  self
+
+import wWindow
 
 proc getMousePos*(self: wEvent): wPoint {.validate, property.} =
   ## Get coordinate of the cursor.

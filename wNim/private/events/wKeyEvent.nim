@@ -29,17 +29,14 @@ when defined(gcDestructors): {.push sinkInference: off.}
 
 import ../wBase
 
-const
-  wEvent_Char* = WM_CHAR
-  wEvent_KeyDown* = WM_KEYDOWN
-  wEvent_KeyUp* = WM_KEYUP
-  wEvent_SysKeyDown* = WM_SYSKEYDOWN
-  wEvent_SysKeyUp* = WM_SYSKEYUP
+wEventRegister(wKeyEvent):
+  wEvent_Char = WM_CHAR
+  wEvent_KeyDown = WM_KEYDOWN
+  wEvent_KeyUp = WM_KEYUP
+  wEvent_SysKeyDown = WM_SYSKEYDOWN
+  wEvent_SysKeyUp = WM_SYSKEYUP
   wEvent_KeyFirst = WM_KEYFIRST
   wEvent_KeyLast = WM_KEYLAST
-
-proc isKeyEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_KeyFirst..wEvent_KeyLast
 
 method getKeyCode*(self: wKeyEvent): int {.property, inline.} =
   ## Returns the key code of the key that generated this event.

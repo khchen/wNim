@@ -132,7 +132,7 @@ import wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
 export wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
   wHyperlinkEvent, wIpEvent, wWebViewEvent
 
-DefineEvent:
+wEventRegister(wCommandEvent):
   wEvent_CommandFirst
   wEvent_Menu
   wEvent_MenuRightClick
@@ -182,17 +182,6 @@ DefineEvent:
 const
   wEvent_Tool* = wEvent_Menu
   wEvent_TimeChanged* = wEvent_DateChanged
-
-proc isCommandEvent(msg: UINT): bool {.inline, shield.} =
-  msg in wEvent_CommandFirst..wEvent_CommandLast or
-    msg.isStatusBarEvent or
-    msg.isScrollEvent or
-    msg.isListEvent or
-    msg.isTreeEvent or
-    msg.isSpinEvent or
-    msg.isHyperlinkEvent or
-    msg.isIpEvent or
-    msg.isWebViewEvent
 
 method getMenuItem*(self: wCommandEvent): wMenuItem {.property, inline.} =
   ## Returns the menu item (valid for wEvent_Menu and wEvent_MenuRightClick).
