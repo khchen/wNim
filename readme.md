@@ -5,7 +5,7 @@ Layout DSL is powered by Yuriy Glukhov's Kiwi constraint solving library.
 
 ## Code Examples
 Basic code structure:
-```nimrod
+```nim
 import wNim
 
 let app = App()
@@ -17,7 +17,7 @@ app.mainLoop()
 ```
 
 [Event handler](https://khchen.github.io/wNim/wEvent.html):
-```nimrod
+```nim
 button.wEvent_Button do ():
   frame.delete()
 
@@ -29,7 +29,7 @@ frame.wEvent_Size do ():
 ```
 
 [Layout DSL](https://khchen.github.io/wNim/wResizable.html):
-```nimrod
+```nim
 panel.layout:
   staticText:
     top = panel.top + 10
@@ -40,16 +40,16 @@ panel.layout:
 ```
 
 [Autolayout](https://khchen.github.io/wNim/autolayout.html):
-```nimrod
+```nim
 panel.autolayout """
-  V:|-{col1:[child1(child2)]-[child2]}-|
-  V:|-{col2:[child3(child4,child5)]-[child4]-[child5]}-|
+  V:|-[col1:[child1(child2)]-[child2]]-|
+  V:|-[col2:[child3(child4,child5)]-[child4]-[child5]]-|
   H:|-[col1(col2)]-[col2]-|
 """
 ```
 
 Getter and Setter:
-```nimrod
+```nim
 let frame = Frame()
 
 # wxWidgets/wxPython style
@@ -79,13 +79,13 @@ Without git:
 ## Import
 The easiest way to use wNim is to import the whole package.
 
-```nimrod
+```nim
 import wNim
 ```
 
 However, the modules of wNim can be aslo imported one by one  to speed up compilation time.
 
-```nimrod
+```nim
 import wNim/[wApp, wFrame]
 ```
 
