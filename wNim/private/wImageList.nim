@@ -92,7 +92,7 @@ proc getBitmap*(self: wImageList, index: int): wBitmap {.validate, property.} =
   # need to create new bitmap, don't just warp info.hbmImage
   if index <= self.getImageCount() and
       ImageList_GetIconSize(self.mHandle, &width, &height) != 0 and
-      ImageList_GetImageInfo(self.mHandle, 0, &info) != 0 and
+      ImageList_GetImageInfo(self.mHandle, index, &info) != 0 and
       GetObject(info.hbmImage, sizeof(winimx.BITMAP), &bm) != 0:
 
     result = Bitmap(width, height, int bm.bmBitsPixel)
@@ -109,7 +109,7 @@ proc getBitmap*(self: wImageList, index: int): wBitmap {.validate, property.} =
 proc getIcon*(self: wImageList, index: int): wIcon {.validate, property.} =
   ## Create the icon from specified index.
   if index <= self.getImageCount():
-    var hIcon = ImageList_GetIcon(self.mHandle, 0, ILD_TRANSPARENT)
+    var hIcon = ImageList_GetIcon(self.mHandle, index, ILD_TRANSPARENT)
     result = Icon(hIcon, copy=false)
 
 proc len*(self: wImageList): int {.validate.} =

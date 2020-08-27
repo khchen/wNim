@@ -1,3 +1,8 @@
+Version 0.11.3
+--------------
+* wImageList: Fix incorrect index in getBitmap() and getIcon() (#64, thanks to BugFix).
+* wTreeEvent: Fix getItem() and getOldItem(). Remove the mistake comment.
+
 Version 0.11.2
 --------------
 * Slightly modify the event system. wNim now uses the new wEventRegister() macro to define all the event.

@@ -61,16 +61,16 @@ wEventRegister(wTreeEvent):
   wEvent_TreeItemMenu
   wEvent_TreeLast
 
-# method getItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
-#   ## Returns the item.
-#   result.mTreeCtrl = self.mTreeCtrl
-#   result.mHandle = self.mHandle
+method getItem*(self: wTreeEvent): wTreeItem {.property, inline, raises: [].} =
+  ## Returns the item.
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = self.mHandle
 
-# method getOldItem*(self: wTreeEvent): wTreeItem {.property, inline.} =
-#   ## Returns the old item (valid for wEvent_TreeSelChanging, wEvent_TreeSelChanged,
-#   ## and wEvent_TreeEndDrag events).
-#   result.mTreeCtrl = self.mTreeCtrl
-#   result.mHandle = self.mOldHandle
+method getOldItem*(self: wTreeEvent): wTreeItem {.property, inline, raises: [].} =
+  ## Returns the old item (valid for wEvent_TreeSelChanging, wEvent_TreeSelChanged,
+  ## and wEvent_TreeEndDrag events).
+  result.mTreeCtrl = self.mTreeCtrl
+  result.mHandle = self.mOldHandle
 
 method getText*(self: wTreeEvent): string {.property, inline.} =
   ## The (new) item label for wEvent_TreeEndLabelEdit event.
