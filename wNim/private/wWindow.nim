@@ -1207,7 +1207,7 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
     var caption = "Error: unhandled exception"
     var msg = ""
     when not defined(release):
-      msg.add(getStackTrace())
+      msg.add(getStackTrace(err))
       msg.add "\n"
     msg.add(err.msg)
     msg.add " ["

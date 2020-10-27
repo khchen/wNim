@@ -220,19 +220,21 @@ template layout*(parent: wResizable, x: untyped) =
   ## Parses the layout DSL and rearrange the objects. This function only
   ## evaluate the DSL and creates the constraints once.
 
-  # Here needs {.inject.} so that layoutRealize can catch the resizer and
-  # self, so add block for identifier hygiene.
-  block:
-    attributeTempaltes()
-    var resizer {.inject, global.}: wResizer
+  # Note: resizer and self need {.inject.} so that layoutRealize works.
+  # Moreover, they must be in sub-scope for identifier hygiene.
+  # Also add workaround for https://github.com/nim-lang/Nim/issues/15005.
+
+  var globalResizer {.global.}: wResizer
+  if globalResizer == nil or globalResizer.mParent != parent:
+    var resizer {.inject.} = Resizer(parent)
     var self {.inject.}: wResizable
+    attributeTempaltes()
 
-    if resizer == nil or resizer.mParent != parent:
-      resizer = Resizer(parent)
-      layoutRealize(x)
+    layoutRealize(x)
+    globalResizer = resizer
 
-    resizer.resolve()
-    resizer.rearrange()
+  globalResizer.resolve()
+  globalResizer.rearrange()
 
 template relayout*(parent: wResizable, x: untyped) =
   ## Parses the layout DSL and rearrange the objects. This function evaluate
@@ -241,9 +243,9 @@ template relayout*(parent: wResizable, x: untyped) =
   ## object.bestWidth in DSL and the label of the object will change every
   ## time), use this function instead of *layout*.
   block:
-    attributeTempaltes()
     var resizer {.inject.} = Resizer(parent)
-    var self{.inject.}: wResizable
+    var self {.inject.}: wResizable
+    attributeTempaltes()
 
     layoutRealize(x)
     resizer.resolve()
@@ -254,16 +256,21 @@ template plan*(parent: wResizable, x: untyped): untyped =
   ## Calls wResizer.resolve() and then wResizer.rearrange() to change the layout
   ## in reality later. This function provides a chance to modify the resolved
   ## values.
-  block:
+
+  # There is NO workaround for https://github.com/nim-lang/Nim/issues/15005.
+  # The only way to avoid the resizer being destroyed after scope is using
+  # {.global.} in user's code, not in this template.
+
+  var globalResizer {.global.}: wResizer
+  if globalResizer == nil or globalResizer.mParent != parent:
+    var resizer {.inject.} = Resizer(parent)
+    var self {.inject.}: wResizable
     attributeTempaltes()
-    var resizer {.inject, global.}: wResizer
-    var self{.inject.}: wResizable
 
-    if resizer == nil:
-      resizer = Resizer(parent)
-      layoutRealize(x)
+    layoutRealize(x)
+    globalResizer = resizer
 
-    resizer
+  globalResizer
 
 template replan*(parent: wResizable, x: untyped): untyped =
   ## Similar to *relayout*, but return the wResizer object.
@@ -271,9 +278,9 @@ template replan*(parent: wResizable, x: untyped): untyped =
   ## in reality later. This function provides a chance to modify the resolved
   ## values.
   block:
-    attributeTempaltes()
     var resizer {.inject.} = Resizer(parent)
     var self{.inject.}: wResizable
+    attributeTempaltes()
 
     layoutRealize(x)
     resizer

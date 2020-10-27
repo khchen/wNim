@@ -1,3 +1,9 @@
+Version 0.11.4
+--------------
+* Update for Nim Compiler 1.4.0.
+* wWindow: Fix incorrect error message in event loop.
+* wResizable: Add workaround for compiler bug with --gc:arc.
+
 Version 0.11.3
 --------------
 * wImageList: Fix incorrect index in getBitmap() and getIcon() (#64, thanks to BugFix).
