@@ -299,6 +299,19 @@ proc setPosition*(self: wWindow, x: int, y: int) {.validate, property, inline.} 
   ## wDefault to indicate not to change.
   move(self, x, y)
 
+proc lift*(self: wWindow) {.validate, inline.} =
+  ## Raises the window to the top of the Z-order.
+  SetWindowPos(self.mHwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE)
+
+proc lower*(self: wWindow) {.validate, inline.} =
+  ## Lowers the window to the bottom of the Z-order.
+  SetWindowPos(self.mHwnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE)
+
+proc cover*(self: wWindow, win: wWindow) {.validate, inline.} =
+  ## Adjusts the Z-order to cover the specified window.
+  wValidate(win)
+  SetWindowPos(win.mHwnd, self.mHwnd, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE or SWP_NOACTIVATE)
+
 proc setSize*(self: wWindow, width: int, height: int) {.validate, property.} =
   ## Sets the size of the window in pixels.
   ## wDefault to indicate not to change.
@@ -591,9 +604,7 @@ macro dpiAutoScale*(self: wWindow, body: untyped): untyped =
       result = x
 
     for i in 0..<x.len:
-      let n = autoScale(self, x[i])
-      x.del(i)
-      x.insert(i, n)
+      x[i] = autoScale(self, x[i])
 
   autoScale(self, body)
 

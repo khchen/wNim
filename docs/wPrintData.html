@@ -100,46 +100,86 @@ function main() {
     title="wPrintDataError = object of wError"><wbr />w<wbr />Print<wbr />Data<wbr />Error<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wOrientation"
     title="wOrientation = enum
-  wPortrait = 1, wLandscape = 2"><wbr />w<wbr />Orientation<span class="attachedType"></span></a></li>
+  wPortrait = DMORIENT_PORTRAIT, wLandscape = DMORIENT_LANDSCAPE"><wbr />w<wbr />Orientation<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wDuplexMode"
     title="wDuplexMode = enum
-  wDuplexSimplex = 1, wDuplexVertical = 2, wDuplexHorizontal = 3"><wbr />w<wbr />Duplex<wbr />Mode<span class="attachedType"></span></a></li>
+  wDuplexSimplex = DMDUP_SIMPLEX, wDuplexVertical = DMDUP_VERTICAL,
+  wDuplexHorizontal = DMDUP_HORIZONTAL"><wbr />w<wbr />Duplex<wbr />Mode<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wPaper"
     title="wPaper = enum
-  wPaperLetter = 1, wPaperLetterSmall = 2, wPaperTabloid = 3, wPaperLedger = 4,
-  wPaperLegal = 5, wPaperStatement = 6, wPaperExecutive = 7, wPaperA3 = 8, wPaperA4 = 9,
-  wPaperA4Small = 10, wPaperA5 = 11, wPaperB4 = 12, wPaperB5 = 13, wPaperFolio = 14,
-  wPaperQuarto = 15, wPaper10x14 = 16, wPaper11x17 = 17, wPaperNote = 18, wPaperEnv9 = 19,
-  wPaperEnv10 = 20, wPaperEnv11 = 21, wPaperEnv12 = 22, wPaperEnv14 = 23, wPaperCSheet = 24,
-  wPaperDSheet = 25, wPaperESheet = 26, wPaperEnvDl = 27, wPaperEnvC5 = 28,
-  wPaperEnvC3 = 29, wPaperEnvC4 = 30, wPaperEnvC6 = 31, wPaperEnvC65 = 32, wPaperEnvB4 = 33,
-  wPaperEnvB5 = 34, wPaperEnvB6 = 35, wPaperEnvItaly = 36, wPaperEnvMonarch = 37,
-  wPaperEnvPersonal = 38, wPaperFanfoldUs = 39, wPaperFanfoldStdGerman = 40,
-  wPaperFanfoldLglGerman = 41, wPaperIsoB4 = 42, wPaperJapanesePostcard = 43,
-  wPaper9x11 = 44, wPaper10x11 = 45, wPaper15x11 = 46, wPaperEnvInvite = 47,
-  wPaperReserved48 = 48, wPaperReserved49 = 49, wPaperLetterExtra = 50,
-  wPaperLegalExtra = 51, wPaperTabloidExtra = 52, wPaperA4Extra = 53,
-  wPaperLetterTransverse = 54, wPaperA4Transverse = 55,
-  wPaperLetterExtraTransverse = 56, wPaperAPlus = 57, wPaperBPlus = 58,
-  wPaperLetterPlus = 59, wPaperA4Plus = 60, wPaperA5Transverse = 61,
-  wPaperB5Transverse = 62, wPaperA3Extra = 63, wPaperA5Extra = 64, wPaperB5Extra = 65,
-  wPaperA2 = 66, wPaperA3Transverse = 67, wPaperA3ExtraTransverse = 68,
-  wPaperDblJapanesePostcard = 69, wPaperA6 = 70, wPaperJenvKaku2 = 71,
-  wPaperJenvKaku3 = 72, wPaperJenvChou3 = 73, wPaperJenvChou4 = 74,
-  wPaperLetterRotated = 75, wPaperA3Rotated = 76, wPaperA4Rotated = 77,
-  wPaperA5Rotated = 78, wPaperB4JisRotated = 79, wPaperB5JisRotated = 80,
-  wPaperJapanesePostcardRotated = 81, wPaperDblJapanesePostcardRotated = 82,
-  wPaperA6Rotated = 83, wPaperJenvKaku2Rotated = 84, wPaperJenvKaku3Rotated = 85,
-  wPaperJenvChou3Rotated = 86, wPaperJenvChou4Rotated = 87, wPaperB6Jis = 88,
-  wPaperB6JisRotated = 89, wPaper12x11 = 90, wPaperJenvYou4 = 91,
-  wPaperJenvYou4Rotated = 92, wPaperP16k = 93, wPaperP32k = 94, wPaperP32kBig = 95,
-  wPaperPenv1 = 96, wPaperPenv2 = 97, wPaperPenv3 = 98, wPaperPenv4 = 99, wPaperPenv5 = 100,
-  wPaperPenv6 = 101, wPaperPenv7 = 102, wPaperPenv8 = 103, wPaperPenv9 = 104,
-  wPaperPenv10 = 105, wPaperP16kRotated = 106, wPaperP32kRotated = 107,
-  wPaperP32kBigRotated = 108, wPaperPenv1Rotated = 109, wPaperPenv2Rotated = 110,
-  wPaperPenv3Rotated = 111, wPaperPenv4Rotated = 112, wPaperPenv5Rotated = 113,
-  wPaperPenv6Rotated = 114, wPaperPenv7Rotated = 115, wPaperPenv8Rotated = 116,
-  wPaperPenv9Rotated = 117, wPaperPenv10Rotated = 118, wPaperUser = 256"><wbr />w<wbr />Paper<span class="attachedType"></span></a></li>
+  wPaperLetter = DMPAPER_LETTER, wPaperLetterSmall = DMPAPER_LETTERSMALL,
+  wPaperTabloid = DMPAPER_TABLOID, wPaperLedger = DMPAPER_LEDGER,
+  wPaperLegal = DMPAPER_LEGAL, wPaperStatement = DMPAPER_STATEMENT,
+  wPaperExecutive = DMPAPER_EXECUTIVE, wPaperA3 = DMPAPER_A3, wPaperA4 = DMPAPER_A4,
+  wPaperA4Small = DMPAPER_A4SMALL, wPaperA5 = DMPAPER_A5, wPaperB4 = DMPAPER_B4,
+  wPaperB5 = DMPAPER_B5, wPaperFolio = DMPAPER_FOLIO, wPaperQuarto = DMPAPER_QUARTO,
+  wPaper10x14 = DMPAPER_10X14, wPaper11x17 = DMPAPER_11X17, wPaperNote = DMPAPER_NOTE,
+  wPaperEnv9 = DMPAPER_ENV_9, wPaperEnv10 = DMPAPER_ENV_10,
+  wPaperEnv11 = DMPAPER_ENV_11, wPaperEnv12 = DMPAPER_ENV_12,
+  wPaperEnv14 = DMPAPER_ENV_14, wPaperCSheet = DMPAPER_CSHEET,
+  wPaperDSheet = DMPAPER_DSHEET, wPaperESheet = DMPAPER_ESHEET,
+  wPaperEnvDl = DMPAPER_ENV_DL, wPaperEnvC5 = DMPAPER_ENV_C5,
+  wPaperEnvC3 = DMPAPER_ENV_C3, wPaperEnvC4 = DMPAPER_ENV_C4,
+  wPaperEnvC6 = DMPAPER_ENV_C6, wPaperEnvC65 = DMPAPER_ENV_C65,
+  wPaperEnvB4 = DMPAPER_ENV_B4, wPaperEnvB5 = DMPAPER_ENV_B5,
+  wPaperEnvB6 = DMPAPER_ENV_B6, wPaperEnvItaly = DMPAPER_ENV_ITALY,
+  wPaperEnvMonarch = DMPAPER_ENV_MONARCH, wPaperEnvPersonal = DMPAPER_ENV_PERSONAL,
+  wPaperFanfoldUs = DMPAPER_FANFOLD_US,
+  wPaperFanfoldStdGerman = DMPAPER_FANFOLD_STD_GERMAN,
+  wPaperFanfoldLglGerman = DMPAPER_FANFOLD_LGL_GERMAN,
+  wPaperIsoB4 = DMPAPER_ISO_B4, wPaperJapanesePostcard = DMPAPER_JAPANESE_POSTCARD,
+  wPaper9x11 = DMPAPER_9X11, wPaper10x11 = DMPAPER_10X11, wPaper15x11 = DMPAPER_15X11,
+  wPaperEnvInvite = DMPAPER_ENV_INVITE, wPaperReserved48 = DMPAPER_RESERVED_48,
+  wPaperReserved49 = DMPAPER_RESERVED_49, wPaperLetterExtra = DMPAPER_LETTER_EXTRA,
+  wPaperLegalExtra = DMPAPER_LEGAL_EXTRA,
+  wPaperTabloidExtra = DMPAPER_TABLOID_EXTRA, wPaperA4Extra = DMPAPER_A4_EXTRA,
+  wPaperLetterTransverse = DMPAPER_LETTER_TRANSVERSE,
+  wPaperA4Transverse = DMPAPER_A4_TRANSVERSE,
+  wPaperLetterExtraTransverse = DMPAPER_LETTER_EXTRA_TRANSVERSE,
+  wPaperAPlus = DMPAPER_A_PLUS, wPaperBPlus = DMPAPER_B_PLUS,
+  wPaperLetterPlus = DMPAPER_LETTER_PLUS, wPaperA4Plus = DMPAPER_A4_PLUS,
+  wPaperA5Transverse = DMPAPER_A5_TRANSVERSE,
+  wPaperB5Transverse = DMPAPER_B5_TRANSVERSE, wPaperA3Extra = DMPAPER_A3_EXTRA,
+  wPaperA5Extra = DMPAPER_A5_EXTRA, wPaperB5Extra = DMPAPER_B5_EXTRA,
+  wPaperA2 = DMPAPER_A2, wPaperA3Transverse = DMPAPER_A3_TRANSVERSE,
+  wPaperA3ExtraTransverse = DMPAPER_A3_EXTRA_TRANSVERSE,
+  wPaperDblJapanesePostcard = DMPAPER_DBL_JAPANESE_POSTCARD, wPaperA6 = DMPAPER_A6,
+  wPaperJenvKaku2 = DMPAPER_JENV_KAKU2, wPaperJenvKaku3 = DMPAPER_JENV_KAKU3,
+  wPaperJenvChou3 = DMPAPER_JENV_CHOU3, wPaperJenvChou4 = DMPAPER_JENV_CHOU4,
+  wPaperLetterRotated = DMPAPER_LETTER_ROTATED,
+  wPaperA3Rotated = DMPAPER_A3_ROTATED, wPaperA4Rotated = DMPAPER_A4_ROTATED,
+  wPaperA5Rotated = DMPAPER_A5_ROTATED,
+  wPaperB4JisRotated = DMPAPER_B4_JIS_ROTATED,
+  wPaperB5JisRotated = DMPAPER_B5_JIS_ROTATED,
+  wPaperJapanesePostcardRotated = DMPAPER_JAPANESE_POSTCARD_ROTATED,
+  wPaperDblJapanesePostcardRotated = DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED,
+  wPaperA6Rotated = DMPAPER_A6_ROTATED,
+  wPaperJenvKaku2Rotated = DMPAPER_JENV_KAKU2_ROTATED,
+  wPaperJenvKaku3Rotated = DMPAPER_JENV_KAKU3_ROTATED,
+  wPaperJenvChou3Rotated = DMPAPER_JENV_CHOU3_ROTATED,
+  wPaperJenvChou4Rotated = DMPAPER_JENV_CHOU4_ROTATED,
+  wPaperB6Jis = DMPAPER_B6_JIS, wPaperB6JisRotated = DMPAPER_B6_JIS_ROTATED,
+  wPaper12x11 = DMPAPER_12X11, wPaperJenvYou4 = DMPAPER_JENV_YOU4,
+  wPaperJenvYou4Rotated = DMPAPER_JENV_YOU4_ROTATED, wPaperP16k = DMPAPER_P16K,
+  wPaperP32k = DMPAPER_P32K, wPaperP32kBig = DMPAPER_P32KBIG,
+  wPaperPenv1 = DMPAPER_PENV_1, wPaperPenv2 = DMPAPER_PENV_2,
+  wPaperPenv3 = DMPAPER_PENV_3, wPaperPenv4 = DMPAPER_PENV_4,
+  wPaperPenv5 = DMPAPER_PENV_5, wPaperPenv6 = DMPAPER_PENV_6,
+  wPaperPenv7 = DMPAPER_PENV_7, wPaperPenv8 = DMPAPER_PENV_8,
+  wPaperPenv9 = DMPAPER_PENV_9, wPaperPenv10 = DMPAPER_PENV_10,
+  wPaperP16kRotated = DMPAPER_P16K_ROTATED,
+  wPaperP32kRotated = DMPAPER_P32K_ROTATED,
+  wPaperP32kBigRotated = DMPAPER_P32KBIG_ROTATED,
+  wPaperPenv1Rotated = DMPAPER_PENV_1_ROTATED,
+  wPaperPenv2Rotated = DMPAPER_PENV_2_ROTATED,
+  wPaperPenv3Rotated = DMPAPER_PENV_3_ROTATED,
+  wPaperPenv4Rotated = DMPAPER_PENV_4_ROTATED,
+  wPaperPenv5Rotated = DMPAPER_PENV_5_ROTATED,
+  wPaperPenv6Rotated = DMPAPER_PENV_6_ROTATED,
+  wPaperPenv7Rotated = DMPAPER_PENV_7_ROTATED,
+  wPaperPenv8Rotated = DMPAPER_PENV_8_ROTATED,
+  wPaperPenv9Rotated = DMPAPER_PENV_9_ROTATED,
+  wPaperPenv10Rotated = DMPAPER_PENV_10_ROTATED, wPaperUser = DMPAPER_USER"><wbr />w<wbr />Paper<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -227,48 +267,88 @@ An error raised when wPrntData creation failed or error occurred.
 </dd>
 <a id="wOrientation"></a>
 <dt><pre><a href="wPrintData.html#wOrientation"><span class="Identifier">wOrientation</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">wPortrait</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">wLandscape</span> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+  <span class="Identifier">wPortrait</span> <span class="Other">=</span> <span class="Identifier">DMORIENT_PORTRAIT</span><span class="Other">,</span> <span class="Identifier">wLandscape</span> <span class="Other">=</span> <span class="Identifier">DMORIENT_LANDSCAPE</span></pre></dt>
 
 <a id="wDuplexMode"></a>
 <dt><pre><a href="wPrintData.html#wDuplexMode"><span class="Identifier">wDuplexMode</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">wDuplexSimplex</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">wDuplexVertical</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="Identifier">wDuplexHorizontal</span> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+  <span class="Identifier">wDuplexSimplex</span> <span class="Other">=</span> <span class="Identifier">DMDUP_SIMPLEX</span><span class="Other">,</span> <span class="Identifier">wDuplexVertical</span> <span class="Other">=</span> <span class="Identifier">DMDUP_VERTICAL</span><span class="Other">,</span>
+  <span class="Identifier">wDuplexHorizontal</span> <span class="Other">=</span> <span class="Identifier">DMDUP_HORIZONTAL</span></pre></dt>
 
 <a id="wPaper"></a>
 <dt><pre><a href="wPrintData.html#wPaper"><span class="Identifier">wPaper</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">wPaperLetter</span> <span class="Other">=</span> <span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">wPaperLetterSmall</span> <span class="Other">=</span> <span class="DecNumber">2</span><span class="Other">,</span> <span class="Identifier">wPaperTabloid</span> <span class="Other">=</span> <span class="DecNumber">3</span><span class="Other">,</span> <span class="Identifier">wPaperLedger</span> <span class="Other">=</span> <span class="DecNumber">4</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLegal</span> <span class="Other">=</span> <span class="DecNumber">5</span><span class="Other">,</span> <span class="Identifier">wPaperStatement</span> <span class="Other">=</span> <span class="DecNumber">6</span><span class="Other">,</span> <span class="Identifier">wPaperExecutive</span> <span class="Other">=</span> <span class="DecNumber">7</span><span class="Other">,</span> <span class="Identifier">wPaperA3</span> <span class="Other">=</span> <span class="DecNumber">8</span><span class="Other">,</span> <span class="Identifier">wPaperA4</span> <span class="Other">=</span> <span class="DecNumber">9</span><span class="Other">,</span>
-  <span class="Identifier">wPaperA4Small</span> <span class="Other">=</span> <span class="DecNumber">10</span><span class="Other">,</span> <span class="Identifier">wPaperA5</span> <span class="Other">=</span> <span class="DecNumber">11</span><span class="Other">,</span> <span class="Identifier">wPaperB4</span> <span class="Other">=</span> <span class="DecNumber">12</span><span class="Other">,</span> <span class="Identifier">wPaperB5</span> <span class="Other">=</span> <span class="DecNumber">13</span><span class="Other">,</span> <span class="Identifier">wPaperFolio</span> <span class="Other">=</span> <span class="DecNumber">14</span><span class="Other">,</span>
-  <span class="Identifier">wPaperQuarto</span> <span class="Other">=</span> <span class="DecNumber">15</span><span class="Other">,</span> <span class="Identifier">wPaper10x14</span> <span class="Other">=</span> <span class="DecNumber">16</span><span class="Other">,</span> <span class="Identifier">wPaper11x17</span> <span class="Other">=</span> <span class="DecNumber">17</span><span class="Other">,</span> <span class="Identifier">wPaperNote</span> <span class="Other">=</span> <span class="DecNumber">18</span><span class="Other">,</span> <span class="Identifier">wPaperEnv9</span> <span class="Other">=</span> <span class="DecNumber">19</span><span class="Other">,</span>
-  <span class="Identifier">wPaperEnv10</span> <span class="Other">=</span> <span class="DecNumber">20</span><span class="Other">,</span> <span class="Identifier">wPaperEnv11</span> <span class="Other">=</span> <span class="DecNumber">21</span><span class="Other">,</span> <span class="Identifier">wPaperEnv12</span> <span class="Other">=</span> <span class="DecNumber">22</span><span class="Other">,</span> <span class="Identifier">wPaperEnv14</span> <span class="Other">=</span> <span class="DecNumber">23</span><span class="Other">,</span> <span class="Identifier">wPaperCSheet</span> <span class="Other">=</span> <span class="DecNumber">24</span><span class="Other">,</span>
-  <span class="Identifier">wPaperDSheet</span> <span class="Other">=</span> <span class="DecNumber">25</span><span class="Other">,</span> <span class="Identifier">wPaperESheet</span> <span class="Other">=</span> <span class="DecNumber">26</span><span class="Other">,</span> <span class="Identifier">wPaperEnvDl</span> <span class="Other">=</span> <span class="DecNumber">27</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC5</span> <span class="Other">=</span> <span class="DecNumber">28</span><span class="Other">,</span>
-  <span class="Identifier">wPaperEnvC3</span> <span class="Other">=</span> <span class="DecNumber">29</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC4</span> <span class="Other">=</span> <span class="DecNumber">30</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC6</span> <span class="Other">=</span> <span class="DecNumber">31</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC65</span> <span class="Other">=</span> <span class="DecNumber">32</span><span class="Other">,</span> <span class="Identifier">wPaperEnvB4</span> <span class="Other">=</span> <span class="DecNumber">33</span><span class="Other">,</span>
-  <span class="Identifier">wPaperEnvB5</span> <span class="Other">=</span> <span class="DecNumber">34</span><span class="Other">,</span> <span class="Identifier">wPaperEnvB6</span> <span class="Other">=</span> <span class="DecNumber">35</span><span class="Other">,</span> <span class="Identifier">wPaperEnvItaly</span> <span class="Other">=</span> <span class="DecNumber">36</span><span class="Other">,</span> <span class="Identifier">wPaperEnvMonarch</span> <span class="Other">=</span> <span class="DecNumber">37</span><span class="Other">,</span>
-  <span class="Identifier">wPaperEnvPersonal</span> <span class="Other">=</span> <span class="DecNumber">38</span><span class="Other">,</span> <span class="Identifier">wPaperFanfoldUs</span> <span class="Other">=</span> <span class="DecNumber">39</span><span class="Other">,</span> <span class="Identifier">wPaperFanfoldStdGerman</span> <span class="Other">=</span> <span class="DecNumber">40</span><span class="Other">,</span>
-  <span class="Identifier">wPaperFanfoldLglGerman</span> <span class="Other">=</span> <span class="DecNumber">41</span><span class="Other">,</span> <span class="Identifier">wPaperIsoB4</span> <span class="Other">=</span> <span class="DecNumber">42</span><span class="Other">,</span> <span class="Identifier">wPaperJapanesePostcard</span> <span class="Other">=</span> <span class="DecNumber">43</span><span class="Other">,</span>
-  <span class="Identifier">wPaper9x11</span> <span class="Other">=</span> <span class="DecNumber">44</span><span class="Other">,</span> <span class="Identifier">wPaper10x11</span> <span class="Other">=</span> <span class="DecNumber">45</span><span class="Other">,</span> <span class="Identifier">wPaper15x11</span> <span class="Other">=</span> <span class="DecNumber">46</span><span class="Other">,</span> <span class="Identifier">wPaperEnvInvite</span> <span class="Other">=</span> <span class="DecNumber">47</span><span class="Other">,</span>
-  <span class="Identifier">wPaperReserved48</span> <span class="Other">=</span> <span class="DecNumber">48</span><span class="Other">,</span> <span class="Identifier">wPaperReserved49</span> <span class="Other">=</span> <span class="DecNumber">49</span><span class="Other">,</span> <span class="Identifier">wPaperLetterExtra</span> <span class="Other">=</span> <span class="DecNumber">50</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLegalExtra</span> <span class="Other">=</span> <span class="DecNumber">51</span><span class="Other">,</span> <span class="Identifier">wPaperTabloidExtra</span> <span class="Other">=</span> <span class="DecNumber">52</span><span class="Other">,</span> <span class="Identifier">wPaperA4Extra</span> <span class="Other">=</span> <span class="DecNumber">53</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLetterTransverse</span> <span class="Other">=</span> <span class="DecNumber">54</span><span class="Other">,</span> <span class="Identifier">wPaperA4Transverse</span> <span class="Other">=</span> <span class="DecNumber">55</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLetterExtraTransverse</span> <span class="Other">=</span> <span class="DecNumber">56</span><span class="Other">,</span> <span class="Identifier">wPaperAPlus</span> <span class="Other">=</span> <span class="DecNumber">57</span><span class="Other">,</span> <span class="Identifier">wPaperBPlus</span> <span class="Other">=</span> <span class="DecNumber">58</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLetterPlus</span> <span class="Other">=</span> <span class="DecNumber">59</span><span class="Other">,</span> <span class="Identifier">wPaperA4Plus</span> <span class="Other">=</span> <span class="DecNumber">60</span><span class="Other">,</span> <span class="Identifier">wPaperA5Transverse</span> <span class="Other">=</span> <span class="DecNumber">61</span><span class="Other">,</span>
-  <span class="Identifier">wPaperB5Transverse</span> <span class="Other">=</span> <span class="DecNumber">62</span><span class="Other">,</span> <span class="Identifier">wPaperA3Extra</span> <span class="Other">=</span> <span class="DecNumber">63</span><span class="Other">,</span> <span class="Identifier">wPaperA5Extra</span> <span class="Other">=</span> <span class="DecNumber">64</span><span class="Other">,</span> <span class="Identifier">wPaperB5Extra</span> <span class="Other">=</span> <span class="DecNumber">65</span><span class="Other">,</span>
-  <span class="Identifier">wPaperA2</span> <span class="Other">=</span> <span class="DecNumber">66</span><span class="Other">,</span> <span class="Identifier">wPaperA3Transverse</span> <span class="Other">=</span> <span class="DecNumber">67</span><span class="Other">,</span> <span class="Identifier">wPaperA3ExtraTransverse</span> <span class="Other">=</span> <span class="DecNumber">68</span><span class="Other">,</span>
-  <span class="Identifier">wPaperDblJapanesePostcard</span> <span class="Other">=</span> <span class="DecNumber">69</span><span class="Other">,</span> <span class="Identifier">wPaperA6</span> <span class="Other">=</span> <span class="DecNumber">70</span><span class="Other">,</span> <span class="Identifier">wPaperJenvKaku2</span> <span class="Other">=</span> <span class="DecNumber">71</span><span class="Other">,</span>
-  <span class="Identifier">wPaperJenvKaku3</span> <span class="Other">=</span> <span class="DecNumber">72</span><span class="Other">,</span> <span class="Identifier">wPaperJenvChou3</span> <span class="Other">=</span> <span class="DecNumber">73</span><span class="Other">,</span> <span class="Identifier">wPaperJenvChou4</span> <span class="Other">=</span> <span class="DecNumber">74</span><span class="Other">,</span>
-  <span class="Identifier">wPaperLetterRotated</span> <span class="Other">=</span> <span class="DecNumber">75</span><span class="Other">,</span> <span class="Identifier">wPaperA3Rotated</span> <span class="Other">=</span> <span class="DecNumber">76</span><span class="Other">,</span> <span class="Identifier">wPaperA4Rotated</span> <span class="Other">=</span> <span class="DecNumber">77</span><span class="Other">,</span>
-  <span class="Identifier">wPaperA5Rotated</span> <span class="Other">=</span> <span class="DecNumber">78</span><span class="Other">,</span> <span class="Identifier">wPaperB4JisRotated</span> <span class="Other">=</span> <span class="DecNumber">79</span><span class="Other">,</span> <span class="Identifier">wPaperB5JisRotated</span> <span class="Other">=</span> <span class="DecNumber">80</span><span class="Other">,</span>
-  <span class="Identifier">wPaperJapanesePostcardRotated</span> <span class="Other">=</span> <span class="DecNumber">81</span><span class="Other">,</span> <span class="Identifier">wPaperDblJapanesePostcardRotated</span> <span class="Other">=</span> <span class="DecNumber">82</span><span class="Other">,</span>
-  <span class="Identifier">wPaperA6Rotated</span> <span class="Other">=</span> <span class="DecNumber">83</span><span class="Other">,</span> <span class="Identifier">wPaperJenvKaku2Rotated</span> <span class="Other">=</span> <span class="DecNumber">84</span><span class="Other">,</span> <span class="Identifier">wPaperJenvKaku3Rotated</span> <span class="Other">=</span> <span class="DecNumber">85</span><span class="Other">,</span>
-  <span class="Identifier">wPaperJenvChou3Rotated</span> <span class="Other">=</span> <span class="DecNumber">86</span><span class="Other">,</span> <span class="Identifier">wPaperJenvChou4Rotated</span> <span class="Other">=</span> <span class="DecNumber">87</span><span class="Other">,</span> <span class="Identifier">wPaperB6Jis</span> <span class="Other">=</span> <span class="DecNumber">88</span><span class="Other">,</span>
-  <span class="Identifier">wPaperB6JisRotated</span> <span class="Other">=</span> <span class="DecNumber">89</span><span class="Other">,</span> <span class="Identifier">wPaper12x11</span> <span class="Other">=</span> <span class="DecNumber">90</span><span class="Other">,</span> <span class="Identifier">wPaperJenvYou4</span> <span class="Other">=</span> <span class="DecNumber">91</span><span class="Other">,</span>
-  <span class="Identifier">wPaperJenvYou4Rotated</span> <span class="Other">=</span> <span class="DecNumber">92</span><span class="Other">,</span> <span class="Identifier">wPaperP16k</span> <span class="Other">=</span> <span class="DecNumber">93</span><span class="Other">,</span> <span class="Identifier">wPaperP32k</span> <span class="Other">=</span> <span class="DecNumber">94</span><span class="Other">,</span> <span class="Identifier">wPaperP32kBig</span> <span class="Other">=</span> <span class="DecNumber">95</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv1</span> <span class="Other">=</span> <span class="DecNumber">96</span><span class="Other">,</span> <span class="Identifier">wPaperPenv2</span> <span class="Other">=</span> <span class="DecNumber">97</span><span class="Other">,</span> <span class="Identifier">wPaperPenv3</span> <span class="Other">=</span> <span class="DecNumber">98</span><span class="Other">,</span> <span class="Identifier">wPaperPenv4</span> <span class="Other">=</span> <span class="DecNumber">99</span><span class="Other">,</span> <span class="Identifier">wPaperPenv5</span> <span class="Other">=</span> <span class="DecNumber">100</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv6</span> <span class="Other">=</span> <span class="DecNumber">101</span><span class="Other">,</span> <span class="Identifier">wPaperPenv7</span> <span class="Other">=</span> <span class="DecNumber">102</span><span class="Other">,</span> <span class="Identifier">wPaperPenv8</span> <span class="Other">=</span> <span class="DecNumber">103</span><span class="Other">,</span> <span class="Identifier">wPaperPenv9</span> <span class="Other">=</span> <span class="DecNumber">104</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv10</span> <span class="Other">=</span> <span class="DecNumber">105</span><span class="Other">,</span> <span class="Identifier">wPaperP16kRotated</span> <span class="Other">=</span> <span class="DecNumber">106</span><span class="Other">,</span> <span class="Identifier">wPaperP32kRotated</span> <span class="Other">=</span> <span class="DecNumber">107</span><span class="Other">,</span>
-  <span class="Identifier">wPaperP32kBigRotated</span> <span class="Other">=</span> <span class="DecNumber">108</span><span class="Other">,</span> <span class="Identifier">wPaperPenv1Rotated</span> <span class="Other">=</span> <span class="DecNumber">109</span><span class="Other">,</span> <span class="Identifier">wPaperPenv2Rotated</span> <span class="Other">=</span> <span class="DecNumber">110</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv3Rotated</span> <span class="Other">=</span> <span class="DecNumber">111</span><span class="Other">,</span> <span class="Identifier">wPaperPenv4Rotated</span> <span class="Other">=</span> <span class="DecNumber">112</span><span class="Other">,</span> <span class="Identifier">wPaperPenv5Rotated</span> <span class="Other">=</span> <span class="DecNumber">113</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv6Rotated</span> <span class="Other">=</span> <span class="DecNumber">114</span><span class="Other">,</span> <span class="Identifier">wPaperPenv7Rotated</span> <span class="Other">=</span> <span class="DecNumber">115</span><span class="Other">,</span> <span class="Identifier">wPaperPenv8Rotated</span> <span class="Other">=</span> <span class="DecNumber">116</span><span class="Other">,</span>
-  <span class="Identifier">wPaperPenv9Rotated</span> <span class="Other">=</span> <span class="DecNumber">117</span><span class="Other">,</span> <span class="Identifier">wPaperPenv10Rotated</span> <span class="Other">=</span> <span class="DecNumber">118</span><span class="Other">,</span> <span class="Identifier">wPaperUser</span> <span class="Other">=</span> <span class="DecNumber">256</span></pre></dt>
+  <span class="Identifier">wPaperLetter</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER</span><span class="Other">,</span> <span class="Identifier">wPaperLetterSmall</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTERSMALL</span><span class="Other">,</span>
+  <span class="Identifier">wPaperTabloid</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_TABLOID</span><span class="Other">,</span> <span class="Identifier">wPaperLedger</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LEDGER</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLegal</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LEGAL</span><span class="Other">,</span> <span class="Identifier">wPaperStatement</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_STATEMENT</span><span class="Other">,</span>
+  <span class="Identifier">wPaperExecutive</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_EXECUTIVE</span><span class="Other">,</span> <span class="Identifier">wPaperA3</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A3</span><span class="Other">,</span> <span class="Identifier">wPaperA4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA4Small</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4SMALL</span><span class="Other">,</span> <span class="Identifier">wPaperA5</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A5</span><span class="Other">,</span> <span class="Identifier">wPaperB4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperB5</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B5</span><span class="Other">,</span> <span class="Identifier">wPaperFolio</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_FOLIO</span><span class="Other">,</span> <span class="Identifier">wPaperQuarto</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_QUARTO</span><span class="Other">,</span>
+  <span class="Identifier">wPaper10x14</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_10X14</span><span class="Other">,</span> <span class="Identifier">wPaper11x17</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_11X17</span><span class="Other">,</span> <span class="Identifier">wPaperNote</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_NOTE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnv9</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_9</span><span class="Other">,</span> <span class="Identifier">wPaperEnv10</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_10</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnv11</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_11</span><span class="Other">,</span> <span class="Identifier">wPaperEnv12</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_12</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnv14</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_14</span><span class="Other">,</span> <span class="Identifier">wPaperCSheet</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_CSHEET</span><span class="Other">,</span>
+  <span class="Identifier">wPaperDSheet</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_DSHEET</span><span class="Other">,</span> <span class="Identifier">wPaperESheet</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ESHEET</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvDl</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_DL</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC5</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_C5</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvC3</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_C3</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_C4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvC6</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_C6</span><span class="Other">,</span> <span class="Identifier">wPaperEnvC65</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_C65</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvB4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_B4</span><span class="Other">,</span> <span class="Identifier">wPaperEnvB5</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_B5</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvB6</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_B6</span><span class="Other">,</span> <span class="Identifier">wPaperEnvItaly</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_ITALY</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvMonarch</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_MONARCH</span><span class="Other">,</span> <span class="Identifier">wPaperEnvPersonal</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_PERSONAL</span><span class="Other">,</span>
+  <span class="Identifier">wPaperFanfoldUs</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_FANFOLD_US</span><span class="Other">,</span>
+  <span class="Identifier">wPaperFanfoldStdGerman</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_FANFOLD_STD_GERMAN</span><span class="Other">,</span>
+  <span class="Identifier">wPaperFanfoldLglGerman</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_FANFOLD_LGL_GERMAN</span><span class="Other">,</span>
+  <span class="Identifier">wPaperIsoB4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ISO_B4</span><span class="Other">,</span> <span class="Identifier">wPaperJapanesePostcard</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JAPANESE_POSTCARD</span><span class="Other">,</span>
+  <span class="Identifier">wPaper9x11</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_9X11</span><span class="Other">,</span> <span class="Identifier">wPaper10x11</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_10X11</span><span class="Other">,</span> <span class="Identifier">wPaper15x11</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_15X11</span><span class="Other">,</span>
+  <span class="Identifier">wPaperEnvInvite</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_ENV_INVITE</span><span class="Other">,</span> <span class="Identifier">wPaperReserved48</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_RESERVED_48</span><span class="Other">,</span>
+  <span class="Identifier">wPaperReserved49</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_RESERVED_49</span><span class="Other">,</span> <span class="Identifier">wPaperLetterExtra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER_EXTRA</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLegalExtra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LEGAL_EXTRA</span><span class="Other">,</span>
+  <span class="Identifier">wPaperTabloidExtra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_TABLOID_EXTRA</span><span class="Other">,</span> <span class="Identifier">wPaperA4Extra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4_EXTRA</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLetterTransverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA4Transverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLetterExtraTransverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER_EXTRA_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperAPlus</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A_PLUS</span><span class="Other">,</span> <span class="Identifier">wPaperBPlus</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B_PLUS</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLetterPlus</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER_PLUS</span><span class="Other">,</span> <span class="Identifier">wPaperA4Plus</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4_PLUS</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA5Transverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A5_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperB5Transverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B5_TRANSVERSE</span><span class="Other">,</span> <span class="Identifier">wPaperA3Extra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A3_EXTRA</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA5Extra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A5_EXTRA</span><span class="Other">,</span> <span class="Identifier">wPaperB5Extra</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B5_EXTRA</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA2</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A2</span><span class="Other">,</span> <span class="Identifier">wPaperA3Transverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A3_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA3ExtraTransverse</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A3_EXTRA_TRANSVERSE</span><span class="Other">,</span>
+  <span class="Identifier">wPaperDblJapanesePostcard</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_DBL_JAPANESE_POSTCARD</span><span class="Other">,</span> <span class="Identifier">wPaperA6</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A6</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvKaku2</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_KAKU2</span><span class="Other">,</span> <span class="Identifier">wPaperJenvKaku3</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_KAKU3</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvChou3</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_CHOU3</span><span class="Other">,</span> <span class="Identifier">wPaperJenvChou4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_CHOU4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperLetterRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_LETTER_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA3Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A3_ROTATED</span><span class="Other">,</span> <span class="Identifier">wPaperA4Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A4_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA5Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A5_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperB4JisRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B4_JIS_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperB5JisRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B5_JIS_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJapanesePostcardRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JAPANESE_POSTCARD_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperDblJapanesePostcardRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperA6Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_A6_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvKaku2Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_KAKU2_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvKaku3Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_KAKU3_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvChou3Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_CHOU3_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvChou4Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_CHOU4_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperB6Jis</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B6_JIS</span><span class="Other">,</span> <span class="Identifier">wPaperB6JisRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_B6_JIS_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaper12x11</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_12X11</span><span class="Other">,</span> <span class="Identifier">wPaperJenvYou4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_YOU4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperJenvYou4Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_JENV_YOU4_ROTATED</span><span class="Other">,</span> <span class="Identifier">wPaperP16k</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P16K</span><span class="Other">,</span>
+  <span class="Identifier">wPaperP32k</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P32K</span><span class="Other">,</span> <span class="Identifier">wPaperP32kBig</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P32KBIG</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv1</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_1</span><span class="Other">,</span> <span class="Identifier">wPaperPenv2</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_2</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv3</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_3</span><span class="Other">,</span> <span class="Identifier">wPaperPenv4</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_4</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv5</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_5</span><span class="Other">,</span> <span class="Identifier">wPaperPenv6</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_6</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv7</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_7</span><span class="Other">,</span> <span class="Identifier">wPaperPenv8</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_8</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv9</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_9</span><span class="Other">,</span> <span class="Identifier">wPaperPenv10</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_10</span><span class="Other">,</span>
+  <span class="Identifier">wPaperP16kRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P16K_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperP32kRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P32K_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperP32kBigRotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_P32KBIG_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv1Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_1_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv2Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_2_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv3Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_3_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv4Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_4_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv5Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_5_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv6Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_6_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv7Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_7_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv8Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_8_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv9Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_9_ROTATED</span><span class="Other">,</span>
+  <span class="Identifier">wPaperPenv10Rotated</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_PENV_10_ROTATED</span><span class="Other">,</span> <span class="Identifier">wPaperUser</span> <span class="Other">=</span> <span class="Identifier">DMPAPER_USER</span></pre></dt>
 
 
 </dl></div>
@@ -306,16 +386,14 @@ Constructor.
 
 </dd>
 <a id="init,wPrintData"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#init%2CwPrintData"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wPrintData"><span class="Identifier">wPrintData</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPrintDataError</span><span class="Other">]</span><span class="Other">,</span>
-                           <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#init%2CwPrintData"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wPrintData"><span class="Identifier">wPrintData</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPrintDataError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Initializes the data by default printer.
 
 </dd>
 <a id="PrintData"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#PrintData"><span class="Identifier">PrintData</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wPrintData"><span class="Identifier">wPrintData</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
-                            <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wPrintDataError</span><span class="Other">]</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">proc</span> <a href="#PrintData"><span class="Identifier">PrintData</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wPrintData"><span class="Identifier">wPrintData</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wPrintDataError</span><span class="Other">]</span><span class="Other">,</span>
                             <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 

@@ -1,3 +1,8 @@
+Version 0.11.5
+--------------
+* wWindow: Add lift(), lower(), and cover() for Z-order adjustment.
+* Add prebuilt resource file for vcc.
+
 Version 0.11.4
 --------------
 * Update for Nim Compiler 1.4.0.

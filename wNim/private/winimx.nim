@@ -1384,6 +1384,8 @@ const
   SWP_NOOWNERZORDER* = 0x0200
   SWP_DRAWFRAME* = SWP_FRAMECHANGED
   SWP_NOREPOSITION* = SWP_NOOWNERZORDER
+  HWND_TOP* = HWND 0
+  HWND_BOTTOM* = HWND 1
   HWND_TOPMOST* = HWND(-1)
   HWND_NOTOPMOST* = HWND(-2)
   SM_CXSCREEN* = 0
@@ -1745,6 +1747,7 @@ proc EndPaint*(hWnd: HWND, lpPaint: ptr PAINTSTRUCT): WINBOOL {.winapi, stdcall,
 proc GetUpdateRect*(hWnd: HWND, lpRect: LPRECT, bErase: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetWindowRgn*(hWnd: HWND, hRgn: HRGN, bRedraw: WINBOOL): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc InvalidateRect*(hWnd: HWND, lpRect: ptr RECT, bErase: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc ValidateRgn*(hWnd: HWND, hRgn: HRGN): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc RedrawWindow*(hWnd: HWND, lprcUpdate: ptr RECT, hrgnUpdate: HRGN, flags: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ShowScrollBar*(hWnd: HWND, wBar: int32, bShow: WINBOOL): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc EnableScrollBar*(hWnd: HWND, wSBflags: UINT, wArrows: UINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}

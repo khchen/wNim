@@ -96,7 +96,9 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wSize"
+      <li><a class="reference" href="#IndexDefect"
+    title="IndexDefect = object of IndexError"><wbr />Index<wbr />Defect<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wSize"
     title="wSize = tuple[width: int, height: int]"><wbr />w<wbr />Size<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wPoint"
     title="wPoint = tuple[x: int, y: int]"><wbr />w<wbr />Point<span class="attachedType"></span></a></li>
@@ -779,6 +781,9 @@ function main() {
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
+<a id="IndexDefect"></a>
+<dt><pre><a href="wTypes.html#IndexDefect"><span class="Identifier">IndexDefect</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">IndexError</span></pre></dt>
+
 <a id="wSize"></a>
 <dt><pre><a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span class="Other">=</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">,</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span></pre></dt>
 <dd>
@@ -851,7 +856,7 @@ Represents a point in time.
 
 <a id="wId"></a>
 <dt><pre><a href="wTypes.html#wId"><span class="Identifier">wId</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">wIdAny</span> <span class="Other">=</span> <span class="DecNumber">-1</span><span class="Other">,</span> <span class="Identifier">wIdZero</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">wIdLowest</span> <span class="Other">=</span> <span class="DecNumber">4999</span><span class="Other">,</span> <span class="Identifier">wIdOpen</span><span class="Other">,</span> <span class="Identifier">wIdClose</span><span class="Other">,</span> <span class="Identifier">wIdNew</span><span class="Other">,</span> <span class="Identifier">wIdSave</span><span class="Other">,</span> <span class="Identifier">wIdSaveAS</span><span class="Other">,</span>
+  <span class="Identifier">wIdAny</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">,</span> <span class="Identifier">wIdZero</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span> <span class="Identifier">wIdLowest</span> <span class="Other">=</span> <span class="DecNumber">4999</span><span class="Other">,</span> <span class="Identifier">wIdOpen</span><span class="Other">,</span> <span class="Identifier">wIdClose</span><span class="Other">,</span> <span class="Identifier">wIdNew</span><span class="Other">,</span> <span class="Identifier">wIdSave</span><span class="Other">,</span> <span class="Identifier">wIdSaveAS</span><span class="Other">,</span>
   <span class="Identifier">wIdRevert</span><span class="Other">,</span> <span class="Identifier">wIdExit</span><span class="Other">,</span> <span class="Identifier">wIdUndo</span><span class="Other">,</span> <span class="Identifier">wIdRedo</span><span class="Other">,</span> <span class="Identifier">wIdHelp</span><span class="Other">,</span> <span class="Identifier">wIdPrint</span><span class="Other">,</span> <span class="Identifier">wIdPrintSetup</span><span class="Other">,</span> <span class="Identifier">wIdPreview</span><span class="Other">,</span>
   <span class="Identifier">wIdAbout</span><span class="Other">,</span> <span class="Identifier">wIdHelpContents</span><span class="Other">,</span> <span class="Identifier">wIdHelpCommands</span><span class="Other">,</span> <span class="Identifier">wIdHelpProcedures</span><span class="Other">,</span> <span class="Identifier">wIdCloseAll</span><span class="Other">,</span>
   <span class="Identifier">wIdDelete</span><span class="Other">,</span> <span class="Identifier">wIdProperties</span><span class="Other">,</span> <span class="Identifier">wIdReplace</span><span class="Other">,</span> <span class="Identifier">wIdCut</span> <span class="Other">=</span> <span class="DecNumber">5030</span><span class="Other">,</span> <span class="Identifier">wIdCopy</span><span class="Other">,</span> <span class="Identifier">wIdPaste</span><span class="Other">,</span> <span class="Identifier">wIdClear</span><span class="Other">,</span>
