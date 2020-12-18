@@ -67,7 +67,7 @@ type
     cookie: DWORD
     refs: LONG
     ole: ptr IOleObject
-    browser: ptr IWebBrowser2
+    browser*: ptr IWebBrowser2
     dispatch: IDispatch
     clientSite: IOleClientSite
     inPlaceSiteEx: IOleInPlaceSiteEx
@@ -747,9 +747,9 @@ proc wWebViewClassInit(className: string) =
   wc.lpszClassName = className
   RegisterClassEx(wc)
 
-proc getWeb(self: wWebView): ptr wWeb =
+proc getWeb*(self: wWebView): ptr wWeb =
   result = cast[ptr wWeb](GetWindowLongPtr(self.mHwnd, 0))
-  assert result != nil
+  # assert result != nil
 
 method getDefaultSize*(self: wWebView): wSize {.property, uknlock.} =
   ## Returns the default size for the control.
