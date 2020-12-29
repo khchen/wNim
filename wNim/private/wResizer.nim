@@ -113,7 +113,7 @@ wClass(wResizer):
     wValidate(parent)
     self.mParent = parent
     self.mSolver = newSolver()
-    self.mObjects = initHashSet[wResizable]()
+    self.mObjects = initHashSet[wBase.wResizable]()
 
     self.mSolver.addEditVariable(parent.mLeft, REQUIRED-1)
     self.mSolver.addEditVariable(parent.mTop, REQUIRED-1)
