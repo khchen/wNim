@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -19,9 +19,7 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../gdiobjects/wBitmap, wDC
 export wDC
 
@@ -32,7 +30,7 @@ proc selectObject*(self: var wMemoryDC, bitmap: wBitmap) =
   let hBmp = SelectObject(self.mHdc, bitmap.mHandle)
   if self.mhOldBitmap == 0: self.mhOldBitmap = hBmp
 
-method getSize*(self: wMemoryDC): wSize {.property, uknlock.} =
+method getSize*(self: wMemoryDC): wSize {.property.} =
   ## Gets the size of the device context.
   result = self.mBitmap.getSize()
 

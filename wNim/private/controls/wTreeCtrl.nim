@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -40,9 +40,7 @@
 ## :Events:
 ##   `wTreeEvent <wTreeEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import tables
 import ../wBase, wControl, wListCtrl, wTextCtrl
 export wControl, wListCtrl, wTextCtrl
@@ -893,7 +891,7 @@ iterator allItems*(self: wTreeCtrl): wTreeItem {.validate.} =
 
     item = item.getNextSibling()
 
-method getBestSize*(self: wTreeCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wTreeCtrl): wSize {.property.} =
   result = wDefaultSize
 
   var info = SCROLLBARINFO(cbSize: sizeof(SCROLLBARINFO))
@@ -1015,7 +1013,7 @@ proc endDrag*(self: wTreeCtrl) {.validate.} =
     self.processEvent(event)
 
 method processNotify(self: wTreeCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   case code:
   of TVN_SELCHANGED:
@@ -1198,7 +1196,7 @@ proc wTreeCtrl_RightDown(event: wEvent) =
 
 wClass(wTreeCtrl of wControl):
 
-  method release*(self: wTreeCtrl) {.uknlock.} =
+  method release*(self: wTreeCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

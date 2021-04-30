@@ -5,5 +5,8 @@
 #
 #====================================================================
 
-import private/dc/wDC
-export wDC
+{.experimental, deadCodeElim: on.}
+
+{.warning[LockLevel]: off.}
+
+when defined(gcDestructors): {.push sinkInference: off.}

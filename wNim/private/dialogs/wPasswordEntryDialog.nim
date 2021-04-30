@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -20,9 +20,7 @@
 ##   wEvent_DialogClosed              When the dialog is being closed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../wFrame, wDialog, wTextEntryDialog
 export wDialog, wTextEntryDialog
 

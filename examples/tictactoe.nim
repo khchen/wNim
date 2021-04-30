@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -154,6 +154,7 @@ wClass(wBoard of wFrame):
           self.tryStartAi()
 
 when isMainModule:
+  wSetSysemDpiAware()
   let app = App()
   let board = Board(title="wNim Tic-Tac-Toe")
 

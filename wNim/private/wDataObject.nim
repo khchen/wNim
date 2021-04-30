@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -23,9 +23,7 @@
 ##   wDragLink                       Drag source should create a link to the original data.
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import wBase, gdiobjects/wBitmap
 
 const

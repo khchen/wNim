@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -62,9 +62,7 @@
 ##   wFontEncodingCp850              OEM_CHARSET
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import math
 import ../wBase, wGdiObject
 export wGdiObject
@@ -114,7 +112,7 @@ const
 proc setup(self: wFont, lf: LOGFONT) =
   self.mPointSize = -(lf.lfHeight * 72 / wAppGetDpi())
   self.mWeight = lf.lfWeight
-  self.mFaceName = nullTerminated(%$lf.lfFaceName)
+  self.mFaceName = nullTerminated($$lf.lfFaceName)
   self.mEncoding = int lf.lfCharSet
   self.mFamily = int(lf.lfPitchAndFamily and 0b000)
   self.mItalic = (lf.lfItalic != 0)

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -42,23 +42,21 @@
 ##   `wHotkeyCtrl <wHotkeyCtrl.html>`_
 ##   `wRebar <wRebar.html>`_  (experimental)
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import strutils
 import ../wBase, ../wWindow, ../wEvent
 export wWindow, wEvent
 
 # GUI controls by default don't apply the window margin setting,
 # (except wStaticBox and wNoteBook, however they have their own override)
-method getClientSize*(self: wControl): wSize {.property, uknlock.} =
+method getClientSize*(self: wControl): wSize {.property.} =
   ## Returns the size of the control 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
   result.width = r.right - r.left
   result.height = r.bottom - r.top
 
-method getClientAreaOrigin*(self: wControl): wPoint {.property, uknlock.} =
+method getClientAreaOrigin*(self: wControl): wPoint {.property.} =
   ## Gets the origin of the client area of the control.
   result = (0, 0)
 
@@ -414,7 +412,7 @@ proc wControl_OnNavigation(event: wEvent) =
   else: discard
 
 method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield, uknlock.} =
+    ret: var LRESULT): bool {.shield.} =
 
   var eventType: UINT
   case code
@@ -430,7 +428,7 @@ method processNotify(self: wControl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wControl of wWindow):
 
-  method release*(self: wControl) {.uknlock.} =
+  method release*(self: wControl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

@@ -355,7 +355,9 @@ function main() {
   mControls*: seq[wControl]
   mImageList*: wImageList
   mSizeConn*: wEventConnection
-  mDragging*: bool"><wbr />w<wbr />Rebar<span class="attachedType"></span></a></li>
+  mDragging*: bool
+  mDisableMinMax*: bool
+  mDisableDrag*: bool"><wbr />w<wbr />Rebar<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wButton"
     title="wButton = ref object of wControl
   mImgData*: BUTTON_IMAGELIST
@@ -1184,6 +1186,8 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mImageList</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wImageList"><span class="Identifier">wImageList</span></a>
   <span class="Identifier">mSizeConn</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wEventConnection"><span class="Identifier">wEventConnection</span></a>
   <span class="Identifier">mDragging</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDisableMinMax</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mDisableDrag</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
 </pre></dt>
 
 <a id="wButton"></a>

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -35,9 +35,7 @@
 ##   wEvent_ListBoxDoubleClick        When the listbox is double-clicked.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -320,22 +318,22 @@ proc countSize(self: wListBox, minItem: int, rate: float): wSize =
   if (style and WS_VSCROLL) != 0 and ((style and LBS_DISABLENOSCROLL) != 0 or count > maxItem):
     result.width += GetSystemMetrics(SM_CXVSCROLL)
 
-method getDefaultSize*(self: wListBox): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wListBox): wSize {.property, inline.} =
   ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = self.countSize(3, 1.3)
 
-method getBestSize*(self: wListBox): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wListBox): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method trigger(self: wListBox) {.uknlock.} =
+method trigger(self: wListBox) =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
 wClass(wListBox of wControl):
 
-  method release*(self: wListBox) {.uknlock.} =
+  method release*(self: wListBox) =
     ## Release all the resources during destroying. Used internally.
     # self.mParent may be nil for wrapped wListBox.
     if not self.mParent.isNil:

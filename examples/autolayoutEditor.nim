@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -10,7 +10,7 @@ import
   resource/resource
 
 import wNim/[autolayout, wApp, wFrame, wIcon, wPanel, wMenu, wMenuBar, wSplitter,
-  wStatusBar, wTextCtrl, wStaticText, wFont]
+  wStatusBar, wTextCtrl, wStaticText, wFont, wUtils]
 
 type
   MenuID = enum
@@ -21,6 +21,7 @@ type
     vfl: string
     show: proc ()
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="AutoLayout Editor", size=(900, 600))
 frame.icon = Icon("", 0) # load icon from exe file.
@@ -37,10 +38,10 @@ macro generateExamples(x: untyped): untyped =
     let panel = Panel(win)
     const style = wAlignCentre or wAlignMiddle or wBorderSimple
 $3
-    proc laytout = panel.autorelayout $2
-    panel.wEvent_Size do (event: wEvent): laytout()
+    proc layout = panel.autorelayout $2
+    panel.wEvent_Size do (event: wEvent): layout()
 
-    laytout()
+    layout()
     win.center()
     win.show()
   )
@@ -53,7 +54,9 @@ $3
       parser = initVflParser()
       children = ""
 
-    parser.parse(vfl)
+    try: parser.parse(vfl)
+    except: discard
+
     for item in parser.names:
       children.add "var $1 = StaticText(panel, label=\"$2\", style=style)\n" % [item, item]
 
@@ -151,16 +154,58 @@ generateExamples:
       HV:|-(10@WEAK)-[view(100@STRONG)]-(10@WEAK)|
     """
 
-  "Batch Operation":
+  "Batch Operation 1":
     """
       H:|~{views:[viewA]~[viewB]~[viewC]}~|
       V:|~[viewA,viewB,viewC]~|
       HV:[views(100)]
     """
 
+  "Batch Operation 2":
+    """
+      batch: views=viewA, viewB, viewC
+      H:|~[viewA]~[viewB]~[viewC]~|
+      V:|~[views]~|
+      HV:[views(100)]
+    """
+
+  "Aliases":
+    """
+      alias: v1=Apple, v2=Banana, v3=Orange, v4=Mango, v5=Grapes
+      H:[v1(v1.height)]
+      HV:[v2..5(v1)]
+      H:|-[v1]-[v2]-[v3]-[v4]-[v5]-|
+      V:|~[v1..5]~|
+    """
+
+  "Nim Style Syntax":
+    """
+      alias:
+        v1=Apple
+        v2=Banana
+        v3=Orange
+        v4=Mango
+        v5=Grapes
+
+      H:
+        [v1(v1.height)],
+        |-[v1]-[v2]-[v3]-[v4]-[v5]-|
+
+      V:
+        |~[v1..5]~|
+
+      HV:
+        [v2..5(v1)]
+    """
+
+  "Quote":
+    """
+      H:|~[view1(`view1.dpiScale(100)`)]~[view2(100)]~|
+      V:|~[view1(view1.width),view2(view2.width)]~|
+    """
+
   "Comments, Space, and Newline":
     """
-      // Single line comments
       # Single line comments
       |-[view1]-| # H: can be omit, but not encourage
       V: | -
@@ -207,10 +252,10 @@ generateExamples:
       spacing: 8
       H:|-[text1(60)]-[text2]-|
       H:|-[text1]-[text3(60)]-[text4]-|
-      H:|-[text1]-[text3]-(>=8)-[text5(text5.height@WEAK)]-|
+      H:|-[text1]-[text3]-(>=8)-[text5(text5.height@WEAK1)]-|
       V:|-[text1]-|
-      V:|-[text2(60@WEAK)]-[text3]-|
-      V:|-[text2]-[text4(60@WEAK)]-[text5]-|
+      V:|-[text2(60@WEAK1)]-[text3]-|
+      V:|-[text2]-[text4(60@WEAK1)]-[text5]-|
       V:[text4]-(>=8)-|
     """
 

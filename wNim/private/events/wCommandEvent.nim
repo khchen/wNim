@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -121,9 +121,7 @@
 ##   wEvent_HotkeyChanged            The hotkey was changed.
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase
 
 import wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,

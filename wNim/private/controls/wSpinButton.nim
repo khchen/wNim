@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -24,9 +24,7 @@
 ## :Events:
 ##   `wSpinEvent <wSpinEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -38,7 +36,7 @@ proc isVertical*(self: wSpinButton): bool {.validate, inline.} =
   ## Returns true if the spin button is vertical and false otherwise.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and UDS_HORZ) == 0
 
-method getDefaultSize*(self: wSpinButton): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wSpinButton): wSize {.property.} =
   ## Returns the default size for the control.
   let isVert = self.isVertical()
   result.width = GetSystemMetrics(if isVert: SM_CXVSCROLL else: SM_CXHSCROLL)
@@ -48,7 +46,7 @@ method getDefaultSize*(self: wSpinButton): wSize {.property, uknlock.} =
   else:
       result.width *= 2
 
-method getBestSize*(self: wSpinButton): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wSpinButton): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -82,7 +80,7 @@ proc wSpinButton_OnNotify(self: wSpinButton, event: wEvent) =
 
 wClass(wSpinButton of wControl):
 
-  method release*(self: wSpinButton) {.uknlock.} =
+  method release*(self: wSpinButton) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.disconnect(self.mNotifyConn)
     free(self[])

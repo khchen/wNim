@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -36,9 +36,7 @@
 ## :Events:
 ##   `wListEvent <wListEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl, wTextCtrl
 export wControl, wTextCtrl
 
@@ -727,7 +725,7 @@ proc endEditLabel*(self: wListCtrl, cancel = false) {.validate.} =
     assert hwnd == self.mTextCtrl.mHwnd
     SendMessage(hwnd, WM_KEYDOWN, if cancel: VK_ESCAPE else: VK_RETURN, 0)
 
-method getBestSize*(self: wListCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wListCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   let ret = SendMessage(self.mHwnd, LVM_APPROXIMATEVIEWRECT, -1, MAKELPARAM(-1, -1))
   result.width = int LOWORD(ret)
@@ -772,7 +770,7 @@ proc ListEvent(self: wListCtrl, msg: UINT, lParam: LPARAM): wListEvent =
   result = event
 
 method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   let msg = case code
   of LVN_BEGINDRAG: wEvent_ListBeginDrag
@@ -927,7 +925,7 @@ proc wListCtrl_OnPaint(event: wEvent) =
 
 wClass(wListCtrl of wControl):
 
-  method release*(self: wListCtrl) {.uknlock.} =
+  method release*(self: wListCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -45,9 +45,7 @@
 ##   wEvent_Splitter                  The position is dragging by user. This event can be vetoed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../wPanel, ../gdiobjects/wCursor, ../dc/wPaintDC
 import wSpinButton, wControl
 export wSpinButton, wControl # export wSpinButton for wSpHorizontal/wSpVertical
@@ -321,7 +319,7 @@ proc wSplitter_DoPaint(event: wEvent) =
 
 wClass(wSplitter of wControl):
 
-  method release*(self: wSplitter) {.uknlock.} =
+  method release*(self: wSplitter) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mSizeConn)
     self.clearEventHandle()

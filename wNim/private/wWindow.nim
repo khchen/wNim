@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -50,9 +50,7 @@
 ##   - `wScrollWinEvent <wScrollWinEvent.html>`_
 ##   - `wDragDropEvent <wDragDropEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import macros, dynlib, tables, lists
 import wBase, wUtils, wDataObject, gdiobjects/[wFont, wBrush, wCursor]
 
@@ -131,7 +129,7 @@ method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base, shield.} =
     result.y = rect.top
 
 method setWindowRect(self: wWindow, x, y, width, height, flag = 0)
-    {.base, inline, shield, uknlock.} =
+    {.base, inline, shield.} =
   # must use SWP_NOACTIVATE or window will steal focus after setsize
   SetWindowPos(self.mHwnd, 0, x, y, width, height,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE))
@@ -142,7 +140,7 @@ proc setWindowSize(self: wWindow, width, height: int) {.inline.} =
 proc setWindowPos(self: wWindow, x, y: int) {.inline.} =
   self.setWindowRect(x, y, 0, 0, SWP_NOSIZE)
 
-method getClientSize*(self: wWindow): wSize {.property, uknlock.} =
+method getClientSize*(self: wWindow): wSize {.property.} =
   ## Returns the size of the window 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
@@ -171,7 +169,7 @@ method getClientSize*(self: wWindow): wSize {.property, uknlock.} =
     let rect = self.mStatusBar.getWindowRect(sizeOnly=true)
     result.height -= rect.height
 
-method getClientAreaOrigin*(self: wWindow): wPoint {.base, property, uknlock.} =
+method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
   ## Gets the origin of the client area of the window relative to the window
   ## top left corner (the client area may be shifted because of the borders,
   ## scrollbars, other decorations...).
@@ -254,7 +252,7 @@ proc destroy*(self: wWindow) {.validate, inline.} =
   ## Destroys the window. The same as delete().
   self.delete()
 
-method release*(self: wWindow) {.base, inline, uknlock.} =
+method release*(self: wWindow) {.base, inline.} =
   ## Release all the resources during destroying. Used internally.
 
   # override this if a window needs extra code to release the resource
@@ -263,7 +261,7 @@ method release*(self: wWindow) {.base, inline, uknlock.} =
   # so that gc:arc won't have memory leaks
   free(self[])
 
-method trigger(self: wWindow) {.base, inline, shield, uknlock.} =
+method trigger(self: wWindow) {.base, inline, shield.} =
   # override this if a window need extra init after window create.
   # similar to WM_CREATE.
   discard
@@ -381,7 +379,7 @@ proc getPosition*(self: wWindow): wPoint {.validate, property.} =
   result.y = rect.y
   self.adjustForParentClientOriginSub(result.x, result.y)
 
-method getClientMargin*(self: wWindow, direction: int): int {.property, uknlock.} =
+method getClientMargin*(self: wWindow, direction: int): int {.property.} =
   ## Returns the client margin of the specified direction.
   ## This function basically exists for wNim's layout DSL.
   result = case direction
@@ -420,13 +418,13 @@ proc clientToWindow(self: wWindow, size: wSize): wSize {.validate.} =
   if size.height != wDefault:
     result.height += windowSize.height - clientSize.height
 
-method getDefaultSize*(self: wWindow): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wWindow): wSize {.property, inline.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
   # window's default size is it's parent's clientSize, or 0, 0 by default
   if self.mParent != nil:
     result = self.mParent.getClientSize()
 
-method getBestSize*(self: wWindow): wSize {.property, uknlock.} =
+method getBestSize*(self: wWindow): wSize {.property.} =
   ## Returns the best acceptable minimal size for the window
   ## (usually used for GUI controls).
   if self.mChildren.len == 0:
@@ -641,7 +639,7 @@ proc refresh*(self: wWindow, eraseBackground = true, rect: wRect) {.validate, in
   var r = rect.toRECT()
   InvalidateRect(self.mHwnd, r, eraseBackground)
 
-method show*(self: wWindow, flag = true) {.base, inline, uknlock.} =
+method show*(self: wWindow, flag = true) {.base, inline.} =
   ## Shows or hides the window.
   ShowWindow(self.mHwnd, if flag: SW_SHOWNORMAL else: SW_HIDE)
 
@@ -890,7 +888,7 @@ proc setData*(self: wWindow, data: int) {.validate, property.} =
   ## Sets the window associated data.
   self.mData = data
 
-method setFont*(self: wWindow, font: wFont) {.base, validate, property, uknlock.} =
+method setFont*(self: wWindow, font: wFont) {.base, validate, property.} =
   ## Sets the font for this window.
   wValidate(font)
   self.mFont = font
@@ -1308,7 +1306,7 @@ proc processMessage*(self: wWindow, msg: UINT, wParam: wWparam = 0,
   result = self.processMessage(msg, wParam, lParam, dummy)
 
 method processNotify(self: wWindow, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.base, uknlock.} =
+    ret: var LRESULT): bool {.base.} =
   # subclass can override this to process the nofity message
   discard
 

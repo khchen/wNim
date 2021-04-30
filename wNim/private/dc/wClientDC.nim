@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -13,13 +13,11 @@
 ## :Superclass:
 ##   `wDC <wDC.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../wWindow, wDC
 export wDC
 
-method getSize*(self: wClientDC): wSize {.property, uknlock.} =
+method getSize*(self: wClientDC): wSize {.property.} =
   ## Gets the size of the device context.
   result = self.mCanvas.getClientSize()
 

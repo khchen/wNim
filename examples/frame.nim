@@ -1,14 +1,15 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel,
+import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel, wUtils,
   wMenu, wMenuBar, wButton, wStatusBar, wStaticText, wTextEntryDialog, wFontDialog]
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="wNim Frame Demo")
 frame.icon = Icon("", 0) # load icon from exe file.

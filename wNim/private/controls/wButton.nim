@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -35,9 +35,7 @@
 ##   wEvent_ButtonLeave               The mouse is leaving the button.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 from ../winimx import nil # For BITMAP
 import ../wBase, ../gdiobjects/[wBitmap, wIcon], wControl
 export wControl
@@ -50,7 +48,7 @@ const
   wBuBottom* = BS_BOTTOM
   wBuNoBorder* = BS_FLAT
 
-method getDefaultSize*(self: wButton): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wButton): wSize {.property.} =
   ## Returns the default size for the control.
   # button's default size is 50x14 DLUs
   # don't use GetDialogBaseUnits, it count by DEFAULT_GUI_FONT only
@@ -59,7 +57,7 @@ method getDefaultSize*(self: wButton): wSize {.property, uknlock.} =
   result.width = MulDiv(result.width, 50, 4)
   result.height = MulDiv(result.height, 14, 8)
 
-method getBestSize*(self: wButton): wSize {.property, uknlock.} =
+method getBestSize*(self: wButton): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   var size: SIZE
   if SendMessage(self.mHwnd, BCM_GETIDEALSIZE, 0, &size) != 0:
@@ -226,7 +224,7 @@ proc click*(self: wButton) {.validate, inline.} =
   SendMessage(self.mHwnd, BM_CLICK, 0, 0)
 
 method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   case code
   of BCN_DROPDOWN:
@@ -249,7 +247,7 @@ method processNotify(self: wButton, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wButton of wControl):
 
-  method release*(self: wButton) {.uknlock.} =
+  method release*(self: wButton) =
     ## Release all the resources during destroying. Used internally.
     if self.mImgData.himl != 0:
       ImageList_Destroy(self.mImgData.himl)

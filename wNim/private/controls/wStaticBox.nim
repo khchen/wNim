@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -14,27 +14,25 @@
 ## :Superclass:
 ##   `wControl <wControl.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
 proc getLabelSize(self: wStaticBox): wSize {.property.} =
   result = getTextFontSize(self.getLabel() & "  ", self.mFont.mHandle, self.mHwnd)
 
-method getBestSize*(self: wStaticBox): wSize {.property, uknlock.} =
+method getBestSize*(self: wStaticBox): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getLabelSize()
   result.width += 2
   result.height += 2
 
-method getDefaultSize*(self: wStaticBox): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wStaticBox): wSize {.property.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-method getClientAreaOrigin*(self: wStaticBox): wPoint {.property, uknlock.} =
+method getClientAreaOrigin*(self: wStaticBox): wPoint {.property.} =
   ## Get the origin of the client area of the window relative to the window top
   ## left corner.
   result.x = self.mMargin.left
@@ -42,7 +40,7 @@ method getClientAreaOrigin*(self: wStaticBox): wPoint {.property, uknlock.} =
   let labelSize = self.getLabelSize()
   result.y += labelSize.height div 2
 
-method getClientSize*(self: wStaticBox): wSize {.property, uknlock.} =
+method getClientSize*(self: wStaticBox): wSize {.property.} =
   ## Returns the size of the window 'client area' in pixels.
   result = procCall wWindow(self).getClientSize()
   let labelSize = self.getLabelSize()
@@ -50,7 +48,7 @@ method getClientSize*(self: wStaticBox): wSize {.property, uknlock.} =
 
 wClass(wStaticBox of wControl):
 
-  method release*(self: wStaticBox) {.uknlock.} =
+  method release*(self: wStaticBox) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

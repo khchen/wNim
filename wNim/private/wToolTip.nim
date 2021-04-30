@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -10,13 +10,11 @@
 ## :Superclass:
 ##   `wWindow <wWindow.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import wBase, wWindow
 export wWindow
 
-method show*(self: wToolTip, flag = true) {.inline, uknlock.} =
+method show*(self: wToolTip, flag = true) {.inline.} =
   ## Shows or hides the tooltip.
   SendMessage(self.mHwnd, TTM_TRACKACTIVATE, if flag: 1 else: 0, cast[LPARAM](&self.mToolInfo))
 
@@ -70,7 +68,7 @@ proc setToolTip*(self: wToolTip, maxWidth = wDefault, autoPop = wDefault,
 
 wClass(wToolTip of wWindow):
 
-  method release*(self: wToolTip) {.uknlock.} =
+  method release*(self: wToolTip) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

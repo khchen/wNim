@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -14,15 +14,13 @@
 ## :Seealso:
 ##   `wControl <wControl.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import wBase, wWindow
 export wWindow
 
 wClass(wPanel of wWindow):
 
-  method release*(self: wPanel) {.uknlock.} =
+  method release*(self: wPanel) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

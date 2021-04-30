@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -37,9 +37,7 @@
 ##   wEvent_CommandKillFocus          When the control loses the keyboard focus.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import strutils
 import ../wBase, ../gdiobjects/wCursor, ../dc/[wPaintDC, wClientDC], wControl, wComboBox
 # import ../wEvent # compiler bug?
@@ -362,7 +360,7 @@ iterator pairs*(self: wCheckComboBoxSelection): (int, string) =
     if self.ctrl.isSelected(i):
       yield (i, self.ctrl[i])
 
-method getDefaultSize*(self: wCheckComboBox): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wCheckComboBox): wSize {.property.} =
   ## Returns the default size for the control.
   var line = ""
   for text in self.items():
@@ -376,7 +374,7 @@ method getDefaultSize*(self: wCheckComboBox): wSize {.property, uknlock.} =
   result.height = self.getWindowRect(sizeOnly=true).height
   result.width = max(size.width + 8, result.height) + (cbi.rcButton.right - cbi.rcButton.left) + 2
 
-method getBestSize*(self: wCheckComboBox): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wCheckComboBox): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = cast[wComboBox](self).countSize(1, 1.0)
 
@@ -594,7 +592,7 @@ proc onKeyDown(event: wEvent) =
   else: discard
   event.skip
 
-method setFont*(self: wCheckComboBox, font: wFont) {.validate, property, uknlock.} =
+method setFont*(self: wCheckComboBox, font: wFont) {.validate, property.} =
   ## Sets the font for this text control.
   wValidate(font)
   procCall wWindow(self).setFont(font)
@@ -609,13 +607,13 @@ method setFont*(self: wCheckComboBox, font: wFont) {.validate, property, uknlock
   # -1 to set the combobox height (undocumented)
   SendMessage(self.mHwnd, CB_SETITEMHEIGHT, -1, height)
 
-method trigger(self: wCheckComboBox) {.uknlock.} =
+method trigger(self: wCheckComboBox) =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
 wClass(wCheckComboBox of wControl):
 
-  method release*(self: wCheckComboBox) {.uknlock.} =
+  method release*(self: wCheckComboBox) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mDrawItemConn)
     self.mParent.systemDisconnect(self.mCommandConn)

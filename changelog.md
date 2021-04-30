@@ -1,3 +1,16 @@
+Version 0.12.0
+--------------
+* autolayout: Using excellent npeg module to parse visual format language now, this brings
+  more features (alias, quote, etc.) and less bugs. The most important change is that
+  all rules have default priority to avoid annoying *UnsatisfiableConstraintException*.
+* wRebar: Add a lot of methods. wRebar class is fully functioning and not experimental 
+  anymore. **(Breaking Change)**
+* wResizer: Add some consts that can be used in layout DLS and autolayout VFL as priority keywords.
+* wEvent: getKeyStatus() returns set of key-codes instead of array **(Breaking Change)**.
+* Modify examples/autolayoutEditor.nim and dialog.nim to demonstrate new features of autolayout.
+* Modify examples/rebar.nim to demonstrate new feature of wRebar.
+* Fix bugs.
+
 Version 0.11.5
 --------------
 * wWindow: Add lift(), lower(), and cover() for Z-order adjustment.

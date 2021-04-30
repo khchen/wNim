@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -23,9 +23,7 @@
 # forward declaration
 # method getEventVisited(self: wWindow, index: int): bool {.base.}
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase
 
 wEventRegister(wHyperlinkEvent):
@@ -39,12 +37,12 @@ method getIndex*(self: wHyperlinkEvent): int {.property, inline.} =
 method getUrl*(self: wHyperlinkEvent): string {.property, inline.} =
   ## Returns the URL of the hyperlink.
   let pnmLink = cast[PNMLINK](self.mLparam)
-  result = nullTerminated(%$pnmLink.item.szUrl)
+  result = nullTerminated($$pnmLink.item.szUrl)
 
 method getLinkId*(self: wHyperlinkEvent): string {.property, inline.} =
   ## Returns the link ID of the hyperlink.
   let pnmLink = cast[PNMLINK](self.mLparam)
-  result = nullTerminated(%$pnmLink.item.szID)
+  result = nullTerminated($$pnmLink.item.szID)
 
 method getVisited*(self: wHyperlinkEvent): bool {.property, inline.} =
   ## Returns the visited state of the hyperlink.

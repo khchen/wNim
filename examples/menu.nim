@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -9,7 +9,7 @@ import
   strformat,
   resource/resource
 
-import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage, wUtils]
 
 type
   # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.
@@ -27,6 +27,7 @@ const resources: array[idIcon1..idIcon6, string] = [
   staticRead(r"images/5.png"),
   staticRead(r"images/6.png") ]
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="wNim Menu Demo")
 frame.icon = Icon("", 0) # load icon from exe file.

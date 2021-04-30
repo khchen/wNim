@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -85,9 +85,7 @@
 ##   wEvent_App                        Used to define private event type, usually of the form wEvent_App+x.
 ##   ================================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import wBase
 
 const
@@ -279,15 +277,16 @@ proc middleDown*(self: wEvent): bool {.validate, inline.} =
   ##  Returns true if the middle mouse button is currently down.
   result = self.mKeyStatus[wKeyMButton] < 0
 
-proc getKeyStatus*(self: wEvent): array[256, bool] {.validate, property, inline.} =
-  ## Return an bool array with all the pressed keys.
-  ## Using const defined in wKeyCodes.nim as the index.
+proc getKeyStatus*(self: wEvent): set[byte] {.validate, property, inline.} =
+  ## Return a set of key-codes with all the pressed keys.
+  ## The key-codes are defined in wKeyCodes.nim.
   ## For example:
   ##
   ## .. code-block:: Nim
-  ##   echo event.keyStauts[wKeyCtrl]
+  ##   echo wKey_Ctrl in event.keyStatus
   for key, val in self.mKeyStatus:
-    result[key] = val < 0
+    if val < 0:
+      result.incl byte key
 
 proc getMouseScreenPos*(self: wEvent): wPoint {.validate, property, inline.} =
   ## Get coordinate of the cursor.

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -47,9 +47,7 @@
 ##   - `wTrayEvent <wTrayEvent.html>`_
 ##   - `wCommandEvent <wCommandEvent.html>`_  - wEvent_Menu
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import wBase, wWindow, wAcceleratorTable
 export wWindow, wAcceleratorTable
 
@@ -76,7 +74,7 @@ const
   wBallonWarning* = NIIF_WARNING
   wBallonError* = NIIF_ERROR
 
-method getDefaultSize*(self: wFrame): wSize {.validate, uknlock.} =
+method getDefaultSize*(self: wFrame): wSize {.validate.} =
   ## Returns the system suggested size of a window (usually used for GUI controls).
   # a reasonable frame size
   result = (640, 480)
@@ -417,7 +415,7 @@ proc wFrame_OnMenuHighlight(event: wEvent) =
 
 wClass(wFrame of wWindow):
 
-  method release*(self: wFrame) {.uknlock.} =
+  method release*(self: wFrame) =
     ## Release all the resources during destroying. Used internally.
     self.removeTrayIcon() # delete the tray icon (if any)
     free(self[])

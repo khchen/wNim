@@ -1,13 +1,14 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC]
+import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC, wUtils]
 
+wSetSysemDpiAware()
 let app = App()
 
 const logo = staticRead(r"images/logo.png")

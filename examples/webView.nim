@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -11,7 +11,7 @@ import
   winim/com
 
 import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
-  wRebar, wWebView, wTextCtrl, wMessageDialog]
+  wRebar, wWebView, wTextCtrl, wMessageDialog, wUtils]
 
 when false:
   ## https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730%28v%3dvs.85%29
@@ -50,6 +50,7 @@ proc aboutDialog(owner: wWindow) =
   dialog.showModal()
   dialog.delete()
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="wWebView", size=(640, 460))
 let statusbar = StatusBar(frame)
@@ -65,12 +66,12 @@ toolbar.addTool(idGoBack, "", Bitmap(imgGoBack), longHelp="Navigate back")
 toolbar.addTool(idGoForward, "", Bitmap(imgGoForward), longHelp="Navigate foreward")
 toolBar.disableTool(idGoBack)
 toolBar.disableTool(idGoForward)
-rebar.addControl(toolBar)
+rebar.addBand(toolBar)
 
 var textctrl = TextCtrl(rebar, value="about:blank", style=wBorderSunken)
 textctrl.enableAutoComplete(wAcUrl)
-rebar.addControl(textctrl, label="Address")
-rebar.minimize(0)
+rebar.addBand(textctrl, label="Address")
+rebar.minimizeBand(0)
 
 # select all when the textctrl just got focus
 textctrl.wEvent_LeftDown do (event: wEvent):

@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 ## Some macros used in wNim.
 
-{.experimental, deadCodeElim: on.}
+include pragma
 {.experimental: "dynamicBindSym".}
 
 import macros, strutils, strformat, tables, sets, hashes, winimx
@@ -80,10 +80,6 @@ macro shield*(x: untyped): untyped =
   x[0] = postfix(x[0], "*")
   result = x
 
-macro uknlock(x: untyped): untyped {.shield.} =
-  x.addPragma(newColonExpr(ident("locks"), newStrLitNode("unknown")))
-  result = x
-
 proc createCtor(procdef: NimNode, className: string, isExport: bool): NimNode =
 
   # var comment: NimNode
@@ -123,7 +119,7 @@ proc createCtor(procdef: NimNode, className: string, isExport: bool): NimNode =
 template releaseOrDestroy*(T: typedesc, P: typedesc, hasFinal: bool): untyped =
   ## Used internally.
   when T is wWindow and T isnot wDialog:
-    method release(self: T) =
+    method release(self: T) {.locks: "unknown".} =
       when hasFinal:
         final(self)
       procCall P(self).release()

@@ -103,7 +103,7 @@ There are some simple rules:
 ## Compile
 To compile the examples, try following command:
 
-    nim c -d:release --opt:size --passL:-s --app:gui demo.nim
+    nim c -d:release -d:strip --opt:size --app:gui demo.nim
 
 For Windows XP compatibility, add:
 
@@ -135,4 +135,4 @@ However, it only support Windows system.
 ## License
 Read license.txt for more details.
 
-Copyright (c) 2017-2020 Kai-Hung Chen, Ward. All rights reserved.
+Copyright (c) 2017-2021 Kai-Hung Chen, Ward. All rights reserved.

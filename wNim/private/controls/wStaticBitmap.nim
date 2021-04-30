@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -31,9 +31,7 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../gdiobjects/wBitmap, wControl, wStaticText
 export wControl
 
@@ -43,12 +41,12 @@ const
   wSbFit* = SS_REALSIZECONTROL
   wSbCenter* = SS_CENTERIMAGE
 
-method getBestSize*(self: wStaticBitmap): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wStaticBitmap): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   if self.mBitmap != nil:
     result = self.mBitmap.getSize()
 
-method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wStaticBitmap): wSize {.property, inline.} =
   ## Returns the default size for the control.
   if self.mBitmap != nil:
     result = self.mBitmap.getSize()
@@ -65,7 +63,7 @@ proc getBitmap*(self: wStaticBitmap): wBitmap {.validate, property, inline.} =
 
 wClass(wStaticBitmap of wControl):
 
-  method release*(self: wStaticBitmap) {.uknlock.} =
+  method release*(self: wStaticBitmap) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])

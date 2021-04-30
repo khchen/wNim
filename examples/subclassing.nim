@@ -1,12 +1,12 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon]
+import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon, wUtils]
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
@@ -39,6 +39,7 @@ wClass(wMyFrame of wFrame):
 
 when isMainModule:
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = MyFrame("Hello World")
   frame.icon = Icon("", 0) # load icon from exe file.

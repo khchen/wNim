@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wImageList, wImage, wBitmap, wIcon, wFrame, wPanel,
-  wStatusBar, wRebar, wToolBar, wButton, wComboBox]
+import wNim/[wApp, wImageList, wImage, wBitmap, wIcon, wFrame, wStatusBar, wRebar,
+  wToolBar, wButton, wComboBox, wUtils]
 
 type
   MenuID = enum
@@ -31,12 +31,13 @@ let img2 = Image(resource2).scale(16, 16)
 let img3 = Image(resource3).scale(16, 16)
 let img4 = Image(resource4).scale(16, 16)
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="Rebar Example")
 frame.icon = Icon("", 0) # load icon from exe file.
 
 let statusbar = StatusBar(frame)
-let panel = Panel(frame)
+let reset = Button(frame, label="Reset Layout And Freeze")
 let rebar = Rebar(frame)
 rebar.setImageList(imageList)
 
@@ -52,9 +53,11 @@ let combobox = ComboBox(rebar, value="Combobox Item1",
   choices=["Combobox Item1", "Combobox Item2", "Combobox Item3"],
   style=wCB_READONLY)
 
-rebar.addControl(toolBar)
-rebar.addControl(button, 4)
-rebar.addControl(combobox, 2, "Combo", isBreak=true)
+let bandToolBar = rebar.addBand(toolBar)
+let bandEmpty = rebar.addBand()
+let bandButton = rebar.addBand(button, 4)
+let bandCombobox = rebar.addBand(combobox, 2, "Combo", style=wRbBreak)
+rebar.maximizeBand(bandEmpty)
 
 frame.wEvent_Tool do (event: wEvent):
   statusbar.setStatusText($MenuID(event.id) & " clicked.")
@@ -64,6 +67,20 @@ combobox.wEvent_ComboBox do (event: wEvent):
 
 button.wEvent_Button do ():
   frame.close()
+
+let layout = rebar.layout
+var freeze = true
+
+reset.wEvent_Button do ():
+  if freeze:
+    reset.label = "Unfreeze"
+  else:
+    reset.label = "Reset Layout And Freeze"
+
+  rebar.disableMinMax(freeze)
+  rebar.disableDrag(freeze)
+  rebar.layout = layout
+  freeze = not freeze
 
 frame.center()
 frame.show()

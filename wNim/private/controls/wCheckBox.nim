@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -31,9 +31,7 @@
 ##   wEvent_CheckBox                  The check box is clicked.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -47,13 +45,13 @@ const
   wChkChecked* = BST_CHECKED
   wChkUndetermined* = BST_INDETERMINATE
 
-method getBestSize*(self: wCheckBox): wSize {.property, uknlock.} =
+method getBestSize*(self: wCheckBox): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   # BCM_GETIDEALSIZE not works correct on BS_AUTO3STATE
   result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
-method getDefaultSize*(self: wCheckBox): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wCheckBox): wSize {.property.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -92,7 +90,7 @@ proc click*(self: wCheckBox) {.validate, inline.} =
 
 wClass(wCheckBox of wControl):
 
-  method release*(self: wCheckBox) {.uknlock.} =
+  method release*(self: wCheckBox) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -165,8 +165,9 @@ wClass(wHyperlink of wStaticText):
 
 when isMainModule:
   import resource/resource
-  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont]
+  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont, wUtils]
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = Frame(title="wHyperlink custom control")
   frame.icon = Icon("", 0) # load icon from exe file.

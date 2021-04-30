@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -27,9 +27,7 @@
 ## :Events:
 ##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -37,14 +35,14 @@ const
   wHlAlignLeft* = 0
   wHlAlignRight* = LWS_RIGHT
 
-method getBestSize*(self: wHyperlinkCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wHyperlinkCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   var size: SIZE
   SendMessage(self.mHwnd, LM_GETIDEALSIZE, 0, &size)
   result.width = size.cx
   result.height = size.cy
 
-method getDefaultSize*(self: wHyperlinkCtrl): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wHyperlinkCtrl): wSize {.property, inline.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
 
@@ -109,13 +107,13 @@ proc getUrl*(self: wHyperlinkCtrl, index = -1): string {.validate, property, inl
   ## Returns the URL associated with the hyperlink.
   ## Index == -1 means the current focused item.
   var item = self.getItem(index)
-  result = nullTerminated(%$item.szUrl)
+  result = nullTerminated($$item.szUrl)
 
 proc getLinkId*(self: wHyperlinkCtrl, index = -1): string {.validate, property, inline.} =
   ## Returns the link ID associated with the hyperlink.
   ## Index == -1 means the current focused item.
   var item = self.getItem(index)
-  result = nullTerminated(%$item.szID)
+  result = nullTerminated($$item.szID)
 
 proc getVisited*(self: wHyperlinkCtrl, index = -1): bool {.validate, property, inline.} =
   ## Returns true if the hyperlink has already been clicked by the user at least one time.
@@ -148,7 +146,7 @@ proc setVisited*(self: wHyperlinkCtrl, flag = true, index = -1) {.validate, prop
   SendMessage(self.mHwnd, LM_SETITEM, 0, &item)
 
 method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR,
-    lParam: LPARAM, ret: var LRESULT): bool {.uknlock.} =
+    lParam: LPARAM, ret: var LRESULT): bool =
 
   if code == NM_CLICK or code == NM_RETURN:
     var event = wHyperlinkEvent Event(self, wEvent_Hyperlink, cast[WPARAM](id), lParam)
@@ -161,7 +159,7 @@ method processNotify(self: wHyperlinkCtrl, code: INT, id: UINT_PTR,
 
 wClass(wHyperlinkCtrl of wControl):
 
-  method release*(self: wHyperlinkCtrl) {.uknlock.} =
+  method release*(self: wHyperlinkCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

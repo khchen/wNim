@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -118,6 +118,7 @@ when isMainModule:
   const widthArray: array[idString..idSuper, int] =
     [1, 3, 7, 12, 180]
 
+  wSetSysemDpiAware()
   let app = App()
   let scribble = Scribble(title="Scribble Demo", size=(400, 400))
   scribble.setColor(colorArray[idBlack])

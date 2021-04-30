@@ -100,6 +100,24 @@ function main() {
     title="wRbBandBorder = 0x00000400"><wbr />w<wbr />Rb<wbr />Band<wbr />Border<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wRbDoubleClickToggle"
     title="wRbDoubleClickToggle = 0x00008000"><wbr />w<wbr />Rb<wbr />Double<wbr />Click<wbr />Toggle<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbFixedSize"
+    title="wRbFixedSize = 0x00000002"><wbr />w<wbr />Rb<wbr />Fixed<wbr />Size<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbBreak"
+    title="wRbBreak = 0x00000001"><wbr />w<wbr />Rb<wbr />Break<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbTopAlign"
+    title="wRbTopAlign = 0x00000800"><wbr />w<wbr />Rb<wbr />Top<wbr />Align<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestCaption"
+    title="wRbHittestCaption = 0x00000002"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Caption<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestChevron"
+    title="wRbHittestChevron = 0x00000008"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Chevron<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestClient"
+    title="wRbHittestClient = 0x00000003"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Client<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestGrabber"
+    title="wRbHittestGrabber = 0x00000004"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Grabber<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestNowhere"
+    title="wRbHittestNowhere = 0x00000001"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Nowhere<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wRbHittestSplitter"
+    title="wRbHittestSplitter = 0x00000010"><wbr />w<wbr />Rb<wbr />Hittest<wbr />Splitter<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -112,10 +130,101 @@ function main() {
     title="getImageList(self: wRebar): wImageList"><wbr />get<wbr />Image<wbr />List<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getCount%2CwRebar"
     title="getCount(self: wRebar): int"><wbr />get<wbr />Count<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#addControl%2CwRebar%2CwControl%2Cstring"
-    title="addControl(self: wRebar; control: wControl; image = -1; label = &quot;&quot;; isBreak = false)"><wbr />add<wbr />Control<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#minimize%2CwRebar%2Cint"
-    title="minimize(self: wRebar; band: int)"><wbr />minimize<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getRowCount%2CwRebar"
+    title="getRowCount(self: wRebar): int"><wbr />get<wbr />Row<wbr />Count<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getHeight%2CwRebar"
+    title="getHeight(self: wRebar): int"><wbr />get<wbr />Height<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#insertBand%2CwRebar%2Cint%2CwWindow%2Cstring%2CwStyle"
+    title="insertBand(self: wRebar; pos: int; control: wWindow = nil; image = -1; label = &quot;&quot;;
+           style: wStyle = 0): wCommandID"><wbr />insert<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#addBand%2CwRebar%2CwWindow%2Cstring%2CwStyle"
+    title="addBand(self: wRebar; control: wWindow = nil; image = -1; label = &quot;&quot;; style: wStyle = 0): wCommandID"><wbr />add<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#findBand%2CwRebar%2CwCommandID"
+    title="findBand(self: wRebar; id: wCommandID): int"><wbr />find<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandId%2CwRebar%2Cint"
+    title="getBandId(self: wRebar; index: int): wCommandID"><wbr />get<wbr />Band<wbr />Id<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandId%2CwRebar%2Cint%2CwCommandID"
+    title="setBandId(self: wRebar; index: int; id: wCommandID)"><wbr />set<wbr />Band<wbr />Id<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#deleteBand%2CwRebar%2Cint"
+    title="deleteBand(self: wRebar; index: int)"><wbr />delete<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#deleteBand%2CwRebar%2CwCommandID"
+    title="deleteBand(self: wRebar; id: wCommandID)"><wbr />delete<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#showBand%2CwRebar%2Cint"
+    title="showBand(self: wRebar; index: int; flag = true)"><wbr />show<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#showBand%2CwRebar%2CwCommandID"
+    title="showBand(self: wRebar; id: wCommandID; flag = true)"><wbr />show<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#minimizeBand%2CwRebar%2Cint"
+    title="minimizeBand(self: wRebar; index: int)"><wbr />minimize<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#minimizeBand%2CwRebar%2CwCommandID"
+    title="minimizeBand(self: wRebar; id: wCommandID)"><wbr />minimize<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#maximizeBand%2CwRebar%2Cint"
+    title="maximizeBand(self: wRebar; index: int)"><wbr />maximize<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#maximizeBand%2CwRebar%2CwCommandID"
+    title="maximizeBand(self: wRebar; id: wCommandID)"><wbr />maximize<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandRect%2CwRebar%2Cint"
+    title="getBandRect(self: wRebar; index: int): wRect"><wbr />get<wbr />Band<wbr />Rect<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandRect%2CwRebar%2CwCommandID"
+    title="getBandRect(self: wRebar; id: wCommandID): wRect"><wbr />get<wbr />Band<wbr />Rect<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandWidth%2CwRebar%2Cint"
+    title="getBandWidth(self: wRebar; index: int): int"><wbr />get<wbr />Band<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandWidth%2CwRebar%2CwCommandID"
+    title="getBandWidth(self: wRebar; id: wCommandID): int"><wbr />get<wbr />Band<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandWidth%2CwRebar%2Cint%2Cint"
+    title="setBandWidth(self: wRebar; index: int; width: int; exactly = false)"><wbr />set<wbr />Band<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandWidth%2CwRebar%2CwCommandID%2Cint"
+    title="setBandWidth(self: wRebar; id: wCommandID; width: int; exactly = false)"><wbr />set<wbr />Band<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandMinWidth%2CwRebar%2Cint%2Cint"
+    title="setBandMinWidth(self: wRebar; index: int; width: int)"><wbr />set<wbr />Band<wbr />Min<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandMinWidth%2CwRebar%2CwCommandID%2Cint"
+    title="setBandMinWidth(self: wRebar; id: wCommandID; width: int)"><wbr />set<wbr />Band<wbr />Min<wbr />Width<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandHeight%2CwRebar%2Cint"
+    title="getBandHeight(self: wRebar; index: int): int"><wbr />get<wbr />Band<wbr />Height<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandHeight%2CwRebar%2CwCommandID"
+    title="getBandHeight(self: wRebar; id: wCommandID): int"><wbr />get<wbr />Band<wbr />Height<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandMinHeight%2CwRebar%2Cint%2Cint"
+    title="setBandMinHeight(self: wRebar; index: int; height: int)"><wbr />set<wbr />Band<wbr />Min<wbr />Height<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandMinHeight%2CwRebar%2CwCommandID%2Cint"
+    title="setBandMinHeight(self: wRebar; id: wCommandID; height: int)"><wbr />set<wbr />Band<wbr />Min<wbr />Height<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandLabel%2CwRebar%2Cint"
+    title="getBandLabel(self: wRebar; index: int): string"><wbr />get<wbr />Band<wbr />Label<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandLabel%2CwRebar%2CwCommandID"
+    title="getBandLabel(self: wRebar; id: wCommandID): string"><wbr />get<wbr />Band<wbr />Label<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandLabel%2CwRebar%2Cint%2Cstring"
+    title="setBandLabel(self: wRebar; index: int; label: string)"><wbr />set<wbr />Band<wbr />Label<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandLabel%2CwRebar%2CwCommandID%2Cstring"
+    title="setBandLabel(self: wRebar; id: wCommandID; label: string)"><wbr />set<wbr />Band<wbr />Label<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandImage%2CwRebar%2Cint"
+    title="getBandImage(self: wRebar; index: int): int"><wbr />get<wbr />Band<wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandImage%2CwRebar%2CwCommandID"
+    title="getBandImage(self: wRebar; id: wCommandID): int"><wbr />get<wbr />Band<wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandImage%2CwRebar%2Cint%2Cint"
+    title="setBandImage(self: wRebar; index: int; image: int)"><wbr />set<wbr />Band<wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandImage%2CwRebar%2CwCommandID%2Cint"
+    title="setBandImage(self: wRebar; id: wCommandID; image: int)"><wbr />set<wbr />Band<wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandStyle%2CwRebar%2Cint"
+    title="getBandStyle(self: wRebar; index: int): wStyle"><wbr />get<wbr />Band<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getBandStyle%2CwRebar%2CwCommandID"
+    title="getBandStyle(self: wRebar; id: wCommandID): wStyle"><wbr />get<wbr />Band<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandStyle%2CwRebar%2Cint%2CwStyle"
+    title="setBandStyle(self: wRebar; index: int; style: wStyle)"><wbr />set<wbr />Band<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setBandStyle%2CwRebar%2CwCommandID%2CwStyle"
+    title="setBandStyle(self: wRebar; id: wCommandID; style: wStyle)"><wbr />set<wbr />Band<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#moveBand%2CwRebar%2Cint%2Cint"
+    title="moveBand(self: wRebar; index: int; newPos: int)"><wbr />move<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#moveBand%2CwRebar%2CwCommandID%2Cint"
+    title="moveBand(self: wRebar; id: wCommandID; newPos: int)"><wbr />move<wbr />Band<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#hitTest%2CwRebar%2Cint%2Cint"
+    title="hitTest(self: wRebar; x: int; y: int): tuple[band: wCommandID, flag: int]"><wbr />hit<wbr />Test<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#hitTest%2CwRebar%2CwPoint"
+    title="hitTest(self: wRebar; pos: wPoint): tuple[band: wCommandID, flag: int]"><wbr />hit<wbr />Test<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#disableMinMax%2CwRebar"
+    title="disableMinMax(self: wRebar; disable = true)"><wbr />disable<wbr />Min<wbr />Max<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#disableDrag%2CwRebar"
+    title="disableDrag(self: wRebar; disable = true)"><wbr />disable<wbr />Drag<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getLayout%2CwRebar"
+    title="getLayout(self: wRebar): string"><wbr />get<wbr />Layout<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setLayout%2CwRebar%2Cstring"
+    title="setLayout(self: wRebar; layout: string)"><wbr />set<wbr />Layout<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#len%2CwRebar"
     title="len(self: wRebar): int"><wbr />len<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#init%2CwRebar%2CwWindow%2CwImageList%2CwStyle"
@@ -144,7 +253,7 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc">A rebar control can contain one or more bands, and each band can have a gripper bar, a bitmap, a text label, and one child control. As you dynamically reposition a rebar control band, the rebar control manages the size and position of the child window assigned to that band. <strong>Notice: This is just a experimental module, not yet fully functional.</strong><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
+  <p class="module-desc">A rebar control can contain one or more bands, and each band can have a gripper bar, a bitmap, a text label, and one child control. As you dynamically reposition a rebar control band, the rebar control manages the size and position of the child window assigned to that band.<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Superclass:</th><td><a class="reference external" href="wControl.html">wControl</a></td></tr>
 </tbody></table></p>
   
 <div class="section" id="10">
@@ -155,6 +264,33 @@ function main() {
 
 <a id="wRbDoubleClickToggle"></a>
 <dt><pre><a href="wRebar.html#wRbDoubleClickToggle"><span class="Identifier">wRbDoubleClickToggle</span></a> <span class="Other">=</span> <span class="DecNumber">0x00008000</span></pre></dt>
+
+<a id="wRbFixedSize"></a>
+<dt><pre><a href="wRebar.html#wRbFixedSize"><span class="Identifier">wRbFixedSize</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000002</span></pre></dt>
+
+<a id="wRbBreak"></a>
+<dt><pre><a href="wRebar.html#wRbBreak"><span class="Identifier">wRbBreak</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+
+<a id="wRbTopAlign"></a>
+<dt><pre><a href="wRebar.html#wRbTopAlign"><span class="Identifier">wRbTopAlign</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000800</span></pre></dt>
+
+<a id="wRbHittestCaption"></a>
+<dt><pre><a href="wRebar.html#wRbHittestCaption"><span class="Identifier">wRbHittestCaption</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000002</span></pre></dt>
+
+<a id="wRbHittestChevron"></a>
+<dt><pre><a href="wRebar.html#wRbHittestChevron"><span class="Identifier">wRbHittestChevron</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000008</span></pre></dt>
+
+<a id="wRbHittestClient"></a>
+<dt><pre><a href="wRebar.html#wRbHittestClient"><span class="Identifier">wRbHittestClient</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000003</span></pre></dt>
+
+<a id="wRbHittestGrabber"></a>
+<dt><pre><a href="wRebar.html#wRbHittestGrabber"><span class="Identifier">wRbHittestGrabber</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000004</span></pre></dt>
+
+<a id="wRbHittestNowhere"></a>
+<dt><pre><a href="wRebar.html#wRbHittestNowhere"><span class="Identifier">wRbHittestNowhere</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000001</span></pre></dt>
+
+<a id="wRbHittestSplitter"></a>
+<dt><pre><a href="wRebar.html#wRbHittestSplitter"><span class="Identifier">wRbHittestSplitter</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000010</span></pre></dt>
 
 
 </dl></div>
@@ -172,36 +308,369 @@ Sets the image list associated with the rebar.
 <dt><pre><span class="Keyword">proc</span> <a href="#getImageList%2CwRebar"><span class="Identifier">getImageList</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wImageList"><span class="Identifier">wImageList</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Returns the specified image list.
+Returns the image list associated with the rebar.
 
 </dd>
 <a id="getCount,wRebar"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getCount%2CwRebar"><span class="Identifier">getCount</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Returns the number of controls in the rebar.
+Returns the number of bands in the rebar.
 
 </dd>
-<a id="addControl,wRebar,wControl,string"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#addControl%2CwRebar%2CwControl%2Cstring"><span class="Identifier">addControl</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">control</span><span class="Other">:</span> <a href="wTypes.html#wControl"><span class="Identifier">wControl</span></a><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">isBreak</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wNilAccess</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="getRowCount,wRebar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getRowCount%2CwRebar"><span class="Identifier">getRowCount</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Adds a control to the rebar.
+Returns the number of rows in the rebar.
 
 </dd>
-<a id="minimize,wRebar,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#minimize%2CwRebar%2Cint"><span class="Identifier">minimize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">band</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="getHeight,wRebar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getHeight%2CwRebar"><span class="Identifier">getHeight</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Resizes a band to its smallest size.
+Returns the height of the rebar.
+
+</dd>
+<a id="insertBand,wRebar,int,wWindow,string,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#insertBand%2CwRebar%2Cint%2CwWindow%2Cstring%2CwStyle"><span class="Identifier">insertBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">control</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span>
+               <span class="Identifier">style</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Inserts a band to the rebar and returns the ID of the band (wIdZero if failed). If <em>control</em> is nil, an empty band will be inserted. Add <em>wRbBreak</em> style to indicate the band is on a new line.
+
+</dd>
+<a id="addBand,wRebar,wWindow,string,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#addBand%2CwRebar%2CwWindow%2Cstring%2CwStyle"><span class="Identifier">addBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">control</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">image</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">label</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Adds a band to the rebar and returns the ID of the band (wIdZero if failed). If <em>control</em> is nil, an empty band will be added. Add <em>wRbBreak</em> style to indicate the band is on a new line.
+
+</dd>
+<a id="findBand,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#findBand%2CwRebar%2CwCommandID"><span class="Identifier">findBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Find a band by id. Returns zero-based index, or -1 otherwise.
+
+</dd>
+<a id="getBandId,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandId%2CwRebar%2Cint"><span class="Identifier">getBandId</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the id for a given band.
+
+</dd>
+<a id="setBandId,wRebar,int,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandId%2CwRebar%2Cint%2CwCommandID"><span class="Identifier">setBandId</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the id for a band.
+
+</dd>
+<a id="deleteBand,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#deleteBand%2CwRebar%2Cint"><span class="Identifier">deleteBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Deletes a band from a rebar by index.
+
+</dd>
+<a id="deleteBand,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#deleteBand%2CwRebar%2CwCommandID"><span class="Identifier">deleteBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Deletes a band from a rebar by id.
+
+</dd>
+<a id="showBand,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#showBand%2CwRebar%2Cint"><span class="Identifier">showBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Shows or hides a given band in a rebar by index.
+
+</dd>
+<a id="showBand,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#showBand%2CwRebar%2CwCommandID"><span class="Identifier">showBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Shows or hides a given band in a rebar by id.
+
+</dd>
+<a id="minimizeBand,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#minimizeBand%2CwRebar%2Cint"><span class="Identifier">minimizeBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Resizes a band to its smallest size by index.
+
+</dd>
+<a id="minimizeBand,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#minimizeBand%2CwRebar%2CwCommandID"><span class="Identifier">minimizeBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Resizes a band to its smallest size by id.
+
+</dd>
+<a id="maximizeBand,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#maximizeBand%2CwRebar%2Cint"><span class="Identifier">maximizeBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Resizes a band to either its ideal or largest size by index.
+
+</dd>
+<a id="maximizeBand,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#maximizeBand%2CwRebar%2CwCommandID"><span class="Identifier">maximizeBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Resizes a band to either its ideal or largest size by id.
+
+</dd>
+<a id="getBandRect,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandRect%2CwRebar%2Cint"><span class="Identifier">getBandRect</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wRect"><span class="Identifier">wRect</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the bounding rectangle for a given band by index.
+
+</dd>
+<a id="getBandRect,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandRect%2CwRebar%2CwCommandID"><span class="Identifier">getBandRect</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wRect"><span class="Identifier">wRect</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the bounding rectangle for a given band by id.
+
+</dd>
+<a id="getBandWidth,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandWidth%2CwRebar%2Cint"><span class="Identifier">getBandWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the width for a given band by index.
+
+</dd>
+<a id="getBandWidth,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandWidth%2CwRebar%2CwCommandID"><span class="Identifier">getBandWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the width for a given band by id.
+
+</dd>
+<a id="setBandWidth,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandWidth%2CwRebar%2Cint%2Cint"><span class="Identifier">setBandWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">exactly</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the width for a band by index.
+
+</dd>
+<a id="setBandWidth,wRebar,wCommandID,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandWidth%2CwRebar%2CwCommandID%2Cint"><span class="Identifier">setBandWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">exactly</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the width for a band by id.
+
+</dd>
+<a id="setBandMinWidth,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandMinWidth%2CwRebar%2Cint%2Cint"><span class="Identifier">setBandMinWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the minimum width for a band by index.
+
+</dd>
+<a id="setBandMinWidth,wRebar,wCommandID,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandMinWidth%2CwRebar%2CwCommandID%2Cint"><span class="Identifier">setBandMinWidth</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the minimum width for a band by id.
+
+</dd>
+<a id="getBandHeight,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandHeight%2CwRebar%2Cint"><span class="Identifier">getBandHeight</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the height for a given band by index.
+
+</dd>
+<a id="getBandHeight,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandHeight%2CwRebar%2CwCommandID"><span class="Identifier">getBandHeight</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the height for a given band by id.
+
+</dd>
+<a id="setBandMinHeight,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandMinHeight%2CwRebar%2Cint%2Cint"><span class="Identifier">setBandMinHeight</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the minimum height for a band by index.
+
+</dd>
+<a id="setBandMinHeight,wRebar,wCommandID,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandMinHeight%2CwRebar%2CwCommandID%2Cint"><span class="Identifier">setBandMinHeight</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the minimum height for a band by id.
+
+</dd>
+<a id="getBandLabel,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandLabel%2CwRebar%2Cint"><span class="Identifier">getBandLabel</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the label for a band by index.
+
+</dd>
+<a id="getBandLabel,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandLabel%2CwRebar%2CwCommandID"><span class="Identifier">getBandLabel</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the label for a band by id.
+
+</dd>
+<a id="setBandLabel,wRebar,int,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandLabel%2CwRebar%2Cint%2Cstring"><span class="Identifier">setBandLabel</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the label for a band by index.
+
+</dd>
+<a id="setBandLabel,wRebar,wCommandID,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandLabel%2CwRebar%2CwCommandID%2Cstring"><span class="Identifier">setBandLabel</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">label</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the label for a band by id.
+
+</dd>
+<a id="getBandImage,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandImage%2CwRebar%2Cint"><span class="Identifier">getBandImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the index of image list for a band by index. -1 means no image.
+
+</dd>
+<a id="getBandImage,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandImage%2CwRebar%2CwCommandID"><span class="Identifier">getBandImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the index of image list for a band by id. -1 means no image.
+
+</dd>
+<a id="setBandImage,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandImage%2CwRebar%2Cint%2Cint"><span class="Identifier">setBandImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the index of image list for a band by index. -1 means no image.
+
+</dd>
+<a id="setBandImage,wRebar,wCommandID,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandImage%2CwRebar%2CwCommandID%2Cint"><span class="Identifier">setBandImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the index of image list for a band by id. -1 means no image.
+
+</dd>
+<a id="getBandStyle,wRebar,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandStyle%2CwRebar%2Cint"><span class="Identifier">getBandStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the style for a band by index.
+
+</dd>
+<a id="getBandStyle,wRebar,wCommandID"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBandStyle%2CwRebar%2CwCommandID"><span class="Identifier">getBandStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the style for a band by id.
+
+</dd>
+<a id="setBandStyle,wRebar,int,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandStyle%2CwRebar%2Cint%2CwStyle"><span class="Identifier">setBandStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the style for a band by index.
+
+</dd>
+<a id="setBandStyle,wRebar,wCommandID,wStyle"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setBandStyle%2CwRebar%2CwCommandID%2CwStyle"><span class="Identifier">setBandStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the style for a band by id.
+
+</dd>
+<a id="moveBand,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#moveBand%2CwRebar%2Cint%2Cint"><span class="Identifier">moveBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">newPos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Moves a band to another position by index.
+
+</dd>
+<a id="moveBand,wRebar,wCommandID,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#moveBand%2CwRebar%2CwCommandID%2Cint"><span class="Identifier">moveBand</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">id</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">;</span> <span class="Identifier">newPos</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Moves a band to another position by id.
+
+</dd>
+<a id="hitTest,wRebar,int,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#hitTest%2CwRebar%2Cint%2Cint"><span class="Identifier">hitTest</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">band</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">,</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Determines which band (if any, wIdZero otherwise) is at the specified point, giving details in flags. <em>flag</em> will be a one of the following flags:<table border="1" class="docutils"><tr><th>Flag</th><th>Description</th></tr>
+<tr><td>wRbHittestCaption</td><td>In the rebar band's caption.</td></tr>
+<tr><td>wRbHittestChevron</td><td>In the rebar band's chevron</td></tr>
+<tr><td>wRbHittestClient</td><td>In the rebar band's client area.</td></tr>
+<tr><td>wRbHittestGrabber</td><td>In the rebar band's gripper.</td></tr>
+<tr><td>wRbHittestNowhere</td><td>Not in a rebar band.</td></tr>
+<tr><td>wRbHittestSplitter</td><td>In the rebar band's splitter.</td></tr>
+</table>
+
+</dd>
+<a id="hitTest,wRebar,wPoint"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#hitTest%2CwRebar%2CwPoint"><span class="Identifier">hitTest</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <a href="wTypes.html#wPoint"><span class="Identifier">wPoint</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">band</span><span class="Other">:</span> <a href="wTypes.html#wCommandID"><span class="Identifier">wCommandID</span></a><span class="Other">,</span> <span class="Identifier">flag</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+The same as hitTest().
+
+</dd>
+<a id="disableMinMax,wRebar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#disableMinMax%2CwRebar"><span class="Identifier">disableMinMax</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">disable</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Disables or enables maximizing or minimizing a band.
+
+</dd>
+<a id="disableDrag,wRebar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#disableDrag%2CwRebar"><span class="Identifier">disableDrag</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">disable</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Disables or enables dragging a band.
+
+</dd>
+<a id="getLayout,wRebar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getLayout%2CwRebar"><span class="Identifier">getLayout</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the current layout of bands in the rebar (binary format). The bands must have different id to work.
+
+</dd>
+<a id="setLayout,wRebar,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setLayout%2CwRebar%2Cstring"><span class="Identifier">setLayout</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">layout</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets a layout of bands in the rebar. The bands must have different id to work.
 
 </dd>
 <a id="len,wRebar"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#len%2CwRebar"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Returns the number of controls in the rebar.
+Returns the number of bands in the rebar.
 
 </dd>
 <a id="init,wRebar,wWindow,wImageList,wStyle"></a>
@@ -230,15 +699,14 @@ Constructor.
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
 <a id="show.e,wRebar"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#show.e%2CwRebar"><span class="Identifier">show</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <a href="#show.e%2CwRebar"><span class="Identifier">show</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Shows or hides the status bar.
+Shows or hides the rebar bar.
 
 </dd>
 <a id="release.e,wRebar"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#release.e%2CwRebar"><span class="Identifier">release</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">locks</span><span class="Other">:</span> <span class="StringLit">&quot;unknown&quot;</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <a href="#release.e%2CwRebar"><span class="Identifier">release</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Release all the resources during destroying. Used internally.

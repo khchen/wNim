@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -34,9 +34,7 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -48,13 +46,13 @@ const
   wAlignMiddle* = SS_CENTERIMAGE
   wAlignLeftNoWordWrap* = SS_LEFTNOWORDWRAP
 
-method getBestSize*(self: wStaticText): wSize {.property, uknlock.} =
+method getBestSize*(self: wStaticText): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.width += 2
   result.height += 2
 
-method getDefaultSize*(self: wStaticText): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wStaticText): wSize {.property.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -71,7 +69,7 @@ proc wStaticText_DoCommand(self: wControl, event: wEvent) {.shield.} =
 
 wClass(wStaticText of wControl):
 
-  method release*(self: wStaticText) {.uknlock.} =
+  method release*(self: wStaticText) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])

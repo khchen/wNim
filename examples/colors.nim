@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -217,6 +217,7 @@ when isMainModule:
     MenuID = enum
       idSortByColor = wIdUser, idSortByName, idPaletteStd, idPalettewNim
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = Frame(title="wNim Colors")
   frame.icon = Icon("", 0)

@@ -213,7 +213,7 @@ function main() {
   <li><a class="reference" href="#middleDown%2CwEvent"
     title="middleDown(self: wEvent): bool"><wbr />middle<wbr />Down<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getKeyStatus%2CwEvent"
-    title="getKeyStatus(self: wEvent): array[256, bool]"><wbr />get<wbr />Key<wbr />Status<span class="attachedType"></span></a></li>
+    title="getKeyStatus(self: wEvent): set[byte]"><wbr />get<wbr />Key<wbr />Status<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getMouseScreenPos%2CwEvent"
     title="getMouseScreenPos(self: wEvent): wPoint"><wbr />get<wbr />Mouse<wbr />Screen<wbr />Pos<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#init%2CwEvent%2CwWindow%2CUINT%2CwWparam%2CwLparam%2CHWND%2Cint"
@@ -685,10 +685,10 @@ Returns true if the middle mouse button is currently down.
 
 </dd>
 <a id="getKeyStatus,wEvent"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getKeyStatus%2CwEvent"><span class="Identifier">getKeyStatus</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">array</span><span class="Other">[</span><span class="DecNumber">256</span><span class="Other">,</span> <span class="Identifier">bool</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#getKeyStatus%2CwEvent"><span class="Identifier">getKeyStatus</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><span class="Identifier">byte</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Return an bool array with all the pressed keys. Using const defined in wKeyCodes.nim as the index. For example:<pre class="listing"><span class="Identifier">echo</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">keyStauts</span><span class="Punctuation">[</span><span class="Identifier">wKeyCtrl</span><span class="Punctuation">]</span></pre>
+Return a set of key-codes with all the pressed keys. The key-codes are defined in wKeyCodes.nim. For example:<pre class="listing"><span class="Identifier">echo</span> <span class="Identifier">wKey_Ctrl</span> <span class="Keyword">in</span> <span class="Identifier">event</span><span class="Operator">.</span><span class="Identifier">keyStatus</span></pre>
 
 </dd>
 <a id="getMouseScreenPos,wEvent"></a>

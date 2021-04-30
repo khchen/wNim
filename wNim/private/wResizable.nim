@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -68,9 +68,7 @@
 ##   `wResizer <wResizer.html>`_
 ##   `autolayout <autolayout.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import macros, math, strutils
 import wBase, autolayout
 
@@ -101,16 +99,16 @@ proc setLayoutRect*(self: wResizable, rect: wRect) {.validate, property.} =
 # Following base method used in wResizer.
 # These methods should be not public, only the wWindow.xxx() is public.
 
-method getClientMargin(self: wResizable, direction: int): int {.base, property, uknlock.} =
+method getClientMargin(self: wResizable, direction: int): int {.base, property.} =
   result = 0
 
-method getClientSize(self: wResizable): wSize {.base, property, uknlock.} =
+method getClientSize(self: wResizable): wSize {.base, property.} =
   result = self.getLayoutSize()
 
-method getDefaultSize(self: wResizable): wSize {.base, property, uknlock.} =
+method getDefaultSize(self: wResizable): wSize {.base, property.} =
   result = self.getLayoutSize()
 
-method getBestSize(self: wResizable): wSize {.base, property, uknlock.} =
+method getBestSize(self: wResizable): wSize {.base, property.} =
   result = self.getLayoutSize()
 
 wClass(wResizable):
@@ -152,7 +150,12 @@ proc layoutParser(x: NimNode): string =
     "bestHeight", "innerLeft", "innerTop", "innerRight", "innerBottom",
     "innerUp", "innerDown", "innerWidth", "innerHeight"]
 
-  const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "WEAKER"]
+  const strengthes = ["REQUIRED", "STRONG", "MEDIUM", "WEAK", "STRONGEST",
+    "STRONGER", "STRONG9", "STRONG8", "STRONG7", "STRONG6", "STRONG5", "STRONG4",
+    "STRONG3", "STRONG2", "STRONG1", "MEDIUM9", "MEDIUM8", "MEDIUM7", "MEDIUM6",
+    "MEDIUM5", "MEDIUM4", "MEDIUM3", "MEDIUM2", "MEDIUM1", "WEAK9", "WEAK8",
+    "WEAK7", "WEAK6", "WEAK5", "WEAK4", "WEAK3", "WEAK2", "WEAK1", "WEAKER",
+    "WEAKEST"]
 
   proc addSelfDot(x: NimNode): NimNode =
     # Find all ident recursively, add "self." if the ident is a attribute
@@ -163,9 +166,7 @@ proc layoutParser(x: NimNode): string =
 
     for i in 0..<x.len:
       if x[i].kind != nnkDotExpr:
-        let new = addSelfDot(x[i])
-        x.del(i)
-        x.insert(i, new)
+        x[i] = addSelfDot(x[i])
 
   proc addConstraint(code: var string, x: NimNode, strength = "") =
     if x.kind == nnkInfix:
@@ -289,28 +290,32 @@ macro autolayout*(parent: wResizable, input: static[string]): untyped =
   ## Parses the layout VFL (Visual Format Language), and then use *layout*
   ## function to deal with the result.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   parseStmt(parser.toString(templ="layout"))
 
 macro autorelayout*(parent: wResizable, input: static[string]): untyped =
   ## Parses the layout VFL (Visual Format Language), and then use *relayout*
   ## function to deal with the result.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   parseStmt(parser.toString(templ="relayout"))
 
 macro autoplan*(parent: wResizable, input: static[string]): untyped =
   ## Parses the layout VFL (Visual Format Language), and then use *plan*
   ## function to deal with the result.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   parseStmt(parser.toString(templ="plan"))
 
 macro autoreplan*(parent: wResizable, input: static[string]): untyped =
   ## Parses the layout VFL (Visual Format Language), and then use *replan*
   ## function to deal with the result.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   parseStmt(parser.toString(templ="replan"))
 
 macro layoutDebug*(parent: wResizable, x: untyped): untyped =
@@ -327,12 +332,14 @@ macro autolayoutDebug*(parent: wResizable, input: static[string]): untyped =
   ## Parses the VFL (Visual Format Language) and returns the result in string
   ## literal for debugging.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   result = newStrLitNode(parser.toString(templ="layout"))
 
 macro autolayoutDump*(parent: wResizable, input: static[string]): untyped =
   ## Parses the VFL (Visual Format Language) and displays the result at compile
   ## time for debugging.
   var parser = initVflParser(parent.repr)
-  parser.parse(input)
+  try: parser.parse(input)
+  except: discard
   echo parser.toString(templ="layout")

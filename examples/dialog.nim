@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -9,7 +9,7 @@ import
   strformat, math, strutils,
   resource/resource
 
-import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon,
+import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon, wUtils,
   wStaticBox, wButton, wRadioButton, wMessageDialog, wDirDialog, wFileDialog,
   wColorDialog, wFontDialog, wTextEntryDialog, wPasswordEntryDialog,
   wFindReplaceDialog, wPageSetupDialog, wPrintDialog]
@@ -17,6 +17,7 @@ import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon,
 wEventRegister(wEvent):
   wEvent_RadioButtonOn
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="Dialog Demo", size=(500, 520))
 frame.icon = Icon("", 0) # load icon from exe file.
@@ -59,16 +60,31 @@ proc buttonReset(a, b: bool) =
 
 proc layout() =
   panel.autolayout """
+    alias:
+      b1 = buttonShow
+      b2 = buttonClose
+      b3 = buttonShowModal
+
     H:|-[staticbox]-|
-    H:|->[buttonShow]-[buttonClose]-[buttonShowModal]-|
-    V:|-[staticbox]-[buttonShow,buttonClose,buttonShowModal]-|
+    H:|->[b1]-[b2]-[b3]-|
+    V:|-[staticbox]-[b1..3]-|
 
     outer: staticbox
-    H:|-[radioMessage,radioDir,radioFile,radioColor,radioFont,radioTextEntry,
-      radioPasswordEntry,radioFindReplace,radioPageSetup,radioPrint]-|
-    V:|-[radioMessage]-[radioDir]-[radioFile]-[radioColor]-[radioFont]-
-      [radioTextEntry]-[radioPasswordEntry]-[radioFindReplace]-
-      [radioPageSetup]-[radioPrint]
+    alias:
+      r1 = radioMessage
+      r2 = radioDir
+      r3 = radioFile
+      r4 = radioColor
+      r5 = radioFont
+      r6 = radioTextEntry
+      r7 = radioPasswordEntry
+      r8 = radioFindReplace
+      r9 = radioPageSetup
+      r10 = radioPrint
+
+    H:|-[r1..10]-|
+    V:|-[r1]-[r2]-[r3]-[r4]-[r5]-[r6]-[r7]-[r8]-[r9]-[r10]
+    V: [r1(r1.defaultSize.height), r2..10(r1)]
   """
 
 panel.wEvent_Size do ():

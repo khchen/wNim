@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -11,9 +11,7 @@
 ## names. In that case, you need to specify the type name from wApp.
 ## For example: *wApp.wIcon*.
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import times, tables, sets, lists, hashes, sequtils
 import winim/[winstr, utils], winim/inc/windef, winimx, kiwi/kiwi
 
@@ -384,6 +382,8 @@ type
     mImageList*: wImageList
     mSizeConn*: wEventConnection
     mDragging*: bool
+    mDisableMinMax*: bool
+    mDisableDrag*: bool
 
   wButton* = ref object of wControl
     mImgData*: BUTTON_IMAGELIST

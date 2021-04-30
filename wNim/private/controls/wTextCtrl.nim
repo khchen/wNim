@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -48,9 +48,7 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import strutils, streams
 import ../wBase, wControl
 export wControl
@@ -402,7 +400,7 @@ proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.v
     if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
     SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_SELECTION, cast[LPARAM](&charformat))
 
-method setFont*(self: wTextCtrl, font: wFont) {.validate, property, uknlock.} =
+method setFont*(self: wTextCtrl, font: wFont) {.validate, property.} =
   ## Sets the font for this text control.
   wValidate(font)
   procCall wWindow(self).setFont(font)
@@ -468,7 +466,7 @@ iterator lines*(self: wTextCtrl): string {.validate.} =
   for i in 0..<count:
     yield self.getLineText(i)
 
-method getBestSize*(self: wTextCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wTextCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   if self.mRich:
     result = self.mBestSize
@@ -495,7 +493,7 @@ method getBestSize*(self: wTextCtrl): wSize {.property, uknlock.} =
     if (style and WS_HSCROLL) != 0:
       result.height += GetSystemMetrics(SM_CYHSCROLL)
 
-method getDefaultSize*(self: wTextCtrl): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wTextCtrl): wSize {.property.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -644,7 +642,7 @@ proc enableAutoComplete*(self: wTextCtrl, provider: wAutoCompleteProvider): bool
   return false
 
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   if code == EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
@@ -668,7 +666,7 @@ proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
 
 wClass(wTextCtrl of wControl):
 
-  method release*(self: wTextCtrl) {.uknlock.} =
+  method release*(self: wTextCtrl) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     self.disableAutoComplete()

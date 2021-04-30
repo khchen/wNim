@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
 
-import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
+import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap, wUtils,
   wStaticText, wTextCtrl, wToolBar, wButton, wStatusBar, wMessageDialog]
 
 proc passwordDialog(owner: wWindow): string =
@@ -64,6 +64,7 @@ when isMainModule:
       idExit
       idButton
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = Frame(title="wNim PasswordDialog", size=(480, 320))
   frame.icon = Icon("", 0) # load icon from exe file.

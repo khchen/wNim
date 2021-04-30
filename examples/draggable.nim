@@ -1,17 +1,18 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wFrame, wIcon, wMenuBar, wMenu, wStatusBar, wSplitter, wButton]
+import wNim/[wApp, wFrame, wIcon, wMenuBar, wMenu, wStatusBar, wSplitter, wButton, wUtils]
 
 type
   MenuID = enum
     idLayout1 = wIdUser, idLayout2, idEnable, idExit
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="Draggable GUI Demo")
 let statusBar = StatusBar(frame)

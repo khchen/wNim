@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 ## Basic types definition for wNim.
 
-{.experimental, deadCodeElim: on.}
+include pragma
 
 # Export some modules that every module in wNim depends on.
 import winim/[winstr, utils], winim/inc/windef, kiwi/kiwi

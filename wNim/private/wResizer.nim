@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -17,28 +17,90 @@
 ##   ==============================  =============================================================
 ##   Consts                          Description
 ##   ==============================  =============================================================
-##   REQUIRED                        createStrength(1000.0, 1000.0, 1000.0)
-##   STRONG                          createStrength(1.0, 0.0, 0.0)
-##   MEDIUM                          createStrength(0.0, 1.0, 0.0)
-##   WEAK                            createStrength(0.0, 0.0, 1.0)
-##   WEAKER                          createStrength(0.0, 0.0, 0.1)
-##   WEAKEST                         createStrength(0.0, 0.0, 0.01)
+##   REQUIRED                        REQUIRED
+##   STRONGEST                       20000000.0
+##   STRONGER                        10000000.0
+##   STRONG9                         9000000.0
+##   STRONG8                         8000000.0
+##   STRONG7                         7000000.0
+##   STRONG6                         6000000.0
+##   STRONG5                         1000000.0
+##   STRONG4                         400000.0
+##   STRONG3                         300000.0
+##   STRONG2                         200000.0
+##   STRONG1                         100000.0
+##   MEDIUM9                         9000.0
+##   MEDIUM8                         7000.0
+##   MEDIUM7                         5000.0
+##   MEDIUM6                         3000.0
+##   MEDIUM5                         1000.0
+##   MEDIUM4                         400.0
+##   MEDIUM3                         300.0
+##   MEDIUM2                         200.0
+##   MEDIUM1                         100.0
+##   WEAK9                           90.0
+##   WEAK8                           80.0
+##   WEAK7                           70.0
+##   WEAK6                           60.0
+##   WEAK5                           1.0
+##   WEAK4                           0.4
+##   WEAK3                           0.3
+##   WEAK2                           0.2
+##   WEAK1                           0.1
+##   WEAKER                          0.05
+##   WEAKEST                         0.01
+##   STRONG                          STRONG5
+##   MEDIUM                          MEDIUM5
+##   WEAK                            WEAK5
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import sets, math
 import wBase, wWindow, kiwi/kiwi
 
 export kiwi
 
-# const REQUIRED* = createStrength(1000.0, 1000.0, 1000.0)
-# const STRONG* = createStrength(1.0, 0.0, 0.0)
-# const MEDIUM* = createStrength(0.0, 1.0, 0.0)
-# const WEAK* = createStrength(0.0, 0.0, 1.0)
-const WEAKER* = createStrength(0.0, 0.0, 0.1)
-const WEAKEST* = createStrength(0.0, 0.0, 0.01)
+const
+  # REQUIRED* = createStrength(1000.0, 1000.0, 1000.0)
+  # STRONG* = createStrength(1.0, 0.0, 0.0)
+  # MEDIUM* = createStrength(0.0, 1.0, 0.0)
+  # WEAK* = createStrength(0.0, 0.0, 1.0)
+  STRONGEST* = 20000000.0
+  STRONGER* = 10000000.0
+  STRONG9* = 9000000.0
+  STRONG8* = 8000000.0
+  STRONG7* = 7000000.0
+  STRONG6* = 6000000.0
+  STRONG5* = 1000000.0
+  STRONG4* = 400000.0
+  STRONG3* = 300000.0
+  STRONG2* = 200000.0
+  STRONG1* = 100000.0
+  MEDIUM9* = 9000.0
+  MEDIUM8* = 7000.0
+  MEDIUM7* = 5000.0
+  MEDIUM6* = 3000.0
+  MEDIUM5* = 1000.0
+  MEDIUM4* = 400.0
+  MEDIUM3* = 300.0
+  MEDIUM2* = 200.0
+  MEDIUM1* = 100.0
+  WEAK9* = 90.0
+  WEAK8* = 80.0
+  WEAK7* = 70.0
+  WEAK6* = 60.0
+  WEAK5* = 1.0
+  WEAK4* = 0.4
+  WEAK3* = 0.3
+  WEAK2* = 0.2
+  WEAK1* = 0.1
+  WEAKER* = 0.05
+  WEAKEST* = 0.01
+
+static:
+  assert STRONG == STRONG5
+  assert MEDIUM == MEDIUM5
+  assert WEAK == WEAK5
 
 proc `|`*(constraint: Constraint, strength: float): Constraint {.inline.} =
   ## Modify a constraint by specified strength

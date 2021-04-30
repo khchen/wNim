@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -14,18 +14,16 @@
 ## :Events:
 ##   `wStatusBarEvent <wStatusBarEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
 # statusbar's best size and default size are current size
-method getBestSize*(self: wStatusBar): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wStatusBar): wSize {.property, inline.} =
   ## Returns the best size for the status bar.
   result = self.getSize()
 
-method getDefaultSize*(self: wStatusBar): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wStatusBar): wSize {.property, inline.} =
   ## Returns the default size for the status bar.
   result = self.getSize()
 
@@ -124,12 +122,12 @@ proc `[]`*(self: wStatusBar, index: int): string {.validate, inline.} =
   ## Returns the string associated with a status bar of the specified field.
   result = self.getStatusText(index)
 
-method show*(self: wStatusBar, flag = true) {.inline, uknlock.} =
+method show*(self: wStatusBar, flag = true) {.inline.} =
   ## Shows or hides the status bar.
   self.showAndNotifyParent(flag)
 
 method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield, uknlock.} =
+    ret: var LRESULT): bool {.shield.} =
 
   var eventKind: UINT
   case code
@@ -142,7 +140,7 @@ method processNotify(self: wStatusBar, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wStatusBar of wControl):
 
-  method release*(self: wStatusBar) {.uknlock.} =
+  method release*(self: wStatusBar) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mSizeConn)
     free(self[])

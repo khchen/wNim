@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -36,9 +36,7 @@
 ##   wEvent_HotkeyChanged             The hotkey was changed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import tables, strutils
 import ../wBase, wControl
 export wControl
@@ -146,14 +144,14 @@ proc update(self: wHotkeyCtrl) =
   let l = SendMessage(self.mHwnd, EM_LINELENGTH, 0, 0)
   SendMessage(self.mHwnd, EM_SETSEL, l, l)
 
-method getDefaultSize*(self: wHotkeyCtrl): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wHotkeyCtrl): wSize {.property.} =
   ## Returns the default size for the control.
   result = getTextFontSize("Ctrl + Alt + Shift + Win + PrintScreen",
     self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
   result.width += 10
 
-method getBestSize*(self: wHotkeyCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wHotkeyCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize(self.mValue, self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -315,7 +313,7 @@ proc unhook(self: wHotkeyCtrl) =
 
 wClass(wHotkeyCtrl of wControl):
 
-  method release*(self: wHotkeyCtrl) {.uknlock.} =
+  method release*(self: wHotkeyCtrl) =
     ## Release all the resources during destroying. Used internally.
     self.unhook()
     free(self[])

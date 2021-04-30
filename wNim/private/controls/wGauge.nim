@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -24,9 +24,7 @@
 ##   wGaProgress                     Reflect the value of gauge in the taskbar button under Windows 7 and later.
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -37,13 +35,13 @@ const
   wGaSmooth* = PBS_SMOOTH
   wGaProgress* = 0x10000000.int64 shl 32
 
-method getDefaultSize*(self: wGauge): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wGauge): wSize {.property.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   result.width = MulDiv(result.width.int32, 107, 4)
   result.height = MulDiv(result.height.int32, 8, 8)
 
-method getBestSize*(self: wGauge): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wGauge): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -120,7 +118,7 @@ proc getTaskBar(self: wGauge) =
 
 wClass(wGauge of wControl):
 
-  method release*(self: wGauge) {.uknlock.} =
+  method release*(self: wGauge) =
     ## Release all the resources during destroying. Used internally.
     self.getTopParent().systemDisconnect(self.mTaskBarCreatedConn)
 

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -37,9 +37,7 @@
 ##   wEvent_ToolEnter                 The mouse cursor has moved into or moved off a tool.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../gdiobjects/wBitmap, wControl, wStatusBar
 export wControl
 
@@ -62,11 +60,11 @@ const
   wTbDropDown* = BTNS_WHOLEDROPDOWN
 
 # toolbar's best size and default size are current size
-method getBestSize*(self: wToolBar): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the best size for the tool bar.
   result = self.getSize()
 
-method getDefaultSize*(self: wToolBar): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wToolBar): wSize {.property, inline.} =
   ## Returns the default size for the tool bar.
   result = self.getSize()
 
@@ -293,12 +291,12 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     SendMessage(self.mHwnd, TB_INSERTBUTTON, pos, &button)
     SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
-method show*(self: wToolBar, flag = true) {.inline, uknlock.} =
+method show*(self: wToolBar, flag = true) {.inline.} =
   ## Shows or hides the toolbar.
   self.showAndNotifyParent(flag)
 
 method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield, uknlock.} =
+    ret: var LRESULT): bool {.shield.} =
 
   case code
   of NM_CUSTOMDRAW:
@@ -381,7 +379,7 @@ proc wToolBar_OnToolDropDown(event: wEvent) =
 
 wClass(wToolBar of wControl):
 
-  method release*(self: wToolBar) {.uknlock.} =
+  method release*(self: wToolBar) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mSizeConn)
     self.mParent.systemDisconnect(self.mCommandConn)

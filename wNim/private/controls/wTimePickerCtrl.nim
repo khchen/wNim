@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -21,9 +21,7 @@
 ##   wEvent_TimeChanged               The selected time changed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl, wDatePickerCtrl
 export wControl
 
@@ -53,7 +51,7 @@ proc setTime*(self: wTimePickerCtrl, time: tuple[hour, min, sec: int])
 
 wClass(wTimePickerCtrl of wDatePickerCtrl):
 
-  method release*(self: wTimePickerCtrl) {.uknlock.} =
+  method release*(self: wTimePickerCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

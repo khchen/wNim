@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -36,14 +36,12 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import net
-import ../wBase, wControl, wTextCtrl
+import ../wBase, wControl, wTextCtrl, ../gdiobjects/wFont
 export wControl, wTextCtrl
 
-method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield, uknlock.} =
+method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield.} =
   # WC_IPADDRESS cannot change size after create, it's Windows's limitation.
   SetWindowPos(self.mHwnd, 0, x, y, 0, 0,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE or SWP_NOSIZE))
@@ -105,7 +103,7 @@ proc getTextCtrl*(self: wIpCtrl, index: range[0..3]): wTextCtrl
   result = self.getEditControl(index)
 
 method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.shield, uknlock.} =
+    ret: var LRESULT): bool {.shield.} =
 
   if code == IPN_FIELDCHANGED:
     let lpnmipa = cast[LPNMIPADDRESS](lparam)
@@ -120,7 +118,7 @@ method processNotify(self: wIpCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wIpCtrl of wControl):
 
-  method release*(self: wIpCtrl) {.uknlock.} =
+  method release*(self: wIpCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 
@@ -132,7 +130,7 @@ wClass(wIpCtrl of wControl):
 
     # need to count the init size for WC_IPADDRESS control.
     var size = size
-    var font = if font != nil: font else: parent.mFont
+    var font = if font != nil: font else: Font(parent.mFont)
 
     if size.width == wDefault:
       size.width = getTextFontSize(" 222 . 222 . 222 . 222 ", font.mHandle,

@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -41,9 +41,7 @@
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -62,7 +60,7 @@ method getWindowRect(self: wSpinCtrl, sizeOnly = false): wRect =
   result.width += self.mUpdownWidth
 
 method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0)
-    {.shield, uknlock.} =
+    {.shield.} =
 
   var
     width = width
@@ -102,17 +100,17 @@ method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0)
   if cacheSizeEvent != nil and not noSize:
     SendMessage(self.mHwnd, WM_SIZE, cacheSizeEvent.mWparam, cacheSizeEvent.mLparam)
 
-method show*(self: wSpinCtrl, flag = true) {.inline, uknlock.} =
+method show*(self: wSpinCtrl, flag = true) {.inline.} =
   ## Shows or hides the control.
   procCall wWindow(self).show(flag)
   ShowWindow(self.mUpdownHwnd, if flag: SW_SHOWNORMAL else: SW_HIDE)
 
-method getDefaultSize*(self: wSpinCtrl): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wSpinCtrl): wSize {.property.} =
   ## Returns the default size for the control.
   result.width = 120
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
 
-method getBestSize*(self: wSpinCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wSpinCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSize("0000  ", self.mFont.mHandle, self.mHwnd)
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -208,7 +206,7 @@ proc wSpinCtrl_OnNotify(self: wSpinCtrl, event: wEvent) =
 
 wClass(wSpinCtrl of wControl):
 
-  method release*(self: wSpinCtrl) {.uknlock.} =
+  method release*(self: wSpinCtrl) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     self.mParent.disconnect(self.mNotifyConn)

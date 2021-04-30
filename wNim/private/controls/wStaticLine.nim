@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -22,9 +22,7 @@
 ##   wLiVertical                     Creates a vertical line.
 ##   ==============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -32,7 +30,7 @@ const
   wLiHorizontal* = SS_LEFT # 0
   wLiVertical* = SS_RIGHT # 2
 
-method getDefaultSize*(self: wStaticLine): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wStaticLine): wSize {.property.} =
   ## Returns the default size for the control.
   let
     pos = self.getPosition()
@@ -46,7 +44,7 @@ method getDefaultSize*(self: wStaticLine): wSize {.property, uknlock.} =
     result.height = 2
     result.width = clientSize.width - pos.x * 2
 
-method getBestSize*(self: wStaticLine): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wStaticLine): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -56,7 +54,7 @@ proc isVertical*(self: wStaticLine): bool {.validate.} =
 
 wClass(wStaticLine of wControl):
 
-  method release*(self: wStaticLine) {.uknlock.} =
+  method release*(self: wStaticLine) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

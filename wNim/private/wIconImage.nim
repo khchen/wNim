@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -35,9 +35,7 @@
 # proc delete*(self: wImage)
 # proc saveData*(self: wImage, fileType: string, quality: range[0..100] = 90): string
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import strutils
 import wBase
 

@@ -1,13 +1,13 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
 import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wButton, wResizable,
-  wMenuBar, wMenu]
+  wMenuBar, wMenu, wUtils]
 
 const
   UseAutoLayout = not defined(legacy)
@@ -16,6 +16,7 @@ const
 type
   MenuID = enum idLayout1 = wIdUser, idLayout2, idExit
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title=Title, size=(400, 300))
 frame.icon = Icon("", 0) # load icon from exe file.

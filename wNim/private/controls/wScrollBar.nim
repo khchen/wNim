@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -24,9 +24,7 @@
 ## :Events:
 ##   `wScrollEvent <wScrollEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -39,7 +37,7 @@ proc isVertical*(self: wScrollBar): bool {.validate, inline.} =
   ## Returns true for scrollbars that have the vertical style set.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and SBS_VERT) != 0
 
-method getDefaultSize*(self: wScrollBar): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wScrollBar): wSize {.property.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
 
@@ -50,7 +48,7 @@ method getDefaultSize*(self: wScrollBar): wSize {.property, uknlock.} =
     result.height = GetSystemMetrics(SM_CXHSCROLL)
     result.width = MulDiv(result.width, 107, 4)
 
-method getBestSize*(self: wScrollBar): wSize {.property, uknlock.} =
+method getBestSize*(self: wScrollBar): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -87,7 +85,7 @@ proc getScrollPos*(self: wScrollBar): int {.validate, property, inline.} =
 
 wClass(wScrollBar of wControl):
 
-  method release*(self: wScrollBar) {.uknlock.} =
+  method release*(self: wScrollBar) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mHScrollConn)
     self.mParent.systemDisconnect(self.mVScrollConn)

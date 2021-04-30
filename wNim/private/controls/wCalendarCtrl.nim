@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -34,9 +34,7 @@
 ##   wEvent_CalendarViewChanged       The control view changed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import times
 import ../wBase, wControl
 export wControl
@@ -49,7 +47,7 @@ const
   wCalShowWeekNumbers* = MCS_WEEKNUMBERS
   wCalMultiSelect* = MCS_MULTISELECT
 
-method getBestSize*(self: wCalendarCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wCalendarCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   var rect: RECT
   SendMessage(self.mHwnd, MCM_GETMINREQRECT, 0, addr rect)
@@ -57,7 +55,7 @@ method getBestSize*(self: wCalendarCtrl): wSize {.property, uknlock.} =
     SendMessage(self.mHwnd, MCM_GETMAXTODAYWIDTH, 0, 0).int) + 2
   result.height = rect.bottom + 2
 
-method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wCalendarCtrl): wSize {.property, inline.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
 
@@ -148,7 +146,7 @@ proc getMaxSelectCount*(self: wCalendarCtrl): int {.validate, property.} =
   result = int SendMessage(self.mHwnd, MCM_GETMAXSELCOUNT, 0, 0)
 
 method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   case code
   of MCN_SELCHANGE:
@@ -162,7 +160,7 @@ method processNotify(self: wCalendarCtrl, code: INT, id: UINT_PTR, lParam: LPARA
 
 wClass(wCalendarCtrl of wControl):
 
-  method release*(self: wCalendarCtrl) {.uknlock.} =
+  method release*(self: wCalendarCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

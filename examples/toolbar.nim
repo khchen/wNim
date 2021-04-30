@@ -1,18 +1,19 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
 import wNim/[wApp, wFrame, wPanel, wMenu, wIcon, wImage, wBitmap,
-  wStatusBar, wToolBar, wListBox]
+  wStatusBar, wToolBar, wListBox, wUtils]
 
 type
   MenuID = enum
     idTool1 = wIdUser, idTool2, idTool3, idTool4, idTool5, idExit
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="Toolbar")
 frame.icon = Icon("", 0) # load icon from exe file.

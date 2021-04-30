@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -10,9 +10,7 @@
 ## exported by this module automatically. The users don't need to import these
 ## three modules directly.
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include pragma
 import tables
 import winim/[utils, winstr], winim/inc/windef, winimx
 import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]

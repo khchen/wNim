@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -11,8 +11,10 @@ import
   resource/resource,
   winim/lean
 
-import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush, wMessageDialog]
+import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush,
+  wMessageDialog, wUtils]
 
+wSetSysemDpiAware()
 let
   app = App()
   frame = Frame(title="wNim with Windows SDK", size=(640, 480))

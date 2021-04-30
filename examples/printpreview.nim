@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -14,7 +14,7 @@ import
 
 import wNim/[wApp, wFrame, wPanel, wStatusBar, wToolBar, wSlider, wStaticText, wButton,
   wScreenDC, wPrinterDC, wMemoryDC, wPaintDC, wRegion, wBitmap, wIcon, wFont, wImage,
-  wPageSetupDialog, wPrintDialog]
+  wPageSetupDialog, wPrintDialog, wUtils]
 
 const
   border = 20
@@ -622,6 +622,7 @@ when isMainModule:
       idOpen = wIdPreviewFrameUser, idPrint, idSetup, idFont, idExit, idDelay
       idHigh, idNormal, idLow
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = PreviewFrame(title="Print and Preview Demo")
   let menuBar = MenuBar(frame)

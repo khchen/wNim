@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -29,9 +29,7 @@
 ##   wEvent_RadioButton               The radio button is clicked.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -39,12 +37,12 @@ const
   # RadioButton styles
   wRbGroup* = WS_GROUP
 
-method getBestSize*(self: wRadioButton): wSize {.property, uknlock.} =
+method getBestSize*(self: wRadioButton): wSize {.property.} =
   ## Returns the best acceptable minimal size for the control.
   result = getTextFontSizeWithCheckMark(self.getLabel(), self.mFont.mHandle, self.mHwnd)
   result.height += 2
 
-method getDefaultSize*(self: wRadioButton): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wRadioButton): wSize {.property.} =
   ## Returns the default size for the control.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -63,7 +61,7 @@ proc click*(self: wRadioButton) {.validate, inline.} =
 
 wClass(wRadioButton of wControl):
 
-  method release*(self: wRadioButton) {.uknlock.} =
+  method release*(self: wRadioButton) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])

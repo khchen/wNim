@@ -1,19 +1,20 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
 
-import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu,
+import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu, wUtils,
   wIcon, wBitmap, wPen, wBrush, wPaintDC,
   wStaticBox, wStaticLine, wStaticBitmap, wStaticText,
   wButton, wRadioButton, wCheckBox, wComboBox, wCheckComboBox, wListBox,
   wNoteBook, wTextCtrl, wSpinCtrl, wHotKeyCtrl, wSlider, wGauge,
   wCalendarCtrl, wDatePickerCtrl, wTimePickerCtrl]
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)
 frame.icon = Icon("", 0) # load icon from exe file.

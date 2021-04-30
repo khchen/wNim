@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -29,9 +29,7 @@
 ##   wEvent_NoteBookPageChanged       The page selection was changed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, ../wImageList, ../wImage, ../wPanel, ../dc/wPaintDC, wControl
 export wControl
 
@@ -53,7 +51,7 @@ proc notebookPageOnPaint(event: wEvent) =
   # So that following event handler for wEvent_Paint can work.
   InvalidateRect(page.mHwnd, clipRect, FALSE)
 
-method getClientSize*(self: wNoteBook): wSize {.property, uknlock.} =
+method getClientSize*(self: wNoteBook): wSize {.property.} =
   ## Returns the size of the notebook 'client area' in pixels.
   var r: RECT
   GetClientRect(self.mHwnd, r)
@@ -61,7 +59,7 @@ method getClientSize*(self: wNoteBook): wSize {.property, uknlock.} =
   result.width = r.right - r.left - (self.mMargin.left + self.mMargin.right)
   result.height = r.bottom - r.top - (self.mMargin.up + self.mMargin.down)
 
-method getClientAreaOrigin*(self: wNoteBook): wPoint {.property, uknlock.} =
+method getClientAreaOrigin*(self: wNoteBook): wPoint {.property.} =
   ## Get the origin of the client area of the window relative to the window top
   ## left corner.
   result = (self.mMargin.left, self.mMargin.up)
@@ -309,7 +307,7 @@ proc setPadding*(self: wNoteBook, size: wSize) {.validate, property, inline.} =
   SendMessage(self.mHwnd, TCM_SETPADDING, 0, MAKELPARAM(size.width, size.height))
 
 method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   case code
   of TCN_SELCHANGE:
@@ -331,7 +329,7 @@ method processNotify(self: wNoteBook, code: INT, id: UINT_PTR, lParam: LPARAM,
 
 wClass(wNoteBook of wControl):
 
-  method release*(self: wNoteBook) {.uknlock.} =
+  method release*(self: wNoteBook) =
     ## Release all the resources during destroying. Used internally.
     for page in self.mPages:
       page.delete()

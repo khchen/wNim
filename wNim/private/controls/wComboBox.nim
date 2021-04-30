@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -48,9 +48,7 @@
 ##   wEvent_CommandLeftDoubleClick    Double-clicked the left mouse button within the control.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl, wTextCtrl, wListBox
 export wControl, wTextCtrl, wListBox
 
@@ -250,22 +248,22 @@ proc countSize(self: wComboBox, minItem: int, rate: float): wSize {.shield.} =
     result.width = countWidth(rate) + (cbi.rcButton.right - cbi.rcButton.left) + 2
     result.height = self.getWindowRect(sizeOnly=true).height
 
-method getDefaultSize*(self: wComboBox): wSize {.property, inline, uknlock.} =
+method getDefaultSize*(self: wComboBox): wSize {.property, inline.} =
   ## Returns the default size for the control.
   # width of longest item + 30% x an integral number of items (3 items minimum)
   result = self.countSize(3, 1.3)
 
-method getBestSize*(self: wComboBox): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wComboBox): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.countSize(1, 1.0)
 
-method trigger(self: wComboBox) {.uknlock.} =
+method trigger(self: wComboBox) =
   for i in 0..<self.mInitCount:
     self.append(self.mInitData[i])
 
 wClass(wComboBox of wControl):
 
-  method release*(self: wComboBox) {.uknlock.} =
+  method release*(self: wComboBox) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])

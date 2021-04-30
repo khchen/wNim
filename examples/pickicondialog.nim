@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -53,7 +53,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   proc showFilename() =
     var
       dc = WindowDC(staticText)
-      buffer = newWString(currentFile)
+      buffer = +$currentFile
       text: string
 
     defer:
@@ -212,6 +212,7 @@ when isMainModule:
     # We can specify wApp.wIcon to avoid this problem.
     var backgroundIcons = newSeq[wApp.wIcon]()
 
+  wSetSysemDpiAware()
   let app = App()
   let frame = Frame(title="wNim PickIconDialog", size=(650, 380))
   frame.icon = Icon("", 0) # load icon from exe file.

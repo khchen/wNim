@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -38,9 +38,7 @@
 ## :Events:
 ##   `wWebViewEvent <wWebViewEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -751,11 +749,11 @@ proc getWeb(self: wWebView): ptr wWeb =
   result = cast[ptr wWeb](GetWindowLongPtr(self.mHwnd, 0))
   assert result != nil
 
-method getDefaultSize*(self: wWebView): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wWebView): wSize {.property.} =
   ## Returns the default size for the control.
   result = self.mParent.getClientSize()
 
-method getBestSize*(self: wWebView): wSize {.property, uknlock.} =
+method getBestSize*(self: wWebView): wSize {.property.} =
   ## Returns the best acceptable size for the control.
   result = self.mParent.getClientSize()
 
@@ -1044,13 +1042,13 @@ proc copy*(self: wWebView) {.validate, inline.} =
   ## Copies the current selection.
   self.execCommand("Copy")
 
-method trigger(self: wWebView) {.uknlock.} =
+method trigger(self: wWebView) =
   let web = self.getWeb()
   web.view = self
 
 wClass(wWebView of wControl):
 
-  method release*(self: wWebView) {.uknlock.} =
+  method release*(self: wWebView) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

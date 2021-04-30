@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -33,9 +33,7 @@
 ## :Events:
 ##   `wScrollEvent <wScrollEvent.html>`_
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import ../wBase, wControl
 export wControl
 
@@ -56,7 +54,7 @@ proc isVertical*(self: wSlider): bool {.validate, inline.} =
   ## Returns true for slider that have the vertical style set.
   result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and TBS_VERT) != 0
 
-method getDefaultSize*(self: wSlider): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wSlider): wSize {.property.} =
   ## Returns the default size for the control.
   result = getAverageASCIILetterSize(self.mFont.mHandle, self.mHwnd)
   var x, y: int32
@@ -70,7 +68,7 @@ method getDefaultSize*(self: wSlider): wSize {.property, uknlock.} =
   result.width = MulDiv(result.width, x, 4)
   result.height = MulDiv(result.height, y, 8)
 
-method getBestSize*(self: wSlider): wSize {.property, inline, uknlock.} =
+method getBestSize*(self: wSlider): wSize {.property, inline.} =
   ## Returns the best acceptable minimal size for the control.
   result = self.getDefaultSize()
 
@@ -193,7 +191,7 @@ proc clearTicks*(self: wSlider) {.validate, property, inline.} =
 
 wClass(wSlider of wControl):
 
-  method release*(self: wSlider) {.uknlock.} =
+  method release*(self: wSlider) =
     ## Release all the resources during destroying. Used internally.
     self.mParent.systemDisconnect(self.mHScrollConn)
     self.mParent.systemDisconnect(self.mVScrollConn)

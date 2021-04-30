@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -31,9 +31,7 @@
 ##   wEvent_DateChanged               The selected date changed.
 ##   ===============================  =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import times # this line only for nim 0.19.0
 import ../wBase, wControl
 export wControl
@@ -44,14 +42,14 @@ const
   wDpAllowNone*: wStyle = DTS_SHOWNONE
   wDpShowCentury*: wStyle = DTS_SHORTDATECENTURYFORMAT
 
-method getBestSize*(self: wDatePickerCtrl): wSize {.property, uknlock.} =
+method getBestSize*(self: wDatePickerCtrl): wSize {.property.} =
   ## Returns the best acceptable minimal size for the window.
   var size: SIZE
   SendMessage(self.mHwnd, DTM_GETIDEALSIZE, 0, addr size)
   result.width = size.cx + 2
   result.height = size.cy + 2
 
-method getDefaultSize*(self: wDatePickerCtrl): wSize {.property, uknlock.} =
+method getDefaultSize*(self: wDatePickerCtrl): wSize {.property.} =
   ## Returns the default size for the window.
   result = self.getBestSize()
   result.height = getLineControlDefaultHeight(self.mFont.mHandle)
@@ -94,7 +92,7 @@ proc setRange*(self: wDatePickerCtrl, time: (wTime, wTime)) {.validate, property
   self.setRange(time[0], time[1])
 
 method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
-    ret: var LRESULT): bool {.uknlock.} =
+    ret: var LRESULT): bool =
 
   if code == DTN_DATETIMECHANGE:
     return self.processMessage(wEvent_DateChanged, id, lparam, ret)
@@ -103,7 +101,7 @@ method processNotify(self: wDatePickerCtrl, code: INT, id: UINT_PTR, lParam: LPA
 
 wClass(wDatePickerCtrl of wControl):
 
-  method release*(self: wDatePickerCtrl) {.uknlock.} =
+  method release*(self: wDatePickerCtrl) =
     ## Release all the resources during destroying. Used internally.
     free(self[])
 

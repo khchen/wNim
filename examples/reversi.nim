@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -11,7 +11,7 @@ import
   mcts/[gamebase, engine_reversi]
 
 import wNim/[wApp, wMacros, wIcon, wImage, wFrame, wStatusBar, wMenuBar, wMenu,
-  wMemoryDC, wPaintDC, wBitmap, wBrush]
+  wMemoryDC, wPaintDC, wBitmap, wBrush, wUtils]
 
 type
   MenuId = enum idNew = 100, idExit, idAi1, idAi2,
@@ -174,6 +174,7 @@ wClass(wBoard of wFrame):
           self.tryStartAi()
 
 when isMainModule:
+  wSetSysemDpiAware()
   let app = App()
   let board = Board(title="wNim Reversi")
 

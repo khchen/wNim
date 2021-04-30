@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2020 Ward
+#                 (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -58,9 +58,7 @@
 ##   wWindingRule                   fills any region that has a nonzero winding value
 ##   ============================== =============================================================
 
-{.experimental, deadCodeElim: on.}
-when defined(gcDestructors): {.push sinkInference: off.}
-
+include ../pragma
 import strutils, math
 import ../wBase, ../gdiobjects/[wPen, wBrush, wBitmap, wFont, wRegion]
 
@@ -588,7 +586,7 @@ proc getScale*(self: wDC): tuple[x, y: float] {.inline, property.} =
   ## Gets the current scale factor.
   result = self.mScale
 
-method getSize*(self: wDC): wSize {.base, property, uknlock.} =
+method getSize*(self: wDC): wSize {.base, property.} =
   ## Gets the size of the device context.
   result.width = GetDeviceCaps(self.mHdc, HORZRES)
   result.height = GetDeviceCaps(self.mHdc, VERTRES)

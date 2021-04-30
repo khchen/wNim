@@ -1,12 +1,12 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wStaticText, wMenuBar, wMenu]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wStaticText, wMenuBar, wMenu, wUtils]
 
 const
   UseAutoLayout = not defined(legacy)
@@ -15,6 +15,7 @@ const
 type
   MenuID = enum idLayout1 = wIdUser, idLayout2, idLayout3, idExit
 
+wSetSysemDpiAware()
 let app = App()
 let frame = Frame(title=Title, size=(400, 300))
 frame.icon = Icon("", 0) # load icon from exe file.
@@ -135,10 +136,10 @@ proc layout3() =
       spacing: 8
       H:|-[text1(60)]-[text2]-|
       H:|-[text1]-[text3(60)]-[text4]-|
-      H:|-[text1]-[text3]-(>=8)-[text5(text5.height@WEAK)]-|
+      H:|-[text1]-[text3]-(>=8)-[text5(text5.height@WEAK1)]-|
       V:|-[text1]-|
-      V:|-[text2(60@WEAK)]-[text3]-|
-      V:|-[text2]-[text4(60@WEAK)]-[text5]-|
+      V:|-[text2(60@WEAK1)]-[text3]-|
+      V:|-[text2]-[text4(60@WEAK1)]-[text5]-|
       V:[text4]-(>=8)-|
     """
 

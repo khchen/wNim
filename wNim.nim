@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                (c) Copyright 2017-2020 Ward
+#                (c) Copyright 2017-2021 Ward
 #
 #====================================================================
 
@@ -71,7 +71,7 @@
 ##  - `wIpCtrl <wIpCtrl.html>`_
 ##  - `wWebView <wWebView.html>`_
 ##  - `wHotkeyCtrl <wHotkeyCtrl.html>`_
-##  - `wRebar <wRebar.html>`_  (experimental)
+##  - `wRebar <wRebar.html>`_
 ##
 ##  Device Contexts
 ##  ---------------
