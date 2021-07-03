@@ -71,7 +71,7 @@ With git on windows:
 
 Without git:
 
-    1. Download and unzip this moudle (by click "Clone or download" button).
+    1. Download and unzip this moudle (by click "Code" button).
     2. Start a console, change current dir to the folder which include "wNim.nimble" file.
        (for example: C:\wNim-master\wNim-master>)
     3. Run "nimble install"

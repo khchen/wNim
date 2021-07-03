@@ -47,13 +47,19 @@
 ##   wEvent_TextMaxlen                When the user tries to enter more text into the control than the limit.
 ##   wEvent_TextEnter                 When pressing Enter key.
 ##   ===============================  =============================================================
+##
+##   `wTextLinkEvent <wTextLinkEvent.html>`_
 
 include ../pragma
 import strutils, streams
-import ../wBase, wControl
+import ../wBase, ../wImage, wControl
 export wControl
 
 const
+  EM_SETEXTENDEDSTYLE = ECM_FIRST + 10
+  ES_EX_ZOOMABLE = 0x0010
+  ES_EX_CONVERT_EOL_ON_PASTE = 0x0004
+
   # TextCtrl styles
   wTeMultiLine* = ES_MULTILINE
   wTeReadOnly* = ES_READONLY
@@ -73,7 +79,31 @@ const
   wAcMru* = 4
   wAcUrl* = 8
 
+  # for setStyle
+  wTextAlignLeft* = PFA_LEFT
+  wTextAlignRight* = PFA_RIGHT
+  wTextAlignCenter* = PFA_CENTER
+  wTextAlignJustify* = PFA_JUSTIFY
+  wNumberingBullet* = PFN_BULLET
+  wNumberingArabic* = PFN_ARABIC
+  wNumberingLowerLetter* = PFN_LCLETTER
+  wNumberingUpperLetter* = PFN_UCLETTER
+  wNumberingLowerRoman* = PFN_LCROMAN
+  wNumberingUpperRoman* = PFN_UCROMAN
+
 type
+  wTabStyle* = enum
+    ## Indicate the style of tab leader.
+    wTabStyleSpace, wTabStyleDot, wTabStyleDash, wTabStyleUnderline, wTabStyleThickLine, wTabStyleDoubleLine
+
+  wTabAlign* = enum
+    ## Indicate the tab alignment.
+    wTabAlignLeft, wTabAlignCenter, wTabAlignRight, wTabAlignDecimal, wTabAlignVertical
+
+  wTextTabs* {.pure.} = object
+    ## wTextTabs is an object used to set tabs of paragraph.
+    mTabs: seq[LONG]
+
   wAutoCompleteProvider* = proc (self: wTextCtrl): seq[string]
     ## Callback function to provide the custom source for autocomplete
 
@@ -344,13 +374,78 @@ proc writeText*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Writes the text into the text control at the current insertion position.
   SendMessage(self.mHwnd, EM_REPLACESEL, 1, &T(text))
 
-proc appendText*(self: wTextCtrl, text: string) {.validate, inline.} =
+proc appendText*(self: wTextCtrl, text: string) {.validate.} =
   ## Appends the text to the end of the text control.
   self.setInsertionPointEnd()
   self.writeText(text)
 
   if self.mRich and self.isMultiLine():
     SendMessage(self.mHwnd, WM_VSCROLL, SB_BOTTOM, 0)
+
+proc writeRtfText*(self: wTextCtrl, text: string) {.validate, inline.} =
+  ## Writes the RTF text into the text control at the current insertion position.
+  ## Only works for rich text control.
+  if self.mRich:
+    var settextex = SETTEXTEX(flags: ST_SELECTION, codepage: 65001)
+    SendMessage(self.mHwnd, EM_SETTEXTEX, &settextex, &text)
+
+proc appendRtfText*(self: wTextCtrl, text: string) {.validate.} =
+  ## Appends the RTF text to the end of the text control.
+  ## Only works for rich text control.
+  if self.mRich:
+    self.setInsertionPointEnd()
+    self.writeRtfText(text)
+
+    if self.isMultiLine():
+      SendMessage(self.mHwnd, WM_VSCROLL, SB_BOTTOM, 0)
+
+proc generateLinkRtf(link: string, alias = ""): string =
+  let
+    alias = if alias.len == 0: link else: alias
+    link = link.replace("\"", "")
+
+  result = r"""{\rtf{\field{\*\fldinst HYPERLINK "$#"}{\fldrslt $#}}}""" %
+    [link, alias]
+
+proc generateImageRtf(image: wImage, scale: float, dpi: int): string =
+  when not defined(Nimdoc):
+    let
+      (width, height) = image.size
+      png = image.saveData(wImageTypePng)
+      wgoal = width * 1440 div dpi
+      hgoal = height * 1440 div dpi
+      scale = int scale * 100
+
+    result = r"{\rtf{\pict\pngblip\picscalex$#\picscaley$#\picwgoal$#\pichgoal$# $#}}" %
+      [$scale, $scale, $wgoal, $hgoal, png.tohex]
+
+proc writeLink*(self: wTextCtrl, link: string, alias = "") {.validate.} =
+  ## Writes a link into the text control at the current insertion position.
+  ## Only works for rich text control.
+  ## A wEvent_TextLink event will be generated when mouse events occur over link.
+  if self.mRich:
+    self.writeRtfText(generateLinkRtf(link, alias))
+
+proc appendLink*(self: wTextCtrl, link: string, alias = "") {.validate.} =
+  ## Appends a link to the end of the text control.
+  ## Only works for rich text control.
+  ## A wEvent_TextLink event will be generated when mouse events occur over link.
+  if self.mRich:
+    self.appendRtfText(generateLinkRtf(link, alias))
+
+proc writeImage*(self: wTextCtrl, image: wImage, scale = 1.0) =
+  ## Writes an image into the text control at the current insertion position.
+  ## Only works for rich text control.
+  wValidate(image)
+  if self.mRich:
+    self.writeRtfText(generateImageRtf(image, scale, self.getDpi()))
+
+proc appendImage*(self: wTextCtrl, image: wImage, scale = 1.0) {.validate.} =
+  ## Appends an image to the end of the text control.
+  ## Only works for rich text control.
+  wValidate(image)
+  if self.mRich:
+    self.appendRtfText(generateImageRtf(image, scale, self.getDpi()))
 
 proc getTextSelection*(self: wTextCtrl): string {.validate, property.} =
   ## Gets the text currently selected in the control or empty string if there is
@@ -384,37 +479,175 @@ proc add*(self: wTextCtrl, text: string) {.validate, inline.} =
   ## Appends the text to the end of the text control. The same as appendText()
   self.appendText(text)
 
-proc formatSelection*(self: wTextCtrl, font:wFont, fore:wColor, back:wColor) {.validate, inline.} =
-  ## Format the selected text if wTeRich style is specified
+proc tabStyle(style: wTabStyle, align: wTabAlign): DWORD =
+  result = case style
+    of wTabStyleSpace: 0
+    of wTabStyleDot: 0x10000000
+    of wTabStyleDash: 0x20000000
+    of wTabStyleUnderline: 0x30000000
+    of wTabStyleThickLine: 0x40000000
+    of wTabStyleDoubleLine: 0x50000000
+
+  result = result or (case align
+    of wTabAlignLeft: 0
+    of wTabAlignCenter: 0x01000000
+    of wTabAlignRight: 0x02000000
+    of wTabAlignDecimal: 0x03000000
+    of wTabAlignVertical: 0x04000000)
+
+proc TextTabs*(offset: int, style: wTabStyle = wTabStyleSpace,
+    align: wTabAlign = wTabAlignLeft): wTextTabs =
+  ## Constructor for wTextTabs object used by *setStyle*.
+  ## Space unit is twip (1/1440 inche).
+  result.mTabs.setLen(MAX_TAB_STOPS)
+  var n = offset
+  for i in 0..<MAX_TAB_STOPS:
+    result.mTabs[i] = (n.DWORD and 0xffffff) or tabStyle(style, align)
+    n += offset
+
+proc set*(self: var wTextTabs, index: range[0..(MAX_TAB_STOPS-1)], style: wTabStyle = wTabStyleSpace,
+    align: wTabAlign = wTabAlignLeft) =
+  ## Sets the style and alignment of specified tab stop.
+  self.mTabs[index] = (self.mTabs[index] and 0xffffff) or tabStyle(style, align)
+
+proc resetStyle*(self: wTextCtrl) {.validate, inline.} =
+  ## Reset the style to default.
   if self.mRich:
-    var charformat = CHARFORMAT2(cbSize: sizeof(CHARFORMAT2))
-    charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS or CFM_BACKCOLOR or CFM_COLOR
+    var format = PARAFORMAT2(cbSize: sizeof(PARAFORMAT2))
+    format.wAlignment = PFA_LEFT
+    format.dwMask = PFM_ALIGNMENT or PFM_STARTINDENT or PFM_OFFSET or
+      PFM_RIGHTINDENT or PFM_SPACEBEFORE or PFM_SPACEAFTER or PFM_NUMBERING or
+      PFM_LINESPACING or PFM_TABSTOPS
+
+    SendMessage(self.mHwnd, EM_SETPARAFORMAT, 0, &format)
+
+proc setStyle*(self: wTextCtrl, align = 0, indent = -1, subIndent = -1,
+    rightIndent = -1, spaceBefore = -1, spaceAfter = -1, numbering = -1,
+    lineSpacing = NaN, tabs = default(wTextTabs)) {.validate, property.} =
+  ## Sets style of paragraph in the current selection or paragraph inserted at the insertion point.
+  ## Space unit is twip (1/1440 inche).
+  ## *lineSpacing* >= 0 means lines, < 0 means abs(twip).
+  ## ===========================  ==============================================
+  ## align                        Description
+  ## ===========================  ==============================================
+  ## wTextAlignLeft               Paragraphs are aligned with the left margin.
+  ## wTextAlignRight              Paragraphs are aligned with the right margin.
+  ## wTextAlignCenter             Paragraphs are centered.
+  ## wTextAlignJustify            Paragraphs are justified by expanding the blanks alone.
+  ##
+  ## ===========================  ==============================================
+  ## numbering                    Description
+  ## ===========================  ==============================================
+  ## wNumberingBullet             Insert a bullet at the beginning of each selected paragraph.
+  ## wNumberingArabic             Use Arabic numbers (0, 1, 2, and so on).
+  ## wNumberingLowerLetter        Use lowercase letters (a, b, c, and so on).
+  ## wNumberingUpperLetter        Use lowercase Roman letters (i, ii, iii, and so on).
+  ## wNumberingLowerRoman         Use uppercase letters (A, B, C, and so on).
+  ## wNumberingUpperRoman         Use uppercase Roman letters (I, II, III, and so on).
+  if not self.mRich: return
+  var format = PARAFORMAT2(cbSize: sizeof(PARAFORMAT2))
+
+  if align in PFA_LEFT..PFA_JUSTIFY:
+    format.dwMask = format.dwMask or PFM_ALIGNMENT
+    format.wAlignment = WORD align
+
+  if indent >= 0:
+    format.dwMask = format.dwMask or PFM_STARTINDENT
+    format.dxStartIndent = indent
+
+  if subIndent >= 0:
+    format.dwMask = format.dwMask or PFM_OFFSET
+    format.dxOffset  = subIndent
+
+  if rightIndent >= 0:
+    format.dwMask = format.dwMask or PFM_RIGHTINDENT
+    format.dxRightIndent  = rightIndent
+
+  if spaceBefore >= 0:
+    format.dwMask = format.dwMask or PFM_SPACEBEFORE
+    format.dySpaceBefore  = spaceBefore
+
+  if spaceAfter >= 0:
+    format.dwMask = format.dwMask or PFM_SPACEAFTER
+    format.dySpaceAfter  = rightIndent
+
+  if numbering in 0..PFN_UCROMAN:
+    format.dwMask = format.dwMask or PFM_NUMBERING
+    format.wNumbering = WORD numbering
+
+  if lineSpacing == lineSpacing: # not NaN
+    format.dwMask = format.dwMask or PFM_LINESPACING
+    if lineSpacing >= 0:
+      format.bLineSpacingRule = 5
+      format.dyLineSpacing = int(lineSpacing * 20)
+    else:
+      format.bLineSpacingRule = 3
+      format.dyLineSpacing = int abs(lineSpacing)
+
+  if tabs.mTabs.len != 0:
+    format.dwMask = format.dwMask or PFM_TABSTOPS
+    format.cTabCount = SHORT min(tabs.mTabs.len, MAX_TAB_STOPS)
+    copyMem(addr format.rgxTabs[0], unsafeaddr tabs.mTabs[0], sizeof(LONG) * format.cTabCount)
+
+  SendMessage(self.mHwnd, EM_SETPARAFORMAT, 0, &format)
+
+proc charformat(self: wTextCtrl, flag: int, font: wFont = nil, fgColor: wColor = -1, bgColor: wColor = -1) =
+  var charformat = CHARFORMAT2(cbSize: sizeof(CHARFORMAT2))
+  if font != nil:
+    charformat.dwMask = charformat.dwMask or (CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS)
     charformat.yHeight = LONG(font.mPointSize * 20)
     charformat.wWeight = WORD font.mWeight
-    charformat.crBackColor = COLORREF back
-    charformat.crTextColor = COLORREF fore
     charformat.szFaceName << T(font.mFaceName)
     charformat.bCharSet = BYTE font.mEncoding
     charformat.bPitchAndFamily = BYTE font.mFamily
     if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
     if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
-    SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_SELECTION, cast[LPARAM](&charformat))
+
+  if fgColor > 0:
+    charformat.dwMask = charformat.dwMask or CFM_COLOR
+    charformat.crTextColor = fgColor
+
+  if bgColor > 0:
+    charformat.dwMask = charformat.dwMask or CFM_BACKCOLOR
+    charformat.crBackColor = bgColor
+
+  SendMessage(self.mHwnd, EM_SETCHARFORMAT, flag, &charformat)
+
+proc setFormat*(self: wTextCtrl, font: wFont = nil, fgColor: wColor = -1,
+    bgColor: wColor = -1) {.validate, property.} =
+  ## Sets the selection and new character format for this text control if wTeRich style is specified.
+  ## Using nil for font or -1 for color indicate not to change.
+  if self.mRich:
+    self.charformat(SCF_SELECTION, font, fgColor, bgColor)
+
+proc setDefaultFormat*(self: wTextCtrl, font: wFont = nil, fgColor: wColor = -1,
+    bgColor: wColor = -1) {.validate, property.} =
+  ## Sets the default format for this text control if wTeRich style is specified.
+  ## Using nil for font or -1 for color indicate not to change.
+  if self.mRich:
+    self.charformat(SCF_DEFAULT, font, fgColor, bgColor)
 
 method setFont*(self: wTextCtrl, font: wFont) {.validate, property.} =
   ## Sets the font for this text control.
   wValidate(font)
   procCall wWindow(self).setFont(font)
   if self.mRich:
-    var charformat = CHARFORMAT2(cbSize: sizeof(CHARFORMAT2))
-    charformat.dwMask = CFM_SIZE or CFM_WEIGHT or CFM_FACE or CFM_CHARSET or CFM_EFFECTS
-    charformat.yHeight = LONG(font.mPointSize * 20)
-    charformat.wWeight = WORD font.mWeight
-    charformat.szFaceName << T(font.mFaceName)
-    charformat.bCharSet = BYTE font.mEncoding
-    charformat.bPitchAndFamily = BYTE font.mFamily
-    if font.mItalic: charformat.dwEffects = charformat.dwEffects or CFM_ITALIC
-    if font.mUnderline: charformat.dwEffects = charformat.dwEffects or CFE_UNDERLINE
-    SendMessage(self.mHwnd, EM_SETCHARFORMAT, SCF_DEFAULT, cast[LPARAM](&charformat))
+    self.charformat(SCF_DEFAULT, font)
+
+proc zoom*(self: wTextCtrl, ratio = 1.0) {.validate, inline.} =
+  ## Sets the zoom ratio for this text control.
+  ## Ratio should be between 1/64 and 64.
+  ## If ratio is zero or NaN, disable zoom if possible.
+  if ratio == 0 or ratio != ratio:
+    SendMessage(self.mHwnd, EM_SETEXTENDEDSTYLE, ES_EX_ZOOMABLE, 0)
+    SendMessage(self.mHwnd, EM_SETZOOM, 0, 0)
+  else:
+    let ratio = ratio.clamp(1 / 64, 64)
+    SendMessage(self.mHwnd, EM_SETEXTENDEDSTYLE, ES_EX_ZOOMABLE, ES_EX_ZOOMABLE)
+    if ratio >= 1:
+      SendMessage(self.mHwnd, EM_SETZOOM, int16.high, int16(int16.high.float / ratio))
+    else:
+      SendMessage(self.mHwnd, EM_SETZOOM, int16(int16.high.float * ratio), int16.high)
 
 proc StreamInCallback(dwCookie: DWORD_PTR, pbBuff: LPBYTE, cb: LONG, pcb: ptr LONG): DWORD {.stdcall.} =
   let pstrm = cast[ptr Stream](dwCookie)
@@ -641,16 +874,32 @@ proc enableAutoComplete*(self: wTextCtrl, provider: wAutoCompleteProvider): bool
 
   return false
 
+proc enableAutoUrlDetect*(self: wTextCtrl, enable = true): bool {.discardable.} =
+  ## Enables or disables automatic detection of hyperlinks by a rich edit control.
+  ## A wEvent_TextLink event will be generated when mouse events occur over url.
+  if self.mRich:
+    result = SendMessage(self.mHwnd, EM_AUTOURLDETECT, if enable: AURL_ENABLEEA else: 0, 0) == 0
+
 method processNotify(self: wTextCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     ret: var LRESULT): bool =
 
-  if code == EN_REQUESTRESIZE:
+  case code
+  of EN_REQUESTRESIZE:
     let requestSize  = cast[ptr REQRESIZE](lparam)
     self.mBestSize.width = int(requestSize.rc.right - requestSize.rc.left)
     self.mBestSize.height = int(requestSize.rc.bottom - requestSize.rc.top)
     return true
 
-  return procCall wControl(self).processNotify(code, id, lParam, ret)
+  of EN_LINK:
+    let pEnlink = cast[ptr TENLINK](lParam)
+    var event = wTextLinkEvent Event(self, wEvent_TextLink, cast[WPARAM](id), lParam)
+    event.mStart = pEnlink.chrg.cpMin
+    event.mEnd = pEnlink.chrg.cpMax
+    event.mMouseEvent = pEnlink.msg
+    return self.processEvent(event)
+
+  else:
+    return procCall wControl(self).processNotify(code, id, lParam, ret)
 
 proc wTextCtrl_ParentOnCommand(self: wTextCtrl, event: wEvent) =
   if event.mLparam == self.mHwnd:
@@ -695,16 +944,12 @@ wClass(wTextCtrl of wControl):
     self.wControl.init(className=className, parent=parent, id=id, label=value,
       pos=pos, size=size, style=style or WS_CHILD or WS_VISIBLE or WS_TABSTOP)
 
+    SendMessage(self.mHwnd, EM_SETEXTENDEDSTYLE, ES_EX_CONVERT_EOL_ON_PASTE,
+      ES_EX_CONVERT_EOL_ON_PASTE)
+
     if self.mRich:
       SendMessage(self.mHwnd, EM_SETEVENTMASK, 0, ENM_CHANGE or
-        ENM_REQUESTRESIZE or ENM_UPDATE)
-
-      var format = PARAFORMAT2(
-        cbSize: sizeof(PARAFORMAT2),
-        dwMask: PFM_LINESPACING,
-        dyLineSpacing: 0,
-        bLineSpacingRule: 5)
-      SendMessage(self.mHwnd, EM_SETPARAFORMAT, 0, &format)
+        ENM_REQUESTRESIZE or ENM_UPDATE or ENM_LINK)
 
       # rich edit's scroll bar needs these to work well
       self.systemConnect(WM_VSCROLL, wWindow_DoScroll)

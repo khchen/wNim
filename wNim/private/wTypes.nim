@@ -149,8 +149,8 @@ type
 
   wMessageLoopHookProc* = proc (msg: var wMsg, modalHwnd: HWND): int
     ## Hook procedure to the message loop. *modalHwnd* is not 0 if it is a modal
-    ## window message loop instead of main loop. Returns > 0 to continue the loop,
-    ## and returns < 0 to break the loop.
+    ## window message loop instead of main loop. Returns > 0 to continue(skip) the loop,
+    ## and returns < 0 to break(exit) the loop.
 
   wMsg* = MSG
     ## Binary compatibility with Win32 MSG structure.
@@ -250,6 +250,11 @@ type
     mUrl*: string
     mText*: string
 
+  wTextLinkEvent* = ref object of wCommandEvent
+    mStart*: int
+    mEnd*: int
+    mMouseEvent*: UINT
+
   wScrollData* = object
     kind*: int
     orientation*: int
@@ -318,7 +323,7 @@ type
     mConnectionTable*: Table[UINT, DoublyLinkedList[wEventConnection]]
     mMargin*: wDirection
     mStatusBar*: wStatusBar
-    mToolBar*: wToolBar
+    mToolBars*: seq[wToolBar]
     mRebar*: wRebar
     mFont*: wFont
     mBackgroundColor*: wColor
@@ -414,7 +419,6 @@ type
   wComboBox* = ref object of wControl
     mEdit*: wTextCtrl
     mList*: wListBox
-    mOldEditProc*: WNDPROC
     mInitData*: ptr UncheckedArray[string]
     mInitCount*: int
     mCommandConn*: wEventConnection
@@ -554,6 +558,22 @@ type
     mValue*: string
     mKeyCode*: int
     mModifiers*: int
+
+  wMenuBarCtrl* = ref object of wControl
+    mMenuBar*: wMenuBar
+    mOldWndProc*: WNDPROC
+    mOldFocus*: HWND
+    mHotItem*: int
+    mPressedItem*: int
+    mFromKeyboard*: bool
+    mContinueHotTrack*: bool
+    mRtl*: bool
+    mHook*: HHOOK
+    mLastPos*: POINT
+    mLastItem*: int
+    mBlockerStart*: DWORD
+    mHelpStatusBar*: wStatusBar
+    mHelpDisplayed*: bool
 
   wMenuBase* = ref object of RootObj
     mHmenu*: HMENU

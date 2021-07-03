@@ -7,17 +7,19 @@
 
 import resource/resource
 import wNim/[wApp, wImageList, wImage, wBitmap, wIcon, wFrame, wStatusBar, wRebar,
-  wToolBar, wButton, wComboBox, wUtils]
+  wToolBar, wButton, wComboBox, wMenuBarCtrl, wMenuBar]
 
 type
   MenuID = enum
-    idTool1 = wIdUser, idTool2, idTool3, idTool4
+    idOpen = wIdUser, idExit, idCut, idCopy, idPaste, idAbout
+    idTool1, idTool2, idTool3, idTool4
 
-const resource1 = staticRead(r"images/1.png")
-const resource2 = staticRead(r"images/2.png")
-const resource3 = staticRead(r"images/3.png")
-const resource4 = staticRead(r"images/4.png")
-const resource5 = staticRead(r"images/cancel.ico")
+const
+  resource1 = staticRead(r"images/1.png")
+  resource2 = staticRead(r"images/2.png")
+  resource3 = staticRead(r"images/3.png")
+  resource4 = staticRead(r"images/4.png")
+  resource5 = staticRead(r"images/cancel.ico")
 
 let imageList = ImageList(24, 24)
 imageList.add(Image(resource1).scale(24, 24))
@@ -26,19 +28,20 @@ imageList.add(Image(resource3).scale(24, 24))
 imageList.add(Image(resource4).scale(24, 24))
 imageList.add(Image(resource5).scale(24, 24))
 
-let img1 = Image(resource1).scale(16, 16)
-let img2 = Image(resource2).scale(16, 16)
-let img3 = Image(resource3).scale(16, 16)
-let img4 = Image(resource4).scale(16, 16)
+let
+  img1 = Image(resource1).scale(16, 16)
+  img2 = Image(resource2).scale(16, 16)
+  img3 = Image(resource3).scale(16, 16)
+  img4 = Image(resource4).scale(16, 16)
 
-wSetSysemDpiAware()
-let app = App()
-let frame = Frame(title="Rebar Example")
+let
+  app = App(wSystemDpiAware)
+  frame = Frame(title="Rebar Example")
+  statusbar = StatusBar(frame)
+  reset = Button(frame, label="Reset Layout And Freeze")
+  rebar = Rebar(frame)
+
 frame.icon = Icon("", 0) # load icon from exe file.
-
-let statusbar = StatusBar(frame)
-let reset = Button(frame, label="Reset Layout And Freeze")
-let rebar = Rebar(frame)
 rebar.setImageList(imageList)
 
 let toolbar = ToolBar(rebar)
@@ -53,11 +56,29 @@ let combobox = ComboBox(rebar, value="Combobox Item1",
   choices=["Combobox Item1", "Combobox Item2", "Combobox Item3"],
   style=wCB_READONLY)
 
-let bandToolBar = rebar.addBand(toolBar)
-let bandEmpty = rebar.addBand()
-let bandButton = rebar.addBand(button, 4)
-let bandCombobox = rebar.addBand(combobox, 2, "Combo", style=wRbBreak)
-rebar.maximizeBand(bandEmpty)
+let menuBar = MenuBar()
+let menuFile = Menu(menuBar, "&File")
+menuFile.append(idOpen, "&Open", "Open a file.")
+menuFile.appendSeparator()
+menuFile.append(idExit, "E&xit", "Exit the program.")
+
+let menuEdit = Menu(menuBar, "E&dit")
+menuEdit.append(idCut, "Cut", "Cut")
+menuEdit.append(idCopy, "&Copy", "Copy")
+menuEdit.append(idPaste, "&Paste", "Paste")
+
+let menuAbout = Menu(menuBar, "A&bout")
+menuAbout.append(idAbout, "About", "About the program")
+
+let menuBarCtrl = MenuBarCtrl(rebar, menuBar=menuBar, statusBar=statusbar)
+wMenuBarCtrlEnableMenuKey()
+
+rebar.addBand(toolBar)
+rebar.addBand()
+rebar.addBand(button, 4)
+rebar.addBand(combobox, 2, "Combo", style=wRbBreak)
+rebar.addBand(menuBarCtrl)
+rebar.maximizeBand(1)
 
 frame.wEvent_Tool do (event: wEvent):
   statusbar.setStatusText($MenuID(event.id) & " clicked.")
@@ -66,6 +87,9 @@ combobox.wEvent_ComboBox do (event: wEvent):
   statusbar.setStatusText(combobox.getValue())
 
 button.wEvent_Button do ():
+  frame.close()
+
+frame.idExit do ():
   frame.close()
 
 let layout = rebar.layout

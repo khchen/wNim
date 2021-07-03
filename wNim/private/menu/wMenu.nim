@@ -462,10 +462,6 @@ proc toggle*(self: wMenu, pos: int) {.validate.} =
   ## Toggle the menu item.
   wMenuToggle(self, pos)
 
-proc getHandle*(self: wMenu): HMENU {.validate, property, inline.} =
-  ## Get system handle of this menu.
-  result = self.mHmenu
-
 proc getTitle*(self: wMenu): string {.validate, property.} =
   ## Returns the title of the menu, a title means it's label in menuBar or menu.
   ## (find fist match if a menu attach to more than one menuBar or menu).
@@ -479,10 +475,6 @@ proc getTitle*(self: wMenu): string {.validate, property.} =
       let menu = wBase.wMenu(menuBase)
       let pos = menu.find(self)
       if pos != wNotFound: return menu.getText(pos)
-
-proc getCount*(self: wMenu): int {.validate, property, inline.} =
-  ## Returns the number of items in the menu.
-  result = GetMenuItemCount(self.mHmenu)
 
 iterator items*(self: wMenu): wMenuItem {.validate.} =
   ## Iterator menus in a menubar

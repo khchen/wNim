@@ -124,6 +124,8 @@ function main() {
     title="wHScroll = 0x00100000"><wbr />w<wbr />HScroll<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wClipChildren"
     title="wClipChildren = 0x02000000"><wbr />w<wbr />Clip<wbr />Children<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wClipSiblings"
+    title="wClipSiblings = 0x04000000"><wbr />w<wbr />Clip<wbr />Siblings<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wHideTaskbar"
     title="wHideTaskbar = 1152921504606846976&apos;i64"><wbr />w<wbr />Hide<wbr />Taskbar<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wInvisible"
@@ -298,6 +300,8 @@ function main() {
     title="show(self: wWindow; cmd: int)"><wbr />show<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#hide%2CwWindow"
     title="hide(self: wWindow)"><wbr />hide<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#showCaret%2CwWindow"
+    title="showCaret(self: wWindow; flag = true)"><wbr />show<wbr />Caret<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isShownOnScreen%2CwWindow"
     title="isShownOnScreen(self: wWindow): bool"><wbr />is<wbr />Shown<wbr />On<wbr />Screen<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isShown%2CwWindow"
@@ -338,8 +342,10 @@ function main() {
     title="getFont(self: wWindow): wFont"><wbr />get<wbr />Font<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getStatusBar%2CwWindow"
     title="getStatusBar(self: wWindow): wStatusBar"><wbr />get<wbr />Status<wbr />Bar<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getToolBar%2CwWindow"
-    title="getToolBar(self: wWindow): wToolBar"><wbr />get<wbr />Tool<wbr />Bar<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getToolBar%2CwWindow%2Cint"
+    title="getToolBar(self: wWindow; index = 0): wToolBar"><wbr />get<wbr />Tool<wbr />Bar<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getToolBars%2CwWindow"
+    title="getToolBars(self: wWindow): seq[wToolBar]"><wbr />get<wbr />Tool<wbr />Bars<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getId%2CwWindow"
     title="getId(self: wWindow): wCommandID"><wbr />get<wbr />Id<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getTitle%2CwWindow"
@@ -583,6 +589,7 @@ function main() {
 <tr><td>wVScroll</td><td>Use this style to enable a vertical scrollbar.</td></tr>
 <tr><td>wHScroll</td><td>Use this style to enable a horizontal scrollbar.</td></tr>
 <tr><td>wClipChildren</td><td>Use this style to eliminate flicker caused by the background being repainted, then children being painted over them.</td></tr>
+<tr><td>wClipSiblings</td><td>Use this style to cuts the sibling window.</td></tr>
 <tr><td>wHideTaskbar</td><td>Use this style to hide the taskbar item (top-level window only).</td></tr>
 <tr><td>wInvisible</td><td>The window is initially invisible (child window is visible by default).</td></tr>
 <tr><td>wPopup</td><td>The window is a pop-up window (WS_POPUP).</td></tr>
@@ -645,6 +652,9 @@ An error raised when wWindow creation failed.
 
 <a id="wClipChildren"></a>
 <dt><pre><a href="wWindow.html#wClipChildren"><span class="Identifier">wClipChildren</span></a> <span class="Other">=</span> <span class="DecNumber">0x02000000</span></pre></dt>
+
+<a id="wClipSiblings"></a>
+<dt><pre><a href="wWindow.html#wClipSiblings"><span class="Identifier">wClipSiblings</span></a> <span class="Other">=</span> <span class="DecNumber">0x04000000</span></pre></dt>
 
 <a id="wHideTaskbar"></a>
 <dt><pre><a href="wWindow.html#wHideTaskbar"><span class="Identifier">wHideTaskbar</span></a> <span class="Other">=</span> <span class="DecNumber">1152921504606846976'i64</span></pre></dt>
@@ -820,14 +830,14 @@ Destroys the window. The same as delete().
 <dt><pre><span class="Keyword">proc</span> <a href="#move%2CwWindow%2Cint%2Cint"><span class="Identifier">move</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">x</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Moves the window to the given position. wDefault to indicate not to change.
+Moves the window to the given position. Using wDefault to indicate not to change.
 
 </dd>
 <a id="move,wWindow,wPoint"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#move%2CwWindow%2CwPoint"><span class="Identifier">move</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">pos</span><span class="Other">:</span> <a href="wTypes.html#wPoint"><span class="Identifier">wPoint</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Moves the window to the given position. wDefault to indicate not to change.
+Moves the window to the given position. Using wDefault to indicate not to change.
 
 </dd>
 <a id="setPosition,wWindow,wPoint"></a>
@@ -835,7 +845,7 @@ Moves the window to the given position. wDefault to indicate not to change.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Moves the window to the specified position. The same as move(). wDefault to indicate not to change.
+Moves the window to the specified position. The same as move(). Using wDefault to indicate not to change.
 
 </dd>
 <a id="setPosition,wWindow,int,int"></a>
@@ -843,7 +853,7 @@ Moves the window to the specified position. The same as move(). wDefault to indi
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Moves the window to the specified position. The same as move(). wDefault to indicate not to change.
+Moves the window to the specified position. The same as move(). Using wDefault to indicate not to change.
 
 </dd>
 <a id="lift,wWindow"></a>
@@ -871,7 +881,7 @@ Adjusts the Z-order to cover the specified window.
 <dt><pre><span class="Keyword">proc</span> <a href="#setSize%2CwWindow%2Cint%2Cint"><span class="Identifier">setSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Sets the size of the window in pixels. wDefault to indicate not to change.
+Sets the size of the window in pixels. Using wDefault to indicate not to change.
 
 </dd>
 <a id="setSize,wWindow,int,int,int,int"></a>
@@ -879,14 +889,14 @@ Sets the size of the window in pixels. wDefault to indicate not to change.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Sets the size of the window in pixels. wDefault to indicate not to change.
+Sets the size of the window in pixels. Using wDefault to indicate not to change.
 
 </dd>
 <a id="setSize,wWindow,wSize"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#setSize%2CwWindow%2CwSize"><span class="Identifier">setSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">size</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Sets the size of the window in pixels. wDefault to indicate not to change.
+Sets the size of the window in pixels. Using wDefault to indicate not to change.
 
 </dd>
 <a id="setSize,wWindow,wPoint,wSize"></a>
@@ -894,7 +904,7 @@ Sets the size of the window in pixels. wDefault to indicate not to change.
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Sets the size of the window in pixels. wDefault to indicate not to change.
+Sets the size of the window in pixels. Using wDefault to indicate not to change.
 
 </dd>
 <a id="setSize,wWindow,wRect"></a>
@@ -902,7 +912,7 @@ Sets the size of the window in pixels. wDefault to indicate not to change.
                                       <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Sets the size of the window in pixels. wDefault to indicate not to change.
+Sets the size of the window in pixels. Using wDefault to indicate not to change.
 
 </dd>
 <a id="getSize,wWindow"></a>
@@ -1063,30 +1073,28 @@ Converts to screen coordinates from coordinates relative to this window.
 
 </dd>
 <a id="getDpi,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getDpi%2CwWindow"><span class="Identifier">getDpi</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#getDpi%2CwWindow"><span class="Identifier">getDpi</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the dpi value for the window. This function use GetDpiForWindow() api (requires win 10) to get the current dpi if possible.
 
 </dd>
 <a id="getDpiScaleRatio,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getDpiScaleRatio%2CwWindow"><span class="Identifier">getDpiScaleRatio</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#getDpiScaleRatio%2CwWindow"><span class="Identifier">getDpiScaleRatio</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the dpi scale ratio for the window.
 
 </dd>
 <a id="dpiScale,wWindow,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#dpiScale%2CwWindow%2Cint"><span class="Identifier">dpiScale</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#dpiScale%2CwWindow%2Cint"><span class="Identifier">dpiScale</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the relative value according to current dpi setting.
 
 </dd>
 <a id="dpiScale,wWindow,float"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#dpiScale%2CwWindow%2Cfloat"><span class="Identifier">dpiScale</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">proc</span> <a href="#dpiScale%2CwWindow%2Cfloat"><span class="Identifier">dpiScale</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">value</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -1148,6 +1156,13 @@ Shows the window using specified command.
 <dd>
 
 Hides the window.
+
+</dd>
+<a id="showCaret,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#showCaret%2CwWindow"><span class="Identifier">showCaret</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">flag</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Show or hide the caret. Hiding is cumulative. If your application hide caret five times, it must also show caret five times before the caret reappears.
 
 </dd>
 <a id="isShownOnScreen,wWindow"></a>
@@ -1290,11 +1305,18 @@ Returns the font for this window.
 Returns the status bar currently associated with the window.
 
 </dd>
-<a id="getToolBar,wWindow"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getToolBar%2CwWindow"><span class="Identifier">getToolBar</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="getToolBar,wWindow,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getToolBar%2CwWindow%2Cint"><span class="Identifier">getToolBar</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">index</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Returns the toolbar currently associated with the window.
+Returns the toolbar of specified index currently associated with the window.
+
+</dd>
+<a id="getToolBars,wWindow"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getToolBars%2CwWindow"><span class="Identifier">getToolBars</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Returns the toolbars currently associated with the window.
 
 </dd>
 <a id="getId,wWindow"></a>

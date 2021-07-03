@@ -19,6 +19,7 @@
 ##   `wListEvent <wListEvent.html>`_
 ##   `wTreeEvent <wTreeEvent.html>`_
 ##   `wHyperlinkEvent <wHyperlinkEvent.html>`_
+##   `wTextLinkEvent <wTextLinkEvent.html>`_
 #
 ## :Seealso:
 ##   `wButton <wButton.html>`_
@@ -125,10 +126,10 @@ include ../pragma
 import ../wBase
 
 import wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
-  wHyperlinkEvent, wIpEvent, wWebViewEvent
+  wHyperlinkEvent, wIpEvent, wWebViewEvent, wTextLinkEvent
 
 export wStatusBarEvent, wScrollEvent, wListEvent, wTreeEvent, wSpinEvent,
-  wHyperlinkEvent, wIpEvent, wWebViewEvent
+  wHyperlinkEvent, wIpEvent, wWebViewEvent, wTextLinkEvent
 
 wEventRegister(wCommandEvent):
   wEvent_CommandFirst

@@ -6,7 +6,7 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon, wUtils]
+import wNim/[wApp, wMacros, wFrame, wMessageDialog, wIcon]
 
 # wNim's class/object use following naming convention.
 # 1. Class name starts with 'w' and define as ref object. e.g. wObject.
@@ -38,9 +38,7 @@ wClass(wMyFrame of wFrame):
     MessageDialog(nil, "A custom finalizer is optional.", "Finalizer").display()
 
 when isMainModule:
-
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = MyFrame("Hello World")
   frame.icon = Icon("", 0) # load icon from exe file.
 

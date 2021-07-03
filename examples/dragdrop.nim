@@ -21,8 +21,7 @@ const defaultText = "You can drop text, image, or files on drop target."
 const defaultFile = ["dragdrop.exe"]
 const defaultImage = staticRead(r"images/logo.png")
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 var data = DataObject(defaultText)
 
 let frame = Frame(title="wNim Drag-Drop Demo", size=(600, 350),

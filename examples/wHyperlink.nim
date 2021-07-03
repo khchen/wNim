@@ -165,10 +165,9 @@ wClass(wHyperlink of wStaticText):
 
 when isMainModule:
   import resource/resource
-  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont, wUtils]
+  import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wFont]
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = Frame(title="wHyperlink custom control")
   frame.icon = Icon("", 0) # load icon from exe file.
 

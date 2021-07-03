@@ -11,7 +11,10 @@ import
   mcts/[gamebase, engine_reversi]
 
 import wNim/[wApp, wMacros, wIcon, wImage, wFrame, wStatusBar, wMenuBar, wMenu,
-  wMemoryDC, wPaintDC, wBitmap, wBrush, wUtils]
+  wMemoryDC, wPaintDC, wBitmap, wBrush]
+
+when defined(vcc):
+  import macros
 
 type
   MenuId = enum idNew = 100, idExit, idAi1, idAi2,
@@ -81,9 +84,24 @@ wClass(wBoard of wFrame):
       style=wCaption or wSystemMenu or wMinimizeBox or wModalFrame)
     self.setIcon(Icon("", 0))
 
-    const boardImg = staticRead(r"images/board2.png")
+    when defined(vcc):
+      macro staticReadArray(path: string): untyped =
+        let data = staticRead(path.strval)
+        var code = "@[byte "
+        for i in 0..data.high:
+          code.add $byte(data[i]) & ','
+        code.add "]"
+        result = parseExpr(code)
+
+      const data = staticReadArray(r"images/board2.png")
+      let boardImg = cast[string](data)
+
+    else:
+      const boardImg = staticRead(r"images/board2.png")
+
     const piece1Img = staticRead(r"images/black.png")
     const piece2Img = staticRead(r"images/white.png")
+
     self.mBoard = Image(boardImg)
     self.mPiece1 = Image(piece1Img)
     self.mPiece2 = Image(piece2Img)
@@ -174,8 +192,7 @@ wClass(wBoard of wFrame):
           self.tryStartAi()
 
 when isMainModule:
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let board = Board(title="wNim Reversi")
 
   board.center()

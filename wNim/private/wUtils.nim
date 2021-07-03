@@ -8,8 +8,7 @@
 ## wNim's utilities and convenience functions.
 
 include pragma
-import dynlib
-import wBase, wDataObject, wApp
+import wBase, wDataObject, wApp, wHelper
 
 const
   wSysBorderX* = SM_CXBORDER ## Width of single border.
@@ -148,42 +147,16 @@ proc wGetPrinters*(): seq[string] =
   for i in 0..<returned:
     result.add $printers[i].pName
 
-proc wSetSysemDpiAware*(): bool {.discardable.} =
+proc wSetSystemDpiAware*(): bool {.discardable.} =
   ## Sets the default DPI awareness to system aware (Windows Vista later).
   ## Return true if the function succeeds.
-  when not defined(useWinXP):
-    if SetProcessDPIAware() != 0:
-      return true
+  result = setSystemDpiAware()
 
 proc wSetPerMonitorDpiAware*(): bool {.discardable.} =
   ## Sets the default DPI awareness to per monitor aware v2 (Windows 10 version 1607 later),
   ## or per monitor aware (Windows 8.1 later).
   ## Return true if the function succeeds.
-  when not defined(useWinXP):
-    const DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
-    const PROCESS_PER_MONITOR_DPI_AWARE = 2
-
-    type
-      SetProcessDpiAwarenessContext = proc (value: HANDLE): BOOL {.stdcall.}
-      SetProcessDpiAwareness = proc (value: cint): HRESULT {.stdcall.}
-
-    var lib = loadLib("user32.dll")
-    if not lib.isNil:
-      defer: unloadLib(lib)
-
-      let api = cast[SetProcessDpiAwarenessContext](lib.symAddr("SetProcessDpiAwarenessContext"))
-      if not api.isNil:
-        if api(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) != 0:
-          return true
-
-    lib = loadLib("shcore.dll")
-    if not lib.isNil:
-      defer: unloadLib(lib)
-
-      let api = cast[SetProcessDpiAwareness](lib.symAddr("SetProcessDpiAwareness"))
-      if not api.isNil:
-        if api(PROCESS_PER_MONITOR_DPI_AWARE) == S_OK:
-          return true
+  result = setPerMonitorDpiAware()
 
 proc wGetWinVersion*(): float =
   ## Get Windows release version number.

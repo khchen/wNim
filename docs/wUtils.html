@@ -198,8 +198,8 @@ function main() {
     title="wSetDefaultPrinter(device: string)"><wbr />w<wbr />Set<wbr />Default<wbr />Printer<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wGetPrinters"
     title="wGetPrinters(): seq[string]"><wbr />w<wbr />Get<wbr />Printers<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#wSetSysemDpiAware"
-    title="wSetSysemDpiAware(): bool"><wbr />w<wbr />Set<wbr />Sysem<wbr />Dpi<wbr />Aware<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wSetSystemDpiAware"
+    title="wSetSystemDpiAware(): bool"><wbr />w<wbr />Set<wbr />System<wbr />Dpi<wbr />Aware<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wSetPerMonitorDpiAware"
     title="wSetPerMonitorDpiAware(): bool"><wbr />w<wbr />Set<wbr />Per<wbr />Monitor<wbr />Dpi<wbr />Aware<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wGetWinVersion"
@@ -562,23 +562,22 @@ Sets the printer name of the default printer for the current user
 Returns available printers.
 
 </dd>
-<a id="wSetSysemDpiAware"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#wSetSysemDpiAware"><span class="Identifier">wSetSysemDpiAware</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="wSetSystemDpiAware"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#wSetSystemDpiAware"><span class="Identifier">wSetSystemDpiAware</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Sets the default DPI awareness to system aware (Windows Vista later). Return true if the function succeeds.
 
 </dd>
 <a id="wSetPerMonitorDpiAware"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#wSetPerMonitorDpiAware"><span class="Identifier">wSetPerMonitorDpiAware</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#wSetPerMonitorDpiAware"><span class="Identifier">wSetPerMonitorDpiAware</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Sets the default DPI awareness to per monitor aware v2 (Windows 10 version 1607 later), or per monitor aware (Windows 8.1 later). Return true if the function succeeds.
 
 </dd>
 <a id="wGetWinVersion"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#wGetWinVersion"><span class="Identifier">wGetWinVersion</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#wGetWinVersion"><span class="Identifier">wGetWinVersion</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get Windows release version number.<table border="1" class="docutils"><tr><th>Windows Version</th><th>Release Version</th></tr>

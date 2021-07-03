@@ -124,6 +124,8 @@ function main() {
     title="wTbRadio = 6"><wbr />w<wbr />Tb<wbr />Radio<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wTbDropDown"
     title="wTbDropDown = 0x00000080"><wbr />w<wbr />Tb<wbr />Drop<wbr />Down<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTbFloating"
+    title="wTbFloating = 12"><wbr />w<wbr />Tb<wbr />Floating<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -196,6 +198,8 @@ function main() {
     title="getToolLabel(self: wToolBar; toolId: wCommandID): string"><wbr />get<wbr />Tool<wbr />Label<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#setToolLabel%2CwToolBar%2CwCommandID%2Cstring"
     title="setToolLabel(self: wToolBar; toolId: wCommandID; label: string)"><wbr />set<wbr />Tool<wbr />Label<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#undock%2CwToolBar"
+    title="undock(self: wToolBar)"><wbr />undock<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#init%2CwToolBar%2CwWindow%2CwStyle"
     title="init(self: wToolBar; parent: wWindow; id = wDefaultID; style: wStyle = wTbDefaultStyle)"><wbr />init<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ToolBar%2CwWindow%2CwStyle"
@@ -290,6 +294,9 @@ function main() {
 
 <a id="wTbDropDown"></a>
 <dt><pre><a href="wToolBar.html#wTbDropDown"><span class="Identifier">wTbDropDown</span></a> <span class="Other">=</span> <span class="DecNumber">0x00000080</span></pre></dt>
+
+<a id="wTbFloating"></a>
+<dt><pre><a href="wToolBar.html#wTbFloating"><span class="Identifier">wTbFloating</span></a> <span class="Other">=</span> <span class="DecNumber">12</span></pre></dt>
 
 
 </dl></div>
@@ -523,6 +530,13 @@ Returns the label for the given tool.
 Sets the label for the tool given by its id.
 
 </dd>
+<a id="undock,wToolBar"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#undock%2CwToolBar"><span class="Identifier">undock</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Undock the toolar.
+
+</dd>
 <a id="init,wToolBar,wWindow,wStyle"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#init%2CwToolBar%2CwWindow%2CwStyle"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <a href="wTypes.html#wWindow"><span class="Identifier">wWindow</span></a><span class="Other">;</span> <span class="Identifier">id</span> <span class="Other">=</span> <span class="Identifier">wDefaultID</span><span class="Other">;</span>
          <span class="Identifier">style</span><span class="Other">:</span> <a href="wTypes.html#wStyle"><span class="Identifier">wStyle</span></a> <span class="Other">=</span> <span class="Identifier">wTbDefaultStyle</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wNilAccess</span><span class="Other">,</span> <span class="Identifier">wWindowError</span><span class="Other">,</span>
@@ -549,16 +563,14 @@ Constructor.
 <h1><a class="toc-backref" href="#14">Methods</a></h1>
 <dl class="item">
 <a id="getBestSize.e,wToolBar"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#getBestSize.e%2CwToolBar"><span class="Identifier">getBestSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-                                        <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <a href="#getBestSize.e%2CwToolBar"><span class="Identifier">getBestSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the best size for the tool bar.
 
 </dd>
 <a id="getDefaultSize.e,wToolBar"></a>
-<dt><pre><span class="Keyword">method</span> <a href="#getDefaultSize.e%2CwToolBar"><span class="Identifier">getDefaultSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">method</span> <a href="#getDefaultSize.e%2CwToolBar"><span class="Identifier">getDefaultSize</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wSize"><span class="Identifier">wSize</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the default size for the tool bar.

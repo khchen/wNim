@@ -81,22 +81,14 @@ proc insertBand*(self: wRebar, pos: int, control: wWindow = nil, image = -1,
     rbBand.hwndChild = control.mHwnd
 
     if control of wBase.wToolBar:
-      var
-        toolbar = wBase.wToolBar(control)
-        toolSize = toolbar.getToolSize()
+      wBase.wToolBar(control).undock()
 
-      rbBand.cxMinChild = toolbar.getToolsCount() * toolSize.width
-      rbBand.cyMinChild = toolSize.height
+    var size = control.getMinSize()
+    if size == wDefaultSize:
+      size = control.getBestSize()
 
-      toolbar.addWindowStyle(wTbDefaultStyle or CCS_NODIVIDER or
-        CCS_NOPARENTALIGN or CCS_NORESIZE)
-
-    else:
-      var size = control.getMinSize()
-      if size == wDefaultSize:
-        size = control.getBestSize()
-      rbBand.cxMinChild = size.width
-      rbBand.cyMinChild = size.height
+    rbBand.cxMinChild = size.width
+    rbBand.cyMinChild = size.height
 
     rbBand.cx = rbBand.cxMinChild
     rbBand.cyChild = rbBand.cyMinChild

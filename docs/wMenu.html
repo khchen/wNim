@@ -219,12 +219,8 @@ function main() {
     title="isChecked(self: wMenu; pos: int): bool"><wbr />is<wbr />Checked<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toggle%2CwMenu%2Cint_2"
     title="toggle(self: wMenu; pos: int)"><wbr />toggle<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getHandle%2CwMenu"
-    title="getHandle(self: wMenu): HMENU"><wbr />get<wbr />Handle<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getTitle%2CwMenu"
     title="getTitle(self: wMenu): string"><wbr />get<wbr />Title<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getCount%2CwMenu"
-    title="getCount(self: wMenu): int"><wbr />get<wbr />Count<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#%5B%5D%2CwMenu%2Cint"
     title="`[]`(self: wMenu; pos: int): wMenuItem"><wbr />`[]`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#len%2CwMenu"
@@ -667,26 +663,12 @@ Determines whether a menu item is checked.
 Toggle the menu item.
 
 </dd>
-<a id="getHandle,wMenu"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getHandle%2CwMenu"><span class="Identifier">getHandle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wMenu"><span class="Identifier">wMenu</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HMENU</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Get system handle of this menu.
-
-</dd>
 <a id="getTitle,wMenu"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getTitle%2CwMenu"><span class="Identifier">getTitle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wMenu"><span class="Identifier">wMenu</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">wNilAccess</span><span class="Other">,</span> <span class="Identifier">IndexDefect</span><span class="Other">]</span><span class="Other">,</span>
                                  <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Returns the title of the menu, a title means it's label in menuBar or menu. (find fist match if a menu attach to more than one menuBar or menu).
-
-</dd>
-<a id="getCount,wMenu"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getCount%2CwMenu"><span class="Identifier">getCount</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wMenu"><span class="Identifier">wMenu</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Returns the number of items in the menu.
 
 </dd>
 <a id="[],wMenu,int"></a>

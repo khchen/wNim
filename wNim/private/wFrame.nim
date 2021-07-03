@@ -327,6 +327,7 @@ proc wFrame_OnSize(event: wEvent) =
   for child in self.mChildren:
     if (not (child of wStatusBar)) and
         (not (child of wToolBar)) and
+        (not (child of wMenuBarCtrl)) and
         (not (child of wRebar)):
       if childOne == nil:
         childOne = child

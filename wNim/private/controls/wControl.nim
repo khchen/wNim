@@ -40,7 +40,8 @@
 ##   `wIpCtrl <wIpCtrl.html>`_
 ##   `wWebView <wWebView.html>`_
 ##   `wHotkeyCtrl <wHotkeyCtrl.html>`_
-##   `wRebar <wRebar.html>`_  (experimental)
+##   `wRebar <wRebar.html>`_
+##   `wMenuBarCtrl <wMenuBarCtrl.html>`_
 
 include ../pragma
 import strutils

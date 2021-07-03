@@ -15,6 +15,14 @@
 include ../pragma
 import ../wBase, wMenu
 
+proc getHandle*(self: wMenuBase): HMENU {.validate, property, inline.} =
+  ## Get system handle of this menu.
+  result = self.mHmenu
+
+proc getCount*(self: wMenuBase): int {.validate, property, inline.} =
+  ## Returns number of items in a menu or number of menus in a menubar.
+  result = GetMenuItemCount(self.mHmenu)
+
 proc find*(self: wMenuBase, id: wCommandID): tuple[menu: wMenu, pos: int]
     {.validate.} =
   ## Return the tuple (menu, pos) indicate a item with the given id,

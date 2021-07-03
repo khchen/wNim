@@ -5,10 +5,9 @@
 #
 #====================================================================
 
-import wNim/[wApp, wFrame, wUtils]
+import wNim/[wApp, wFrame]
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="Hello World", size=(400, 300))
 
 frame.center()

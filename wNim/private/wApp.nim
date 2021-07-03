@@ -25,6 +25,10 @@ const
   wAppMainLoopBreak = -1
   wAppMainLoopContinue = 1
 
+type
+  wDpiAware* = enum
+    wNoDpiAware, wSystemDpiAware, wPerMonitorDpiAware
+
 # Forward declarations
 proc wAppProcessQuitMessage(msg: var wMsg, modalHwnd: HWND = 0): int
 proc wAppProcessDialogMessage(msg: var wMsg, modalHwnd: HWND = 0): int
@@ -53,11 +57,16 @@ proc getMessageLoopWait*(self: wApp): bool {.inline, property.} =
   ## Gets the current setting.
   result = self.mWaitMessage
 
-proc App*(): wApp {.discardable.} =
-  ## Constructor.
+proc App*(dpiAware: wDpiAware = wNoDpiAware): wApp {.discardable.} =
+  ## Constructor. Sets the default DPI awareness by *dpiAware*.
   if not wBaseApp.isNil:
     # "allow only one instance of wApp"
     return wBaseApp
+
+  case dpiAware
+  of wNoDpiAware: discard
+  of wSystemDpiAware: setSystemDpiAware()
+  of wPerMonitorDpiAware: setPerMonitorDpiAware()
 
   var ctrl = TINITCOMMONCONTROLSEX(dwSize: sizeof(TINITCOMMONCONTROLSEX),
     dwICC: ICC_DATE_CLASSES or ICC_LISTVIEW_CLASSES or ICC_INTERNET_CLASSES or

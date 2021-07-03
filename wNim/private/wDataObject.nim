@@ -24,7 +24,7 @@
 ##   ==============================  =============================================================
 
 include pragma
-import wBase, gdiobjects/wBitmap
+import wBase, gdiobjects/wBitmap, memlib/rtlib
 
 const
   wDragNone* = DROPEFFECT_NONE # 0
@@ -46,6 +46,13 @@ type
     vtbl: IDataObjectVtbl
     refCount: LONG
     bmp: HBITMAP
+
+# Windows XP don't support SHCreateDataObject.
+# And SHCreateFileDataObject support CF_HDROP format.
+proc SHCreateFileDataObject(pidlFolder: PCIDLIST_ABSOLUTE, cidl: UINT,
+  apidl: PCUITEMID_CHILD_ARRAY, pDataInner: ptr IDataObject,
+  ppDataObj: ptr ptr IDataObject): HRESULT
+  {.checkedRtlib: "shell32", stdcall, importc: 740.}
 
 converter BmpDataObjectToIUnknown(x: ptr BmpDataObject): ptr IUnknown {.shield.} = cast[ptr IUnknown](x)
 converter BmpDataObjectToIDataObject(x: ptr BmpDataObject): ptr IDataObject {.shield.} = cast[ptr IDataObject](x)
@@ -269,23 +276,6 @@ proc delete*(self: wDataObject) {.validate.} =
   ## it will force to flush it.
   `=destroy`(self[])
 
-type
-  SHCreateFileDataObjectType = proc (pidlFolder: PCIDLIST_ABSOLUTE,
-    cidl: UINT, apidl: PCUITEMID_CHILD_ARRAY, pDataInner: ptr IDataObject,
-    ppDataObj: ptr ptr IDataObject): HRESULT {.stdcall.}
-
-var
-  SHCreateFileDataObject {.threadvar.}: SHCreateFileDataObjectType
-
-proc ensureSHCreateFileDataObject() =
-  # Windows XP don't support SHCreateDataObject.
-  # And SHCreateFileDataObject support CF_HDROP format.
-
-  if SHCreateFileDataObject == nil:
-    let lib = LoadLibrary("shell32.dll")
-    SHCreateFileDataObject = cast[SHCreateFileDataObjectType](GetProcAddress(lib,
-      cast[LPCSTR](740)))
-
 wClass(wDataObject):
 
   proc init*(self: wDataObject, dataObj: ptr IDataObject) {.validate, inline.} =
@@ -295,8 +285,11 @@ wClass(wDataObject):
 
   proc init*(self: wDataObject, text: string) {.validate.} =
     ## Initializes a dataObject from text.
-    ensureSHCreateFileDataObject()
-    if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK: self.error()
+    try:
+      if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK:
+        self.error()
+    except LibraryError:
+      self.error()
 
     # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
     #   error()
@@ -331,7 +324,6 @@ wClass(wDataObject):
   proc init*(self: wDataObject, files: openarray[string]) {.validate.} =
     ## Initializes a dataObject from files. The path must exist.
     if files.len == 0: self.error()
-    ensureSHCreateFileDataObject()
 
     var pidlDesk: PIDLIST_ABSOLUTE
     if SHGetSpecialFolderLocation(0, CSIDL_DESKTOP, &pidlDesk) != S_OK: self.error()
@@ -345,7 +337,10 @@ wClass(wDataObject):
       if il == nil: self.error()
       apidl.add(il)
 
-    if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &self.mObj) != S_OK:
+    try:
+      if SHCreateFileDataObject(pidlDesk, files.len, &apidl[0], nil, &self.mObj) != S_OK:
+        self.error()
+    except LibraryError:
       self.error()
 
     self.mReleasable = true

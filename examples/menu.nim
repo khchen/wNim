@@ -9,7 +9,8 @@ import
   strformat,
   resource/resource
 
-import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage, wUtils]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wMenuBar, wMenu, wBitmap, wImage,
+  wPanel, wMenuBarCtrl]
 
 type
   # A menu ID in wNim is type of wCommandID (distinct int) or any enum type.
@@ -27,13 +28,14 @@ const resources: array[idIcon1..idIcon6, string] = [
   staticRead(r"images/5.png"),
   staticRead(r"images/6.png") ]
 
-wSetSysemDpiAware()
-let app = App()
-let frame = Frame(title="wNim Menu Demo")
-frame.icon = Icon("", 0) # load icon from exe file.
+let
+  app = App(wSystemDpiAware)
+  frame = Frame(title="wNim Menu Demo")
+  panel = Panel(frame)
+  statusBar = StatusBar(frame)
+  menuBar = MenuBar(frame)
 
-let statusBar = StatusBar(frame)
-let menuBar = MenuBar(frame)
+frame.icon = Icon("", 0) # load icon from exe file.
 
 let menuFile = Menu(menuBar, "&File")
 menuFile.append(idOpen, "&Open", "Open a file.")
@@ -60,6 +62,19 @@ menuTest.appendSubMenu(menuIcon, "&Icon", "Icon menu here.").disable()
 
 let menuAbout = Menu(menuBar, "&About")
 let itemAbout = menuAbout.append(idAbout, "About", "About")
+
+let menuBarCtrl = MenuBarCtrl(panel, menuBar=menuBar, statusBar=statusBar)
+menuBarCtrl.suit()
+
+frame.wEvent_Size do ():
+  frame.autolayout """
+    HV:[panel(70%)]|
+  """
+
+  panel.autolayout """
+    H:|[menuBarCtrl]|
+    V:|[menuBarCtrl]
+  """
 
 # frame.connect(idExit) is syntax sugar for frame.connect(wEvent_Menu, idExit)
 # frame.idExit is syntax sugar for frame.connect(idExit)
@@ -88,10 +103,8 @@ frame.wEvent_Menu do (event: wEvent):
   statusBar.setStatusText(msg)
   event.skip # make sure idExit event pass to next handler
 
-frame.connect(wEvent_ContextMenu) do (event: wEvent):
-  frame.popupMenu(menuTest, event.getMousePos())
-  # Or just frame.popupMenu(menuTest) in order to use the current
-  # mouse pointer position.
+frame.wEvent_ContextMenu do ():
+  frame.popupMenu(menuTest)
 
 frame.center()
 frame.show()

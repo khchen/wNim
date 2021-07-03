@@ -7,7 +7,7 @@
 
 import resource/resource
 
-import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap, wUtils,
+import wNim/[wApp, wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
   wStaticText, wTextCtrl, wToolBar, wButton, wStatusBar, wMessageDialog]
 
 proc passwordDialog(owner: wWindow): string =
@@ -25,9 +25,10 @@ proc passwordDialog(owner: wWindow): string =
   const cancel = staticRead(r"images/cancel.ico")
 
   # Add a [X] button to delete the text.
-  let toolbar = ToolBar(panel, style=wTbDefaultStyle or wTbNoDivider or wTbNoAlign or wTbNoResize)
+  let toolbar = ToolBar(panel)
   toolbar.backgroundColor = wWhite
   toolbar.addTool(wIdDelete, "", Bitmap(Icon("shell32.dll,131", (16, 16))))
+  toolbar.undock()
   textctrl.setBuddy(toolbar, wRight, 24)
 
   buttonOk.setDefault()
@@ -64,8 +65,7 @@ when isMainModule:
       idExit
       idButton
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = Frame(title="wNim PasswordDialog", size=(480, 320))
   frame.icon = Icon("", 0) # load icon from exe file.
 

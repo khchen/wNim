@@ -34,6 +34,7 @@
 ##   wVScroll                        Use this style to enable a vertical scrollbar.
 ##   wHScroll                        Use this style to enable a horizontal scrollbar.
 ##   wClipChildren                   Use this style to eliminate flicker caused by the background being repainted, then children being painted over them.
+##   wClipSiblings                   Use this style to cuts the sibling window.
 ##   wHideTaskbar                    Use this style to hide the taskbar item (top-level window only).
 ##   wInvisible                      The window is initially invisible (child window is visible by default).
 ##   wPopup                          The window is a pop-up window (WS_POPUP).
@@ -51,7 +52,7 @@
 ##   - `wDragDropEvent <wDragDropEvent.html>`_
 
 include pragma
-import macros, dynlib, tables, lists
+import macros, tables, lists, memlib/rtlib
 import wBase, wUtils, wDataObject, gdiobjects/[wFont, wBrush, wCursor]
 
 # For recursive module dependencies.
@@ -80,6 +81,7 @@ const
   wVScroll* = WS_VSCROLL
   wHScroll* = WS_HSCROLL
   wClipChildren* = WS_CLIPCHILDREN
+  wClipSiblings* = WS_CLIPSIBLINGS
   wHideTaskbar* = 0x10000000.int64 shl 32
   wInvisible* = 0x20000000.int64 shl 32
   wPopup* = int64 cast[uint32](WS_POPUP) # WS_POPUP is 0x80000000L
@@ -147,19 +149,20 @@ method getClientSize*(self: wWindow): wSize {.property.} =
   result.width = r.right - r.left - (self.mMargin.left + self.mMargin.right)
   result.height = r.bottom - r.top - (self.mMargin.up + self.mMargin.down)
 
-  if self.mToolBar != nil and self.mToolBar.isShown():
-    let rect = self.mToolBar.getWindowRect()
-    case toolBarDirection(self.mToolBar.mHwnd)
-    of wTop, wBottom:
-      result.height -= rect.height
+  for toolbar in self.mToolBars:
+    if toolbar.isShown() and not toolbar.isToolbarFloating():
+      let rect = toolbar.getWindowRect()
+      case toolBarDirection(toolbar.mHwnd)
+      of wTop, wBottom:
+        result.height -= rect.height
 
-    of wRight:
-      result.width -= rect.width
+      of wRight:
+        result.width -= rect.width
 
-    of wLeft:
-      result.width -= rect.width + rect.x
+      of wLeft:
+        result.width -= rect.width + rect.x
 
-    else: discard
+      else: discard
 
   if self.mRebar != nil and self.mRebar.isShown():
     let rect = self.mRebar.getWindowRect()
@@ -175,14 +178,15 @@ method getClientAreaOrigin*(self: wWindow): wPoint {.base, property.} =
   ## scrollbars, other decorations...).
   result.x = self.mMargin.left
   result.y = self.mMargin.up
-  if self.mToolBar != nil and self.mToolBar.isShown():
-    let rect = self.mToolBar.getWindowRect()
-    case toolBarDirection(self.mToolBar.mHwnd)
-    of wTop:
-      result.y += rect.height + rect.y
-    of wLeft:
-      result.x += rect.width + rect.x
-    else: discard
+  for toolbar in self.mToolBars:
+    if toolbar.isShown() and not toolbar.isToolbarFloating():
+      let rect = toolbar.getWindowRect()
+      case toolBarDirection(toolbar.mHwnd)
+      of wTop:
+        result.y += rect.height + rect.y
+      of wLeft:
+        result.x += rect.width + rect.x
+      else: discard
 
   if self.mRebar != nil and self.mRebar.isShown():
     let rect = self.mRebar.getWindowRect()
@@ -268,7 +272,7 @@ method trigger(self: wWindow) {.base, inline, shield.} =
 
 proc move*(self: wWindow, x: int, y: int) {.validate.} =
   ## Moves the window to the given position.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   var
     xx = x
     yy = y
@@ -284,17 +288,17 @@ proc move*(self: wWindow, x: int, y: int) {.validate.} =
 
 proc move*(self: wWindow, pos: wPoint) {.validate, inline.} =
   ## Moves the window to the given position.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   move(self, pos.x, pos.y)
 
 proc setPosition*(self: wWindow, pos: wPoint) {.validate, property, inline.} =
   ## Moves the window to the specified position. The same as move().
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   move(self, pos.x, pos.y)
 
 proc setPosition*(self: wWindow, x: int, y: int) {.validate, property, inline.} =
   ## Moves the window to the specified position. The same as move().
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   move(self, x, y)
 
 proc lift*(self: wWindow) {.validate, inline.} =
@@ -312,7 +316,7 @@ proc cover*(self: wWindow, win: wWindow) {.validate, inline.} =
 
 proc setSize*(self: wWindow, width: int, height: int) {.validate, property.} =
   ## Sets the size of the window in pixels.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   var
     ww = width
     hh = height
@@ -327,7 +331,7 @@ proc setSize*(self: wWindow, width: int, height: int) {.validate, property.} =
 proc setSize*(self: wWindow, x: int, y: int, width: int, height: int)
     {.validate, property.} =
   ## Sets the size of the window in pixels.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   var
     xx = x
     yy = y
@@ -347,18 +351,18 @@ proc setSize*(self: wWindow, x: int, y: int, width: int, height: int)
 
 proc setSize*(self: wWindow, size: wSize) {.validate, property, inline.} =
   ## Sets the size of the window in pixels.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   self.setSize(size.width, size.height)
 
 proc setSize*(self: wWindow, point: wPoint, size: wSize)
     {.validate, property, inline.} =
   ## Sets the size of the window in pixels.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   self.setSize(point.x, point.y, size.width, size.height)
 
 proc setSize*(self: wWindow, rect: wRect) {.validate, property, inline.} =
   ## Sets the size of the window in pixels.
-  ## wDefault to indicate not to change.
+  ## Using wDefault to indicate not to change.
   self.setSize(rect.x, rect.y, rect.width, rect.height)
 
 proc getSize*(self: wWindow): wSize {.validate, property, inline.} =
@@ -562,16 +566,11 @@ proc clientToScreen*(self: wWindow, pos: wPoint): wPoint {.validate.} =
 proc getDpi*(self: wWindow): int {.validate, property.} =
   ## Returns the dpi value for the window. This function use GetDpiForWindow() api
   ## (requires win 10) to get the current dpi if possible.
-  type GetDpiForWindow = proc (hWnd: HWND): UINT {.stdcall.}
-  var getDpiForWindow {.global.}: GetDpiForWindow
+  try:
+    proc GetDpiForWindow(hWnd: HWND): UINT {.checkedRtlib: "user32", stdcall, importc.}
+    result = GetDpiForWindow(self.mHwnd)
 
-  once:
-    getDpiForWindow = cast[GetDpiForWindow](loadLib("user32.dll").symAddr("GetDpiForWindow"))
-
-  if not getDpiForWindow.isNil:
-    result = getDpiForWindow(self.mHwnd)
-
-  else:
+  except LibraryError:
     result = wAppGetDpi()
 
 proc getDpiScaleRatio*(self: wWindow): float {.validate, inline, property.} =
@@ -650,6 +649,15 @@ proc show*(self: wWindow, cmd: int) {.inline.} =
 proc hide*(self: wWindow) {.validate, inline.} =
   ## Hides the window.
   self.show(false)
+
+proc showCaret*(self: wWindow, flag = true) {.validate, inline.} =
+  ## Show or hide the caret. Hiding is cumulative.
+  ## If your application hide caret five times, it must also show caret five times
+  ## before the caret reappears.
+  if flag:
+    ShowCaret(self.mHwnd)
+  else:
+    HideCaret(self.mHwnd)
 
 proc isShownOnScreen*(self: wWindow): bool {.validate, inline.} =
   ## Returns true if the window is physically visible on the screen.
@@ -770,9 +778,14 @@ proc getStatusBar*(self: wWindow): wStatusBar {.validate, property, inline.} =
   ## Returns the status bar currently associated with the window.
   result = self.mStatusBar
 
-proc getToolBar*(self: wWindow): wToolBar {.validate, property, inline.} =
-  ## Returns the toolbar currently associated with the window.
-  result = self.mToolBar
+proc getToolBar*(self: wWindow, index = 0): wToolBar {.validate, property, inline.} =
+  ## Returns the toolbar of specified index currently associated with the window.
+  if index <= self.mToolBars.len:
+    result = self.mToolBars[index]
+
+proc getToolBars*(self: wWindow): seq[wToolBar] {.validate, property, inline.} =
+  ## Returns the toolbars currently associated with the window.
+  result = self.mToolBars
 
 proc getId*(self: wWindow): wCommandID {.validate, property, inline.} =
   ## Returns the identifier of the window.

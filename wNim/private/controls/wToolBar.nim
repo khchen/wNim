@@ -58,15 +58,26 @@ const
   wTbCheck* = TBSTYLE_CHECK
   wTbRadio* = TBSTYLE_CHECKGROUP
   wTbDropDown* = BTNS_WHOLEDROPDOWN
+  wTbFloating* = CCS_NOPARENTALIGN or CCS_NORESIZE
 
-# toolbar's best size and default size are current size
-method getBestSize*(self: wToolBar): wSize {.property, inline.} =
+method getBestSize*(self: wToolBar): wSize {.property.} =
   ## Returns the best size for the tool bar.
-  result = self.getSize()
+  var size: SIZE
+  SendMessage(self.mHwnd, TB_GETIDEALSIZE, FALSE, &size)
+  result.width = int size.cx
 
-method getDefaultSize*(self: wToolBar): wSize {.property, inline.} =
+  let ret = SendMessage(self.mHwnd, TB_GETBUTTONSIZE, 0, 0)
+  result.height = int HIWORD(ret)
+
+method getDefaultSize*(self: wToolBar): wSize {.property.} =
   ## Returns the default size for the tool bar.
-  result = self.getSize()
+  var size: SIZE
+  SendMessage(self.mHwnd, TB_GETIDEALSIZE, FALSE, &size)
+  result.width = int size.cx
+
+  let ret = SendMessage(self.mHwnd, TB_GETBUTTONSIZE, 0, 0)
+  let ret2 = SendMessage(self.mHwnd, TB_GETPADDING, 0, 0)
+  result.height = int(HIWORD(ret) + HIWORD(ret2))
 
 proc getToolByPos(self: wToolBar, pos: Natural): wToolBarTool =
   var button = TBBUTTON()
@@ -291,6 +302,10 @@ proc setToolLabel*(self: wToolBar, toolId: wCommandID, label: string)
     SendMessage(self.mHwnd, TB_INSERTBUTTON, pos, &button)
     SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
+proc undock*(self: wToolBar) {.validate, inline.} =
+  ## Undock the toolar.
+  self.addWindowStyle(wTbFloating or wTbNoDivider)
+
 method show*(self: wToolBar, flag = true) {.inline.} =
   ## Shows or hides the toolbar.
   self.showAndNotifyParent(flag)
@@ -301,10 +316,10 @@ method processNotify(self: wToolBar, code: INT, id: UINT_PTR, lParam: LPARAM,
   case code
   of NM_CUSTOMDRAW:
     if self.mBackgroundColor != -1: # -1 means transparent.
-      var pNMTBCUSTOMDRAW = cast[LPNMTBCUSTOMDRAW](lparam)
-      if pNMTBCUSTOMDRAW.nmcd.dwDrawStage == CDDS_PREERASE:
-        let hdc = pNMTBCUSTOMDRAW.nmcd.hdc
-        var rect = pNMTBCUSTOMDRAW.nmcd.rc
+      let info = cast[LPNMTBCUSTOMDRAW](lparam)
+      if info.nmcd.dwDrawStage == CDDS_PREERASE:
+        let hdc = info.nmcd.hdc
+        var rect = info.nmcd.rc
         let oldcr = SetBkColor(hdc, self.mBackgroundColor)
         ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, "", 0, nil)
         SetBkColor(hdc, oldcr)
@@ -381,6 +396,8 @@ wClass(wToolBar of wControl):
 
   method release*(self: wToolBar) =
     ## Release all the resources during destroying. Used internally.
+    let index = self.mParent.mToolBars.find(self)
+    if index >= 0: self.mParent.mToolBars.delete(index)
     self.mParent.systemDisconnect(self.mSizeConn)
     self.mParent.systemDisconnect(self.mCommandConn)
     free(self[])
@@ -398,21 +415,19 @@ wClass(wToolBar of wControl):
     SendMessage(self.mHwnd, TB_BUTTONSTRUCTSIZE, sizeof(TBBUTTON), 0)
     SendMessage(self.mHwnd, TB_SETEXTENDEDSTYLE, 0, TBSTYLE_EX_DRAWDDARROWS)
 
-    parent.mToolBar = self
+    parent.mToolBars.add self
+
     self.mFocusable = false
     # todo: handle key navigation by TB_SETHOTITEM?
 
     self.mSizeConn = parent.systemConnect(WM_SIZE) do (event: wEvent):
-      SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
+      if not self.isToolbarFloating():
+        SendMessage(self.mHwnd, TB_AUTOSIZE, 0, 0)
 
     self.mCommandConn = parent.systemConnect(WM_COMMAND) do (event: wEvent):
       # translate WM_COMMAND to wEvent_Tool
       if event.mLparam == self.mHwnd and HIWORD(event.mWparam) == 0:
         self.processMessage(wEvent_Tool, event.mWparam, event.mLparam)
-
-    # send WM_MENUCOMMAND to wFrame (if there has one)
-    # systemConnect(WM_MENUCOMMAND, wControl_DoMenuCommand)
-    # this already be done in wControl
 
     # show the popupmenu is a default behavior, but can be overridden.
     self.hardConnect(wEvent_ToolDropDown, wToolBar_OnToolDropDown)

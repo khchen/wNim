@@ -65,6 +65,7 @@
 ##   `wIpEvent <wIpEvent.html>`_
 ##   `wWebViewEvent <wWebViewEvent.html>`_
 ##   `wDialogEvent <wDialogEvent.html>`_
+##   `wTextLinkEvent <wTextLinkEvent.html>`_
 #
 ## :Events:
 ##   ================================  =============================================================
@@ -356,6 +357,12 @@ method setValue*(self: wEvent, value: int) {.base, property.} = discard
 method getMenuItem*(self: wEvent): wMenuItem {.base, property.} = discard
   ## Method needs to be overridden.
 method getErrorCode*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getStart*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getEnd*(self: wEvent): int {.base, property.} = discard
+  ## Method needs to be overridden.
+method getMouseEvent*(self: wEvent): UINT {.base, property.} = discard
   ## Method needs to be overridden.
 
 method shouldPropagate*(self: wEventBase): bool {.base.} =

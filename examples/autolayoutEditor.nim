@@ -10,7 +10,7 @@ import
   resource/resource
 
 import wNim/[autolayout, wApp, wFrame, wIcon, wPanel, wMenu, wMenuBar, wSplitter,
-  wStatusBar, wTextCtrl, wStaticText, wFont, wUtils]
+  wStatusBar, wTextCtrl, wStaticText, wFont]
 
 type
   MenuID = enum
@@ -21,8 +21,7 @@ type
     vfl: string
     show: proc ()
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="AutoLayout Editor", size=(900, 600))
 frame.icon = Icon("", 0) # load icon from exe file.
 

@@ -238,6 +238,11 @@ function main() {
   mDispatch*: ptr IDispatch
   mUrl*: string
   mText*: string"><wbr />w<wbr />Web<wbr />View<wbr />Event<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextLinkEvent"
+    title="wTextLinkEvent = ref object of wCommandEvent
+  mStart*: int
+  mEnd*: int
+  mMouseEvent*: UINT"><wbr />w<wbr />Text<wbr />Link<wbr />Event<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wScrollData"
     title="wScrollData = object
   kind*: int
@@ -292,7 +297,7 @@ function main() {
   mConnectionTable*: Table[UINT, DoublyLinkedList[wEventConnection]]
   mMargin*: wDirection
   mStatusBar*: wStatusBar
-  mToolBar*: wToolBar
+  mToolBars*: seq[wToolBar]
   mRebar*: wRebar
   mFont*: wFont
   mBackgroundColor*: wColor
@@ -388,7 +393,6 @@ function main() {
     title="wComboBox = ref object of wControl
   mEdit*: wTextCtrl
   mList*: wListBox
-  mOldEditProc*: WNDPROC
   mInitData*: ptr UncheckedArray[string]
   mInitCount*: int
   mCommandConn*: wEventConnection"><wbr />w<wbr />Combo<wbr />Box<span class="attachedType"></span></a></li>
@@ -528,6 +532,22 @@ function main() {
   mValue*: string
   mKeyCode*: int
   mModifiers*: int"><wbr />w<wbr />Hotkey<wbr />Ctrl<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wMenuBarCtrl"
+    title="wMenuBarCtrl = ref object of wControl
+  mMenuBar*: wMenuBar
+  mOldWndProc*: WNDPROC
+  mOldFocus*: HWND
+  mHotItem*: int
+  mPressedItem*: int
+  mFromKeyboard*: bool
+  mContinueHotTrack*: bool
+  mRtl*: bool
+  mHook*: HHOOK
+  mLastPos*: POINT
+  mLastItem*: int
+  mBlockerStart*: DWORD
+  mHelpStatusBar*: wStatusBar
+  mHelpDisplayed*: bool"><wbr />w<wbr />Menu<wbr />Bar<wbr />Ctrl<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wMenuBase"
     title="wMenuBase = ref object of RootObj
   mHmenu*: HMENU"><wbr />w<wbr />Menu<wbr />Base<span class="attachedType"></span></a></li>
@@ -899,7 +919,7 @@ Used internally.
 <dt><pre><a href="wTypes.html#wMessageLoopHookProc"><span class="Identifier">wMessageLoopHookProc</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">msg</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="wTypes.html#wMsg"><span class="Identifier">wMsg</span></a><span class="Other">;</span> <span class="Identifier">modalHwnd</span><span class="Other">:</span> <span class="Identifier">HWND</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span></pre></dt>
 <dd>
 
-Hook procedure to the message loop. <em>modalHwnd</em> is not 0 if it is a modal window message loop instead of main loop. Returns &gt; 0 to continue the loop, and returns &lt; 0 to break the loop.
+Hook procedure to the message loop. <em>modalHwnd</em> is not 0 if it is a modal window message loop instead of main loop. Returns &gt; 0 to continue(skip) the loop, and returns &lt; 0 to break(exit) the loop.
 
 </dd>
 <a id="wMsg"></a>
@@ -1038,6 +1058,13 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mText</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
 </pre></dt>
 
+<a id="wTextLinkEvent"></a>
+<dt><pre><a href="wTypes.html#wTextLinkEvent"><span class="Identifier">wTextLinkEvent</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="wTypes.html#wCommandEvent"><span class="Identifier">wCommandEvent</span></a>
+  <span class="Identifier">mStart</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mEnd</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mMouseEvent</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">UINT</span>
+</pre></dt>
+
 <a id="wScrollData"></a>
 <dt><pre><a href="wTypes.html#wScrollData"><span class="Identifier">wScrollData</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">kind</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
@@ -1108,7 +1135,7 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mConnectionTable</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">UINT</span><span class="Other">,</span> <span class="Identifier">DoublyLinkedList</span><span class="Other">[</span><a href="wTypes.html#wEventConnection"><span class="Identifier">wEventConnection</span></a><span class="Other">]</span><span class="Other">]</span>
   <span class="Identifier">mMargin</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wDirection"><span class="Identifier">wDirection</span></a>
   <span class="Identifier">mStatusBar</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wStatusBar"><span class="Identifier">wStatusBar</span></a>
-  <span class="Identifier">mToolBar</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a>
+  <span class="Identifier">mToolBars</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="wTypes.html#wToolBar"><span class="Identifier">wToolBar</span></a><span class="Other">]</span>
   <span class="Identifier">mRebar</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wRebar"><span class="Identifier">wRebar</span></a>
   <span class="Identifier">mFont</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wFont"><span class="Identifier">wFont</span></a>
   <span class="Identifier">mBackgroundColor</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a>
@@ -1234,7 +1261,6 @@ Binary compatibility with Win32 MSG structure.
 <dt><pre><a href="wTypes.html#wComboBox"><span class="Identifier">wComboBox</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="wTypes.html#wControl"><span class="Identifier">wControl</span></a>
   <span class="Identifier">mEdit</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a>
   <span class="Identifier">mList</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wListBox"><span class="Identifier">wListBox</span></a>
-  <span class="Identifier">mOldEditProc</span><span class="Operator">*</span><span class="Other">:</span> <a href="winimx.html#WNDPROC"><span class="Identifier">WNDPROC</span></a>
   <span class="Identifier">mInitData</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">ptr</span> <span class="Identifier">UncheckedArray</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
   <span class="Identifier">mInitCount</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
   <span class="Identifier">mCommandConn</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wEventConnection"><span class="Identifier">wEventConnection</span></a>
@@ -1409,6 +1435,24 @@ Binary compatibility with Win32 MSG structure.
   <span class="Identifier">mValue</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
   <span class="Identifier">mKeyCode</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
   <span class="Identifier">mModifiers</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+</pre></dt>
+
+<a id="wMenuBarCtrl"></a>
+<dt><pre><a href="wTypes.html#wMenuBarCtrl"><span class="Identifier">wMenuBarCtrl</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <a href="wTypes.html#wControl"><span class="Identifier">wControl</span></a>
+  <span class="Identifier">mMenuBar</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wMenuBar"><span class="Identifier">wMenuBar</span></a>
+  <span class="Identifier">mOldWndProc</span><span class="Operator">*</span><span class="Other">:</span> <a href="winimx.html#WNDPROC"><span class="Identifier">WNDPROC</span></a>
+  <span class="Identifier">mOldFocus</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HWND</span>
+  <span class="Identifier">mHotItem</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mPressedItem</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mFromKeyboard</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mContinueHotTrack</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mRtl</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">mHook</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">HHOOK</span>
+  <span class="Identifier">mLastPos</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">POINT</span>
+  <span class="Identifier">mLastItem</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">mBlockerStart</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">DWORD</span>
+  <span class="Identifier">mHelpStatusBar</span><span class="Operator">*</span><span class="Other">:</span> <a href="wTypes.html#wStatusBar"><span class="Identifier">wStatusBar</span></a>
+  <span class="Identifier">mHelpDisplayed</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
 </pre></dt>
 
 <a id="wMenuBase"></a>

@@ -1,9 +1,26 @@
+Version 0.13.0
+--------------
+* Add wMenuBarCtrl class: a menubar that can be placed everywhere. For example, in the rebar control.
+* wTextCtrl: Add a lot of RTF relate functions: writeRtfText(), appendRtfText(), writeLink(),
+  appendLink(), writeImage(), appendImage(), setStyle(), setFormat(), setDefaultFormat(),
+  enableAutoUrlDetect(), zoom(), etc.
+  Remove formatSelection(), use setFormat() instead **(Breaking Change)**.
+* Add wTextLinkEvent class to deal with hyperlink event in wTextCtrl.
+* wApp: App() can accept an extra parameter to set the default DPI awareness.
+* wWindow: Add showCaret(), getToolBars() and style wClipSiblings.
+* wImage: Image object can be created based on binary bytes along with size and format information.
+* wToolBar: Add undock().
+* wMenuBar: Remove getCount() and getHandle(). wMenuBase already has these procs.
+* Examples: Add textctrl.nim; modify rebar.nim and menu.nim to demonstrate new features.
+* Fix typo and bugs. wSetSysemDpiAware => wSetSystemDpiAware **(Breaking Change)**.
+* Don't maintain compatibility with Nim Compiler 1.0 (requires nim >= 1.2.0).
+
 Version 0.12.0
 --------------
 * autolayout: Using excellent npeg module to parse visual format language now, this brings
   more features (alias, quote, etc.) and less bugs. The most important change is that
   all rules have default priority to avoid annoying *UnsatisfiableConstraintException*.
-* wRebar: Add a lot of methods. wRebar class is fully functioning and not experimental 
+* wRebar: Add a lot of methods. wRebar class is fully functioning and not experimental
   anymore. **(Breaking Change)**
 * wResizer: Add some consts that can be used in layout DLS and autolayout VFL as priority keywords.
 * wEvent: getKeyStatus() returns set of key-codes instead of array **(Breaking Change)**.
@@ -146,7 +163,7 @@ Version 0.7.0
 * wToolBar: Add wTbNoAlign, wTbNoResize.
 * wDC: Add getRegion(), setRegion(), getCharHeight(), getCharWidth(), getFontMetrics(), stretchBlitQuality().
 * wEvent: Add wWparam and wLparam types. In case we need "cast" for creation event object.
-* wUtil: Add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSysemDpiAware(), wSetPerMonitorDpiAware().
+* wUtil: Add wGetSystemMetric(), wGetDefaultPrinter(), wSetDefaultPrinter(), wGetPrinters(), wSetSystemDpiAware(), wSetPerMonitorDpiAware().
 * wPredefined: Add wNilRegion.
 * Add examples: shapewin.nim and printpreview.nim.
 * Fix bugs.

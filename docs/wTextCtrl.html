@@ -96,7 +96,18 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#wAutoCompleteProvider"
+      <li><a class="reference" href="#wTabStyle"
+    title="wTabStyle = enum
+  wTabStyleSpace, wTabStyleDot, wTabStyleDash, wTabStyleUnderline,
+  wTabStyleThickLine, wTabStyleDoubleLine"><wbr />w<wbr />Tab<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTabAlign"
+    title="wTabAlign = enum
+  wTabAlignLeft, wTabAlignCenter, wTabAlignRight, wTabAlignDecimal,
+  wTabAlignVertical"><wbr />w<wbr />Tab<wbr />Align<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextTabs"
+    title="wTextTabs {.pure.} = object
+  mTabs: seq[LONG]"><wbr />w<wbr />Text<wbr />Tabs<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wAutoCompleteProvider"
     title="wAutoCompleteProvider = proc (self: wTextCtrl): seq[string]"><wbr />w<wbr />Auto<wbr />Complete<wbr />Provider<span class="attachedType"></span></a></li>
 
   </ul>
@@ -134,6 +145,26 @@ function main() {
     title="wAcMru = 4"><wbr />w<wbr />Ac<wbr />Mru<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wAcUrl"
     title="wAcUrl = 8"><wbr />w<wbr />Ac<wbr />Url<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextAlignLeft"
+    title="wTextAlignLeft = 1"><wbr />w<wbr />Text<wbr />Align<wbr />Left<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextAlignRight"
+    title="wTextAlignRight = 2"><wbr />w<wbr />Text<wbr />Align<wbr />Right<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextAlignCenter"
+    title="wTextAlignCenter = 3"><wbr />w<wbr />Text<wbr />Align<wbr />Center<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wTextAlignJustify"
+    title="wTextAlignJustify = 4"><wbr />w<wbr />Text<wbr />Align<wbr />Justify<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingBullet"
+    title="wNumberingBullet = 1"><wbr />w<wbr />Numbering<wbr />Bullet<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingArabic"
+    title="wNumberingArabic = 2"><wbr />w<wbr />Numbering<wbr />Arabic<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingLowerLetter"
+    title="wNumberingLowerLetter = 3"><wbr />w<wbr />Numbering<wbr />Lower<wbr />Letter<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingUpperLetter"
+    title="wNumberingUpperLetter = 4"><wbr />w<wbr />Numbering<wbr />Upper<wbr />Letter<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingLowerRoman"
+    title="wNumberingLowerRoman = 5"><wbr />w<wbr />Numbering<wbr />Lower<wbr />Roman<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wNumberingUpperRoman"
+    title="wNumberingUpperRoman = 6"><wbr />w<wbr />Numbering<wbr />Upper<wbr />Roman<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -230,6 +261,18 @@ function main() {
     title="writeText(self: wTextCtrl; text: string)"><wbr />write<wbr />Text<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#appendText%2CwTextCtrl%2Cstring"
     title="appendText(self: wTextCtrl; text: string)"><wbr />append<wbr />Text<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#writeRtfText%2CwTextCtrl%2Cstring"
+    title="writeRtfText(self: wTextCtrl; text: string)"><wbr />write<wbr />Rtf<wbr />Text<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#appendRtfText%2CwTextCtrl%2Cstring"
+    title="appendRtfText(self: wTextCtrl; text: string)"><wbr />append<wbr />Rtf<wbr />Text<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#writeLink%2CwTextCtrl%2Cstring%2Cstring"
+    title="writeLink(self: wTextCtrl; link: string; alias = &quot;&quot;)"><wbr />write<wbr />Link<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#appendLink%2CwTextCtrl%2Cstring%2Cstring"
+    title="appendLink(self: wTextCtrl; link: string; alias = &quot;&quot;)"><wbr />append<wbr />Link<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#writeImage%2CwTextCtrl%2CwImage%2Cfloat"
+    title="writeImage(self: wTextCtrl; image: wImage; scale = 1.0)"><wbr />write<wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#appendImage%2CwTextCtrl%2CwImage%2Cfloat"
+    title="appendImage(self: wTextCtrl; image: wImage; scale = 1.0)"><wbr />append<wbr />Image<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getTextSelection%2CwTextCtrl"
     title="getTextSelection(self: wTextCtrl): string"><wbr />get<wbr />Text<wbr />Selection<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#replace%2CwTextCtrl%2CSlice%5Bint%5D%2Cstring"
@@ -244,8 +287,25 @@ function main() {
     title="len(self: wTextCtrl): int"><wbr />len<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#add%2CwTextCtrl%2Cstring"
     title="add(self: wTextCtrl; text: string)"><wbr />add<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#formatSelection%2CwTextCtrl%2CwFont%2CwColor%2CwColor"
-    title="formatSelection(self: wTextCtrl; font: wFont; fore: wColor; back: wColor)"><wbr />format<wbr />Selection<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#TextTabs%2Cint%2CwTabStyle%2CwTabAlign"
+    title="TextTabs(offset: int; style: wTabStyle = wTabStyleSpace;
+         align: wTabAlign = wTabAlignLeft): wTextTabs"><wbr />Text<wbr />Tabs<span class="attachedType">wTabStyle</span></a></li>
+  <li><a class="reference" href="#set%2CwTextTabs%2Crange%5B%5D%2CwTabStyle%2CwTabAlign"
+    title="set(self: var wTextTabs; index: range[0 .. (32 - 1)]; style: wTabStyle = wTabStyleSpace;
+    align: wTabAlign = wTabAlignLeft)"><wbr />set<span class="attachedType">wTabStyle</span></a></li>
+  <li><a class="reference" href="#resetStyle%2CwTextCtrl"
+    title="resetStyle(self: wTextCtrl)"><wbr />reset<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setStyle%2CwTextCtrl%2Cint"
+    title="setStyle(self: wTextCtrl; align = 0; indent = -1; subIndent = -1; rightIndent = -1;
+         spaceBefore = -1; spaceAfter = -1; numbering = -1; lineSpacing = NaN;
+         tabs = default(wTextTabs))"><wbr />set<wbr />Style<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setFormat%2CwTextCtrl%2CwFont%2CwColor%2CwColor"
+    title="setFormat(self: wTextCtrl; font: wFont = nil; fgColor: wColor = -1; bgColor: wColor = -1)"><wbr />set<wbr />Format<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#setDefaultFormat%2CwTextCtrl%2CwFont%2CwColor%2CwColor"
+    title="setDefaultFormat(self: wTextCtrl; font: wFont = nil; fgColor: wColor = -1;
+                 bgColor: wColor = -1)"><wbr />set<wbr />Default<wbr />Format<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#zoom%2CwTextCtrl%2Cfloat"
+    title="zoom(self: wTextCtrl; ratio = 1.0)"><wbr />zoom<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#loadRtf%2CwTextCtrl%2Cstring"
     title="loadRtf(self: wTextCtrl; rtf: string)"><wbr />load<wbr />Rtf<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#saveRtf%2CwTextCtrl"
@@ -260,6 +320,8 @@ function main() {
     title="enableAutoComplete(self: wTextCtrl; flags = 5 or 8): bool"><wbr />enable<wbr />Auto<wbr />Complete<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#enableAutoComplete%2CwTextCtrl%2CwAutoCompleteProvider"
     title="enableAutoComplete(self: wTextCtrl; provider: wAutoCompleteProvider): bool"><wbr />enable<wbr />Auto<wbr />Complete<span class="attachedType">wAutoCompleteProvider</span></a></li>
+  <li><a class="reference" href="#enableAutoUrlDetect%2CwTextCtrl"
+    title="enableAutoUrlDetect(self: wTextCtrl; enable = true): bool"><wbr />enable<wbr />Auto<wbr />Url<wbr />Detect<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#init%2CwTextCtrl%2CwWindow%2Cstring%2CwStyle"
     title="init(self: wTextCtrl; parent: wWindow; id = wDefaultID; value: string = &quot;&quot;;
      pos = wDefaultPoint; size = wDefaultSize; style: wStyle = wTeLeft)"><wbr />init<span class="attachedType"></span></a></li>
@@ -327,12 +389,40 @@ function main() {
 <tr><td>wEvent_TextUpdate</td><td>When the control is about to redraw itself.</td></tr>
 <tr><td>wEvent_TextMaxlen</td><td>When the user tries to enter more text into the control than the limit.</td></tr>
 <tr><td>wEvent_TextEnter</td><td>When pressing Enter key.</td></tr>
-</table></td></tr>
+</table><p><a class="reference external" href="wTextLinkEvent.html">wTextLinkEvent</a></p>
+</td></tr>
 </tbody></table></p>
   
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
+<a id="wTabStyle"></a>
+<dt><pre><a href="wTextCtrl.html#wTabStyle"><span class="Identifier">wTabStyle</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">wTabStyleSpace</span><span class="Other">,</span> <span class="Identifier">wTabStyleDot</span><span class="Other">,</span> <span class="Identifier">wTabStyleDash</span><span class="Other">,</span> <span class="Identifier">wTabStyleUnderline</span><span class="Other">,</span>
+  <span class="Identifier">wTabStyleThickLine</span><span class="Other">,</span> <span class="Identifier">wTabStyleDoubleLine</span></pre></dt>
+<dd>
+
+Indicate the style of tab leader.
+
+</dd>
+<a id="wTabAlign"></a>
+<dt><pre><a href="wTextCtrl.html#wTabAlign"><span class="Identifier">wTabAlign</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">wTabAlignLeft</span><span class="Other">,</span> <span class="Identifier">wTabAlignCenter</span><span class="Other">,</span> <span class="Identifier">wTabAlignRight</span><span class="Other">,</span> <span class="Identifier">wTabAlignDecimal</span><span class="Other">,</span>
+  <span class="Identifier">wTabAlignVertical</span></pre></dt>
+<dd>
+
+Indicate the tab alignment.
+
+</dd>
+<a id="wTextTabs"></a>
+<dt><pre><a href="wTextCtrl.html#wTextTabs"><span class="Identifier">wTextTabs</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pure</span></span><span class="Other">.}</span></span> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">mTabs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">LONG</span><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+wTextTabs is an object used to set tabs of paragraph.
+
+</dd>
 <a id="wAutoCompleteProvider"></a>
 <dt><pre><a href="wTextCtrl.html#wAutoCompleteProvider"><span class="Identifier">wAutoCompleteProvider</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
@@ -389,6 +479,36 @@ Callback function to provide the custom source for autocomplete
 
 <a id="wAcUrl"></a>
 <dt><pre><a href="wTextCtrl.html#wAcUrl"><span class="Identifier">wAcUrl</span></a> <span class="Other">=</span> <span class="DecNumber">8</span></pre></dt>
+
+<a id="wTextAlignLeft"></a>
+<dt><pre><a href="wTextCtrl.html#wTextAlignLeft"><span class="Identifier">wTextAlignLeft</span></a> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+
+<a id="wTextAlignRight"></a>
+<dt><pre><a href="wTextCtrl.html#wTextAlignRight"><span class="Identifier">wTextAlignRight</span></a> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+
+<a id="wTextAlignCenter"></a>
+<dt><pre><a href="wTextCtrl.html#wTextAlignCenter"><span class="Identifier">wTextAlignCenter</span></a> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+
+<a id="wTextAlignJustify"></a>
+<dt><pre><a href="wTextCtrl.html#wTextAlignJustify"><span class="Identifier">wTextAlignJustify</span></a> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+
+<a id="wNumberingBullet"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingBullet"><span class="Identifier">wNumberingBullet</span></a> <span class="Other">=</span> <span class="DecNumber">1</span></pre></dt>
+
+<a id="wNumberingArabic"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingArabic"><span class="Identifier">wNumberingArabic</span></a> <span class="Other">=</span> <span class="DecNumber">2</span></pre></dt>
+
+<a id="wNumberingLowerLetter"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingLowerLetter"><span class="Identifier">wNumberingLowerLetter</span></a> <span class="Other">=</span> <span class="DecNumber">3</span></pre></dt>
+
+<a id="wNumberingUpperLetter"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingUpperLetter"><span class="Identifier">wNumberingUpperLetter</span></a> <span class="Other">=</span> <span class="DecNumber">4</span></pre></dt>
+
+<a id="wNumberingLowerRoman"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingLowerRoman"><span class="Identifier">wNumberingLowerRoman</span></a> <span class="Other">=</span> <span class="DecNumber">5</span></pre></dt>
+
+<a id="wNumberingUpperRoman"></a>
+<dt><pre><a href="wTextCtrl.html#wNumberingUpperRoman"><span class="Identifier">wNumberingUpperRoman</span></a> <span class="Other">=</span> <span class="DecNumber">6</span></pre></dt>
 
 
 </dl></div>
@@ -706,10 +826,55 @@ Writes the text into the text control at the current insertion position.
 
 </dd>
 <a id="appendText,wTextCtrl,string"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#appendText%2CwTextCtrl%2Cstring"><span class="Identifier">appendText</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#appendText%2CwTextCtrl%2Cstring"><span class="Identifier">appendText</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Appends the text to the end of the text control.
+
+</dd>
+<a id="writeRtfText,wTextCtrl,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#writeRtfText%2CwTextCtrl%2Cstring"><span class="Identifier">writeRtfText</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Writes the RTF text into the text control at the current insertion position. Only works for rich text control.
+
+</dd>
+<a id="appendRtfText,wTextCtrl,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#appendRtfText%2CwTextCtrl%2Cstring"><span class="Identifier">appendRtfText</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">text</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Appends the RTF text to the end of the text control. Only works for rich text control.
+
+</dd>
+<a id="writeLink,wTextCtrl,string,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#writeLink%2CwTextCtrl%2Cstring%2Cstring"><span class="Identifier">writeLink</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">link</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">alias</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Writes a link into the text control at the current insertion position. Only works for rich text control. A wEvent_TextLink event will be generated when mouse events occur over link.
+
+</dd>
+<a id="appendLink,wTextCtrl,string,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#appendLink%2CwTextCtrl%2Cstring%2Cstring"><span class="Identifier">appendLink</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">link</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">alias</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Appends a link to the end of the text control. Only works for rich text control. A wEvent_TextLink event will be generated when mouse events occur over link.
+
+</dd>
+<a id="writeImage,wTextCtrl,wImage,float"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#writeImage%2CwTextCtrl%2CwImage%2Cfloat"><span class="Identifier">writeImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <a href="wTypes.html#wImage"><span class="Identifier">wImage</span></a><span class="Other">;</span> <span class="Identifier">scale</span> <span class="Other">=</span> <span class="FloatNumber">1.0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wNilAccess</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Writes an image into the text control at the current insertion position. Only works for rich text control.
+
+</dd>
+<a id="appendImage,wTextCtrl,wImage,float"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#appendImage%2CwTextCtrl%2CwImage%2Cfloat"><span class="Identifier">appendImage</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">image</span><span class="Other">:</span> <a href="wTypes.html#wImage"><span class="Identifier">wImage</span></a><span class="Other">;</span> <span class="Identifier">scale</span> <span class="Other">=</span> <span class="FloatNumber">1.0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wNilAccess</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Appends an image to the end of the text control. Only works for rich text control.
 
 </dd>
 <a id="getTextSelection,wTextCtrl"></a>
@@ -764,12 +929,73 @@ Returns the number of characters in the control.
 Appends the text to the end of the text control. The same as appendText()
 
 </dd>
-<a id="formatSelection,wTextCtrl,wFont,wColor,wColor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#formatSelection%2CwTextCtrl%2CwFont%2CwColor%2CwColor"><span class="Identifier">formatSelection</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <a href="wTypes.html#wFont"><span class="Identifier">wFont</span></a><span class="Other">;</span> <span class="Identifier">fore</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a><span class="Other">;</span> <span class="Identifier">back</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span>
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IndexDefect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="TextTabs,int,wTabStyle,wTabAlign"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#TextTabs%2Cint%2CwTabStyle%2CwTabAlign"><span class="Identifier">TextTabs</span></a><span class="Other">(</span><span class="Identifier">offset</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">style</span><span class="Other">:</span> <a href="wTextCtrl.html#wTabStyle"><span class="Identifier">wTabStyle</span></a> <span class="Other">=</span> <span class="Identifier">wTabStyleSpace</span><span class="Other">;</span>
+             <span class="Identifier">align</span><span class="Other">:</span> <a href="wTextCtrl.html#wTabAlign"><span class="Identifier">wTabAlign</span></a> <span class="Other">=</span> <span class="Identifier">wTabAlignLeft</span><span class="Other">)</span><span class="Other">:</span> <a href="wTextCtrl.html#wTextTabs"><span class="Identifier">wTextTabs</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Format the selected text if wTeRich style is specified
+Constructor for wTextTabs object used by <em>setStyle</em>. Space unit is twip (1/1440 inche).
+
+</dd>
+<a id="set,wTextTabs,range[],wTabStyle,wTabAlign"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#set%2CwTextTabs%2Crange%5B%5D%2CwTabStyle%2CwTabAlign"><span class="Identifier">set</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="wTextCtrl.html#wTextTabs"><span class="Identifier">wTextTabs</span></a><span class="Other">;</span> <span class="Identifier">index</span><span class="Other">:</span> <span class="Identifier">range</span><span class="Other">[</span><span class="DecNumber">0</span> <span class="Operator">..</span> <span class="Other">(</span><span class="DecNumber">32</span> <span class="Operator">-</span> <span class="DecNumber">1</span><span class="Other">)</span><span class="Other">]</span><span class="Other">;</span>
+        <span class="Identifier">style</span><span class="Other">:</span> <a href="wTextCtrl.html#wTabStyle"><span class="Identifier">wTabStyle</span></a> <span class="Other">=</span> <span class="Identifier">wTabStyleSpace</span><span class="Other">;</span> <span class="Identifier">align</span><span class="Other">:</span> <a href="wTextCtrl.html#wTabAlign"><span class="Identifier">wTabAlign</span></a> <span class="Other">=</span> <span class="Identifier">wTabAlignLeft</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the style and alignment of specified tab stop.
+
+</dd>
+<a id="resetStyle,wTextCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#resetStyle%2CwTextCtrl"><span class="Identifier">resetStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Reset the style to default.
+
+</dd>
+<a id="setStyle,wTextCtrl,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setStyle%2CwTextCtrl%2Cint"><span class="Identifier">setStyle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">align</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">;</span> <span class="Identifier">indent</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">subIndent</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">rightIndent</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span>
+             <span class="Identifier">spaceBefore</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">spaceAfter</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">numbering</span> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span> <span class="Identifier">lineSpacing</span> <span class="Other">=</span> <span class="Identifier">NaN</span><span class="Other">;</span>
+             <span class="Identifier">tabs</span> <span class="Other">=</span> <span class="Identifier">default</span><span class="Other">(</span><a href="wTextCtrl.html#wTextTabs"><span class="Identifier">wTextTabs</span></a><span class="Other">)</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets style of paragraph in the current selection or paragraph inserted at the insertion point. Space unit is twip (1/1440 inche). <em>lineSpacing</em> &gt;= 0 means lines, &lt; 0 means abs(twip).<table border="1" class="docutils"><tr><th>align</th><th>Description</th></tr>
+<tr><td>wTextAlignLeft</td><td>Paragraphs are aligned with the left margin.</td></tr>
+<tr><td>wTextAlignRight</td><td>Paragraphs are aligned with the right margin.</td></tr>
+<tr><td>wTextAlignCenter</td><td>Paragraphs are centered.</td></tr>
+<tr><td>wTextAlignJustify</td><td>Paragraphs are justified by expanding the blanks alone.</td></tr>
+<tr><th></th><th></th></tr>
+<tr><th>numbering</th><th>Description</th></tr>
+<tr><td>wNumberingBullet</td><td>Insert a bullet at the beginning of each selected paragraph.</td></tr>
+<tr><td>wNumberingArabic</td><td>Use Arabic numbers (0, 1, 2, and so on).</td></tr>
+<tr><td>wNumberingLowerLetter</td><td>Use lowercase letters (a, b, c, and so on).</td></tr>
+<tr><td>wNumberingUpperLetter</td><td>Use lowercase Roman letters (i, ii, iii, and so on).</td></tr>
+<tr><td>wNumberingLowerRoman</td><td>Use uppercase letters (A, B, C, and so on).</td></tr>
+<tr><td>wNumberingUpperRoman</td><td>Use uppercase Roman letters (I, II, III, and so on).</td></tr>
+</table>
+
+</dd>
+<a id="setFormat,wTextCtrl,wFont,wColor,wColor"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setFormat%2CwTextCtrl%2CwFont%2CwColor%2CwColor"><span class="Identifier">setFormat</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <a href="wTypes.html#wFont"><span class="Identifier">wFont</span></a> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">fgColor</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span>
+              <span class="Identifier">bgColor</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IndexDefect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the selection and new character format for this text control if wTeRich style is specified. Using nil for font or -1 for color indicate not to change.
+
+</dd>
+<a id="setDefaultFormat,wTextCtrl,wFont,wColor,wColor"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#setDefaultFormat%2CwTextCtrl%2CwFont%2CwColor%2CwColor"><span class="Identifier">setDefaultFormat</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">font</span><span class="Other">:</span> <a href="wTypes.html#wFont"><span class="Identifier">wFont</span></a> <span class="Other">=</span> <span class="Keyword">nil</span><span class="Other">;</span> <span class="Identifier">fgColor</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">;</span>
+                     <span class="Identifier">bgColor</span><span class="Other">:</span> <a href="wTypes.html#wColor"><span class="Identifier">wColor</span></a> <span class="Other">=</span> <span class="Operator">-</span><span class="DecNumber">1</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IndexDefect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the default format for this text control if wTeRich style is specified. Using nil for font or -1 for color indicate not to change.
+
+</dd>
+<a id="zoom,wTextCtrl,float"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#zoom%2CwTextCtrl%2Cfloat"><span class="Identifier">zoom</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">ratio</span> <span class="Other">=</span> <span class="FloatNumber">1.0</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Sets the zoom ratio for this text control. Ratio should be between 1/64 and 64. If ratio is zero or NaN, disable zoom if possible.
 
 </dd>
 <a id="loadRtf,wTextCtrl,string"></a>
@@ -829,6 +1055,14 @@ Enable the autocompletion and use system predefined sources. <em>flags</em> is a
 <dd>
 
 Enable the autocompletion and use custom source.
+
+</dd>
+<a id="enableAutoUrlDetect,wTextCtrl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#enableAutoUrlDetect%2CwTextCtrl"><span class="Identifier">enableAutoUrlDetect</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wTextCtrl"><span class="Identifier">wTextCtrl</span></a><span class="Other">;</span> <span class="Identifier">enable</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">discardable</span><span class="Other">,</span>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Enables or disables automatic detection of hyperlinks by a rich edit control. A wEvent_TextLink event will be generated when mouse events occur over url.
 
 </dd>
 <a id="init,wTextCtrl,wWindow,string,wStyle"></a>

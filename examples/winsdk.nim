@@ -12,11 +12,10 @@ import
   winim/lean
 
 import wNim/[wApp, wIcon, wFrame, wMenu, wStatusBar, wPaintDC, wBrush,
-  wMessageDialog, wUtils]
+  wMessageDialog]
 
-wSetSysemDpiAware()
 let
-  app = App()
+  app = App(wSystemDpiAware)
   frame = Frame(title="wNim with Windows SDK", size=(640, 480))
   statusBar = StatusBar(frame)
 

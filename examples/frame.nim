@@ -6,11 +6,10 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel, wUtils,
+import wNim/[wApp, wIcon, wFont, wCursor, wAcceleratorTable, wFrame, wPanel,
   wMenu, wMenuBar, wButton, wStatusBar, wStaticText, wTextEntryDialog, wFontDialog]
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="wNim Frame Demo")
 frame.icon = Icon("", 0) # load icon from exe file.
 

@@ -6,10 +6,9 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC, wUtils]
+import wNim/[wApp, wImage, wFrame, wRegion, wMenu, wPaintDC]
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 
 const logo = staticRead(r"images/logo.png")
 let image = Image(logo)

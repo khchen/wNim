@@ -20,7 +20,7 @@
 ##   ==============================  =============================================================
 
 include ../pragma
-import ../wBase, wDialog
+import ../wBase, wDialog, memlib/rtlib
 export wDialog
 
 const
@@ -53,18 +53,10 @@ proc setMessage*(self: wDirDialog, message: string) {.validate, property, inline
   ## Sets the message that will be displayed on the dialog.
   self.mMessage = message
 
+proc SHCreateItemFromParsingName(pszPath: PCWSTR, pbc: ptr IBindCtx, riid: REFIID, ppv: ptr pointer): HRESULT
+  {.checkedRtlib: "shell32", stdcall, importc.}
+
 proc showModal_VistaLaster(self: wDirDialog): wId =
-  type SHCreateItemFromParsingName = proc (pszPath: PCWSTR, pbc: ptr IBindCtx, riid: REFIID, ppv: ptr pointer): HRESULT {.stdcall.}
-  var shCreateItemFromParsingName {.global.}: SHCreateItemFromParsingName
-
-  if shCreateItemFromParsingName.isNil:
-    let hDll = LoadLibrary("shell32.dll")
-    if hDll != 0:
-      defer: FreeLibrary(hDll)
-      shCreateItemFromParsingName = cast[SHCreateItemFromParsingName](GetProcAddress(hDll, "SHCreateItemFromParsingName"))
-      if shCreateItemFromParsingName.isNil:
-        return wIdCancel
-
   var
     dialog: ptr IFileOpenDialog
     item: ptr IShellItem
@@ -81,8 +73,12 @@ proc showModal_VistaLaster(self: wDirDialog): wId =
       if dialog.SetTitle(self.mMessage).FAILED: break
 
     if self.mPath.len != 0:
-      if shCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
-        cast[ptr PVOID](&folder)).FAILED: break
+      try:
+        if SHCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
+          cast[ptr PVOID](&folder)).FAILED: break
+
+      except LibraryError:
+        break
 
       if dialog.SetFolder(folder).FAILED: break
 

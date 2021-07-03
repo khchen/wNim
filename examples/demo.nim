@@ -7,15 +7,14 @@
 
 import resource/resource
 
-import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu, wUtils,
+import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu,
   wIcon, wBitmap, wPen, wBrush, wPaintDC,
   wStaticBox, wStaticLine, wStaticBitmap, wStaticText,
   wButton, wRadioButton, wCheckBox, wComboBox, wCheckComboBox, wListBox,
   wNoteBook, wTextCtrl, wSpinCtrl, wHotKeyCtrl, wSlider, wGauge,
   wCalendarCtrl, wDatePickerCtrl, wTimePickerCtrl]
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="wNim Demo", style=wDefaultFrameStyle or wModalFrame)
 frame.icon = Icon("", 0) # load icon from exe file.
 frame.dpiAutoScale:

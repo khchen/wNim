@@ -6,14 +6,13 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wStaticBox, wButton, wUtils]
+import wNim/[wApp, wFrame, wIcon, wStatusBar, wPanel, wStaticBox, wButton]
 
 const
   UseAutoLayout = not defined(legacy)
   Title = if UseAutoLayout: "Autolayout Example 3" else: "Layout Example 3"
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title=Title, size=(400, 300))
 frame.icon = Icon("", 0) # load icon from exe file.
 

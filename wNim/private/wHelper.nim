@@ -6,7 +6,7 @@
 #====================================================================
 
 include pragma
-import lists, times, tables
+import lists, times, tables, memlib/rtlib
 import winim/[winstr, utils], winim/inc/windef, winimx
 import wTypes, wMacros
 
@@ -265,24 +265,20 @@ proc wMenuToggle*(self: wMenu, pos: int) {.validate.} =
     SetMenuItemInfo(self.mHmenu, pos, true, menuItemInfo)
 
 proc loadRichDll*(): bool =
-  var richDllLoaded {.global, threadvar.}: bool
+  var richDllLoaded {.threadvar.}: bool
   if not richDllLoaded:
-    if LoadLibrary("msftedit.dll") != 0:
-      richDllLoaded = true
+    richDllLoaded = LoadLibrary("msftedit.dll") != 0
   result = richDllLoaded
 
-proc usingTheme*(): bool =
-  let hDll = LoadLibrary("comctl32.dll")
-  if hDll != 0:
-    defer: FreeLibrary(hDll)
+proc DllGetVersion(vi: ptr DLLVERSIONINFO) {.checkedRtlib: "comctl32", stdcall, importc.}
 
-    var dllGetVersion = cast[DLLGETVERSIONPROC](GetProcAddress(hDll, "DllGetVersion"))
-    if not dllGetVersion.isNil:
-      var vi = DLLVERSIONINFO(cbSize: int32 sizeof(DLLVERSIONINFO))
-      try: {.gcsafe.}: # to avoid observable warning
-        discard dllGetVersion(vi)
-        result = vi.dwMajorVersion >= 6
-      except: discard
+proc usingTheme*(): bool =
+  try:
+    var vi = DLLVERSIONINFO(cbSize: sizeof(DLLVERSIONINFO))
+    DllGetVersion(&vi)
+    result = vi.dwMajorVersion >= 6
+
+  except LibraryError: discard
 
 proc getSize*(iconInfo: ICONINFO): wSize =
   var bitmapInfo: BITMAP
@@ -314,22 +310,18 @@ proc getHandle*(self: wAcceleratorTable): HACCEL =
 
   result = self.mHandle
 
+proc RtlGetVersion(lp: ptr OSVERSIONINFO) {.checkedRtlib: "ntdll", stdcall, importc.}
+
 proc wGetWinVersionImpl*(): float =
-  type RtlGetVersion = proc (lp: ptr OSVERSIONINFO) {.stdcall.}
-  var osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO).DWORD)
-  let hDll = LoadLibrary("ntdll.dll")
-  if hDll != 0:
-    defer: FreeLibrary(hDll)
+  var osv = OSVERSIONINFO(dwOSVersionInfoSize: sizeof(OSVERSIONINFO))
+  try:
+    RtlGetVersion(osv)
 
-    var rtlGetVersion = cast[RtlGetVersion](GetProcAddress(hDll, "RtlGetVersion"))
-    if not rtlGetVersion.isNil:
-      try: {.gcsafe.}: # to avoid observable warning
-        rtlGetVersion(osv)
-        return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
-      except: discard
+  except LibraryError:
+    GetVersionEx(osv)
 
-  GetVersionEx(osv)
-  return osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
+  finally:
+    result = osv.dwMajorVersion.float + osv.dwMinorVersion.float / 10
 
 proc wGetMessagePosition*(): wPoint =
   # Returns the mouse position in screen coordinates.
@@ -346,3 +338,30 @@ proc forceForegroundWindow*(hWnd: HWND) =
 
   SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE or SWP_SHOWWINDOW)
   BringWindowToTop(hWnd)
+
+proc isToolbarFloating*(self: wToolBar): bool =
+  result = (GetWindowLongPtr(self.mHwnd, GWL_STYLE) and (CCS_NOPARENTALIGN or CCS_NORESIZE)) != 0
+
+proc setSystemDpiAware*(): bool {.discardable.} =
+  proc SetProcessDPIAware(): BOOL {.checkedRtlib: "user32", stdcall, importc.}
+
+  try:
+    if SetProcessDPIAware() != 0:
+      return true
+  except LibraryError: discard
+
+proc setPerMonitorDpiAware*(): bool {.discardable.} =
+  const DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
+  const PROCESS_PER_MONITOR_DPI_AWARE = 2
+  proc SetProcessDpiAwarenessContext(value: HANDLE): BOOL {.checkedRtlib: "user32", stdcall, importc.}
+  proc SetProcessDpiAwareness(value: cint): HRESULT {.checkedRtlib: "shcore", stdcall, importc.}
+
+  try:
+    if SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) != 0:
+      return true
+  except LibraryError: discard
+
+  try:
+    if SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE) == S_OK:
+      return true
+  except LibraryError: discard

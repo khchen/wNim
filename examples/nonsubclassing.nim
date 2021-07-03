@@ -6,10 +6,9 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wFrame, wIcon, wMessageDialog, wUtils]
+import wNim/[wApp, wFrame, wIcon, wMessageDialog]
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="Hello World", size=(350, 200))
 frame.icon = Icon("", 0) # load icon from exe file.
 

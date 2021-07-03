@@ -9,7 +9,7 @@ import
   strformat, math, strutils,
   resource/resource
 
-import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon, wUtils,
+import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon,
   wStaticBox, wButton, wRadioButton, wMessageDialog, wDirDialog, wFileDialog,
   wColorDialog, wFontDialog, wTextEntryDialog, wPasswordEntryDialog,
   wFindReplaceDialog, wPageSetupDialog, wPrintDialog]
@@ -17,8 +17,7 @@ import wNim/[wApp, wMacros, wFrame, wPanel, wEvent, wPrintData, wIcon, wUtils,
 wEventRegister(wEvent):
   wEvent_RadioButtonOn
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="Dialog Demo", size=(500, 520))
 frame.icon = Icon("", 0) # load icon from exe file.
 frame.minSize = (500, 520)

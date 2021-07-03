@@ -144,10 +144,6 @@ function main() {
     title="removeAll(self: wMenuBar)"><wbr />remove<wbr />All<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#replace%2CwMenuBar%2Cint%2CwMenu%2Cstring%2CwBitmap"
     title="replace(self: wMenuBar; pos: int; menu: wMenu; text: string; bitmap: wBitmap = nil): wMenu"><wbr />replace<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getHandle%2CwMenuBar"
-    title="getHandle(self: wMenuBar): HMENU"><wbr />get<wbr />Handle<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getCount%2CwMenuBar"
-    title="getCount(self: wMenuBar): int"><wbr />get<wbr />Count<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#%5B%5D%2CwMenuBar%2Cint"
     title="`[]`(self: wMenuBar; pos: int): wMenu"><wbr />`[]`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#len%2CwMenuBar"
@@ -374,20 +370,6 @@ Removes all the menu from the menubar.
 <dd>
 
 Replaces the menu at the given position with another one. Return the old menu object.
-
-</dd>
-<a id="getHandle,wMenuBar"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getHandle%2CwMenuBar"><span class="Identifier">getHandle</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wMenuBar"><span class="Identifier">wMenuBar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">HMENU</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Get system handle of this menubar.
-
-</dd>
-<a id="getCount,wMenuBar"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getCount%2CwMenuBar"><span class="Identifier">getCount</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wMenuBar"><span class="Identifier">wMenuBar</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Returns the number of menus in this menubar.
 
 </dd>
 <a id="[],wMenuBar,int"></a>

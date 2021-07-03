@@ -72,6 +72,7 @@
 ##  - `wWebView <wWebView.html>`_
 ##  - `wHotkeyCtrl <wHotkeyCtrl.html>`_
 ##  - `wRebar <wRebar.html>`_
+##  - `wMenuBarCtrl <wMenuBarCtrl.html>`_
 ##
 ##  Device Contexts
 ##  ---------------
@@ -131,6 +132,7 @@
 ##  - `wIpEvent <wIpEvent.html>`_
 ##  - `wWebViewEvent <wWebViewEvent.html>`_
 ##  - `wDialogEvent <wDialogEvent.html>`_
+##  - `wTextLinkEvent <wTextLinkEvent.html>`_
 ##
 ##  Constants
 ##  ---------
@@ -160,7 +162,7 @@ when not defined(Nimdoc):
       wListBox, wListCtrl, wNoteBook, wRadioButton, wRebar, wScrollBar, wSlider,
       wSpinButton, wSpinCtrl, wSplitter, wStaticBitmap, wStaticBox, wStaticLine,
       wStaticText, wStatusBar, wTextCtrl, wTimePickerCtrl, wToolBar, wTreeCtrl,
-      wWebView],
+      wWebView, wMenuBarCtrl],
 
     wNim/private/dialogs/[wColorDialog, wDialog, wDirDialog, wFileDialog, wFindReplaceDialog,
       wFontDialog, wMessageDialog, wPageSetupDialog, wPasswordEntryDialog,
@@ -184,7 +186,7 @@ when not defined(Nimdoc):
     wListBox, wListCtrl, wNoteBook, wRadioButton, wRebar, wScrollBar, wSlider,
     wSpinButton, wSpinCtrl, wSplitter, wStaticBitmap, wStaticBox, wStaticLine,
     wStaticText, wStatusBar, wTextCtrl, wTimePickerCtrl, wToolBar, wTreeCtrl,
-    wWebView,
+    wWebView, wMenuBarCtrl,
 
     wColorDialog, wDialog, wDirDialog, wFileDialog, wFindReplaceDialog,
     wFontDialog, wMessageDialog, wPageSetupDialog, wPasswordEntryDialog,

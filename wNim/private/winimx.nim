@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               Winim - Nim's Windows API Module
-#                 (c) Copyright 2016-2020 Ward
+#                 (c) Copyright 2016-2021 Ward
 #
 #====================================================================
 
@@ -59,10 +59,10 @@ proc LoadResource*(hModule: HMODULE, hResInfo: HRSRC): HGLOBAL {.winapi, stdcall
 proc LockResource*(hResData: HGLOBAL): LPVOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc SizeofResource*(hModule: HMODULE, hResInfo: HRSRC): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc FreeLibrary*(hLibModule: HMODULE): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GetProcAddress*(hModule: HMODULE, lpProcName: LPCSTR): FARPROC {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetCurrentThreadId*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc Sleep*(dwMilliseconds: DWORD): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GetLocalTime*(lpSystemTime: LPSYSTEMTIME): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
+proc GetTickCount*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalAlloc*(uFlags: UINT, dwBytes: SIZE_T): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalSize*(hMem: HGLOBAL): SIZE_T {.winapi, stdcall, dynlib: "kernel32", importc.}
 proc GlobalLock*(hMem: HGLOBAL): LPVOID {.winapi, stdcall, dynlib: "kernel32", importc.}
@@ -839,6 +839,30 @@ type
     lpszMenuName*: LPCWSTR
     lpszClassName*: LPCWSTR
     hIconSm*: HICON
+  WNDCLASSA* {.pure.} = object
+    style*: UINT
+    lpfnWndProc*: WNDPROC
+    cbClsExtra*: int32
+    cbWndExtra*: int32
+    hInstance*: HINSTANCE
+    hIcon*: HICON
+    hCursor*: HCURSOR
+    hbrBackground*: HBRUSH
+    lpszMenuName*: LPCSTR
+    lpszClassName*: LPCSTR
+  LPWNDCLASSA* = ptr WNDCLASSA
+  WNDCLASSW* {.pure.} = object
+    style*: UINT
+    lpfnWndProc*: WNDPROC
+    cbClsExtra*: int32
+    cbWndExtra*: int32
+    hInstance*: HINSTANCE
+    hIcon*: HICON
+    hCursor*: HCURSOR
+    hbrBackground*: HBRUSH
+    lpszMenuName*: LPCWSTR
+    lpszClassName*: LPCWSTR
+  LPWNDCLASSW* = ptr WNDCLASSW
   MSG* {.pure.} = object
     hwnd*: HWND
     message*: UINT
@@ -1212,6 +1236,7 @@ const
   VK_NONAME* = 0xFC
   VK_PA1* = 0xFD
   VK_OEM_CLEAR* = 0xFE
+  WH_MSGFILTER* = -1
   WH_CBT* = 5
   WH_KEYBOARD_LL* = 13
   HCBT_ACTIVATE* = 5
@@ -1234,6 +1259,7 @@ const
   WM_QUIT* = 0x0012
   WM_ERASEBKGND* = 0x0014
   WM_SHOWWINDOW* = 0x0018
+  WM_CANCELMODE* = 0x001F
   WM_SETCURSOR* = 0x0020
   WM_GETMINMAXINFO* = 0x0024
   WM_DRAWITEM* = 0x002B
@@ -1243,6 +1269,7 @@ const
   WM_WINDOWPOSCHANGED* = 0x0047
   WM_NOTIFY* = 0x004E
   WM_CONTEXTMENU* = 0x007B
+  WM_STYLECHANGED* = 0x007D
   WM_SETICON* = 0x0080
   WM_NCDESTROY* = 0x0082
   WM_NCCALCSIZE* = 0x0083
@@ -1278,9 +1305,13 @@ const
   WM_MENUSELECT* = 0x011F
   WM_MENURBUTTONUP* = 0x0122
   WM_MENUCOMMAND* = 0x0126
+  WM_CHANGEUISTATE* = 0x0127
   WM_UPDATEUISTATE* = 0x0128
+  WM_QUERYUISTATE* = 0x0129
+  UIS_SET* = 1
   UIS_CLEAR* = 2
   UISF_HIDEFOCUS* = 0x1
+  UISF_HIDEACCEL* = 0x2
   WM_CTLCOLOREDIT* = 0x0133
   WM_CTLCOLORLISTBOX* = 0x0134
   WM_CTLCOLORBTN* = 0x0135
@@ -1344,8 +1375,10 @@ const
   WS_EX_TOOLWINDOW* = 0x00000080
   WS_EX_WINDOWEDGE* = 0x00000100
   WS_EX_CLIENTEDGE* = 0x00000200
+  WS_EX_RTLREADING* = 0x00002000
   WS_EX_STATICEDGE* = 0x00020000
   WS_EX_LAYERED* = 0x00080000
+  WS_EX_LAYOUTRTL* = 0x00400000
   WS_EX_COMPOSITED* = 0x02000000
   CS_VREDRAW* = 0x0001
   CS_HREDRAW* = 0x0002
@@ -1374,6 +1407,7 @@ const
   MOD_WIN* = 0x0008
   MOD_NOREPEAT* = 0x4000
   CW_USEDEFAULT* = int32 0x80000000'i32
+  HWND_DESKTOP* = HWND 0
   LWA_ALPHA* = 0x00000002
   SWP_NOSIZE* = 0x0001
   SWP_NOMOVE* = 0x0002
@@ -1388,6 +1422,7 @@ const
   HWND_BOTTOM* = HWND 1
   HWND_TOPMOST* = HWND(-1)
   HWND_NOTOPMOST* = HWND(-2)
+  KEYEVENTF_KEYUP* = 0x0002
   SM_CXSCREEN* = 0
   SM_CYSCREEN* = 1
   SM_CXVSCROLL* = 2
@@ -1439,15 +1474,18 @@ const
   MIIM_BITMAP* = 0x00000080
   MIIM_FTYPE* = 0x00000100
   HBMMENU_CALLBACK* = HBITMAP(-1)
+  TPM_LEFTBUTTON* = 0x0000
   TPM_LEFTALIGN* = 0x0000
   TPM_RIGHTALIGN* = 0x0008
   TPM_TOPALIGN* = 0x0000
   TPM_VCENTERALIGN* = 0x0010
   TPM_BOTTOMALIGN* = 0x0020
+  TPM_VERTICAL* = 0x0040
   TPM_RETURNCMD* = 0x0100
   TPM_RECURSE* = 0x0001
   TPM_HORPOSANIMATION* = 0x0400
   TPM_HORNEGANIMATION* = 0x0800
+  TPM_LAYOUTRTL* = 0x8000
   DT_TOP* = 0x00000000
   DT_LEFT* = 0x00000000
   DT_CENTER* = 0x00000001
@@ -1458,6 +1496,7 @@ const
   DT_CALCRECT* = 0x00000400
   DT_NOPREFIX* = 0x00000800
   DT_END_ELLIPSIS* = 0x00008000
+  DT_HIDEPREFIX* = 0x00100000
   RDW_INVALIDATE* = 0x0001
   RDW_ERASE* = 0x0004
   RDW_ALLCHILDREN* = 0x0080
@@ -1486,6 +1525,7 @@ const
   MB_APPLMODAL* = 0x00000000
   MB_TASKMODAL* = 0x00002000
   MB_TOPMOST* = 0x00040000
+  COLOR_MENUTEXT* = 7
   COLOR_ACTIVEBORDER* = 10
   COLOR_APPWORKSPACE* = 12
   COLOR_HIGHLIGHT* = 13
@@ -1500,9 +1540,12 @@ const
   MF_SEPARATOR* = 0x00000800
   MF_ENABLED* = 0x00000000
   MF_GRAYED* = 0x00000001
+  MF_DISABLED* = 0x00000002
   MF_CHECKED* = 0x00000008
   MF_STRING* = 0x00000000
   MF_POPUP* = 0x00000010
+  MF_MENUBARBREAK* = 0x00000020
+  MF_MENUBREAK* = 0x00000040
   MFT_STRING* = MF_STRING
   MFT_SEPARATOR* = MF_SEPARATOR
   MFS_GRAYED* = 0x00000003
@@ -1669,6 +1712,8 @@ const
   SIF_TRACKPOS* = 0x0010
   SIF_ALL* = SIF_RANGE or SIF_PAGE or SIF_POS or SIF_TRACKPOS
   SPI_GETNONCLIENTMETRICS* = 0x0029
+  SPI_GETKEYBOARDCUES* = 0x100A
+  SPI_GETMENUUNDERLINES* = SPI_GETKEYBOARDCUES
   OBJID_VSCROLL* = LONG 0xFFFFFFFB'i32
   OBJID_HSCROLL* = LONG 0xFFFFFFFA'i32
   STATE_SYSTEM_PRESSED* = 0x00000008
@@ -1711,6 +1756,7 @@ proc GetFocus*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetKeyState*(nVirtKey: int32): SHORT {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetAsyncKeyState*(vKey: int32): SHORT {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetKeyboardState*(lpKeyState: PBYTE): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc keybd_event*(bVk: BYTE, bScan: BYTE, dwFlags: DWORD, dwExtraInfo: ULONG_PTR): VOID {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetCapture*(): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetCapture*(hWnd: HWND): HWND {.winapi, stdcall, dynlib: "user32", importc.}
 proc ReleaseCapture*(): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1722,6 +1768,7 @@ proc DestroyAcceleratorTable*(hAccel: HACCEL): WINBOOL {.winapi, stdcall, dynlib
 proc GetSystemMetrics*(nIndex: int32): int32 {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetMenu*(hWnd: HWND): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetMenu*(hWnd: HWND, hMenu: HMENU): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc GetMenuState*(hMenu: HMENU, uId: UINT, uFlags: UINT): UINT {.winapi, stdcall, dynlib: "user32", importc.}
 proc DrawMenuBar*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetSystemMenu*(hWnd: HWND, bRevert: WINBOOL): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
 proc CreateMenu*(): HMENU {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1755,6 +1802,8 @@ proc GetWindowRect*(hWnd: HWND, lpRect: LPRECT): WINBOOL {.winapi, stdcall, dynl
 proc SetCursorPos*(X: int32, Y: int32): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc SetCursor*(hCursor: HCURSOR): HCURSOR {.winapi, stdcall, dynlib: "user32", importc.}
 proc GetCursorPos*(lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc HideCaret*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
+proc ShowCaret*(hWnd: HWND): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ClientToScreen*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc ScreenToClient*(hWnd: HWND, lpPoint: LPPOINT): WINBOOL {.winapi, stdcall, dynlib: "user32", importc.}
 proc MapWindowPoints*(hWndFrom: HWND, hWndTo: HWND, lpPoints: LPPOINT, cPoints: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc.}
@@ -1798,6 +1847,7 @@ when winimUnicode:
   proc CreateWindowEx*(dwExStyle: DWORD, lpClassName: LPCWSTR, lpWindowName: LPCWSTR, dwStyle: DWORD, X: int32, Y: int32, nWidth: int32, nHeight: int32, hWndParent: HWND, hMenu: HMENU, hInstance: HINSTANCE, lpParam: LPVOID): HWND {.winapi, stdcall, dynlib: "user32", importc: "CreateWindowExW".}
   type
     WNDCLASSEX* = WNDCLASSEXW
+    WNDCLASS* = WNDCLASSW
     CREATESTRUCT* = CREATESTRUCTW
     MENUITEMINFO* = MENUITEMINFOW
     NONCLIENTMETRICS* = NONCLIENTMETRICSW
@@ -1808,7 +1858,9 @@ when winimUnicode:
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageW".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageW".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcW".}
+  proc CallWindowProc*(lpPrevWndFunc: WNDPROC, hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "CallWindowProcW".}
   proc UnregisterClass*(lpClassName: LPCWSTR, hInstance: HINSTANCE): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "UnregisterClassW".}
+  proc GetClassInfo*(hInstance: HINSTANCE, lpClassName: LPCWSTR, lpWndClass: LPWNDCLASSW): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetClassInfoW".}
   proc RegisterClassEx*(P1: ptr WNDCLASSEXW): ATOM {.winapi, stdcall, dynlib: "user32", importc: "RegisterClassExW".}
   proc CreateAcceleratorTable*(paccel: LPACCEL, cAccel: int32): HACCEL {.winapi, stdcall, dynlib: "user32", importc: "CreateAcceleratorTableW".}
   proc TranslateAccelerator*(hWnd: HWND, hAccTable: HACCEL, lpMsg: LPMSG): int32 {.winapi, stdcall, dynlib: "user32", importc: "TranslateAcceleratorW".}
@@ -1820,6 +1872,7 @@ when winimUnicode:
   proc GetWindowText*(hWnd: HWND, lpString: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextW".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthW".}
   proc MessageBox*(hWnd: HWND, lpText: LPCWSTR, lpCaption: LPCWSTR, uType: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "MessageBoxW".}
+  proc FindWindow*(lpClassName: LPCWSTR, lpWindowName: LPCWSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowW".}
   proc FindWindowEx*(hWndParent: HWND, hWndChildAfter: HWND, lpszClass: LPCWSTR, lpszWindow: LPCWSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowExW".}
   proc GetClassName*(hWnd: HWND, lpClassName: LPWSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameW".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExW".}
@@ -1830,6 +1883,7 @@ when winimUnicode:
 when winimAnsi:
   type
     WNDCLASSEX* = WNDCLASSEXA
+    WNDCLASS* = WNDCLASSA
     CREATESTRUCT* = CREATESTRUCTA
     MENUITEMINFO* = MENUITEMINFOA
     NONCLIENTMETRICS* = NONCLIENTMETRICSA
@@ -1840,7 +1894,9 @@ when winimAnsi:
   proc SendMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "SendMessageA".}
   proc PostMessage*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "PostMessageA".}
   proc DefWindowProc*(hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "DefWindowProcA".}
+  proc CallWindowProc*(lpPrevWndFunc: WNDPROC, hWnd: HWND, Msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT {.winapi, stdcall, dynlib: "user32", importc: "CallWindowProcA".}
   proc UnregisterClass*(lpClassName: LPCSTR, hInstance: HINSTANCE): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "UnregisterClassA".}
+  proc GetClassInfo*(hInstance: HINSTANCE, lpClassName: LPCSTR, lpWndClass: LPWNDCLASSA): WINBOOL {.winapi, stdcall, dynlib: "user32", importc: "GetClassInfoA".}
   proc RegisterClassEx*(P1: ptr WNDCLASSEXA): ATOM {.winapi, stdcall, dynlib: "user32", importc: "RegisterClassExA".}
   proc CreateAcceleratorTable*(paccel: LPACCEL, cAccel: int32): HACCEL {.winapi, stdcall, dynlib: "user32", importc: "CreateAcceleratorTableA".}
   proc TranslateAccelerator*(hWnd: HWND, hAccTable: HACCEL, lpMsg: LPMSG): int32 {.winapi, stdcall, dynlib: "user32", importc: "TranslateAcceleratorA".}
@@ -1852,6 +1908,7 @@ when winimAnsi:
   proc GetWindowText*(hWnd: HWND, lpString: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextA".}
   proc GetWindowTextLength*(hWnd: HWND): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetWindowTextLengthA".}
   proc MessageBox*(hWnd: HWND, lpText: LPCSTR, lpCaption: LPCSTR, uType: UINT): int32 {.winapi, stdcall, dynlib: "user32", importc: "MessageBoxA".}
+  proc FindWindow*(lpClassName: LPCSTR, lpWindowName: LPCSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowA".}
   proc FindWindowEx*(hWndParent: HWND, hWndChildAfter: HWND, lpszClass: LPCSTR, lpszWindow: LPCSTR): HWND {.winapi, stdcall, dynlib: "user32", importc: "FindWindowExA".}
   proc GetClassName*(hWnd: HWND, lpClassName: LPSTR, nMaxCount: int32): int32 {.winapi, stdcall, dynlib: "user32", importc: "GetClassNameA".}
   proc SetWindowsHookEx*(idHook: int32, lpfn: HOOKPROC, hmod: HINSTANCE, dwThreadId: DWORD): HHOOK {.winapi, stdcall, dynlib: "user32", importc: "SetWindowsHookExA".}
@@ -3854,6 +3911,7 @@ const
   TV_FIRST* = 0x1100
   HDM_FIRST* = 0x1200
   TCM_FIRST* = 0x1300
+  ECM_FIRST* = 0x1500
   BCM_FIRST* = 0x1600
   NM_FIRST* = 0-0
   NM_CLICK* = NM_FIRST-2
@@ -3876,8 +3934,15 @@ const
   RBN_FIRST* = 0-831
   IPN_FIRST* = 0-860
   BCN_FIRST* = 0-1250
+  CDRF_DODEFAULT* = 0x0
   CDRF_SKIPDEFAULT* = 0x4
+  CDRF_NOTIFYITEMDRAW* = 0x20
+  CDDS_PREPAINT* = 0x1
   CDDS_PREERASE* = 0x3
+  CDDS_ITEM* = 0x10000
+  CDDS_ITEMPREPAINT* = CDDS_ITEM or CDDS_PREPAINT
+  CDIS_SELECTED* = 0x1
+  CDIS_HOT* = 0x40
   ILC_MASK* = 0x1
   ILC_COLOR32* = 0x20
   ILD_TRANSPARENT* = 0x1
@@ -3894,21 +3959,31 @@ const
   TOOLBARCLASSNAMEW* = "ToolbarWindow32"
   TOOLBARCLASSNAMEA* = "ToolbarWindow32"
   TBSTATE_CHECKED* = 0x1
+  TBSTATE_PRESSED* = 0x2
   TBSTATE_ENABLED* = 0x4
+  TBSTATE_WRAP* = 0x20
   TBSTYLE_BUTTON* = 0x0
   TBSTYLE_SEP* = 0x1
   TBSTYLE_CHECK* = 0x2
   TBSTYLE_GROUP* = 0x4
   TBSTYLE_CHECKGROUP* = TBSTYLE_GROUP or TBSTYLE_CHECK
+  TBSTYLE_DROPDOWN* = 0x8
+  TBSTYLE_AUTOSIZE* = 0x10
   TBSTYLE_TOOLTIPS* = 0x100
   TBSTYLE_FLAT* = 0x800
   TBSTYLE_CUSTOMERASE* = 0x2000
+  TBSTYLE_TRANSPARENT* = 0x8000
   TBSTYLE_EX_DRAWDDARROWS* = 0x1
+  BTNS_SEP* = TBSTYLE_SEP
+  BTNS_DROPDOWN* = TBSTYLE_DROPDOWN
+  BTNS_AUTOSIZE* = TBSTYLE_AUTOSIZE
+  BTNS_SHOWTEXT* = 0x40
   BTNS_WHOLEDROPDOWN* = 0x80
   TB_ENABLEBUTTON* = WM_USER+1
   TB_SETSTATE* = WM_USER+17
   TB_GETSTATE* = WM_USER+18
   TB_ADDBITMAP* = WM_USER+19
+  TB_ADDBUTTONSA* = WM_USER+20
   TB_INSERTBUTTONA* = WM_USER+21
   TB_DELETEBUTTON* = WM_USER+22
   TB_GETBUTTON* = WM_USER+23
@@ -3920,7 +3995,11 @@ const
   TB_GETSTYLE* = WM_USER+57
   TB_GETBUTTONSIZE* = WM_USER+58
   TB_SETHOTITEM* = WM_USER+72
+  TB_MAPACCELERATORA* = WM_USER+78
   TB_SETEXTENDEDSTYLE* = WM_USER+84
+  TB_GETPADDING* = WM_USER+86
+  TB_SETPADDING* = WM_USER+87
+  TB_MAPACCELERATORW* = WM_USER+90
   TBIF_IMAGE* = 0x1
   TBIF_TEXT* = 0x2
   TBIF_STATE* = 0x4
@@ -3929,10 +4008,15 @@ const
   TB_GETBUTTONINFOW* = WM_USER+63
   TB_GETBUTTONINFOA* = WM_USER+65
   TB_INSERTBUTTONW* = WM_USER+67
+  TB_ADDBUTTONSW* = WM_USER+68
+  TB_HITTEST* = WM_USER+69
+  TB_SETDRAWTEXTFLAGS* = WM_USER+70
+  TB_GETIDEALSIZE* = WM_USER+99
   TBN_DROPDOWN* = TBN_FIRST-10
   HICF_ENTERING* = 0x10
   HICF_LEAVING* = 0x20
   TBN_HOTITEMCHANGE* = TBN_FIRST-13
+  TBDDRET_DEFAULT* = 0
   REBARCLASSNAMEW* = "ReBarWindow32"
   REBARCLASSNAMEA* = "ReBarWindow32"
   RBIM_IMAGELIST* = 0x1
@@ -4639,8 +4723,10 @@ when winimUnicode:
     HDN_BEGINTRACK* = HDN_BEGINTRACKW
     HDN_ENDTRACK* = HDN_ENDTRACKW
     TOOLBARCLASSNAME* = TOOLBARCLASSNAMEW
+    TB_MAPACCELERATOR* = TB_MAPACCELERATORW
     TB_GETBUTTONINFO* = TB_GETBUTTONINFOW
     TB_INSERTBUTTON* = TB_INSERTBUTTONW
+    TB_ADDBUTTONS* = TB_ADDBUTTONSW
     REBARCLASSNAME* = REBARCLASSNAMEW
     RB_INSERTBAND* = RB_INSERTBANDW
     RB_SETBANDINFO* = RB_SETBANDINFOW
@@ -4698,8 +4784,10 @@ when winimAnsi:
     HDN_BEGINTRACK* = HDN_BEGINTRACKA
     HDN_ENDTRACK* = HDN_ENDTRACKA
     TOOLBARCLASSNAME* = TOOLBARCLASSNAMEA
+    TB_MAPACCELERATOR* = TB_MAPACCELERATORA
     TB_GETBUTTONINFO* = TB_GETBUTTONINFOA
     TB_INSERTBUTTON* = TB_INSERTBUTTONA
+    TB_ADDBUTTONS* = TB_ADDBUTTONSA
     REBARCLASSNAME* = REBARCLASSNAMEA
     RB_INSERTBAND* = RB_INSERTBANDA
     RB_SETBANDINFO* = RB_SETBANDINFOA
@@ -5105,11 +5193,16 @@ const
   EM_GETTEXTRANGE* = WM_USER+75
   EM_REDO* = WM_USER+84
   EM_CANREDO* = WM_USER+85
+  EM_AUTOURLDETECT* = WM_USER+91
   EM_GETTEXTLENGTHEX* = WM_USER+95
+  EM_SETTEXTEX* = WM_USER+97
+  EM_SETZOOM* = WM_USER+225
   EN_REQUESTRESIZE* = 0x0701
+  EN_LINK* = 0x070b
   ENM_CHANGE* = 0x00000001
   ENM_UPDATE* = 0x00000002
   ENM_REQUESTRESIZE* = 0x00040000
+  ENM_LINK* = 0x04000000
   CFM_BOLD* = 0x00000001
   CFM_ITALIC* = 0x00000002
   CFM_UNDERLINE* = 0x00000004
@@ -5129,8 +5222,28 @@ const
   SF_RTF* = 0x0002
   SFF_SELECTION* = 0x8000
   MAX_TAB_STOPS* = 32
+  PFM_STARTINDENT* = 0x00000001
+  PFM_RIGHTINDENT* = 0x00000002
+  PFM_OFFSET* = 0x00000004
+  PFM_ALIGNMENT* = 0x00000008
+  PFM_TABSTOPS* = 0x00000010
+  PFM_NUMBERING* = 0x00000020
+  PFM_SPACEBEFORE* = 0x00000040
+  PFM_SPACEAFTER* = 0x00000080
   PFM_LINESPACING* = 0x00000100
+  PFN_BULLET* = 1
+  PFN_ARABIC* = 2
+  PFN_LCLETTER* = 3
+  PFN_UCLETTER* = 4
+  PFN_LCROMAN* = 5
+  PFN_UCROMAN* = 6
+  PFA_LEFT* = 1
+  PFA_RIGHT* = 2
+  PFA_CENTER* = 3
+  PFA_JUSTIFY* = 4
+  ST_SELECTION* = 2
   GTL_DEFAULT* = 0
+  AURL_ENABLEEA* = 1
 type
   EDITSTREAMCALLBACK* = proc (dwCookie: DWORD_PTR, pbBuff: LPBYTE, cb: LONG, pcb: ptr LONG): DWORD {.stdcall.}
   CHARFORMAT2W_UNION1* {.pure, union.} = object
@@ -5222,6 +5335,15 @@ type
   REQRESIZE* {.pure.} = object
     nmhdr*: NMHDR
     rc*: RECT
+  TENLINK* {.pure, packed.} = object
+    nmhdr*: NMHDR
+    msg*: UINT
+    wParam*: WPARAM
+    lParam*: LPARAM
+    chrg*: CHARRANGE
+  SETTEXTEX* {.pure.} = object
+    flags*: DWORD
+    codepage*: UINT
   GETTEXTLENGTHEX* {.pure.} = object
     flags*: DWORD
     codepage*: UINT
@@ -5401,7 +5523,6 @@ type
     dwMinorVersion*: DWORD
     dwBuildNumber*: DWORD
     dwPlatformID*: DWORD
-  DLLGETVERSIONPROC* = proc (P1: ptr DLLVERSIONINFO): HRESULT {.stdcall.}
   IShellItem* {.pure.} = object
     lpVtbl*: ptr IShellItemVtbl
   IShellItemVtbl* {.pure, inheritable.} = object of IUnknownVtbl
@@ -7572,6 +7693,7 @@ converter winimConverterIHTMLDocument2ToIDispatch*(x: ptr IHTMLDocument2): ptr I
 converter winimConverterIHTMLDocument2ToIUnknown*(x: ptr IHTMLDocument2): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIDocHostUIHandlerToIUnknown*(x: ptr IDocHostUIHandler): ptr IUnknown = cast[ptr IUnknown](x)
 const
+  unknown* = 0
   requestSize* = 0
 type
   PRINTER_INFO_1A* {.pure.} = object
@@ -7678,10 +7800,26 @@ const
   rotate270FlipY* = 5
   rotateNoneFlipY* = 6
   rotate90FlipY* = 7
+  pixelFormatIndexed* = INT 0x00010000
   pixelFormatGDI* = INT 0x00020000
   pixelFormatAlpha* = INT 0x00040000
+  pixelFormatPAlpha* = INT 0x00080000
+  pixelFormatExtended* = INT 0x00100000
   pixelFormatCanonical* = INT 0x00200000
+  pixelFormat1bppIndexed* = INT(1 or (1 shl 8) or pixelFormatIndexed or pixelFormatGDI)
+  pixelFormat4bppIndexed* = INT(2 or (4 shl 8) or pixelFormatIndexed or pixelFormatGDI)
+  pixelFormat8bppIndexed* = INT(3 or (8 shl 8) or pixelFormatIndexed or pixelFormatGDI)
+  pixelFormat16bppGrayScale* = INT(4 or (16 shl 8) or pixelFormatExtended)
+  pixelFormat16bppRGB555* = INT(5 or (16 shl 8) or pixelFormatGDI)
+  pixelFormat16bppRGB565* = INT(6 or (16 shl 8) or pixelFormatGDI)
+  pixelFormat16bppARGB1555* = INT(7 or (16 shl 8) or pixelFormatAlpha or pixelFormatGDI)
+  pixelFormat24bppRGB* = INT(8 or (24 shl 8) or pixelFormatGDI)
+  pixelFormat32bppRGB* = INT(9 or (32 shl 8) or pixelFormatGDI)
   pixelFormat32bppARGB* = INT(10 or (32 shl 8) or pixelFormatAlpha or pixelFormatGDI or pixelFormatCanonical)
+  pixelFormat32bppPARGB* = INT(11 or (32 shl 8) or pixelFormatAlpha or pixelFormatPAlpha or pixelFormatGDI)
+  pixelFormat48bppRGB* = INT(12 or (48 shl 8) or pixelFormatExtended)
+  pixelFormat64bppARGB* = INT(13 or (64 shl 8) or pixelFormatAlpha or pixelFormatCanonical or pixelFormatExtended)
+  pixelFormat64bppPARGB* = INT(14 or (64 shl 8) or pixelFormatAlpha or pixelFormatPAlpha or pixelFormatExtended)
   EncoderQuality* = DEFINE_GUID(0x1D5BE4B5'i32, 0xFA4A, 0x452D, [0x9C'u8,0xDD,0x5D,0xB3,0x51,0x05,0xE7,0xEB])
   BlurEffectGuid* = DEFINE_GUID(0x633C80A4'i32, 0x1843, 0x482B, [0x9E'u8,0xF2,0xBE,0x28,0x34,0xC5,0xFD,0xD4])
   BrightnessContrastEffectGuid* = DEFINE_GUID(0xD3A1DBE1'i32, 0x8EC4, 0x4C17, [0x9F'u8,0x4C,0xEA,0x97,0xAD,0x1C,0x34,0x3D])

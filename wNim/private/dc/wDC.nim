@@ -764,7 +764,7 @@ proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
     srcWidth, srcHeight, bf)
 
 proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
-    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent = wWHITE) =
+    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent = wWhite) =
   ## Copy from a source DC to this DC and treat a RGB color as transparent.
   TransparentBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc,
     xsrc, ysrc, srcWidth, srcHeight, transparent)
@@ -835,9 +835,9 @@ proc getFontMetrics*(self: wDC): tuple[height, ascent, descent, internalLeading,
   result.externalLeading = textMetric.tmExternalLeading
   result.averageWidth = textMetric.tmAveCharWidth
 
-proc init*(self: var wDC, fgColor: wColor = wBLACK, bgColor: wColor = wWHITE,
+proc init*(self: var wDC, fgColor: wColor = wBlack, bgColor: wColor = wWhite,
     font = wDefaultFont, pen = wDefaultPen, brush = wDefaultBrush,
-    background = wWHITE) =
+    background = wWhite) =
   ## Initializer.
   self.setTextForeground(fgColor)
   self.setTextBackground(bgColor)

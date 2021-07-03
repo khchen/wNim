@@ -98,6 +98,22 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#wImageError"
     title="wImageError = object of wError"><wbr />w<wbr />Image<wbr />Error<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wPixelFormat"
+    title="wPixelFormat = enum
+  wPixelFormat1bppIndexed,    ## Specifies that the format is 1 bit per pixel, indexed.
+  wPixelFormat4bppIndexed,    ## Specifies that the format is 4 bits per pixel, indexed.
+  wPixelFormat8bppIndexed,    ## Specifies that the format is 8 bits per pixel, indexed.
+  wPixelFormat16bppARGB1555,  ## Specifies that the format is 16 bits per pixel; 1 bit is used for the alpha component, and 5 bits each are used for the red, green, and blue components.
+  wPixelFormat16bppGrayScale, ## Specifies that the format is 16 bits per pixel, grayscale.
+  wPixelFormat16bppRGB555,    ## Specifies that the format is 16 bits per pixel; 5 bits each are used for the red, green, and blue components. The remaining bit is not used.
+  wPixelFormat16bppRGB565,    ## Specifies that the format is 16 bits per pixel; 5 bits are used for the red component, 6 bits are used for the green component, and 5 bits are used for the blue component.
+  wPixelFormat24bppRGB,       ## Specifies that the format is 24 bits per pixel; 8 bits each are used for the red, green, and blue components.
+  wPixelFormat32bppARGB,      ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components.
+  wPixelFormat32bppPARGB,     ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component.
+  wPixelFormat32bppRGB,       ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the red, green, and blue components. The remaining 8 bits are not used.
+  wPixelFormat48bppRGB,       ## Specifies that the format is 48 bits per pixel; 16 bits each are used for the red, green, and blue components.
+  wPixelFormat64bppARGB,      ## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components.
+  wPixelFormat64bppPARGB      ## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component."><wbr />w<wbr />Pixel<wbr />Format<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -256,6 +272,11 @@ function main() {
     title="init(self: wImage; cursor: wCursor)"><wbr />init<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#Image%2CwCursor"
     title="Image(cursor: wCursor): wImage"><wbr />Image<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#init%2CwImage%2Cint%2Cint%2Cint%2CwPixelFormat%2Cpointer"
+    title="init(self: wImage; width: int; height: int; stride: int; format: wPixelFormat;
+     scan0: pointer)"><wbr />init<span class="attachedType">wPixelFormat</span></a></li>
+  <li><a class="reference" href="#Image%2Cint%2Cint%2Cint%2CwPixelFormat%2Cpointer"
+    title="Image(width: int; height: int; stride: int; format: wPixelFormat; scan0: pointer): wImage"><wbr />Image<span class="attachedType">wPixelFormat</span></a></li>
   <li><a class="reference" href="#scale%2CwImage%2Cint%2Cint"
     title="scale(self: wImage; width, height: int; quality = wImageQualityNormal): wImage"><wbr />scale<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#scale%2CwImage%2CwSize"
@@ -369,6 +390,23 @@ function main() {
 An error raised when wImage creation or operation failure.
 
 </dd>
+<a id="wPixelFormat"></a>
+<dt><pre><a href="wImage.html#wPixelFormat"><span class="Identifier">wPixelFormat</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">wPixelFormat1bppIndexed</span><span class="Other">,</span>    <span class="Comment">## Specifies that the format is 1 bit per pixel, indexed.</span>
+  <span class="Identifier">wPixelFormat4bppIndexed</span><span class="Other">,</span>    <span class="Comment">## Specifies that the format is 4 bits per pixel, indexed.</span>
+  <span class="Identifier">wPixelFormat8bppIndexed</span><span class="Other">,</span>    <span class="Comment">## Specifies that the format is 8 bits per pixel, indexed.</span>
+  <span class="Identifier">wPixelFormat16bppARGB1555</span><span class="Other">,</span>  <span class="Comment">## Specifies that the format is 16 bits per pixel; 1 bit is used for the alpha component, and 5 bits each are used for the red, green, and blue components.</span>
+  <span class="Identifier">wPixelFormat16bppGrayScale</span><span class="Other">,</span> <span class="Comment">## Specifies that the format is 16 bits per pixel, grayscale.</span>
+  <span class="Identifier">wPixelFormat16bppRGB555</span><span class="Other">,</span>    <span class="Comment">## Specifies that the format is 16 bits per pixel; 5 bits each are used for the red, green, and blue components. The remaining bit is not used.</span>
+  <span class="Identifier">wPixelFormat16bppRGB565</span><span class="Other">,</span>    <span class="Comment">## Specifies that the format is 16 bits per pixel; 5 bits are used for the red component, 6 bits are used for the green component, and 5 bits are used for the blue component.</span>
+  <span class="Identifier">wPixelFormat24bppRGB</span><span class="Other">,</span>       <span class="Comment">## Specifies that the format is 24 bits per pixel; 8 bits each are used for the red, green, and blue components.</span>
+  <span class="Identifier">wPixelFormat32bppARGB</span><span class="Other">,</span>      <span class="Comment">## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components.</span>
+  <span class="Identifier">wPixelFormat32bppPARGB</span><span class="Other">,</span>     <span class="Comment">## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component.</span>
+  <span class="Identifier">wPixelFormat32bppRGB</span><span class="Other">,</span>       <span class="Comment">## Specifies that the format is 32 bits per pixel; 8 bits each are used for the red, green, and blue components. The remaining 8 bits are not used.</span>
+  <span class="Identifier">wPixelFormat48bppRGB</span><span class="Other">,</span>       <span class="Comment">## Specifies that the format is 48 bits per pixel; 16 bits each are used for the red, green, and blue components.</span>
+  <span class="Identifier">wPixelFormat64bppARGB</span><span class="Other">,</span>      <span class="Comment">## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components.</span>
+  <span class="Identifier">wPixelFormat64bppPARGB</span>      <span class="Comment">## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component.</span></pre></dt>
+
 
 </dl></div>
 <div class="section" id="10">
@@ -771,6 +809,22 @@ Initializes an image from wCursor object.
 <dt><pre><span class="Keyword">proc</span> <a href="#Image%2CwCursor"><span class="Identifier">Image</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="wTypes.html#wCursor"><span class="Identifier">wCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wImage"><span class="Identifier">wImage</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span>
                                   <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wNilAccess</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span>
                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Constructor.
+
+</dd>
+<a id="init,wImage,int,int,int,wPixelFormat,pointer"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#init%2CwImage%2Cint%2Cint%2Cint%2CwPixelFormat%2Cpointer"><span class="Identifier">init</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wImage"><span class="Identifier">wImage</span></a><span class="Other">;</span> <span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">stride</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">format</span><span class="Other">:</span> <a href="wImage.html#wPixelFormat"><span class="Identifier">wPixelFormat</span></a><span class="Other">;</span>
+         <span class="Identifier">scan0</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Initializes an image based on binary bytes along with size and format information.
+
+</dd>
+<a id="Image,int,int,int,wPixelFormat,pointer"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#Image%2Cint%2Cint%2Cint%2CwPixelFormat%2Cpointer"><span class="Identifier">Image</span></a><span class="Other">(</span><span class="Identifier">width</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">height</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">stride</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">;</span> <span class="Identifier">format</span><span class="Other">:</span> <a href="wImage.html#wPixelFormat"><span class="Identifier">wPixelFormat</span></a><span class="Other">;</span> <span class="Identifier">scan0</span><span class="Other">:</span> <span class="Identifier">pointer</span><span class="Other">)</span><span class="Other">:</span> <a href="wTypes.html#wImage"><span class="Identifier">wImage</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">inline</span><span class="Other">,</span> <span class="Identifier">discardable</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">wImageError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Constructor.

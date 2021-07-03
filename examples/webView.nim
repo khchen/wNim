@@ -11,7 +11,7 @@ import
   winim/com
 
 import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
-  wRebar, wWebView, wTextCtrl, wMessageDialog, wUtils]
+  wRebar, wWebView, wTextCtrl, wMessageDialog]
 
 when false:
   ## https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730%28v%3dvs.85%29
@@ -50,8 +50,7 @@ proc aboutDialog(owner: wWindow) =
   dialog.showModal()
   dialog.delete()
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="wWebView", size=(640, 460))
 let statusbar = StatusBar(frame)
 let rebar = Rebar(frame)

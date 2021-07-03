@@ -6,14 +6,13 @@
 #====================================================================
 
 import resource/resource
-import wNim/[wApp, wFrame, wIcon, wMenuBar, wMenu, wStatusBar, wSplitter, wButton, wUtils]
+import wNim/[wApp, wFrame, wIcon, wMenuBar, wMenu, wStatusBar, wSplitter, wButton]
 
 type
   MenuID = enum
     idLayout1 = wIdUser, idLayout2, idEnable, idExit
 
-wSetSysemDpiAware()
-let app = App()
+let app = App(wSystemDpiAware)
 let frame = Frame(title="Draggable GUI Demo")
 let statusBar = StatusBar(frame)
 let menuBar = MenuBar(frame)

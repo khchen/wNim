@@ -255,14 +255,6 @@ proc replace*(self: wMenuBar, pos: int, menu: wMenu, text: string,
     result = self.remove(pos)
     self.insert(pos, menu=menu, text=text, bitmap=bitmap)
 
-proc getHandle*(self: wMenuBar): HMENU {.validate, property, inline.} =
-  ## Get system handle of this menubar.
-  result = self.mHmenu
-
-proc getCount*(self: wMenuBar): int {.validate, property, inline.} =
-  ## Returns the number of menus in this menubar.
-  result = GetMenuItemCount(self.mHmenu)
-
 iterator items*(self: wMenuBar): wMenu {.validate.} =
   ## Items iterator for menus in a menubar.
   for menu in self.mMenuList:

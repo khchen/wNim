@@ -217,8 +217,7 @@ when isMainModule:
     MenuID = enum
       idSortByColor = wIdUser, idSortByName, idPaletteStd, idPalettewNim
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = Frame(title="wNim Colors")
   frame.icon = Icon("", 0)
 

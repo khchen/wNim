@@ -52,7 +52,7 @@
 ##   ==============================  =============================================================
 
 include pragma
-import strutils
+import strutils, memlib/rtlib
 import wBase
 
 # For recursive module dependencies.
@@ -66,6 +66,22 @@ import wIconImage
 type
   wImageError* = object of wError
     ## An error raised when wImage creation or operation failure.
+
+  wPixelFormat* = enum
+    wPixelFormat1bppIndexed ## Specifies that the format is 1 bit per pixel, indexed.
+    wPixelFormat4bppIndexed ## Specifies that the format is 4 bits per pixel, indexed.
+    wPixelFormat8bppIndexed ## Specifies that the format is 8 bits per pixel, indexed.
+    wPixelFormat16bppARGB1555 ## Specifies that the format is 16 bits per pixel; 1 bit is used for the alpha component, and 5 bits each are used for the red, green, and blue components.
+    wPixelFormat16bppGrayScale ## Specifies that the format is 16 bits per pixel, grayscale.
+    wPixelFormat16bppRGB555 ## Specifies that the format is 16 bits per pixel; 5 bits each are used for the red, green, and blue components. The remaining bit is not used.
+    wPixelFormat16bppRGB565 ## Specifies that the format is 16 bits per pixel; 5 bits are used for the red component, 6 bits are used for the green component, and 5 bits are used for the blue component.
+    wPixelFormat24bppRGB ## Specifies that the format is 24 bits per pixel; 8 bits each are used for the red, green, and blue components.
+    wPixelFormat32bppARGB ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components.
+    wPixelFormat32bppPARGB ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component.
+    wPixelFormat32bppRGB ## Specifies that the format is 32 bits per pixel; 8 bits each are used for the red, green, and blue components. The remaining 8 bits are not used.
+    wPixelFormat48bppRGB ## Specifies that the format is 48 bits per pixel; 16 bits each are used for the red, green, and blue components.
+    wPixelFormat64bppARGB ## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components.
+    wPixelFormat64bppPARGB ## Specifies that the format is 64 bits per pixel; 16 bits each are used for the alpha, red, green, and blue components. The red, green, and blue components are premultiplied according to the alpha component.
 
 const
   # Image styles and consts
@@ -112,29 +128,23 @@ proc error(self: wImage) {.inline.} =
 proc fail() {.inline.} =
   raise newException(wImageError, "")
 
-type
-  SHCreateMemStreamType = proc (pInit: pointer, cbInit: UINT): ptr IStream {.stdcall.}
-
 var
   wGdiplusToken {.threadvar.}: ULONG_PTR
-  SHCreateMemStream {.threadvar.}: SHCreateMemStreamType
 
 proc wGdipInit() =
   if wGdiplusToken == 0:
     var si = GdiplusStartupInput(GdiplusVersion: 1)
     GdiplusStartup(&wGdiplusToken, si, nil)
 
+proc SHCreateMemStream(pInit: pointer, cbInit: UINT): ptr IStream
+  {.checkedRtlib: "shlwapi", stdcall, importc: 12.}
+
 proc wGdipCreateStreamOnMemory(data: pointer, length: int = 0): ptr IStream =
-  if SHCreateMemStream == nil:
-    # Prior to Windows Vista, this function was not included in the public Shlwapi.h file,
-    # nor was it exported by name from Shlwapi.dll. To use it on earlier systems,
-    # you must call it directly from the Shlwapi.dll file as ordinal 12.
+  try:
+    result = SHCreateMemStream(data, UINT length)
 
-    let lib = LoadLibrary("shlwapi.dll")
-    SHCreateMemStream = cast[SHCreateMemStreamType](GetProcAddress(lib, cast[LPCSTR](12)))
-
-  {.gcsafe.}:
-    result = SHCreateMemStream(data, length.UINT)
+  except LibraryError:
+    discard
 
 proc wGdipReadStream(stream: ptr IStream, data: var string) =
   var stg: STATSTG
@@ -586,6 +596,28 @@ wClass(wImage):
       self.init(IconImage(cursor))
     except wError:
       self.error()
+
+  proc init*(self: wImage, width: int, height: int, stride: int, format: wPixelFormat,
+      scan0: pointer) {.validate.} =
+    ## Initializes an image based on binary bytes along with size and format information.
+    let format = case format
+      of wPixelFormat1bppIndexed: pixelFormat1bppIndexed
+      of wPixelFormat4bppIndexed: pixelFormat4bppIndexed
+      of wPixelFormat8bppIndexed: pixelFormat8bppIndexed
+      of wPixelFormat16bppARGB1555: pixelFormat16bppARGB1555
+      of wPixelFormat16bppGrayScale: pixelFormat16bppGrayScale
+      of wPixelFormat16bppRGB555: pixelFormat16bppRGB555
+      of wPixelFormat16bppRGB565: pixelFormat16bppRGB565
+      of wPixelFormat24bppRGB: pixelFormat24bppRGB
+      of wPixelFormat32bppARGB: pixelFormat32bppARGB
+      of wPixelFormat32bppPARGB: pixelFormat32bppPARGB
+      of wPixelFormat32bppRGB: pixelFormat32bppRGB
+      of wPixelFormat48bppRGB: pixelFormat48bppRGB
+      of wPixelFormat64bppARGB: pixelFormat64bppARGB
+      of wPixelFormat64bppPARGB: pixelFormat64bppPARGB
+
+    if GdipCreateBitmapFromScan0(width, height, stride, format,
+      cast[ptr BYTE](scan0), &self.mGdipBmp) != Ok: self.error()
 
 proc scale*(self: wImage, width, height: int, quality = wImageQualityNormal): wImage
     {.validate.} =

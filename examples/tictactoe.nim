@@ -154,8 +154,7 @@ wClass(wBoard of wFrame):
           self.tryStartAi()
 
 when isMainModule:
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let board = Board(title="wNim Tic-Tac-Toe")
 
   board.center()

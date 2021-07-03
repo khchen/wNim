@@ -14,7 +14,7 @@ import
 
 import wNim/[wApp, wFrame, wPanel, wStatusBar, wToolBar, wSlider, wStaticText, wButton,
   wScreenDC, wPrinterDC, wMemoryDC, wPaintDC, wRegion, wBitmap, wIcon, wFont, wImage,
-  wPageSetupDialog, wPrintDialog, wUtils]
+  wPageSetupDialog, wPrintDialog]
 
 const
   border = 20
@@ -622,8 +622,7 @@ when isMainModule:
       idOpen = wIdPreviewFrameUser, idPrint, idSetup, idFont, idExit, idDelay
       idHigh, idNormal, idLow
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = PreviewFrame(title="Print and Preview Demo")
   let menuBar = MenuBar(frame)
 

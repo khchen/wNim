@@ -7,7 +7,7 @@
 
 import resource/resource
 import times
-import wNim/[wApp, wFrame, wCalendarCtrl, wScrollBar, wFont, wIcon, wUtils]
+import wNim/[wApp, wFrame, wCalendarCtrl, wScrollBar, wFont, wIcon]
 import winim/[lean, inc/uxtheme] # for SetWindowTheme()
 
 proc update(calendar: wCalendarCtrl, today: DateTime) =
@@ -17,8 +17,7 @@ proc update(calendar: wCalendarCtrl, today: DateTime) =
   calendar.dateRange = (firstDay.toTime, lastDay.toTime)
   calendar.date = today.toTime
 
-wSetSysemDpiAware()
-var app = App()
+var app = App(wSystemDpiAware)
 var frame = Frame(title="wNim Calendar")
 frame.icon = Icon("", 0) # load icon from exe file.
 

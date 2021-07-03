@@ -212,8 +212,7 @@ when isMainModule:
     # We can specify wApp.wIcon to avoid this problem.
     var backgroundIcons = newSeq[wApp.wIcon]()
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let frame = Frame(title="wNim PickIconDialog", size=(650, 380))
   frame.icon = Icon("", 0) # load icon from exe file.
 

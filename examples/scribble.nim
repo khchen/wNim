@@ -118,8 +118,7 @@ when isMainModule:
   const widthArray: array[idString..idSuper, int] =
     [1, 3, 7, 12, 180]
 
-  wSetSysemDpiAware()
-  let app = App()
+  let app = App(wSystemDpiAware)
   let scribble = Scribble(title="Scribble Demo", size=(400, 400))
   scribble.setColor(colorArray[idBlack])
   scribble.setWidth(widthArray[idNormal])

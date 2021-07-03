@@ -125,7 +125,7 @@ function main() {
   <li><a class="reference" href="#wEvent_Destroy"
     title="wEvent_Destroy = 32788&apos;i32"><wbr />w<wbr />Event_<wbr />Destroy<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#wEvent_App"
-    title="wEvent_App = 32960&apos;i32"><wbr />w<wbr />Event_<wbr />App<span class="attachedType"></span></a></li>
+    title="wEvent_App = 32961&apos;i32"><wbr />w<wbr />Event_<wbr />App<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -295,6 +295,12 @@ function main() {
     title="getMenuItem(self: wEvent): wMenuItem"><wbr />get<wbr />Menu<wbr />Item<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getErrorCode.e%2CwEvent"
     title="getErrorCode(self: wEvent): int"><wbr />get<wbr />Error<wbr />Code<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getStart.e%2CwEvent"
+    title="getStart(self: wEvent): int"><wbr />get<wbr />Start<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getEnd.e%2CwEvent"
+    title="getEnd(self: wEvent): int"><wbr />get<wbr />End<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getMouseEvent.e%2CwEvent"
+    title="getMouseEvent(self: wEvent): UINT"><wbr />get<wbr />Mouse<wbr />Event<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#shouldPropagate.e%2CwEventBase"
     title="shouldPropagate(self: wEventBase): bool"><wbr />should<wbr />Propagate<span class="attachedType"></span></a></li>
 
@@ -330,7 +336,7 @@ function main() {
 <span class="Identifier">frame</span><span class="Operator">.</span><span class="Identifier">wIdExit</span> <span class="Keyword">do</span> <span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span>
   <span class="Keyword">discard</span></pre><p>An event is usually generated from system. However, the user may define their own event type, create the event object, and pass to a window by wWindow.processEvent().</p>
 <p><strong>Notice: Event() is the only constructor for all event objects in wNim</strong>. <tt class="docutils literal"><span class="pre">import wNim/wEvent</span></tt> <strong>will import all of its subclasses automatically.</strong></p>
-<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wDragDropEvent.html">wDragDropEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wStatusBarEvent.html">wStatusBarEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a> <a class="reference external" href="wScrollEvent.html">wScrollEvent</a> <a class="reference external" href="wSpinEvent.html">wSpinEvent</a> <a class="reference external" href="wHyperlinkEvent.html">wHyperlinkEvent</a> <a class="reference external" href="wListEvent.html">wListEvent</a> <a class="reference external" href="wTreeEvent.html">wTreeEvent</a> <a class="reference external" href="wIpEvent.html">wIpEvent</a> <a class="reference external" href="wWebViewEvent.html">wWebViewEvent</a> <a class="reference external" href="wDialogEvent.html">wDialogEvent</a></td></tr>
+<table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Subclasses:</th><td><a class="reference external" href="wMouseEvent.html">wMouseEvent</a> <a class="reference external" href="wKeyEvent.html">wKeyEvent</a> <a class="reference external" href="wSizeEvent.html">wSizeEvent</a> <a class="reference external" href="wMoveEvent.html">wMoveEvent</a> <a class="reference external" href="wContextMenuEvent.html">wContextMenuEvent</a> <a class="reference external" href="wScrollWinEvent.html">wScrollWinEvent</a> <a class="reference external" href="wTrayEvent.html">wTrayEvent</a> <a class="reference external" href="wDragDropEvent.html">wDragDropEvent</a> <a class="reference external" href="wNavigationEvent.html">wNavigationEvent</a> <a class="reference external" href="wSetCursorEvent.html">wSetCursorEvent</a> <a class="reference external" href="wStatusBarEvent.html">wStatusBarEvent</a> <a class="reference external" href="wCommandEvent.html">wCommandEvent</a> <a class="reference external" href="wScrollEvent.html">wScrollEvent</a> <a class="reference external" href="wSpinEvent.html">wSpinEvent</a> <a class="reference external" href="wHyperlinkEvent.html">wHyperlinkEvent</a> <a class="reference external" href="wListEvent.html">wListEvent</a> <a class="reference external" href="wTreeEvent.html">wTreeEvent</a> <a class="reference external" href="wIpEvent.html">wIpEvent</a> <a class="reference external" href="wWebViewEvent.html">wWebViewEvent</a> <a class="reference external" href="wDialogEvent.html">wDialogEvent</a> <a class="reference external" href="wTextLinkEvent.html">wTextLinkEvent</a></td></tr>
 </tbody></table><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">Events:</th><td><table border="1" class="docutils"><tr><th>wEvent</th><th>Description</th></tr>
 <tr><td>wEvent_SetFocus</td><td>A window has gained the keyboard focus.</td></tr>
 <tr><td>wEvent_KillFocus</td><td>A window is about to loses the keyboard focus.</td></tr>
@@ -394,7 +400,7 @@ function main() {
 <dt><pre><a href="wEvent.html#wEvent_Destroy"><span class="Identifier">wEvent_Destroy</span></a> <span class="Other">=</span> <span class="DecNumber">32788'i32</span></pre></dt>
 
 <a id="wEvent_App"></a>
-<dt><pre><a href="wEvent.html#wEvent_App"><span class="Identifier">wEvent_App</span></a> <span class="Other">=</span> <span class="DecNumber">32960'i32</span></pre></dt>
+<dt><pre><a href="wEvent.html#wEvent_App"><span class="Identifier">wEvent_App</span></a> <span class="Other">=</span> <span class="DecNumber">32961'i32</span></pre></dt>
 
 
 </dl></div>
@@ -951,6 +957,27 @@ Method needs to be overridden.
 </dd>
 <a id="getErrorCode.e,wEvent"></a>
 <dt><pre><span class="Keyword">method</span> <a href="#getErrorCode.e%2CwEvent"><span class="Identifier">getErrorCode</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Method needs to be overridden.
+
+</dd>
+<a id="getStart.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <a href="#getStart.e%2CwEvent"><span class="Identifier">getStart</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Method needs to be overridden.
+
+</dd>
+<a id="getEnd.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <a href="#getEnd.e%2CwEvent"><span class="Identifier">getEnd</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Method needs to be overridden.
+
+</dd>
+<a id="getMouseEvent.e,wEvent"></a>
+<dt><pre><span class="Keyword">method</span> <a href="#getMouseEvent.e%2CwEvent"><span class="Identifier">getMouseEvent</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="wTypes.html#wEvent"><span class="Identifier">wEvent</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">UINT</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">base</span><span class="Other">,</span> <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Method needs to be overridden.
