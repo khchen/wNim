@@ -1,3 +1,7 @@
+Version 0.13.1
+--------------
+* autolayout: allow underline in variable names (#91, thanks to rockcavera).
+
 Version 0.13.0
 --------------
 * Add wMenuBarCtrl class: a menubar that can be placed everywhere. For example, in the rebar control.

@@ -123,6 +123,8 @@ grammar "":
 
   commaList(item) <- item * *(skip(',') * item)
 
+  Alnum <- {'A'..'Z','a'..'z','0'..'9','_'}
+
   Operator <- {'+', '-', '*', '/'}
 
   Number <- ?{'+', '-'} * +Digit * ?('.' * +Digit)
