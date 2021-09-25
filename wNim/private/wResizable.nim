@@ -196,7 +196,7 @@ proc layoutParser(x: NimNode): string =
         for item in x[1]:
           code.addConstraint(item, $x[0].floatVal)
 
-      elif $x[0] in strengthes:
+      elif (repr x[0]) in strengthes:
         for item in x[1]:
           code.addConstraint(item, $x[0])
 
