@@ -11,7 +11,7 @@ import wNim/[wApp, wFrame, wPanel, wStatusBar, wMenu,
   wIcon, wBitmap, wPen, wBrush, wPaintDC,
   wStaticBox, wStaticLine, wStaticBitmap, wStaticText,
   wButton, wRadioButton, wCheckBox, wComboBox, wCheckComboBox, wListBox,
-  wNoteBook, wTextCtrl, wSpinCtrl, wHotKeyCtrl, wSlider, wGauge,
+  wNoteBook, wTextCtrl, wSpinCtrl, wHotkeyCtrl, wSlider, wGauge,
   wCalendarCtrl, wDatePickerCtrl, wTimePickerCtrl]
 
 let app = App(wSystemDpiAware)
