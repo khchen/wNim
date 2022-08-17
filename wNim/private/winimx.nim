@@ -1,14 +1,17 @@
 #====================================================================
 #
 #               Winim - Nim's Windows API Module
-#                 (c) Copyright 2016-2021 Ward
+#                 (c) Copyright 2016-2022 Ward
 #
 #====================================================================
+
+{.push hint[Name]: off.}
 
 when defined(nimHasUsed): {.used.}
 
 import winim/inc/winimbase
 import winim/inc/windef
+import winim/inc/winbase
 const
   FACILITY_WIN32* = 7
   ERROR_SUCCESS* = 0
@@ -29,66 +32,6 @@ const
   TYPE_E_ELEMENTNOTFOUND* = HRESULT 0x8002802B'i32
 template SUCCEEDED*(hr: untyped): bool = hr.HRESULT >= 0
 template FAILED*(hr: untyped): bool = hr.HRESULT < 0
-type
-  SECURITY_ATTRIBUTES* {.pure.} = object
-    nLength*: DWORD
-    lpSecurityDescriptor*: LPVOID
-    bInheritHandle*: WINBOOL
-  LPSECURITY_ATTRIBUTES* = ptr SECURITY_ATTRIBUTES
-  SYSTEMTIME* {.pure.} = object
-    wYear*: WORD
-    wMonth*: WORD
-    wDayOfWeek*: WORD
-    wDay*: WORD
-    wHour*: WORD
-    wMinute*: WORD
-    wSecond*: WORD
-    wMilliseconds*: WORD
-  LPSYSTEMTIME* = ptr SYSTEMTIME
-const
-  LOAD_LIBRARY_AS_DATAFILE* = 0x2
-  GMEM_FIXED* = 0x0
-  GMEM_MOVEABLE* = 0x2
-  GMEM_ZEROINIT* = 0x40
-  GHND* = GMEM_MOVEABLE or GMEM_ZEROINIT
-  GPTR* = GMEM_FIXED or GMEM_ZEROINIT
-type
-  ENUMRESNAMEPROCA* = proc (hModule: HMODULE, lpType: LPCSTR, lpName: LPSTR, lParam: LONG_PTR): WINBOOL {.stdcall.}
-  ENUMRESNAMEPROCW* = proc (hModule: HMODULE, lpType: LPCWSTR, lpName: LPWSTR, lParam: LONG_PTR): WINBOOL {.stdcall.}
-proc LoadResource*(hModule: HMODULE, hResInfo: HRSRC): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc LockResource*(hResData: HGLOBAL): LPVOID {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc SizeofResource*(hModule: HMODULE, hResInfo: HRSRC): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc FreeLibrary*(hLibModule: HMODULE): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GetCurrentThreadId*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc Sleep*(dwMilliseconds: DWORD): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GetLocalTime*(lpSystemTime: LPSYSTEMTIME): VOID {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GetTickCount*(): DWORD {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GlobalAlloc*(uFlags: UINT, dwBytes: SIZE_T): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GlobalSize*(hMem: HGLOBAL): SIZE_T {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GlobalLock*(hMem: HGLOBAL): LPVOID {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GlobalUnlock*(hMem: HGLOBAL): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc GlobalFree*(hMem: HGLOBAL): HGLOBAL {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc MulDiv*(nNumber: int32, nNumerator: int32, nDenominator: int32): int32 {.winapi, stdcall, dynlib: "kernel32", importc.}
-proc InterlockedIncrement*(Addend: ptr LONG): LONG {.importc: "InterlockedIncrement", header: "<windows.h>".}
-proc InterlockedDecrement*(Addend: ptr LONG): LONG {.importc: "InterlockedDecrement", header: "<windows.h>".}
-when winimUnicode:
-  proc GetFullPathName*(lpFileName: LPCWSTR, nBufferLength: DWORD, lpBuffer: LPWSTR, lpFilePart: ptr LPWSTR): DWORD {.winapi, stdcall, dynlib: "kernel32", importc: "GetFullPathNameW".}
-  proc GetModuleHandle*(lpModuleName: LPCWSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "GetModuleHandleW".}
-  proc LoadLibraryEx*(lpLibFileName: LPCWSTR, hFile: HANDLE, dwFlags: DWORD): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryExW".}
-  proc SetCurrentDirectory*(lpPathName: LPCWSTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "SetCurrentDirectoryW".}
-  proc GetVersionEx*(lpVersionInformation: LPOSVERSIONINFOW): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "GetVersionExW".}
-  proc LoadLibrary*(lpLibFileName: LPCWSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryW".}
-  proc FindResource*(hModule: HMODULE, lpName: LPCWSTR, lpType: LPCWSTR): HRSRC {.winapi, stdcall, dynlib: "kernel32", importc: "FindResourceW".}
-  proc EnumResourceNames*(hModule: HMODULE, lpType: LPCWSTR, lpEnumFunc: ENUMRESNAMEPROCW, lParam: LONG_PTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "EnumResourceNamesW".}
-when winimAnsi:
-  proc GetFullPathName*(lpFileName: LPCSTR, nBufferLength: DWORD, lpBuffer: LPSTR, lpFilePart: ptr LPSTR): DWORD {.winapi, stdcall, dynlib: "kernel32", importc: "GetFullPathNameA".}
-  proc GetModuleHandle*(lpModuleName: LPCSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "GetModuleHandleA".}
-  proc LoadLibraryEx*(lpLibFileName: LPCSTR, hFile: HANDLE, dwFlags: DWORD): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryExA".}
-  proc SetCurrentDirectory*(lpPathName: LPCSTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "SetCurrentDirectoryA".}
-  proc GetVersionEx*(lpVersionInformation: LPOSVERSIONINFOA): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "GetVersionExA".}
-  proc LoadLibrary*(lpLibFileName: LPCSTR): HMODULE {.winapi, stdcall, dynlib: "kernel32", importc: "LoadLibraryA".}
-  proc FindResource*(hModule: HMODULE, lpName: LPCSTR, lpType: LPCSTR): HRSRC {.winapi, stdcall, dynlib: "kernel32", importc: "FindResourceA".}
-  proc EnumResourceNames*(hModule: HMODULE, lpType: LPCSTR, lpEnumFunc: ENUMRESNAMEPROCA, lParam: LONG_PTR): WINBOOL {.winapi, stdcall, dynlib: "kernel32", importc: "EnumResourceNamesA".}
 type
   BITMAP* {.pure.} = object
     bmType*: LONG
@@ -1959,7 +1902,7 @@ type
 proc accept*(s: SOCKET, `addr`: ptr sockaddr, addrlen: ptr int32): SOCKET {.winapi, stdcall, dynlib: "ws2_32", importc.}
 proc connect*(s: SOCKET, name: ptr sockaddr, namelen: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 proc select*(nfds: int32, readfds: ptr fd_set, writefds: ptr fd_set, exceptfds: ptr fd_set, timeout: PTIMEVAL): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
-proc send*(s: SOCKET, buf: cstring, len: int32, flags: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
+proc send*(s: SOCKET, buf: ptr char, len: int32, flags: int32): int32 {.winapi, stdcall, dynlib: "ws2_32", importc.}
 const
   network* = 3
   batch* = 4
@@ -2321,7 +2264,7 @@ type
     intVal*: INT
     uintVal*: UINT
     pdecVal*: ptr DECIMAL
-    pcVal*: cstring
+    pcVal*: ptr CHAR
     puiVal*: ptr USHORT
     pulVal*: ptr ULONG
     pullVal*: ptr ULONGLONG
@@ -2952,9 +2895,9 @@ proc uintVal*(self: var VARIANT): var UINT {.inline.} = self.union1.struct1.unio
 proc `pdecVal=`*(self: var VARIANT, x: ptr DECIMAL) {.inline.} = self.union1.struct1.union1.pdecVal = x
 proc pdecVal*(self: VARIANT): ptr DECIMAL {.inline.} = self.union1.struct1.union1.pdecVal
 proc pdecVal*(self: var VARIANT): var ptr DECIMAL {.inline.} = self.union1.struct1.union1.pdecVal
-proc `pcVal=`*(self: var VARIANT, x: cstring) {.inline.} = self.union1.struct1.union1.pcVal = x
-proc pcVal*(self: VARIANT): cstring {.inline.} = self.union1.struct1.union1.pcVal
-proc pcVal*(self: var VARIANT): var cstring {.inline.} = self.union1.struct1.union1.pcVal
+proc `pcVal=`*(self: var VARIANT, x: ptr CHAR) {.inline.} = self.union1.struct1.union1.pcVal = x
+proc pcVal*(self: VARIANT): ptr CHAR {.inline.} = self.union1.struct1.union1.pcVal
+proc pcVal*(self: var VARIANT): var ptr CHAR {.inline.} = self.union1.struct1.union1.pcVal
 proc `puiVal=`*(self: var VARIANT, x: ptr USHORT) {.inline.} = self.union1.struct1.union1.puiVal = x
 proc puiVal*(self: VARIANT): ptr USHORT {.inline.} = self.union1.struct1.union1.puiVal
 proc puiVal*(self: var VARIANT): var ptr USHORT {.inline.} = self.union1.struct1.union1.puiVal
@@ -7764,6 +7707,7 @@ proc DrawThemeText*(hTheme: HTHEME, hdc: HDC, iPartId: int32, iStateId: int32, p
 proc GetThemePartSize*(hTheme: HTHEME, hdc: HDC, iPartId: int32, iStateId: int32, prc: ptr RECT, eSize: THEMESIZE, psz: ptr SIZE): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
 proc SetWindowTheme*(hwnd: HWND, pszSubAppName: LPCWSTR, pszSubIdList: LPCWSTR): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
 proc GetThemeSysColor*(hTheme: HTHEME, iColorId: int32): COLORREF {.winapi, stdcall, dynlib: "uxtheme", importc.}
+proc DrawThemeParentBackground*(hwnd: HWND, hdc: HDC, prc: ptr RECT): HRESULT {.winapi, stdcall, dynlib: "uxtheme", importc.}
 type
   InterpolationMode* = int32
   GpMatrixOrder* = int32

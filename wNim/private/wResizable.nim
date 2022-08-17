@@ -69,7 +69,7 @@
 ##   `autolayout <autolayout.html>`_
 
 include pragma
-import macros, math, strutils
+import macros, math
 import wBase, autolayout
 
 proc getLayoutSize*(self: wResizable): wSize {.validate, property.} =
@@ -144,7 +144,7 @@ template attributeTempaltes(): untyped =
   template innerWidth(name: wResizable): untyped {.used.} = name.innerRight - name.innerLeft
   template innerHeight(name: wResizable): untyped {.used.} = name.innerBottom - name.innerTop
 
-proc layoutParser(x: NimNode): string =
+macro layoutRealize(x, self, resizer: untyped): untyped =
   const attributes = ["width", "height", "left", "top", "right", "bottom", "up",
     "down", "centerX", "centerY", "defaultWidth", "defaultHeight", "bestWidth",
     "bestHeight", "innerLeft", "innerTop", "innerRight", "innerBottom",
@@ -157,32 +157,36 @@ proc layoutParser(x: NimNode): string =
     "WEAK7", "WEAK6", "WEAK5", "WEAK4", "WEAK3", "WEAK2", "WEAK1", "WEAKER",
     "WEAKEST"]
 
-  proc addSelfDot(x: NimNode): NimNode =
+  let (self, resizer) = (self, resizer)
+
+  proc reformatAttribute(x: NimNode): NimNode =
     # Find all ident recursively, add "self." if the ident is a attribute
-    if x.kind == nnkIdent and $x in attributes:
-      result = newDotExpr(newIdentNode("self"), x)
-    else:
-      result = x
+    result =
+      if x.kind == nnkIdent and x.strVal in attributes:
+        newDotExpr(self, x)
+      else:
+        x
 
     for i in 0..<x.len:
       if x[i].kind != nnkDotExpr:
-        x[i] = addSelfDot(x[i])
+        x[i] = x[i].reformatAttribute()
 
-  proc addConstraint(code: var string, x: NimNode, strength = "") =
+  proc addConstraint(result: var NimNode, x: NimNode, strength = "") =
     if x.kind == nnkInfix:
       # enconter infix operator  a == b, a < b, etc.
       if strength.len == 0:
-        code.add "resizer.addConstraint(" & x.repr & ")\n"
+        result.add newCall(newDotExpr(resizer, ident("addConstraint")), x)
       else:
-        code.add "resizer.addConstraint(($1) | $2)\n" % [x.repr, strength]
+        result.add newCall(newDotExpr(resizer, ident("addConstraint")),
+          newNimNode(nnkInfix).add(ident("|")).add(newPar(x), ident(strength)))
 
     elif x.kind == nnkBracket:
       for item in x:
-        code.addConstraint(item, strength)
+        result.addConstraint(item, strength)
 
     if x.kind == nnkAsgn:
       # enconter a = b, we should parse as a == b
-      code.addConstraint(infix(x[0], "==", x[1]), strength)
+      result.addConstraint(infix(x[0], "==", x[1]), strength)
 
     elif x.kind == nnkCall and x.len == 2 and x[1].kind == nnkStmtList:
       # enconter name: stmtlist or number: stmtlist
@@ -190,48 +194,42 @@ proc layoutParser(x: NimNode): string =
       # if there is a number, consider it is the strength
       if x[0].kind in nnkCharLit..nnkUInt64Lit:
         for item in x[1]:
-          code.addConstraint(item, $x[0].intVal)
+          result.addConstraint(item, $x[0].intVal)
 
       elif x[0].kind in nnkFloatLit..nnkFloat64Lit:
         for item in x[1]:
-          code.addConstraint(item, $x[0].floatVal)
+          result.addConstraint(item, $x[0].floatVal)
 
-      elif $x[0] in strengthes:
+      elif x[0].kind == nnkIdent and x[0].strVal in strengthes:
         for item in x[1]:
-          code.addConstraint(item, $x[0])
+          result.addConstraint(item, $x[0])
 
       else:
-        code.add "self = $1\n" % [x[0].repr]
-        code.add "resizer.addObject($1)\n" % [x[0].repr]
+        result.add newAssignment(self, x[0])
+        result.add newCall(newDotExpr(resizer, ident("addObject")), x[0])
         for item in x[1]:
-          code.addConstraint(item, strength)
+          result.addConstraint(item, strength)
 
     elif x.kind == nnkStmtList:
       for item in x:
-        code.addConstraint(item, strength)
+        result.addConstraint(item, strength)
 
-  var code = ""
-  code.addConstraint(x.addSelfDot)
-  return code
-
-macro layoutRealize(x: untyped): untyped =
-  parseStmt(layoutParser(x))
+  result = newStmtList()
+  result.addConstraint(x.reformatAttribute())
 
 template layout*(parent: wResizable, x: untyped) =
   ## Parses the layout DSL and rearrange the objects. This function only
   ## evaluate the DSL and creates the constraints once.
 
-  # Note: resizer and self need {.inject.} so that layoutRealize works.
-  # Moreover, they must be in sub-scope for identifier hygiene.
-  # Also add workaround for https://github.com/nim-lang/Nim/issues/15005.
-
+  # Add workaround for https://github.com/nim-lang/Nim/issues/15005.
   var globalResizer {.global.}: wResizer
   if globalResizer == nil or globalResizer.mParent != parent:
-    var resizer {.inject.} = Resizer(parent)
-    var self {.inject.}: wResizable
-    attributeTempaltes()
+    var
+      self: wResizable
+      resizer = Resizer(parent)
 
-    layoutRealize(x)
+    attributeTempaltes()
+    layoutRealize(x, self, resizer)
     globalResizer = resizer
 
   globalResizer.resolve()
@@ -243,14 +241,14 @@ template relayout*(parent: wResizable, x: untyped) =
   ## If the value in the constraints is not constant (For example, if there is
   ## object.bestWidth in DSL and the label of the object will change every
   ## time), use this function instead of *layout*.
-  block:
-    var resizer {.inject.} = Resizer(parent)
-    var self {.inject.}: wResizable
-    attributeTempaltes()
+  var
+    self: wResizable
+    resizer = Resizer(parent)
 
-    layoutRealize(x)
-    resizer.resolve()
-    resizer.rearrange()
+  attributeTempaltes()
+  layoutRealize(x, self, resizer)
+  resizer.resolve()
+  resizer.rearrange()
 
 template plan*(parent: wResizable, x: untyped): untyped =
   ## Similar to *layout*, but return the wResizer object.
@@ -264,11 +262,12 @@ template plan*(parent: wResizable, x: untyped): untyped =
 
   var globalResizer {.global.}: wResizer
   if globalResizer == nil or globalResizer.mParent != parent:
-    var resizer {.inject.} = Resizer(parent)
-    var self {.inject.}: wResizable
-    attributeTempaltes()
+    var
+      self: wResizable
+      resizer = Resizer(parent)
 
-    layoutRealize(x)
+    attributeTempaltes()
+    layoutRealize(x, self, resizer)
     globalResizer = resizer
 
   globalResizer
@@ -278,13 +277,13 @@ template replan*(parent: wResizable, x: untyped): untyped =
   ## Calls wResizer.resolve() and then wResizer.rearrange() to change the layout
   ## in reality later. This function provides a chance to modify the resolved
   ## values.
-  block:
-    var resizer {.inject.} = Resizer(parent)
-    var self{.inject.}: wResizable
-    attributeTempaltes()
+  var
+    self: wResizable
+    resizer = Resizer(parent)
 
-    layoutRealize(x)
-    resizer
+  attributeTempaltes()
+  layoutRealize(x, self, resizer)
+  resizer
 
 macro autolayout*(parent: wResizable, input: static[string]): untyped =
   ## Parses the layout VFL (Visual Format Language), and then use *layout*
@@ -321,12 +320,14 @@ macro autoreplan*(parent: wResizable, input: static[string]): untyped =
 macro layoutDebug*(parent: wResizable, x: untyped): untyped =
   ## Parses the layout DSL and returns the constraints in string literal for
   ## debugging.
-  result = newStrLitNode(layoutParser(x))
+  var ast = getAst(layoutRealize(x, ident("self"), ident("resizer")))
+  result = newStrLitNode(ast.repr)
 
 macro layoutDump*(parent: wResizable, x: untyped): untyped =
   ## Parses the layout DSL and displays the constraints at compile time for
   ## debugging.
-  echo layoutParser(x)
+  var ast = getAst(layoutRealize(x, ident("self"), ident("resizer")))
+  echo ast.repr
 
 macro autolayoutDebug*(parent: wResizable, input: static[string]): untyped =
   ## Parses the VFL (Visual Format Language) and returns the result in string

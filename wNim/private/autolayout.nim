@@ -67,12 +67,12 @@ type
   State = object
     mode: Mode
     outer: string
-    spacing: string
     inStack: bool
     inSibling: bool
     variablePrefix: string
     variableName: string
     variableUsed: bool
+    spacing: Distance
     strength: Strength
 
   Rule = object
@@ -106,11 +106,18 @@ type
 
   Layout = seq[Command]
 
+  VflResult = object
+    layout: Layout
+    ok: bool
+    matchLen: int
+    matchMax: int
+
   VflParser = object
     parent: string
     state: State
     layout: Layout
     outcome: Outcome
+    aliases: Table[string, string]
 
   VflParseError* = object of CatchableError
     matchLen: int
@@ -122,6 +129,12 @@ grammar "":
   skip(x) <- *Space * x * *Space
 
   commaList(item) <- item * *(skip(',') * item)
+
+  quote <- '`' * *(1 - '`') * '`':
+    push($0)
+
+  unquote <- '`' * >*(1 - '`') * '`':
+    push($1)
 
   Alnum <- {'A'..'Z','a'..'z','0'..'9','_'}
 
@@ -179,7 +192,9 @@ proc addSequence(outcome: var Outcome, sequence: Sequence, state: State) =
   template InnerTop: string {.used.} = ["innerTop", "innerLeft"][state.mode.ord]
   template InnerBottom: string {.used.} = ["innerBottom", "innerRight"][state.mode.ord]
 
-  var state = state
+  var
+    state = state
+    currentSpacing: Distance
 
   proc setupVariable(outcome: var Outcome) =
     var i = 1
@@ -195,12 +210,6 @@ proc addSequence(outcome: var Outcome, sequence: Sequence, state: State) =
       outcome.variables.incl state.variableName
 
   proc translate(raw: string): string =
-    case raw
-    of "-": return state.spacing
-    of "->": return raw
-    of "": return ""
-    else: discard
-
     let peg = peg("arithmetic"):
       arithmetic <- element * *(trim(Operator) * element):
         var
@@ -231,9 +240,6 @@ proc addSequence(outcome: var Outcome, sequence: Sequence, state: State) =
 
       number <- >Number
 
-      quote <- '`' * >*(1 - '`') * '`':
-        push($1)
-
       tilde <- Tilde:
         push(state.variableName)
         state.variableUsed = true
@@ -248,6 +254,28 @@ proc addSequence(outcome: var Outcome, sequence: Sequence, state: State) =
     assert matches.ok
     result = matches.captures[0]
 
+  proc translate(distance: Distance): Distance =
+    case distance.raw
+    of "->":
+      return Distance()
+    of "":
+      return Distance(
+        raw: "0",
+        op: distance.op,
+        priority: distance.priority)
+    of "-":
+      if not ?currentSpacing:
+        currentSpacing = Distance(
+          raw: translate(state.spacing.raw),
+          op: state.spacing.op,
+          priority: state.spacing.priority)
+      return currentSpacing
+    else:
+      return Distance(
+        raw: translate(distance.raw),
+        op: distance.op,
+        priority: distance.priority)
+
   outcome.setupVariable()
   defer:
     outcome.useVariable()
@@ -256,36 +284,38 @@ proc addSequence(outcome: var Outcome, sequence: Sequence, state: State) =
   for group in sequence:
     defer: lastGroup = group
 
-    var gap = translate(group.gap.raw)
+    let gap = translate(group.gap)
     if group.isEdge:
-      let
-        subGap = if ?gap: fmt" - {gap}" else: ""
-        priority = group.gap.priority | state.strength.medium
+      if ?gap:
+        let
+          subGap = if gap.raw != "0": fmt" - {gap.raw}" else: ""
+          priority = gap.priority | state.strength.medium
 
-      if gap != "->":
         for item in lastGroup.items:
           let R = if state.inSibling: InnerRight else: Right
-          outcome.addRule(item, Right, fmt"{state.outer}.{R}{subGap}", group.gap.op, priority, reverse=true)
+          outcome.addRule(item, Right, fmt"{state.outer}.{R}{subGap}", gap.op, priority, reverse=true)
 
     else:
-      let addGap = if ?gap: fmt" + {gap}" else: ""
+      let addGap = if gap.raw != "0": fmt" + {gap.raw}" else: ""
 
       for item in group.items:
-        if gap != "->":
+        if ?gap:
           if lastGroup.isEdge:
             let
-              priority = group.gap.priority | state.strength.medium
+              priority = gap.priority | state.strength.medium
               L = if state.inSibling: InnerLeft else: Left
-            outcome.addRule(item, Left, fmt"{state.outer}.{L}{addGap}", group.gap.op, priority)
+            outcome.addRule(item, Left, fmt"{state.outer}.{L}{addGap}", gap.op, priority)
 
           else:
-            let priority = group.gap.priority | state.strength.weak
+            let priority = gap.priority | state.strength.weak
             for last in lastGroup.items:
-              outcome.addRule(item, Left, fmt"{last.name}.{Right}{addGap}", group.gap.op, priority)
+              outcome.addRule(item, Left, fmt"{last.name}.{Right}{addGap}", gap.op, priority)
 
         for width in item.widths:
-          let priority = width.priority | state.strength.strong
-          outcome.addRule(item, Width, translate(width.raw), width.op, priority)
+          let
+            width = translate(width)
+            priority = width.priority | state.strength.strong
+          outcome.addRule(item, Width, width.raw, width.op, priority)
 
         if item.children.len != 0:
           var subState = state
@@ -343,10 +373,20 @@ proc `$`(sequence: Sequence, isChildren = false): string =
         result.add ','
 
 proc `$`(layout: Layout): string =
+  var aliases: seq[string]
+  for cmd in layout:
+    if cmd.key == "ALIAS":
+      let alias = cmd.value.split(',', maxsplit=1)
+      aliases.add fmt"{alias[0]}={alias[1]}"
+
+  if aliases.len != 0:
+    result.add "alias: " & aliases.join(", ") & "\n"
+
   for cmd in layout:
     case cmd.key
     of "SPACING":
-      result.add fmt"Spacing: {cmd.value}" & "\n"
+      let spacing = to[Distance](cmd.value)
+      result.add fmt"Spacing: {$spacing}" & "\n"
 
     of "OUTER":
       result.add fmt"Outer: {cmd.value}" & "\n"
@@ -369,7 +409,7 @@ proc `$`(layout: Layout): string =
 
     else: discard
 
-proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, matchMax: int] =
+proc parse(input: string): VflResult =
 
   template `?`(n: int): bool =
     capture.len > n and capture[n].s != ""
@@ -378,13 +418,6 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
     currentMode = "H"
     currentBatch: string
     batches: OrderedTable[string, OrderedSet[string]]
-    aliases: Table[string, string]
-
-  proc rename(name: string): string =
-    aliases.withValue(name, newName) do:
-      result = newName[]
-    do:
-      result = name
 
   template joinCaptures(start = 1): string =
     var output: string
@@ -399,7 +432,7 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
         result.add c
       result.add '\n'
 
-  let peg = peg("vfl", layout: Layout):
+  let peg = peg("vfl", vr: VflResult):
 
     vfl <- +command * &skip(!1)
 
@@ -410,20 +443,20 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
     hv <- header(i"HV" | i"VH" | i"H" | i"V") * line:
       let sequence = to[Sequence]($2)
       currentMode = toUpperAscii($1)
-      layout.add Command(key: currentMode, sequence: sequence)
+      vr.layout.add Command(key: currentMode, sequence: sequence)
 
-    spacing <- header(i"SPACING") * >Number:
-      layout.add Command(key: "SPACING", value: $2)
+    spacing <- header(i"SPACING") * distance:
+      vr.layout.add Command(key: "SPACING", value: $2)
 
-    outer <- header(i"OUTER") * name:
-      layout.add Command(key: "OUTER", value: $2)
+    outer <- header(i"OUTER") * (name | quote):
+      vr.layout.add Command(key: "OUTER", value: $2)
 
     variable <- header(i"VARIABLE") * >Ident:
-      layout.add Command(key: "VARIABLE", value: $2)
+      vr.layout.add Command(key: "VARIABLE", value: $2)
 
     strength <- header(i"STRENGTH") * (trim(priority) * ?skip(','))[3]:
       # allow: A, B, C or A, B, C, or A B C
-      layout.add Command(key: "STRENGTH", value: $2 & ',' & $3 & ',' & $4)
+      vr.layout.add Command(key: "STRENGTH", value: $2 & ',' & $3 & ',' & $4)
 
     constraints <- header(i"C") * +skip(constraint):
       # allow: a=b, c=d or a=b, c=d, or a=b c=d
@@ -431,7 +464,7 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
       while ?index:
         let list = to[seq[(string, string)]](capture[index].s)
         for (priority, c) in list:
-          layout.add Command(key: "C", value: fmt"{priority},{c}")
+          vr.layout.add Command(key: "C", value: fmt"{priority},{c}")
         index.inc
 
     constraint <- >?(>priority * skip(':')) * +skip((equation * ?skip(','))):
@@ -448,21 +481,26 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
     equation <- arithmetic * >relation * arithmetic:
       push($1 & ' ' & stripAll($2) & ' ' & $3)
 
-    aliases <- header(i"alias") * +(trim(Ident) * skip('=') * trim(Ident) * ?skip(',')):
+    aliases <- header(i"alias") * +(trim(Ident) * skip('=') * (trim(Ident) | quote) * ?skip(',')):
       # allow: A=B, C=D or A=B, C=D, or A=B C=D
       for i in countup(2, capture.len-1, 2):
-        aliases[capture[i].s] = capture[i+1].s
+        vr.layout.add Command(key: "ALIAS", value: fmt"{capture[i].s},{capture[i+1].s}")
 
-    batches <- header(i"batch") * trim(Ident) * skip('=') * identList:
+    batches <- header(i"batch") * +(trim(Ident) * skip('=') * identList):
       # allow: A=B,C,D not allow extra ',' (A=B,C,D,)
-      batches[$2] = initOrderedSet[string]()
-      var list = to[seq[string]]($3)
-      for i in list:
-        batches[$2].incl rename(i)
+      # allow: abc=a,b,c def=d,e,f
+      for i in countup(2, capture.len-1, 2):
+        let
+          id = capture[i].s
+          list = to[seq[string]](capture[i+1].s)
+
+        batches[id] = initOrderedSet[string]()
+        for i in list:
+          batches[id].incl i
 
     omitMode <- line:
       let sequence = to[Sequence]($1)
-      layout.add Command(key: currentMode, sequence: sequence)
+      vr.layout.add Command(key: currentMode, sequence: sequence)
 
     line <- >?skip('|') * sequence * ?(?gap *  trim('|')) * ?skip(','):
       var sequence = to[Sequence]($2)
@@ -580,13 +618,13 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
     priority <- Number | "STRONGEST" | "STRONGER" | "WEAKEST" | "WEAKER" | "REQUIRED" |
       "STRONG" * ?{'1'..'9'} | "MEDIUM" * ?{'1'..'9'} | "WEAK" * ?{'1'..'9'}
 
-    identRange <- >(Alpha * *(Alnum - range)) * range | name:
+    identRange <- >(Alpha * *(Alnum - range)) * range | name | quote:
       var names: seq[string]
       if ?3:
         var r = parseInt($2)..parseInt($3)
         if r.a > r.b: swap(r.a, r.b)
         for i in r:
-          names.add rename($1 & $i)
+          names.add $1 & $i
       else:
         names.add $1
 
@@ -604,9 +642,6 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
       push(joinCaptures())
 
     name <- Ident:
-      push(rename($0))
-
-    quote <- '`' * *(1 - '`') * '`':
       push($0)
 
     identList <- commaList(trim(Ident)):
@@ -620,16 +655,103 @@ proc parse(layout: var Layout, input: string): tuple[ok: bool, matchLen: int, ma
 
       push($$list)
 
-  let mr = peg.match(input.removeComment(), layout)
-  result = (mr.ok, mr.matchLen, mr.matchMax)
+  let mr = peg.match(input.removeComment(), result)
+  result.ok = mr.ok
+  result.matchLen =  mr.matchLen
+  result.matchMax = mr.matchMax
 
 proc `$`*(parser: VflParser): string =
   ## Output the current layout as visual format language.
   result = $parser.layout
 
+proc generateOutcome(parser: VflParser): Outcome =
+
+  template `?`(n: int): bool =
+    capture.len > n and capture[n].s != ""
+
+  proc `**`(input: string): string # unpacking alias and quote
+
+  var cache: Table[string, string]
+
+  proc rename(name: string): string =
+    cache.withValue(name, newName):
+      result = newName[]
+    do:
+      if name in parser.aliases:
+        result = **parser.aliases[name]
+      else:
+        result = name
+      cache[name] = result
+
+  proc depar(input: string): string =
+    result =
+      if input[0] == '(' and input[^1] == ')': input[1..^2]
+      else: input
+
+  proc `**`(input: string): string =
+    let peg = peg("equation"):
+
+      equation <- arithmetic * >?(trim('='[1..2] | {'<', '>'} * ?'=') * arithmetic):
+        if ?4:
+          push(depar($1) & ' ' & $3 & ' ' & depar($4))
+        else:
+          push(depar($1))
+
+      arithmetic <- element * *(trim(Operator) * element):
+        var
+          output: string
+          quoted = false
+
+        for i in 1..<capture.len:
+          if capture[i].s[0] in {'+', '-', '*', '/'}:
+            output.add ' ' & capture[i].s & ' '
+            if capture[i].s[0] in {'+', '-'}:
+              quoted = true
+          else:
+            output.add capture[i].s
+
+        push(if quoted: fmt"({output})" else: output)
+
+      element <- attrib | unquote | ident | number | parentheses:
+        push($1)
+
+      attrib <- (unquote | ident) * >+('.' * Ident):
+        push($1 & $2)
+
+      ident <- >Ident:
+        push(rename($1))
+
+      number <- >Number
+
+      parentheses <- skip('(') * arithmetic * skip(')'):
+        if ($1)[0] == '(' and ($1)[^1] == ')':
+          push($1)
+        else:
+          push('(' & $1 & ')')
+
+    let matches = peg.match(input)
+    assert matches.ok
+    result = matches.captures[0]
+
+  result.variables = parser.outcome.variables
+  result.stacks = parser.outcome.stacks
+
+  for item, priorities in parser.outcome.rules:
+    for priority, rules in priorities:
+      for rule in rules:
+        result.rules
+          .mgetOrPut(**item, initOrderedTable[string, seq[Rule]]())
+          .mgetOrPut(priority, @[]).add Rule(key: rule.key, op: rule.op, value: **rule.value)
+
+  for priority, rules in parser.outcome.constraints:
+    for rule in rules:
+      result.constraints
+        .mgetOrPut(priority, initOrderedSet[string]())
+        .incl **rule
+
 proc toString*(parser: VflParser, indent = 2, extraIndent = 0, templ = "layout"): string =
   ## Generates the wNim layout DSL.
-  let outcome = parser.outcome
+  let outcome = parser.generateOutcome()
 
   for n in outcome.stacks:
     result.add spaces(extraIndent)
@@ -673,9 +795,9 @@ proc toString*(parser: VflParser, indent = 2, extraIndent = 0, templ = "layout")
 proc initVflParser*(parent = "panel", spacing = 10, variable = "variable"): VflParser =
   ## Initializer.
   result.parent = parent
-  result.state.spacing = $spacing
+  result.state.spacing = Distance(raw: $spacing, op: "=")
   result.state.variablePrefix = variable
-  result.state.outer = parent
+  result.state.outer = fmt"`{parent}`"
   result.state.inSibling = false
   result.state.strength = Strength(strong: "STRONG", medium: "MEDIUM", weak: "WEAK")
 
@@ -684,13 +806,11 @@ proc parse*(parser: var VflParser, input: string) =
   if input.len == 0:
     return
 
-  var layout: Layout
-  let (ok, matchLen, matchMax) = layout.parse(input)
-
-  for cmd in layout:
+  var vr = input.parse()
+  for cmd in vr.layout:
     case cmd.key
     of "SPACING":
-      parser.state.spacing = cmd.value
+      parser.state.spacing = to[Distance](cmd.value)
 
     of "OUTER":
       parser.state.outer = cmd.value
@@ -702,6 +822,10 @@ proc parse*(parser: var VflParser, input: string) =
     of "STRENGTH":
       let s = cmd.value.split(',')
       parser.state.strength = Strength(strong: s[0], medium: s[1], weak: s[2])
+
+    of "ALIAS":
+      let alias = cmd.value.split(',', maxsplit=1)
+      parser.aliases[alias[0]] = alias[1]
 
     of "H":
       parser.state.mode = mHorizontal
@@ -733,25 +857,29 @@ proc parse*(parser: var VflParser, input: string) =
         .mgetOrPut(priority, initOrderedSet[string]())
         .incl rule
 
-  parser.layout &= layout
+  parser.layout &= vr.layout
 
-  if not ok:
-    var max = matchMax
+  if not vr.ok:
+    var max = vr.matchMax
     while max != 0 and (max >= input.len or input[max] in Whitespace):
       max.dec
 
     var error = newException(VflParseError,
       fmt"unexpected char: '{input[max]}' at position {max}")
 
-    error.matchMax = matchMax
-    error.matchLen = matchLen
+    error.matchMax = vr.matchMax
+    error.matchLen = vr.matchLen
     raise error
 
 iterator names*(parser: VflParser, skipStacks = true): string =
   ## Iterates over item names in the parser.
   for key in parser.outcome.rules.keys:
     if skipStacks and key in parser.outcome.stacks: continue
-    yield key
+
+    if key in parser.aliases:
+      yield parser.aliases[key]
+    else:
+      yield key
 
 iterator variables*(parser: VflParser): string =
   ## Iterates over variable names in the parser.

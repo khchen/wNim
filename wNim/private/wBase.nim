@@ -10,8 +10,8 @@
 include pragma
 
 # Export some modules that every module in wNim depends on.
-import winim/[winstr, utils], winim/inc/windef, kiwi/kiwi
-export winstr, utils, windef, kiwi
+import winim/[winstr, utils], winim/inc/[windef, winbase], kiwi/kiwi
+export winstr, utils, windef, winbase, kiwi
 
 import winimx except BITMAP
 export winimx except BITMAP

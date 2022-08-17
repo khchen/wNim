@@ -1,3 +1,13 @@
+Version 0.13.2
+--------------
+* wResizable: allow dot expr in layout DSL (#104).
+* autolayout: allow accent quoted (``) nim symbol in autolayout (dot expr must be quoted).
+* autolayout: allow priority and arithmetic in spacing setting.
+* autolayout: allow nested alias.
+* wApp: add `run` as alias of `mainLoop` to start an app.
+* wCheckComboBox: Fix drawing bug on Windows 11.
+* examples/tictactoe.nim: fix typo (#96).
+
 Version 0.13.1
 --------------
 * autolayout: allow underline in variable names (#91, thanks to rockcavera).

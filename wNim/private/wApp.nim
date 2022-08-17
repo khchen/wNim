@@ -12,7 +12,7 @@
 
 include pragma
 import tables
-import winim/[utils, winstr], winim/inc/windef, winimx
+import winim/[utils, winstr], winim/inc/[windef, winbase], winimx
 import wTypes, wMacros, wHelper, consts/[wColors, wKeyCodes]
 
 # Every wNim app needs wTypes, so export these in wApp to the user for convenience.
@@ -310,6 +310,10 @@ proc mainLoop*(self: wApp): int {.validate, discardable.}=
   ## The loop will exit after all top-level windows is deleted.
   if wAppHasTopLevelWindow():
     result = messageLoop()
+
+proc run*(self: wApp) {.validate, inline.} =
+  ## Alias for mainLoop.
+  self.mainLoop()
 
 proc broadcastTopLevelMessage*(self: wApp, msg: UINT, wParam: wWparam, lParam: wLparam) =
   ## Broadcast a event to all toplevel windows.

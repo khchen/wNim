@@ -112,7 +112,10 @@ proc wStringToHotkey*(value: string): tuple[modifiers: int, keyCode: int] =
 
   proc removePrefix(s: var string, prefix: string): bool =
     if s.startsWith(prefix):
-      s.delete(0, prefix.len - 1)
+      when compiles(s.delete(0..prefix.len - 1)):
+        s.delete(0..prefix.len - 1)
+      else:
+        s.delete(0, prefix.len - 1)
       result = true
 
   var value = value.toLowerAscii.replace(" ")

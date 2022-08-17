@@ -415,6 +415,7 @@ proc paint(self: wCheckComboBox, hdc: HDC, stateId: cint, isFocused: bool,
   # button state only allow CBRO_DISABLED and CBRO_NORMAL
   let buttonStateId = if stateId == CBRO_DISABLED: CBRO_DISABLED else: CBRO_NORMAL
 
+  DrawThemeParentBackground(self.mHwnd, hdc, clientRect)
   DrawThemeBackground(self.mTheme, hdc, self.mComboPart, stateId, clientRect, nil)
   DrawThemeBackground(self.mTheme, hdc, CP_DROPDOWNBUTTONRIGHT, buttonStateId, cbi.rcButton, nil)
 
@@ -464,6 +465,7 @@ proc paintItem(self: wCheckComboBox, hdc: HDC, text: string, rect: var RECT,
     if txColor != -1: SetTextColor(hdc, txColor)
 
   ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, nil, 0, nil)
+  DrawThemeParentBackground(self.mHwnd, hdc, rcCheck)
   DrawThemeBackground(self.mCheckTheme, hdc, BP_CHECKBOX, stateId, rcCheck, nil)
   DrawText(hdc, text, -1, rcText, DT_SINGLELINE or DT_VCENTER)
 

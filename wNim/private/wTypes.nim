@@ -13,7 +13,7 @@
 
 include pragma
 import times, tables, sets, lists, hashes, sequtils
-import winim/[winstr, utils], winim/inc/windef, winimx, kiwi/kiwi
+import winim/[winstr, utils], winim/inc/[windef, winbase], winimx, kiwi/kiwi
 
 when defined(wNimDebug):
   import strformat

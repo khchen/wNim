@@ -256,7 +256,7 @@ proc getPaper*(self: wPrintData): wPaper {.validate, property, inline.} =
   result = wPaperA4
   if self.isOk():
     let pDevMode = cast[ptr DEVMODE](&self.mDevModeBuffer)
-    result = wPaper pDevMode.dmPaperSize
+    result = cast[wPaper](pDevMode.dmPaperSize)
 
 proc getPaperName*(self: wPrintData): string {.validate, property, inline.} =
   ## Returns the paper name, if any.

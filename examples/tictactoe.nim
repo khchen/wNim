@@ -92,8 +92,8 @@ wClass(wBoard of wFrame):
     let menu = Menu(menubar, "&Game")
     menu.append(idNew, "&New Game")
     menu.appendSeparator()
-    menu.appendCheckItem(idAi1, "Computer Paly O")
-    menu.appendCheckItem(idAi2, "Computer Paly X").check()
+    menu.appendCheckItem(idAi1, "Computer Play O")
+    menu.appendCheckItem(idAi2, "Computer Play X").check()
     menu.appendSeparator()
     menu.append(idExit, "E&xit")
 

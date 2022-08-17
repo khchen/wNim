@@ -7,7 +7,7 @@
 
 include pragma
 import lists, times, tables, memlib/rtlib
-import winim/[winstr, utils], winim/inc/windef, winimx
+import winim/[winstr, utils], winim/inc/[windef, winbase], winimx
 import wTypes, wMacros
 
 converter IntToDWORD*(x: int): DWORD = DWORD x
@@ -183,8 +183,12 @@ proc getTextFontSizeWithCheckMark*(text: string, hFont: HANDLE, hwnd: HWND): wSi
   if result.width < checkHeight: result.width = checkHeight
 
 proc toDateTime*(st: SYSTEMTIME): DateTime =
-  initDateTime(st.wDay, Month st.wMonth, st.wYear.int, st.wHour, st.wMinute,
-    st.wSecond)
+  when compiles(dateTime(st.wYear.int, Month st.wMonth, st.wDay)):
+    dateTime(st.wYear.int, Month st.wMonth, st.wDay, st.wHour, st.wMinute,
+      st.wSecond)
+  else:
+    initDateTime(st.wDay, Month st.wMonth, st.wYear.int, st.wHour, st.wMinute,
+      st.wSecond)
 
 proc toSystemTime*(dateTime: DateTime): SYSTEMTIME =
   result.wSecond = WORD dateTime.second
