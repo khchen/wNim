@@ -42,6 +42,8 @@ include ../pragma
 import ../wBase, wControl
 export wControl
 
+converter converterVariantPtrToVar(p: ptr VARIANT): var VARIANT = cast[var VARIANT](p)
+
 const
   wWvNoSel* = 1
   wWvNoScroll* = 2

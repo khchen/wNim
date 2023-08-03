@@ -364,13 +364,13 @@ proc loadFile(self: wPreviewFrame, filename: string) =
     self.load(image)
     self.mInfo.filename = filename
 
-  except:
+  except CatchableError:
     try:
       let text = readFile(filename)
       self.load(text)
       self.mInfo.filename = filename
 
-    except: discard
+    except CatchableError: discard
 
 proc PageSetupDialog(self: wPreviewFrame): wPageSetupDialog =
   result = PageSetupDialog(self, self.mInfo.printData)
@@ -428,8 +428,9 @@ proc print(self: wPreviewFrame, pd: wPrintDialog, delay: bool) {.thread.} =
 
   if printer.startDoc(info.filename):
     self.mIsCancelPtr[] = false
-    self.mPrintText.show()
-    self.mCancel.show()
+    {.gcsafe.}: # fix for nim 2.0
+      self.mPrintText.show()
+      self.mCancel.show()
 
     defer:
       if self.mIsCancelPtr[]:

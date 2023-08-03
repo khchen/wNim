@@ -1,3 +1,10 @@
+Version 0.13.3
+--------------
+* Update for Nim Compiler 2.0.
+* Modify the codes to minimize the annoying warnings.
+* Fix bugs in examples/dragdrop.nim and examples/webView.nim.
+* Don't maintain compatibility with Nim Compiler 1.2 (requires nim >= 1.4.0).
+
 Version 0.13.2
 --------------
 * wResizable: allow dot expr in layout DSL (#104).

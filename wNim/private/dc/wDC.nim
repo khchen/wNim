@@ -162,7 +162,7 @@ proc drawCircle*(self: wDC, point: wPoint, radius: int) =
   ## Draws a circle with the given center and radius.
   self.drawCircle(point.x, point.y, radius)
 
-proc drawTextWithDeg(self: wDC, text: string, x, y: int = 0, deg: float) =
+proc drawTextWithDeg(self: wDC, text: string, x = 0, y = 0, deg: float) =
   var
     size: SIZE
     x = x
@@ -177,7 +177,7 @@ proc drawTextWithDeg(self: wDC, text: string, x, y: int = 0, deg: float) =
     y += int(cos(degToRad(deg)) * float size.cy)
   SetBkColor(self.mHdc, oldColor)
 
-proc drawText*(self: wDC, text: string, x, y: int = 0) =
+proc drawText*(self: wDC, text: string, x = 0, y = 0) =
   ## Draws a text string at the specified point, using the current text font,
   ## and the current text foreground and background colors.
   ## The text can contain multiple lines separated by the new line ('\n')
@@ -191,7 +191,7 @@ proc drawText*(self: wDC, text: string, point: wPoint) =
   ## characters.
   self.drawText(text, point.x, point.y)
 
-proc drawRotatedText*(self: wDC, text: string, x, y: int = 0, angle: float = 0) =
+proc drawRotatedText*(self: wDC, text: string, x = 0, y = 0, angle = 0.0) =
   ## Draws the text rotated by angle degrees (positive angles are counterclockwise;
   ## the full angle is 360 degrees). The text can contain multiple lines separated
   ## by the new line ('\n') characters.
@@ -727,20 +727,20 @@ proc clear*(self: var wDC, brush: wBrush = nil) =
   if prev != MM_TEXT:
     self.setScale(self.mScale)
 
-proc blit*(self: wDC, xdest, ydest, width, height: int = 0, source: wDC,
-    xsrc, ysrc: int = 0, rop: int = wCopy) =
+proc blit*(self: wDC, xdest = 0, ydest = 0, width = 0, height = 0, source: wDC,
+    xsrc = 0, ysrc = 0, rop = wCopy) =
   ## Copy from a source DC to this DC. *rop* is the raster operation.
   BitBlt(self.mHdc, xdest, ydest, width, height, source.mHdc, xsrc, ysrc, rop.dwRop)
 
-proc stretchBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
-    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
+proc stretchBlit*(self: wDC, xdest = 0, ydest = 0, dstWidth = 0, dstHeight = 0,
+    source: wDC, xsrc = 0, ysrc = 0, srcWidth = 0, srcHeight = 0, rop = wCopy) =
   ## Copy from a source DC to this DC possibly changing the scale.
   ## *rop* is the raster operation.
   StretchBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
     srcWidth, srcHeight, rop.dwRop)
 
-proc stretchBlitQuality*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
-    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, rop: int = wCopy) =
+proc stretchBlitQuality*(self: wDC, xdest = 0, ydest = 0, dstWidth = 0, dstHeight = 0,
+    source: wDC, xsrc = 0, ysrc = 0, srcWidth = 0, srcHeight = 0, rop = wCopy) =
   ## Copy from a source DC to this DC possibly changing the scale.
   ## *rop* is the raster operation. Using halftone mode for higher quality.
   var prevPoint: POINT
@@ -753,8 +753,8 @@ proc stretchBlitQuality*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
   SetStretchBltMode(self.mHdc, prevMode)
   SetBrushOrgEx(self.mHdc, prevPoint.x, prevPoint.y, nil)
 
-proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
-    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, alpha: int = 255) =
+proc alphaBlit*(self: wDC, xdest = 0, ydest = 0, dstWidth = 0, dstHeight = 0,
+    source: wDC, xsrc = 0, ysrc = 0, srcWidth = 0, srcHeight = 0, alpha = 255) =
   ## Copy from a source DC to this DC transparently.
   ## The bitmap selected in the source DC must have a transparency mask.
   var bf = BLENDFUNCTION(BlendOp: AC_SRC_OVER, SourceConstantAlpha: alpha.byte,
@@ -763,13 +763,13 @@ proc alphaBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
   AlphaBlend(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc, xsrc, ysrc,
     srcWidth, srcHeight, bf)
 
-proc transparentBlit*(self: wDC, xdest, ydest, dstWidth, dstHeight: int = 0,
-    source: wDC, xsrc, ysrc, srcWidth, srcHeight: int = 0, transparent = wWhite) =
+proc transparentBlit*(self: wDC, xdest = 0, ydest = 0, dstWidth = 0, dstHeight = 0,
+    source: wDC, xsrc = 0, ysrc = 0, srcWidth = 0, srcHeight = 0, transparent = wWhite) =
   ## Copy from a source DC to this DC and treat a RGB color as transparent.
   TransparentBlt(self.mHdc, xdest, ydest, dstWidth, dstHeight, source.mHdc,
     xsrc, ysrc, srcWidth, srcHeight, transparent)
 
-proc drawBitmap*(self: wDC, bmp: wBitmap, x, y: int = 0, transparent = true) =
+proc drawBitmap*(self: wDC, bmp: wBitmap, x = 0, y = 0, transparent = true) =
   ## Draw a bitmap on the device context at the specified point. If *transparent*
   ## is true and the bitmap has a transparency mask, the bitmap will be drawn
   ## transparently.
@@ -796,7 +796,7 @@ proc drawBitmap*(self: wDC, bmp: wBitmap, pos: wPoint, transparent = true) =
   wValidate(bmp)
   self.drawBitmap(bmp, pos.x, pos.y)
 
-proc drawImage*(self: wDC, image: wImage, x, y: int = 0) =
+proc drawImage*(self: wDC, image: wImage, x = 0, y = 0) =
   ## Draw a image on the device context at the specified point.
   wValidate(image)
   self.drawBitmap(Bitmap(image), x, y)
@@ -806,7 +806,7 @@ proc drawImage*(self: wDC, image: wImage, pos: wPoint) =
   wValidate(image)
   self.drawBitmap(Bitmap(image), pos.x, pos.y)
 
-proc drawIcon*(self: wDC, icon: wIcon, x, y: int = 0) =
+proc drawIcon*(self: wDC, icon: wIcon, x = 0, y = 0) =
   ## Draw an icon at the specified point.
   wValidate(icon)
   DrawIconEx(self.mHdc, x, y, icon.mHandle, icon.mWidth, icon.mHeight, 0, 0, DI_NORMAL)

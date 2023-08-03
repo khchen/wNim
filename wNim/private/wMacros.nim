@@ -119,10 +119,12 @@ proc createCtor(procdef: NimNode, className: string, isExport: bool): NimNode =
 template releaseOrDestroy*(T: typedesc, P: typedesc, hasFinal: bool): untyped =
   ## Used internally.
   when T is wWindow and T isnot wDialog:
-    method release(self: T) {.locks: "unknown".} =
+    {.push warning[LockLevel]: off.}
+    method release(self: T) =
       when hasFinal:
         final(self)
       procCall P(self).release()
+    {.pop.}
   else:
     proc `=destroy`(self: var type(T()[])) =
       when hasFinal:
@@ -279,7 +281,11 @@ macro wEventRegister*(event, list: untyped): untyped =
         wEventStorage($event, cint msg[1].intVal())
 
       of nnkIdent:
-        wEventStorage($event, cint bindSym(msg[1]).getImpl().intVal())
+        var impl = bindSym(msg[1]).getImpl()
+        if impl.kind == nnkConstDef: # fix for nim 2.0
+          impl = impl[2]
+
+        wEventStorage($event, cint impl.intVal())
 
       else:
         error("Unexpected a node of kind " & $msg[1].kind, msg[1])

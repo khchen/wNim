@@ -511,17 +511,17 @@ proc wMenuBarCtrl_ProcessMenuKey(msg: var wMsg, modalHwnd: HWND = 0): int =
 
   if modalHwnd != 0 or g.ctrls.len == 0: return 0 # nothing to do
 
-  block:
+  block okay:
     case msg.message
     of WM_SYSKEYDOWN, WM_KEYDOWN:
       # Only interested in <F10> and <ALT>
-      if msg.wParam notin {VK_F10, VK_MENU}: break
+      if msg.wParam notin {VK_F10, VK_MENU}: break okay
       # Ignore if a menubar is already focused
-      if g.focused != nil or delayedActivation: break
+      if g.focused != nil or delayedActivation: break okay
       # Ignore <SHIFT>+<F10>
-      if msg.wParam == VK_F10 and (GetKeyState(VK_SHIFT) and 0x8000) != 0: break
+      if msg.wParam == VK_F10 and (GetKeyState(VK_SHIFT) and 0x8000) != 0: break okay
       # Ignore auto-repeat messages
-      if (msg.lParam and 0x40000000) != 0: break
+      if (msg.lParam and 0x40000000) != 0: break okay
 
       # For standard menubar, Windows does update UI state now for <ALT>,
       # but for <F10> this is delayed into WM_(SYS)KEYUP
@@ -534,11 +534,11 @@ proc wMenuBarCtrl_ProcessMenuKey(msg: var wMsg, modalHwnd: HWND = 0): int =
 
     of WM_SYSKEYUP, WM_KEYUP:
       # Only interested in <F10> and <ALT>
-      if msg.wParam notin {VK_F10, VK_MENU}: break
+      if msg.wParam notin {VK_F10, VK_MENU}: break okay
       # Only messages related to nice WM_(SYS)KEYDOWN are relevant
       if not delayedActivation:
         for mbc in g.ctrls: mbc.showAccel(false)
-        break
+        break okay
 
       # Activate the menubar
       let mbc = nextEnabledMenuBarCtrl(nil)
@@ -565,7 +565,7 @@ proc wMenuBarCtrl_ProcessMenuKey(msg: var wMsg, modalHwnd: HWND = 0): int =
             return 1
 
         delayedActivation = false
-        break
+        break okay
 
     of WM_LBUTTONDOWN, WM_RBUTTONDOWN:
       # Click outside of menubar contorl can kill the focus

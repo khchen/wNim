@@ -11,8 +11,12 @@ import wNim/[wApp, wFrame, wCalendarCtrl, wScrollBar, wFont, wIcon]
 import winim/[lean, inc/uxtheme] # for SetWindowTheme()
 
 proc update(calendar: wCalendarCtrl, today: DateTime) =
-  var firstDay = initDateTime(1, mJan, today.year, 0, 0, 0, 0)
-  var lastDay = initDateTime(31, mDec, today.year, 0, 0, 0, 0)
+  when compiles(dateTime(today.year, mJan, 1)): # initDateTime is deprecated
+    var firstDay = dateTime(today.year, mJan, 1)
+    var lastDay = dateTime(today.year, mDec, 31)
+  else:
+    var firstDay = initDateTime(1, mJan, today.year, 0, 0, 0, 0)
+    var lastDay = initDateTime(31, mDec, today.year, 0, 0, 0, 0)
 
   calendar.dateRange = (firstDay.toTime, lastDay.toTime)
   calendar.date = today.toTime

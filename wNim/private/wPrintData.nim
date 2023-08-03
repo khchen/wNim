@@ -17,6 +17,8 @@ include pragma
 import math
 import wBase
 
+converter converterDevmodePtrToVar(p: ptr DEVMODE): var DEVMODE = cast[var DEVMODE](p)
+
 type
   wPrintDataError* = object of wError
     ## An error raised when wPrntData creation failed or error occurred.

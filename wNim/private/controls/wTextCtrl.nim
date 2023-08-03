@@ -766,8 +766,8 @@ proc enableAutoComplete*(self: wTextCtrl, flags = wAcFile or wAcMru or wAcUrl): 
   ## wAcUrl      Include the URLs in the user's **History** list.
   self.disableAutoComplete()
 
-  block:
-    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break
+  block okay:
+    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break okay
 
     var pac2: ptr IAutoComplete2
     if self.mPac.QueryInterface(&IID_IAutoComplete2, &pac2).SUCCEEDED:
@@ -775,19 +775,19 @@ proc enableAutoComplete*(self: wTextCtrl, flags = wAcFile or wAcMru or wAcUrl): 
       pac2.Release()
 
     var pom: ptr IObjMgr
-    if CoCreateInstance(&CLSID_ACLMulti, nil, CLSCTX_INPROC_SERVER, &IID_IObjMgr, &pom).FAILED: break
+    if CoCreateInstance(&CLSID_ACLMulti, nil, CLSCTX_INPROC_SERVER, &IID_IObjMgr, &pom).FAILED: break okay
     defer: pom.Release()
 
     var punkSourceIsf: ptr IUnknown
-    if CoCreateInstance(&CLSID_ACListISF, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceIsf).FAILED: break
+    if CoCreateInstance(&CLSID_ACListISF, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceIsf).FAILED: break okay
     defer: punkSourceIsf.Release()
 
     var punkSourceMru: ptr IUnknown
-    if CoCreateInstance(&CLSID_ACLMRU, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceMru).FAILED: break
+    if CoCreateInstance(&CLSID_ACLMRU, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceMru).FAILED: break okay
     defer: punkSourceMru.Release()
 
     var punkSourceUrl: ptr IUnknown
-    if CoCreateInstance(&CLSID_ACLHistory, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceUrl).FAILED: break
+    if CoCreateInstance(&CLSID_ACLHistory, nil, CLSCTX_INPROC_SERVER, &IID_IUnknown, &punkSourceUrl).FAILED: break okay
     defer: punkSourceUrl.Release()
 
     var pal2: ptr IACList2
@@ -804,7 +804,7 @@ proc enableAutoComplete*(self: wTextCtrl, flags = wAcFile or wAcMru or wAcUrl): 
     if (flags and wAcUrl) != 0:
       pom.Append(punkSourceUrl)
 
-    if self.mPac.Init(self.mHwnd, pom, nil, nil).FAILED: break
+    if self.mPac.Init(self.mHwnd, pom, nil, nil).FAILED: break okay
     self.connect(WM_KEYDOWN, onAutoCompleteKeyDown)
     return true
 
@@ -860,15 +860,15 @@ proc enableAutoComplete*(self: wTextCtrl, provider: wAutoCompleteProvider): bool
 
   self.mEnumString.provider = provider
 
-  block:
-    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break
+  block okay:
+    if CoCreateInstance(&CLSID_AutoComplete, nil, CLSCTX_INPROC_SERVER, &IID_IAutoComplete, &self.mPac).FAILED: break okay
 
     var pac2: ptr IAutoComplete2
     if self.mPac.QueryInterface(&IID_IAutoComplete2, &pac2).SUCCEEDED:
       pac2.SetOptions(ACO_AUTOSUGGEST)
       pac2.Release()
 
-    if self.mPac.Init(self.mHwnd, cast[ptr IUnknown](&self.mEnumString), nil, nil).FAILED: break
+    if self.mPac.Init(self.mHwnd, cast[ptr IUnknown](&self.mEnumString), nil, nil).FAILED: break okay
     self.connect(WM_KEYDOWN, onAutoCompleteKeyDown)
     return true
 

@@ -143,7 +143,7 @@
 ##  ----------
 ##  - `autolayout <autolayout.html>`_
 
-{.experimental, deadCodeElim: on.}
+{.experimental.}
 
 when not defined(Nimdoc):
   import

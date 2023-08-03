@@ -11,7 +11,7 @@ import
   winim/[winstr, utils], winim/inc/[windef, winuser, shellapi]
 
 import wNim/[wApp, wFrame, wPanel, wMenu, wWindowDC, wImageList, wIcon, wUtils,
-  wStaticText, wButton, wListCtrl, wComboBox, wButton, wFileDialog]
+  wStaticText, wButton, wListCtrl, wComboBox, wFileDialog]
 
 proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
   const iconFiles = ["accessibilitycpl.dll", "comres.dll", "explorer.exe",
@@ -93,7 +93,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
         listCtrl.appendItem($index, image=index)
         index.inc
 
-      except: break
+      except CatchableError: break
 
     if index == 0:
       # it's not a dll/exe with icons, treat it as icon file.
@@ -104,7 +104,7 @@ proc pickIconDialog(owner: wWindow, initFile = "shell32.dll"): string =
         imageList.add(icon)
         listCtrl.appendItem("", image=0)
 
-      except: discard
+      except CatchableError: discard
 
   if wGetWinVersion() < 6.0:
     menu.append(1, "Browse...")
@@ -242,7 +242,7 @@ when isMainModule:
       for n in [16, 24, 36, 48, 64, 128, 256]:
         try:
           backgroundIcons.add Icon(path, (n, n))
-        except: discard
+        except CatchableError: discard
       frame.refresh()
 
   frame.idExit do ():

@@ -41,7 +41,7 @@ import net
 import ../wBase, wControl, wTextCtrl, ../gdiobjects/wFont
 export wControl, wTextCtrl
 
-method setWindowRect(self: wIpCtrl, x, y, width, height, flag = 0) {.inline, shield.} =
+method setWindowRect(self: wIpCtrl, x = 0, y = 0, width = 0, height = 0, flag = 0) {.inline, shield.} =
   # WC_IPADDRESS cannot change size after create, it's Windows's limitation.
   SetWindowPos(self.mHwnd, 0, x, y, 0, 0,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE or SWP_NOSIZE))

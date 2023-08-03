@@ -59,7 +59,7 @@ method getWindowRect(self: wSpinCtrl, sizeOnly = false): wRect =
   result = procCall wWindow(self).getWindowRect()
   result.width += self.mUpdownWidth
 
-method setWindowRect(self: wSpinCtrl, x, y, width, height, flag = 0)
+method setWindowRect(self: wSpinCtrl, x = 0, y = 0, width = 0, height = 0, flag = 0)
     {.shield.} =
 
   var

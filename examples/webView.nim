@@ -6,7 +6,7 @@
 #====================================================================
 
 import
-  random,
+  random, os, strformat,
   resource/resource2,
   winim/com
 
@@ -15,7 +15,6 @@ import wNim/[wApp, wImage, wIcon, wBitmap, wFrame, wStatusBar, wToolBar,
 
 when false:
   ## https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/general-info/ee330730%28v%3dvs.85%29
-  import os
 
   var hkey: HKEY
   if RegCreateKeyEx(HKEY_CURRENT_USER, r"Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION",
@@ -33,7 +32,7 @@ type
 proc aboutDialog(owner: wWindow) =
   let dialog = Frame(owner=owner, title="wNim wWebView", size=(350, 450), style=wDefaultDialogStyle)
   let webView = WebView(dialog, style=wWvNoSel or wWvNoScroll or wWvNoContextMenu or wWvSilent)
-  webView.navigate("res://webView.exe/about.html")
+  webView.navigate(fmt"res://{getAppFilename()}/about.html")
 
   webView.wEvent_WebViewNavigating do (event: wEvent):
     event.veto
@@ -144,7 +143,7 @@ webView.wEvent_WebViewNavigating do (event: wEvent):
   else: discard
 
 randomize()
-webView.navigate("res://webView.exe/demo.html")
+webView.navigate(fmt"res://{getAppFilename()}/demo.html")
 textctrl.setFocus()
 frame.center()
 frame.show()

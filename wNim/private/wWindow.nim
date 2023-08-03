@@ -130,8 +130,8 @@ method getWindowRect(self: wWindow, sizeOnly = false): wRect {.base, shield.} =
     result.x = rect.left
     result.y = rect.top
 
-method setWindowRect(self: wWindow, x, y, width, height, flag = 0)
-    {.base, inline, shield.} =
+method setWindowRect(self: wWindow, x = 0, y = 0, width = 0, height = 0,
+    flag = 0) {.base, inline, shield.} =
   # must use SWP_NOACTIVATE or window will steal focus after setsize
   SetWindowPos(self.mHwnd, 0, x, y, width, height,
     UINT(flag or SWP_NOZORDER or SWP_NOREPOSITION or SWP_NOACTIVATE))
@@ -1257,7 +1257,7 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
     # so we don't break even the event is processed
     # notice: use list instead of seq here,
     # because handler may modify list by disconnect
-    for node in list.nodes: # FIFO
+    for node in list[].nodes: # FIFO
       let connection = node.value
       connection.callHandler()
 
@@ -1267,7 +1267,7 @@ proc processEvent*(self: wWindow, event: wEvent): bool {.validate, discardable.}
   var this = self
   while true:
     this.mConnectionTable.withValue(msg, list):
-      for node in list.rnodes: # FILO
+      for node in list[].rnodes: # FILO
         let connection = node.value
         # make sure we clear the skip state before every callHandler
         event.mSkip = false
@@ -1480,9 +1480,9 @@ proc disconnect*(self: wWindow, msg: UINT, limit = -1) {.validate.} =
   ## Disconnects the given event type from the event handler.
   var count = 0
   self.mConnectionTable.withValue(msg, list):
-    for node in list.rnodes:
+    for node in list[].rnodes:
       if not node.value.undeletable:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
         count.inc
         if limit >= 0 and count >= limit: break
@@ -1492,9 +1492,9 @@ proc disconnect*(self: wWindow, msg: UINT, id: wCommandID, limit = -1)
   ## Disconnects the given event type and specified ID from the event handler.
   var count = 0
   self.mConnectionTable.withValue(msg, list):
-    for node in list.rnodes:
+    for node in list[].rnodes:
       if node.value.id == id and not node.value.undeletable:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
         count.inc
         if limit >= 0 and count >= limit: break
@@ -1506,26 +1506,26 @@ proc disconnect*(self: wWindow, id: wCommandID, limit = -1) {.validate.} =
 proc disconnect*(self: wWindow, msg: UINT, handler: wEventProc) {.validate.} =
   ## Disconnects the specified handler proc from the event handler.
   self.mConnectionTable.withValue(msg, list):
-    for node in list.nodes:
+    for node in list[].nodes:
       if node.value.handler.rawProc == handler.rawProc and not node.value.undeletable:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
 
 proc disconnect*(self: wWindow, msg: UINT, handler: wEventNeatProc) {.validate.} =
   ## Disconnects the specified handler proc from the event handler.
   self.mConnectionTable.withValue(msg, list):
-    for node in list.nodes:
+    for node in list[].nodes:
       if node.value.neatHandler.rawProc == handler.rawProc and not node.value.undeletable:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
 
 proc disconnect*(self: wWindow, connection: wEventConnection) =
   ## Disconnects the specified token that returned by connect().
   let msg = connection.msg
   self.mConnectionTable.withValue(msg, list):
-    for node in list.nodes:
+    for node in list[].nodes:
       if node.value == connection:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
 
 proc systemDisconnect(self: wWindow, connection: wEventConnection) {.validate, shield.} =
@@ -1533,17 +1533,17 @@ proc systemDisconnect(self: wWindow, connection: wEventConnection) {.validate, s
   # systemConnect().
   let msg = connection.msg
   self.mSystemConnectionTable.withValue(msg, list):
-    for node in list.nodes:
+    for node in list[].nodes:
       if node.value == connection:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
 
 proc systemDisconnect(self: wWindow, msg: UINT, handler: wEventProc) {.validate.} =
   # Used internally, disconnects the specified connection.
   self.mSystemConnectionTable.withValue(msg, list):
-    for node in list.nodes:
+    for node in list[].nodes:
       if node.value.handler.rawProc == handler.rawProc:
-        list.remove(node)
+        list[].remove(node)
         wAppDecMessage(msg)
 
 proc `.`*(self: wWindow, msg: UINT, handler: wEventProc): wEventConnection

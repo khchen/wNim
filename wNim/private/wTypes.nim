@@ -12,7 +12,7 @@
 ## For example: *wApp.wIcon*.
 
 include pragma
-import times, tables, sets, lists, hashes, sequtils
+import std/[exitprocs, times, tables, sets, lists, hashes, sequtils]
 import winim/[winstr, utils], winim/inc/[windef, winbase], winimx, kiwi/kiwi
 
 when defined(wNimDebug):
@@ -21,6 +21,14 @@ when defined(wNimDebug):
 when not declared(IndexDefect):
   type
     IndexDefect* = object of IndexError
+
+when compiles(block:
+    type O = object
+    proc `=destroy`(self: O) = discard
+  ):
+  const newDestructors = true
+else:
+  const newDestructors = false
 
 type
   wSize* = tuple
@@ -778,75 +786,104 @@ when not isMainModule: # hide from doc
       elif field is object:
         field.free()
 
-
-  proc `=destroy`(self: var type(wMenuItem()[])) {.shield.}
-  proc `=destroy`(self: var type(wMenu()[])) {.shield.}
+  when newDestructors:
+    proc `=destroy`(self: type(wMenuItem()[])) {.shield.}
+    proc `=destroy`(self: type(wMenu()[])) {.shield.}
+  else:
+    proc `=destroy`(self: var type(wMenuItem()[])) {.shield.}
+    proc `=destroy`(self: var type(wMenu()[])) {.shield.}
 
   # Basic classes
 
-  proc `=destroy`(self: var type(wImage()[])) {.shield.} =
-    if self.mGdipBmp != nil:
-      GdipDisposeImage(self.mGdipBmp)
-      self.mGdipBmp = nil
+  when newDestructors:
+    proc `=destroy`(self: type(wImage()[])) {.shield.} =
+      if self.mGdipBmp != nil:
+        GdipDisposeImage(self.mGdipBmp)
 
-  proc `=destroy`(self: var type(wDataObject()[])) {.shield.} =
-    if OleIsCurrentClipboard(self.mObj):
-      OleFlushClipboard()
-    if self.mReleasable and self.mObj != nil:
-      self.mObj.Release()
-    self.mObj = nil
+  else:
+    proc `=destroy`(self: var type(wImage()[])) {.shield.} =
+      if self.mGdipBmp != nil:
+        GdipDisposeImage(self.mGdipBmp)
+        self.mGdipBmp = nil
 
-  proc `=destroy`(self: var type(wImageList()[])) {.shield.} =
-    if self.mHandle != 0:
-      ImageList_Destroy(self.mHandle)
+  when newDestructors:
+    proc `=destroy`(self: type(wDataObject()[])) {.shield, raises: [Exception].} =
+      if OleIsCurrentClipboard(self.mObj):
+        OleFlushClipboard()
+      if self.mReleasable and self.mObj != nil:
+        self.mObj.Release()
+
+  else:
+    proc `=destroy`(self: var type(wDataObject()[])) {.shield, raises: [Exception].} =
+      if OleIsCurrentClipboard(self.mObj):
+        OleFlushClipboard()
+      if self.mReleasable and self.mObj != nil:
+        self.mObj.Release()
+      self.mObj = nil
+
+  when newDestructors:
+    proc `=destroy`(self: type(wImageList()[])) {.shield.} =
+      if self.mHandle != 0:
+        ImageList_Destroy(self.mHandle)
+
+  else:
+    proc `=destroy`(self: var type(wImageList()[])) {.shield.} =
+      if self.mHandle != 0:
+        ImageList_Destroy(self.mHandle)
+        self.mHandle = 0
+
+  when newDestructors:
+    proc `=destroy`(self: type(wAcceleratorTable()[])) {.shield.} =
+      if self.mHandle != 0:
+        DestroyAcceleratorTable(self.mHandle)
+
+  else:
+    proc `=destroy`(self: var type(wAcceleratorTable()[])) {.shield.} =
+      self.mAccels.setLen(0)
+      if self.mHandle != 0:
+        DestroyAcceleratorTable(self.mHandle)
       self.mHandle = 0
-
-  proc `=destroy`(self: var type(wAcceleratorTable()[])) {.shield.} =
-    self.mAccels.setLen(0)
-    if self.mHandle != 0:
-      DestroyAcceleratorTable(self.mHandle)
-    self.mHandle = 0
 
   # wGDIObjects
 
-  proc `=destroy`(self: var type(wGdiObject()[])) {.shield.} =
-    if self.mHandle != 0 and self.mDeletable:
-      DeleteObject(self.mHandle)
-    self.mHandle = 0
+  when newDestructors:
+    proc `=destroy`(self: type(wGdiObject()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
+        DeleteObject(self.mHandle)
 
-  proc `=destroy`(self: var type(wIcon()[])) {.shield.} =
-    if self.mHandle != 0 and self.mDeletable:
-      DestroyIcon(self.mHandle)
-    self.mHandle = 0
+  else:
+    proc `=destroy`(self: var type(wGdiObject()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
+        DeleteObject(self.mHandle)
+      self.mHandle = 0
 
-  proc `=destroy`(self: var type(wCursor()[])) {.shield.} =
-    if self.mHandle != 0 and self.mDeletable:
-      if self.mIconResource:
+  when newDestructors:
+    proc `=destroy`(self: type(wIcon()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
         DestroyIcon(self.mHandle)
-      else:
-        DestroyCursor(self.mHandle)
-    self.mHandle = 0
 
-  # In the last devel version, =destroy is inherited.
-  # https://github.com/nim-lang/Nim/issues/13810
-  # However, the the release version (1.0.6), it's not.
-  # So here we must call parent's `=destroy` for every type.
+  else:
+    proc `=destroy`(self: var type(wIcon()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
+        DestroyIcon(self.mHandle)
+      self.mHandle = 0
 
-  proc `=destroy`(self: var type(wPen()[])) {.shield.} =
-    `=destroy`(type(wGdiObject()[])(self))
+  when newDestructors:
+    proc `=destroy`(self: type(wCursor()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
+        if self.mIconResource:
+          DestroyIcon(self.mHandle)
+        else:
+          DestroyCursor(self.mHandle)
 
-  proc `=destroy`(self: var type(wBrush()[])) {.shield.} =
-    `=destroy`(type(wGdiObject()[])(self))
-
-  proc `=destroy`(self: var type(wFont()[])) {.shield.} =
-    when defined(wNimDebug): echo fmt"Destroying wFont({self.mFaceName}, {self.mPointSize})"
-    `=destroy`(type(wGdiObject()[])(self))
-
-  proc `=destroy`(self: var type(wRegion()[])) {.shield.} =
-    `=destroy`(type(wGdiObject()[])(self))
-
-  proc `=destroy`(self: var type(wBitmap()[])) {.shield.} =
-    `=destroy`(type(wGdiObject()[])(self))
+  else:
+    proc `=destroy`(self: var type(wCursor()[])) {.shield.} =
+      if self.mHandle != 0 and self.mDeletable:
+        if self.mIconResource:
+          DestroyIcon(self.mHandle)
+        else:
+          DestroyCursor(self.mHandle)
+      self.mHandle = 0
 
   # wBaseApp
 
@@ -859,140 +896,251 @@ when not isMainModule: # hide from doc
 
       free(wBaseApp[])
 
-  when NimMajor >= 1 and NimMinor >= 3:
-    import std/exitprocs
-    addExitProc(wNimAtExit)
-
-  else:
-    addQuitProc(wNimAtExit)
+  addExitProc(wNimAtExit)
 
   # wMenu
 
-  proc `=destroy`(self: var type(wMenuItem()[])) {.shield.} =
-    if wBaseApp != nil:
-      wBaseApp.mMenuIdSet.excl(uint16 self.mId)
+  when newDestructors:
+    proc `=destroy`(self: type(wMenuItem()[])) {.shield.} =
+      if wBaseApp != nil:
+        wBaseApp.mMenuIdSet.excl(uint16 self.mId)
 
-    free(self)
+  else:
+    proc `=destroy`(self: var type(wMenuItem()[])) {.shield.} =
+      if wBaseApp != nil:
+        wBaseApp.mMenuIdSet.excl(uint16 self.mId)
+      free(self)
 
-  proc `=destroy`(self: var type(wMenu()[])) {.shield.} =
-    when defined(wNimDebug): echo fmt"Destroying wMenu({self.mHmenu}[{self.mItemList.len}])"
-    if self.mHmenu != 0:
-      if self.mDeletable:
+  when newDestructors:
+    proc `=destroy`(self: type(wMenu()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenu({self.mHmenu}[{self.mItemList.len}])"
+      if self.mHmenu != 0:
+        if self.mDeletable:
+          for i in 0..<GetMenuItemCount(self.mHmenu):
+            RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+          DestroyMenu(self.mHmenu)
+        wBaseApp.mMenuBaseTable.del(self.mHmenu)
+
+  else:
+    proc `=destroy`(self: var type(wMenu()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenu({self.mHmenu}[{self.mItemList.len}])"
+      if self.mHmenu != 0:
+        if self.mDeletable:
+          for i in 0..<GetMenuItemCount(self.mHmenu):
+            RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+          DestroyMenu(self.mHmenu)
+        wBaseApp.mMenuBaseTable.del(self.mHmenu)
+        self.mHmenu = 0
+        free(self)
+
+  when newDestructors:
+    proc `=destroy`(self: type(wMenuBar()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenuBar({self.mHmenu}[{self.mMenuList.len}])"
+      if self.mHmenu != 0:
         for i in 0..<GetMenuItemCount(self.mHmenu):
           RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
         DestroyMenu(self.mHmenu)
-      wBaseApp.mMenuBaseTable.del(self.mHmenu)
-      self.mHmenu = 0
-      free(self)
+        wBaseApp.mMenuBaseTable.del(self.mHmenu)
 
-  proc `=destroy`(self: var type(wMenuBar()[])) {.shield.} =
-    when defined(wNimDebug): echo fmt"Destroying wMenuBar({self.mHmenu}[{self.mMenuList.len}])"
-    if self.mHmenu != 0:
-      for i in 0..<GetMenuItemCount(self.mHmenu):
-        RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
-      DestroyMenu(self.mHmenu)
-      wBaseApp.mMenuBaseTable.del(self.mHmenu)
-      self.mHmenu = 0
-      free(self)
+  else:
+    proc `=destroy`(self: var type(wMenuBar()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenuBar({self.mHmenu}[{self.mMenuList.len}])"
+      if self.mHmenu != 0:
+        for i in 0..<GetMenuItemCount(self.mHmenu):
+          RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
+        DestroyMenu(self.mHmenu)
+        wBaseApp.mMenuBaseTable.del(self.mHmenu)
+        self.mHmenu = 0
+        free(self)
 
   # wDialog
 
-  proc `=destroy`(self: var type(wPageSetupDialog()[])) {.shield.} =
-    if self.mPsd.hDevMode != 0:
-      GlobalFree(self.mPsd.hDevMode)
-      self.mPsd.hDevMode = 0
+  when newDestructors:
+    proc `=destroy`(self: type(wPageSetupDialog()[])) {.shield.} =
+      if self.mPsd.hDevMode != 0:
+        GlobalFree(self.mPsd.hDevMode)
 
-    if self.mPsd.hDevNames != 0:
-      GlobalFree(self.mPsd.hDevNames)
-      self.mPsd.hDevNames = 0
+      if self.mPsd.hDevNames != 0:
+        GlobalFree(self.mPsd.hDevNames)
 
-    free(self)
+  else:
+    proc `=destroy`(self: var type(wPageSetupDialog()[])) {.shield.} =
+      if self.mPsd.hDevMode != 0:
+        GlobalFree(self.mPsd.hDevMode)
+        self.mPsd.hDevMode = 0
 
-  proc `=destroy`(self: var type(wPrintDialog()[])) {.shield.} =
-    if self.mPd.hDevMode != 0:
-      GlobalFree(self.mPd.hDevMode)
-      self.mPd.hDevMode = 0
+      if self.mPsd.hDevNames != 0:
+        GlobalFree(self.mPsd.hDevNames)
+        self.mPsd.hDevNames = 0
 
-    if self.mPd.hDevNames != 0:
-      GlobalFree(self.mPd.hDevNames)
-      self.mPd.hDevNames = 0
+      free(self)
 
-    free(self)
+  when newDestructors:
+    proc `=destroy`(self: type(wPrintDialog()[])) {.shield.} =
+      if self.mPd.hDevMode != 0:
+        GlobalFree(self.mPd.hDevMode)
+
+      if self.mPd.hDevNames != 0:
+        GlobalFree(self.mPd.hDevNames)
+
+  else:
+    proc `=destroy`(self: var type(wPrintDialog()[])) {.shield.} =
+      if self.mPd.hDevMode != 0:
+        GlobalFree(self.mPd.hDevMode)
+        self.mPd.hDevMode = 0
+
+      if self.mPd.hDevNames != 0:
+        GlobalFree(self.mPd.hDevNames)
+        self.mPd.hDevNames = 0
+
+      free(self)
 
   # wDC
 
-  proc `=destroy`(self: var wDC) {.shield.} =
-    if self.mhOldFont != 0:
-      SelectObject(self.mHdc, self.mhOldFont)
-      self.mhOldFont = 0
+  when newDestructors:
+    proc `=destroy`(self: wDC) {.shield.} =
+      if self.mhOldFont != 0:
+        SelectObject(self.mHdc, self.mhOldFont)
 
-    if self.mhOldPen != 0:
-      SelectObject(self.mHdc, self.mhOldPen)
-      self.mhOldPen = 0
+      if self.mhOldPen != 0:
+        SelectObject(self.mHdc, self.mhOldPen)
 
-    if self.mhOldBrush != 0:
-      SelectObject(self.mHdc, self.mhOldBrush)
-      self.mhOldBrush = 0
+      if self.mhOldBrush != 0:
+        SelectObject(self.mHdc, self.mhOldBrush)
 
-    if self.mhOldBitmap != 0:
-      SelectObject(self.mHdc, self.mhOldBitmap)
-      self.mhOldBitmap = 0
+      if self.mhOldBitmap != 0:
+        SelectObject(self.mHdc, self.mhOldBitmap)
 
-    free(self)
+  else:
+    proc `=destroy`(self: var wDC) {.shield.} =
+      if self.mhOldFont != 0:
+        SelectObject(self.mHdc, self.mhOldFont)
+        self.mhOldFont = 0
 
-  proc `=destroy`(self: var wMemoryDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      DeleteDC(self.mHdc)
-      self.mBitmap = nil
-      self.mHdc = 0
+      if self.mhOldPen != 0:
+        SelectObject(self.mHdc, self.mhOldPen)
+        self.mhOldPen = 0
 
-  proc `=destroy`(self: var wScreenDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      ReleaseDC(0, self.mHdc)
-      self.mHdc = 0
+      if self.mhOldBrush != 0:
+        SelectObject(self.mHdc, self.mhOldBrush)
+        self.mhOldBrush = 0
 
-  proc `=destroy`(self: var wWindowDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      if not self.mCanvas.isNil:
-        ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
-        self.mCanvas = nil
-      self.mHdc = 0
+      if self.mhOldBitmap != 0:
+        SelectObject(self.mHdc, self.mhOldBitmap)
+        self.mhOldBitmap = 0
 
-  proc `=destroy`(self: var wClientDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      if not self.mCanvas.isNil:
-        ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
-        self.mCanvas = nil
-      self.mHdc = 0
+      free(self)
 
-  proc `=destroy`(self: var wPaintDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      if not self.mCanvas.isNil:
-        EndPaint(self.mCanvas.mHwnd, self.mPs)
-        self.mCanvas = nil
-      self.mHdc = 0
+  when newDestructors:
+    proc `=destroy`(self: wMemoryDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        DeleteDC(self.mHdc)
+  else:
+    proc `=destroy`(self: var wMemoryDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        DeleteDC(self.mHdc)
+        self.mBitmap = nil
+        self.mHdc = 0
 
-  proc `=destroy`(self: var wPrinterDC) {.shield.} =
-    if self.mHdc != 0:
-      `=destroy`(wDC(self))
-      DeleteDC(self.mHdc)
-      self.mHdc = 0
+  when newDestructors:
+    proc `=destroy`(self: wScreenDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        ReleaseDC(0, self.mHdc)
+  else:
+    proc `=destroy`(self: var wScreenDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        ReleaseDC(0, self.mHdc)
+        self.mHdc = 0
+
+  when newDestructors:
+    proc `=destroy`(self: wWindowDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+
+  else:
+    proc `=destroy`(self: var wWindowDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+          self.mCanvas = nil
+        self.mHdc = 0
+
+  when newDestructors:
+    proc `=destroy`(self: wClientDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+
+  else:
+    proc `=destroy`(self: var wClientDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+          self.mCanvas = nil
+        self.mHdc = 0
+
+  when newDestructors:
+    proc `=destroy`(self: wPaintDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          EndPaint(self.mCanvas.mHwnd, addr self.mPs)
+
+  else:
+    proc `=destroy`(self: var wPaintDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        if not self.mCanvas.isNil:
+          EndPaint(self.mCanvas.mHwnd, self.mPs)
+          self.mCanvas = nil
+        self.mHdc = 0
+
+  when newDestructors:
+    proc `=destroy`(self: wPrinterDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        DeleteDC(self.mHdc)
+
+  else:
+    proc `=destroy`(self: var wPrinterDC) {.shield.} =
+      if self.mHdc != 0:
+        `=destroy`(wDC(self))
+        DeleteDC(self.mHdc)
+        self.mHdc = 0
 
   when defined(wNimDebug) and defined(gcDestructors):
 
-    proc `=destroy`(self: var type(wButton()[])) {.shield.} =
-      echo fmt"Destroying wButton({self.mHwnd})"
-      for i in self.fields: i.reset()
+    when newDestructors:
+      proc `=destroy`(self: type(wButton()[])) {.shield.} =
+        echo fmt"Destroying wButton({self.mHwnd})"
+        for i in self.fields: i.reset()
 
-    proc `=destroy`(self: var type(wPanel()[])) {.shield.} =
-      echo fmt"Destroying wPanel({self.mHwnd})"
-      for i in self.fields: i.reset()
+      proc `=destroy`(self: type(wPanel()[])) {.shield.} =
+        echo fmt"Destroying wPanel({self.mHwnd})"
+        for i in self.fields: i.reset()
 
-    proc `=destroy`(self: var type(wFrame()[])) {.shield.} =
-      echo fmt"Destroying wFrame({self.mHwnd})"
-      for i in self.fields: i.reset()
+      proc `=destroy`(self: type(wFrame()[])) {.shield.} =
+        echo fmt"Destroying wFrame({self.mHwnd})"
+        for i in self.fields: i.reset()
+
+    else:
+      proc `=destroy`(self: var type(wButton()[])) {.shield.} =
+        echo fmt"Destroying wButton({self.mHwnd})"
+        for i in self.fields: i.reset()
+
+      proc `=destroy`(self: var type(wPanel()[])) {.shield.} =
+        echo fmt"Destroying wPanel({self.mHwnd})"
+        for i in self.fields: i.reset()
+
+      proc `=destroy`(self: var type(wFrame()[])) {.shield.} =
+        echo fmt"Destroying wFrame({self.mHwnd})"
+        for i in self.fields: i.reset()

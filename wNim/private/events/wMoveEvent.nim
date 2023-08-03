@@ -32,7 +32,7 @@ wEventRegister(wMoveEvent):
 
 method getPosition*(self: wMoveEvent): wPoint {.property.} =
   ## Returns the entire size of the window generating the size change event.
-  if self.mMsg in {WM_MOVE, wEvent_Dragging}:
+  if self.mMsg in [WM_MOVE, wEvent_Dragging]:
     result.x = GET_X_LPARAM(self.mLparam)
     result.y = GET_Y_LPARAM(self.mLparam)
   elif self.mMsg == WM_MOVING:

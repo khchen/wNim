@@ -167,7 +167,7 @@ when isMainModule:
       try:
         scribble.loadFile(dlg.path)
         statusBar.setStatusText(dlg.path & " loaded.")
-      except: discard
+      except CatchableError: discard
 
   scribble.idSave do ():
     let wildcard = "PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp"
@@ -181,7 +181,7 @@ when isMainModule:
       try:
         scribble.saveFile(path)
         statusBar.setStatusText(path & " saved.")
-      except: discard
+      except CatchableError: discard
 
   scribble.idAbout do ():
     MessageDialog(scribble, caption="About...",

@@ -131,6 +131,10 @@ wClass(wFont of wGdiObject):
 
     self.setup(lf)
 
+  proc init*(self: wFont, lf: ptr LOGFONT) {.inline.} =
+    ## Initializes a font from pointer to LOGFONT struct. Used internally.
+    self.init(cast[var LOGFONT](lf))
+
   proc init*(self: wFont, pointSize: float = NaN, family = wFontFamilyDefault,
       weight = wFontWeightNormal, italic = false, underline = false, strikeout = false,
       faceName = "", encoding = wFontEncodingDefault) {.validate.} =

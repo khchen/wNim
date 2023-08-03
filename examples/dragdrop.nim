@@ -7,7 +7,8 @@
 
 import
   resource/resource,
-  strformat
+  strformat,
+  os
 
 import wNim/[wApp, wDataObject, wAcceleratorTable, wUtils,
   wFrame, wPanel, wMenuBar, wMenu, wIcon, wBitmap,
@@ -18,8 +19,8 @@ type
     idText = wIdUser, idFile, idImage, idCopy, idPaste, idExit
 
 const defaultText = "You can drop text, image, or files on drop target."
-const defaultFile = ["dragdrop.exe"]
 const defaultImage = staticRead(r"images/logo.png")
+let defaultFile = [getAppFilename()]
 
 let app = App(wSystemDpiAware)
 var data = DataObject(defaultText)

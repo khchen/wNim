@@ -20,8 +20,8 @@ frame.margin = 10
 frame.icon = Icon("", 0) # load icon from exe file.
 
 let menu = Menu(menuBar, "&Action")
-menu.appendRadioItem(idLayout1, "&Layout1", "Switch to layout 1.").check()
-menu.appendRadioItem(idLayout2, "&Layout2", "Switch to layout 2.")
+menu.appendRadioItem(idLayout1, "Layout&1", "Switch to layout 1.").check()
+menu.appendRadioItem(idLayout2, "Layout&2", "Switch to layout 2.")
 menu.appendSeparator()
 menu.appendCheckItem(idEnable, "&Enable", "Enable or disable the splitter.").check()
 menu.appendSeparator()

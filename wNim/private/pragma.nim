@@ -5,8 +5,14 @@
 #
 #====================================================================
 
-{.experimental, deadCodeElim: on.}
+{.experimental.}
 
 {.warning[LockLevel]: off.}
+
+when compiles(block: {.warning[CastSizes]: off.}):
+  {.warning[CastSizes]: off.}
+
+when compiles(block: {.warning[BareExcept]: off.}):
+  {.warning[BareExcept]: off.}
 
 when defined(gcDestructors): {.push sinkInference: off.}

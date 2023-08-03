@@ -65,6 +65,10 @@ wClass(wBrush of wGdiObject):
 
     self.setup(lb)
 
+  proc init*(self: wBrush, lb: ptr LOGBRUSH) {.inline.} =
+    ## Initializes a brush from pointer to LOGBRUSH struct. Used internally.
+    self.init(cast[var LOGBRUSH](lb))
+
   proc init*(self: wBrush, color: wColor = wWHITE, style = wBrushStyleSolid) {.validate.} =
     ## Initializes a brush from a color and style.
     let hatch = style shr 16

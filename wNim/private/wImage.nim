@@ -653,7 +653,7 @@ proc size*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0): wImage
   if newGdipbmp.isNil: raise newException(wImageError, "wImage size failure")
   result = Image(newGdipbmp, copy=false)
 
-proc size*(self: wImage, width, height: int, x, y: int = 0, align = 0): wImage
+proc size*(self: wImage, width, height: int, x = 0, y = 0, align = 0): wImage
     {.validate, inline.} =
   ## Returns a resized version of this image without scaling it.
   result = self.size((width, height), (x, y), align)
@@ -666,21 +666,21 @@ proc resize*(self: wImage, size: wSize, pos: wPoint = (0, 0), align = 0)
   GdipDisposeImage(self.mGdipBmp)
   self.mGdipBmp = newGdipbmp
 
-proc resize*(self: wImage, width, height: int, x, y: int = 0, align = 0)
+proc resize*(self: wImage, width, height: int, x = 0, y = 0, align = 0)
     {.validate, discardable.} =
   ## Changes the size of the image in-place without scaling it.
   self.resize((width, height), (x, y), align)
 
-proc transform*(self: wImage, scaleX, scaleY: float = 1,
-    angle, deltaX, deltaY: float = 0,
+proc transform*(self: wImage, scaleX = 1.0, scaleY = 1.0,
+    angle = 0.0, deltaX = 0.0, deltaY = 0.0,
     quality = wImageQualityNormal): wImage {.validate.} =
   ## Returned a transformed version of this image by given parameters.
   let newGdipbmp = wGdipTransform(self.mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
   if newGdipbmp.isNil: raise newException(wImageError, "wImage transform failure")
   result = Image(newGdipbmp, copy=false)
 
-proc retransform*(self: wImage, scaleX, scaleY: float = 1,
-    angle, deltaX, deltaY: float = 0,
+proc retransform*(self: wImage, scaleX = 1.0, scaleY = 1.0,
+    angle = 0.0, deltaX = 0.0, deltaY = 0.0,
     quality = wImageQualityNormal) {.validate, discardable.} =
   ## Transforms the image in-place.
   let newGdipbmp = wGdipTransform(self.mGdipBmp, scaleX, scaleY, angle, deltaX, deltaY, quality)
@@ -688,7 +688,7 @@ proc retransform*(self: wImage, scaleX, scaleY: float = 1,
   GdipDisposeImage(self.mGdipBmp)
   self.mGdipBmp = newGdipbmp
 
-proc paste*(self: wImage, image: wImage, x, y: int = 0, align = 0)
+proc paste*(self: wImage, image: wImage, x = 0, y = 0, align = 0)
     {.validate, discardable.} =
   ## Copy the data of the given image to the specified position in this image.
   wValidate(image)

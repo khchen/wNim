@@ -63,32 +63,32 @@ proc showModal_VistaLaster(self: wDirDialog): wId =
     folder: ptr IShellItem
     filePath: PWSTR
 
-  block:
+  block okay:
     if CoCreateInstance(&CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
-      &IID_IFileOpenDialog, cast[ptr PVOID](&dialog)).FAILED: break
+      &IID_IFileOpenDialog, cast[ptr PVOID](&dialog)).FAILED: break okay
 
-    if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: break
+    if dialog.SetOptions(FOS_PICKFOLDERS or FOS_FORCEFILESYSTEM).FAILED: break okay
 
     if self.mMessage.len != 0:
-      if dialog.SetTitle(self.mMessage).FAILED: break
+      if dialog.SetTitle(self.mMessage).FAILED: break okay
 
     if self.mPath.len != 0:
       try:
         if SHCreateItemFromParsingName(self.mPath, nil, &IID_IShellItem,
-          cast[ptr PVOID](&folder)).FAILED: break
+          cast[ptr PVOID](&folder)).FAILED: break okay
 
       except LibraryError:
-        break
+        break okay
 
-      if dialog.SetFolder(folder).FAILED: break
+      if dialog.SetFolder(folder).FAILED: break okay
 
     # include HRESULT_FROM_WIN32(ERROR_CANCELLED)
-    if dialog.Show(if self.mOwner == nil: 0 else: self.mOwner.mHwnd).FAILED: break
+    if dialog.Show(if self.mOwner == nil: 0 else: self.mOwner.mHwnd).FAILED: break okay
 
-    if dialog.GetResult(&item).FAILED: break
+    if dialog.GetResult(&item).FAILED: break okay
     defer: item.Release()
 
-    if item.GetDisplayName(SIGDN_FILESYSPATH, &filePath).FAILED: break
+    if item.GetDisplayName(SIGDN_FILESYSPATH, &filePath).FAILED: break okay
     defer: CoTaskMemFree(filePath)
 
     self.mPath = $filePath
