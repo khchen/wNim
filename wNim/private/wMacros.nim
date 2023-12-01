@@ -126,10 +126,19 @@ template releaseOrDestroy*(T: typedesc, P: typedesc, hasFinal: bool): untyped =
       procCall P(self).release()
     {.pop.}
   else:
-    proc `=destroy`(self: var type(T()[])) =
-      when hasFinal:
-        final(cast[T](addr self))
-      `=destroy`((type(P()[]))(self))
+    when (NimMajor, NimMinor) >= (2, 0):
+      proc `=destroy`(self: type(T()[])) =
+        when hasFinal:
+          final(cast[T](addr self))
+        # `=destroy`((type(P()[]))(self))
+        # not working if --mm:refc (due to 2.0 bug?)
+        # a work around here is:
+        `=destroy`(addr(type(P()[])(self))[])
+    else:
+      proc `=destroy`(self: var type(T()[])) =
+        when hasFinal:
+          final(cast[T](addr self))
+        `=destroy`((type(P()[]))(self))
 
 macro wClass*(name: untyped, body: untyped): untyped =
   ## A macro for building class following wNim's naming convention. The user can

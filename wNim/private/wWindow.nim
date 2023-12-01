@@ -1968,7 +1968,7 @@ proc wWindow_DoMouseMove(event: wEvent) {.shield.} =
 
       var lpEventTrack = TTRACKMOUSEEVENT(
         cbSize: sizeof(TTRACKMOUSEEVENT),
-        dwFlags: TME_LEAVE,
+        dwFlags: TME_LEAVE or TME_HOVER,
         dwHoverTime: HOVER_DEFAULT,
         hwndTrack: self.mHwnd)
       TrackMouseEvent(&lpEventTrack)
@@ -2276,10 +2276,6 @@ proc wWndProc(hwnd: HWND, msg: UINT, wParam: WPARAM, lParam: LPARAM): LRESULT
     if self.mHookProc != nil:
       if self.mHookProc(self, msg, wParam, lParam):
         return result
-
-  if msg == WM_NCDESTROY:
-    # It should be an ideal moment to call GC.
-    GC_FullCollect()
 
   return DefWindowProc(hwnd, msg, wParam, lParam)
 

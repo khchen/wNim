@@ -285,14 +285,18 @@ wClass(wDataObject):
 
   proc init*(self: wDataObject, text: string) {.validate.} =
     ## Initializes a dataObject from text.
-    try:
-      if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK:
+    when defined(useWinXP):
+      try:
+        if SHCreateFileDataObject(nil, 0, nil, nil, &self.mObj) != S_OK:
+          self.error()
+      except LibraryError:
         self.error()
-    except LibraryError:
-      self.error()
-
-    # if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
-    #   error()
+    else:
+      try:
+        if SHCreateDataObject(nil, 0, nil, nil, &IID_IDataObject, &self.mObj) != S_OK:
+          self.error()
+      except LibraryError:
+        self.error()
 
     self.mReleasable = true
 

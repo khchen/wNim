@@ -220,6 +220,12 @@ proc unpack*[T](x: string, t: typedesc[T]): T {.inline.} =
   var i: int
   x.unpack(i, result)
 
+proc pack*[T](s: var string, x: T) =
+  s.pack(x)
+
+proc unpack*[T](s: string, i: var int, x: T) =
+  s.unpack(i, x)
+
 when isMainModule:
   proc test(typ: typedesc) =
     var

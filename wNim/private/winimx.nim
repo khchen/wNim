@@ -1290,6 +1290,7 @@ const
   SIZE_MAXIMIZED* = 2
   SIZE_MAXSHOW* = 3
   SIZE_MAXHIDE* = 4
+  TME_HOVER* = 0x00000001
   TME_LEAVE* = 0x00000002
   HOVER_DEFAULT* = 0xFFFFFFFF'i32
   WS_POPUP* = 0x80000000'i32
@@ -7636,7 +7637,6 @@ converter winimConverterIHTMLDocument2ToIDispatch*(x: ptr IHTMLDocument2): ptr I
 converter winimConverterIHTMLDocument2ToIUnknown*(x: ptr IHTMLDocument2): ptr IUnknown = cast[ptr IUnknown](x)
 converter winimConverterIDocHostUIHandlerToIUnknown*(x: ptr IDocHostUIHandler): ptr IUnknown = cast[ptr IUnknown](x)
 const
-  unknown* = 0
   requestSize* = 0
 type
   PRINTER_INFO_1A* {.pure.} = object

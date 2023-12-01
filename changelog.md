@@ -1,3 +1,10 @@
+Version 0.13.4
+--------------
+* Minor update, bug fix, and typo fix.
+* Fix destructors compatibility.
+* Fix spelling in readme.md (Thanks to add-IV; as I am not a native English
+  speaker, this kind of pull request is always welcome).
+
 Version 0.13.3
 --------------
 * Update for Nim Compiler 2.0.

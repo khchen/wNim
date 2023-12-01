@@ -134,13 +134,13 @@ proc getFirstChild*(self: wTreeItem): wTreeItem {.property.} =
   result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_CHILD)
 
 proc getPrevSibling*(self: wTreeItem): wTreeItem {.property.} =
-  ## Gets the previous slbling of the item.
+  ## Gets the previous sibling of the item.
   wValidate(self.mTreeCtrl)
   result.mTreeCtrl = self.mTreeCtrl
   result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_PREVIOUS)
 
 proc getNextSibling*(self: wTreeItem): wTreeItem {.property.} =
-  ## Gets the next slbling of the item.
+  ## Gets the next sibling of the item.
   wValidate(self.mTreeCtrl)
   result.mTreeCtrl = self.mTreeCtrl
   result.mHandle = TreeView_GetNextItem(self.mTreeCtrl.mHwnd, self.mHandle, TVGN_NEXT)

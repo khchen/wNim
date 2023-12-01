@@ -94,7 +94,7 @@ const
   wEvent_PropagateNone* = 0
 
 wEventRegister(wEvent):
-  wEvent_SetFocus= WM_SETFOCUS
+  wEvent_SetFocus = WM_SETFOCUS
   wEvent_KillFocus = WM_KILLFOCUS
   wEvent_Show = WM_SHOWWINDOW
   wEvent_Activate = WM_ACTIVATE

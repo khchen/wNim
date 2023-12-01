@@ -77,9 +77,13 @@ proc getText*(self: wListBox, index: int): string {.validate, property.} =
 proc `[]`*(self: wListBox, index: int): string {.validate, inline.} =
   ## Returns the label of the item with the given index.
   ## Raise error if index out of bounds.
-  result = self.getText(index)
-  if result.len == 0:
+  let maxLen = int SendMessage(self.mHwnd, LB_GETTEXTLEN, index, 0)
+  if maxLen == LB_ERR:
     raise newException(IndexDefect, "index out of bounds")
+
+  var buffer = T(maxLen + 2)
+  buffer.setLen(SendMessage(self.mHwnd, LB_GETTEXT, index, &buffer))
+  result = $buffer
 
 iterator items*(self: wListBox): string {.validate, inline.} =
   ## Iterate each item in this list box.

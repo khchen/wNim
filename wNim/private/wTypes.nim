@@ -22,11 +22,16 @@ when not declared(IndexDefect):
   type
     IndexDefect* = object of IndexError
 
-when compiles(block:
-    type O = object
-    proc `=destroy`(self: O) = discard
-  ):
+const arcLike = defined(gcArc) or defined(gcAtomicArc) or defined(gcOrc)
+when defined(nimAllowNonVarDestructor) and arcLike:
   const newDestructors = true
+
+  template `\`(x: object, field: untyped): untyped =
+    (x.addr)[].field
+
+  template freeObj(x: object): untyped =
+    free(cast[var x.type](x.addr))
+
 else:
   const newDestructors = false
 
@@ -780,7 +785,7 @@ when not isMainModule: # hide from doc
       when field is ref | pointer | wHookProc | wEventProc | wEventNeatProc:
         field = nil
       elif field is seq:
-        field.setLen(0)
+        field.reset()
       elif field is Table:
         field.clear()
       elif field is object:
@@ -799,6 +804,7 @@ when not isMainModule: # hide from doc
     proc `=destroy`(self: type(wImage()[])) {.shield.} =
       if self.mGdipBmp != nil:
         GdipDisposeImage(self.mGdipBmp)
+        self\mGdipBmp = nil
 
   else:
     proc `=destroy`(self: var type(wImage()[])) {.shield.} =
@@ -812,6 +818,7 @@ when not isMainModule: # hide from doc
         OleFlushClipboard()
       if self.mReleasable and self.mObj != nil:
         self.mObj.Release()
+      self\mObj = nil
 
   else:
     proc `=destroy`(self: var type(wDataObject()[])) {.shield, raises: [Exception].} =
@@ -825,6 +832,7 @@ when not isMainModule: # hide from doc
     proc `=destroy`(self: type(wImageList()[])) {.shield.} =
       if self.mHandle != 0:
         ImageList_Destroy(self.mHandle)
+        self\mHandle = 0
 
   else:
     proc `=destroy`(self: var type(wImageList()[])) {.shield.} =
@@ -836,6 +844,7 @@ when not isMainModule: # hide from doc
     proc `=destroy`(self: type(wAcceleratorTable()[])) {.shield.} =
       if self.mHandle != 0:
         DestroyAcceleratorTable(self.mHandle)
+      self\mHandle = 0
 
   else:
     proc `=destroy`(self: var type(wAcceleratorTable()[])) {.shield.} =
@@ -850,6 +859,7 @@ when not isMainModule: # hide from doc
     proc `=destroy`(self: type(wGdiObject()[])) {.shield.} =
       if self.mHandle != 0 and self.mDeletable:
         DeleteObject(self.mHandle)
+      self\mHandle = 0
 
   else:
     proc `=destroy`(self: var type(wGdiObject()[])) {.shield.} =
@@ -861,6 +871,7 @@ when not isMainModule: # hide from doc
     proc `=destroy`(self: type(wIcon()[])) {.shield.} =
       if self.mHandle != 0 and self.mDeletable:
         DestroyIcon(self.mHandle)
+      self\mHandle = 0
 
   else:
     proc `=destroy`(self: var type(wIcon()[])) {.shield.} =
@@ -875,6 +886,7 @@ when not isMainModule: # hide from doc
           DestroyIcon(self.mHandle)
         else:
           DestroyCursor(self.mHandle)
+      self\mHandle = 0
 
   else:
     proc `=destroy`(self: var type(wCursor()[])) {.shield.} =
@@ -902,11 +914,14 @@ when not isMainModule: # hide from doc
 
   when newDestructors:
     proc `=destroy`(self: type(wMenuItem()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenuItem({self.mId})"
       if wBaseApp != nil:
         wBaseApp.mMenuIdSet.excl(uint16 self.mId)
+      freeObj(self)
 
   else:
     proc `=destroy`(self: var type(wMenuItem()[])) {.shield.} =
+      when defined(wNimDebug): echo fmt"Destroying wMenuItem({self.mId})"
       if wBaseApp != nil:
         wBaseApp.mMenuIdSet.excl(uint16 self.mId)
       free(self)
@@ -920,6 +935,8 @@ when not isMainModule: # hide from doc
             RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
           DestroyMenu(self.mHmenu)
         wBaseApp.mMenuBaseTable.del(self.mHmenu)
+        self\mHmenu = 0
+        freeObj(self)
 
   else:
     proc `=destroy`(self: var type(wMenu()[])) {.shield.} =
@@ -941,6 +958,8 @@ when not isMainModule: # hide from doc
           RemoveMenu(self.mHmenu, 0, MF_BYPOSITION)
         DestroyMenu(self.mHmenu)
         wBaseApp.mMenuBaseTable.del(self.mHmenu)
+        self\mHmenu = 0
+        freeObj(self)
 
   else:
     proc `=destroy`(self: var type(wMenuBar()[])) {.shield.} =
@@ -963,6 +982,8 @@ when not isMainModule: # hide from doc
       if self.mPsd.hDevNames != 0:
         GlobalFree(self.mPsd.hDevNames)
 
+      freeObj(self)
+
   else:
     proc `=destroy`(self: var type(wPageSetupDialog()[])) {.shield.} =
       if self.mPsd.hDevMode != 0:
@@ -982,6 +1003,8 @@ when not isMainModule: # hide from doc
 
       if self.mPd.hDevNames != 0:
         GlobalFree(self.mPd.hDevNames)
+
+      freeObj(self)
 
   else:
     proc `=destroy`(self: var type(wPrintDialog()[])) {.shield.} =
@@ -1011,6 +1034,8 @@ when not isMainModule: # hide from doc
       if self.mhOldBitmap != 0:
         SelectObject(self.mHdc, self.mhOldBitmap)
 
+      freeObj(self)
+
   else:
     proc `=destroy`(self: var wDC) {.shield.} =
       if self.mhOldFont != 0:
@@ -1036,6 +1061,9 @@ when not isMainModule: # hide from doc
       if self.mHdc != 0:
         `=destroy`(wDC(self))
         DeleteDC(self.mHdc)
+        self\mBitmap = nil
+        self\mHdc = 0
+
   else:
     proc `=destroy`(self: var wMemoryDC) {.shield.} =
       if self.mHdc != 0:
@@ -1049,6 +1077,8 @@ when not isMainModule: # hide from doc
       if self.mHdc != 0:
         `=destroy`(wDC(self))
         ReleaseDC(0, self.mHdc)
+        self\mHdc = 0
+
   else:
     proc `=destroy`(self: var wScreenDC) {.shield.} =
       if self.mHdc != 0:
@@ -1062,6 +1092,8 @@ when not isMainModule: # hide from doc
         `=destroy`(wDC(self))
         if not self.mCanvas.isNil:
           ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+          self\mCanvas = nil
+        self\mHdc = 0
 
   else:
     proc `=destroy`(self: var wWindowDC) {.shield.} =
@@ -1078,6 +1110,8 @@ when not isMainModule: # hide from doc
         `=destroy`(wDC(self))
         if not self.mCanvas.isNil:
           ReleaseDC(self.mCanvas.mHwnd, self.mHdc)
+          self\mCanvas = nil
+        self\mHdc = 0
 
   else:
     proc `=destroy`(self: var wClientDC) {.shield.} =
@@ -1094,6 +1128,8 @@ when not isMainModule: # hide from doc
         `=destroy`(wDC(self))
         if not self.mCanvas.isNil:
           EndPaint(self.mCanvas.mHwnd, addr self.mPs)
+          self\mCanvas = nil
+        self\mHdc = 0
 
   else:
     proc `=destroy`(self: var wPaintDC) {.shield.} =
@@ -1109,6 +1145,7 @@ when not isMainModule: # hide from doc
       if self.mHdc != 0:
         `=destroy`(wDC(self))
         DeleteDC(self.mHdc)
+        self\mHdc = 0
 
   else:
     proc `=destroy`(self: var wPrinterDC) {.shield.} =
@@ -1117,30 +1154,30 @@ when not isMainModule: # hide from doc
         DeleteDC(self.mHdc)
         self.mHdc = 0
 
-  when defined(wNimDebug) and defined(gcDestructors):
+  when defined(wNimDebug):
 
     when newDestructors:
       proc `=destroy`(self: type(wButton()[])) {.shield.} =
         echo fmt"Destroying wButton({self.mHwnd})"
-        for i in self.fields: i.reset()
+        freeObj(self)
 
       proc `=destroy`(self: type(wPanel()[])) {.shield.} =
         echo fmt"Destroying wPanel({self.mHwnd})"
-        for i in self.fields: i.reset()
+        freeObj(self)
 
       proc `=destroy`(self: type(wFrame()[])) {.shield.} =
         echo fmt"Destroying wFrame({self.mHwnd})"
-        for i in self.fields: i.reset()
+        freeObj(self)
 
     else:
       proc `=destroy`(self: var type(wButton()[])) {.shield.} =
         echo fmt"Destroying wButton({self.mHwnd})"
-        for i in self.fields: i.reset()
+        free(self)
 
       proc `=destroy`(self: var type(wPanel()[])) {.shield.} =
         echo fmt"Destroying wPanel({self.mHwnd})"
-        for i in self.fields: i.reset()
+        free(self)
 
       proc `=destroy`(self: var type(wFrame()[])) {.shield.} =
         echo fmt"Destroying wFrame({self.mHwnd})"
-        for i in self.fields: i.reset()
+        free(self)
