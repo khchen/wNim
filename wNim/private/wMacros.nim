@@ -245,7 +245,7 @@ proc wEventId(initId: cint = -1): cint {.discardable, shield.} =
     result = id
 
 proc wEventStorage(name: string = "", msg: cint = 0): (Table[string, HashSet[cint]], string)
-    {.discardable, shield.} =
+    {.shield.} =
 
   var
     eventSetTable {.global.}: Table[string, HashSet[cint]]
@@ -287,14 +287,14 @@ macro wEventRegister*(event, list: untyped): untyped =
       result.add newConstStmt(postfix(msg[0], "*"), msg[1])
       case msg[1].kind
       of nnkIntLit .. nnkUInt64Lit:
-        wEventStorage($event, cint msg[1].intVal())
+        discard wEventStorage($event, cint msg[1].intVal())
 
       of nnkIdent:
         var impl = bindSym(msg[1]).getImpl()
         if impl.kind == nnkConstDef: # fix for nim 2.0
           impl = impl[2]
 
-        wEventStorage($event, cint impl.intVal())
+        discard wEventStorage($event, cint impl.intVal())
 
       else:
         error("Unexpected a node of kind " & $msg[1].kind, msg[1])
@@ -302,7 +302,7 @@ macro wEventRegister*(event, list: untyped): untyped =
     of nnkIdent:
       let id = wEventId()
       result.add newConstStmt(postfix(msg, "*"), newLit(id))
-      wEventStorage($event, id)
+      discard wEventStorage($event, id)
 
     else:
       error("Unexpected a node of kind " & $msg.kind, msg)

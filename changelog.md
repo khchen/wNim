@@ -1,3 +1,8 @@
+Version 0.13.5
+--------------
+* Update for Nim Compiler 2.2.
+* Fix the issue where reversi and tictactoe don't compile in the newer compiler.
+
 Version 0.13.4
 --------------
 * Minor update, bug fix, and typo fix.

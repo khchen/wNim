@@ -21,7 +21,7 @@ proc mcts*[State](rootState: State, itermax: int, timeout: float = 0,
       wins: float
       visits: float
       untriedMoves: HashSet[Move]
-      playerJustMoved: Player
+      playerJustMoved: State.playerJustMoved.type
 
   proc `[]`[T](x: HashSet[T], i: int): T {.inline.} =
     var index = i
