@@ -1,3 +1,7 @@
+Version 1.0.0
+--------------
+* Since I no longer plan to add new GUI controls and features, and wNim has been stable for a while, I have decided to bump the version to 1.0.0. Going forward, unless there are unexpected issues, wNim will only receive bug fixes or updates for compatibility with new compilers.
+
 Version 0.13.5
 --------------
 * Update for Nim Compiler 2.2.

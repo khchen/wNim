@@ -1,6 +1,13 @@
+#====================================================================
+#
+#               wNim - Nim's Windows GUI Framework
+#                Copyright (c) Chen Kai-Hung, Ward
+#
+#====================================================================
+
 # Package
 
-version       = "0.13.5"
+version       = "1.0.0"
 author        = "Ward"
 description   = "wNim - Nim\'s Windows GUI framework"
 license       = "MIT"

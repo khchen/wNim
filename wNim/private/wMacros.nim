@@ -1,7 +1,7 @@
 #====================================================================
 #
 #               wNim - Nim's Windows GUI Framework
-#                 (c) Copyright 2017-2021 Ward
+#                 Copyright (c) Chen Kai-Hung, Ward
 #
 #====================================================================
 
@@ -126,7 +126,8 @@ template releaseOrDestroy*(T: typedesc, P: typedesc, hasFinal: bool): untyped =
       procCall P(self).release()
     {.pop.}
   else:
-    when (NimMajor, NimMinor) >= (2, 0):
+    const arcLike = defined(gcArc) or defined(gcAtomicArc) or defined(gcOrc)
+    when defined(nimAllowNonVarDestructor) and arcLike:
       proc `=destroy`(self: type(T()[])) =
         when hasFinal:
           final(cast[T](addr self))
