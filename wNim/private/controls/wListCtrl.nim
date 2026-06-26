@@ -801,9 +801,12 @@ method processNotify(self: wListCtrl, code: INT, id: UINT_PTR, lParam: LPARAM,
     if pnh.pitem != nil and (pnh.pitem.mask and HDI_WIDTH) != 0 and
         self.getColumnWidth(pnh.iItem) != pnh.pitem.cxy:
 
-      let event = self.ListEvent(wEvent_ListColDragging, lParam)
-      if event.leftDown():
-        return self.processEvent(event)
+      # event.leftDown() reads the cached key state, which is stale inside the
+      # header's modal resize-tracking loop, so wEvent_ListColDragging never fired
+      # during an interactive divider drag. GetAsyncKeyState reflects the current
+      # physical button state and works inside the modal loop.
+      if (GetAsyncKeyState(VK_LBUTTON).int and 0x8000) != 0:
+        return self.processEvent(self.ListEvent(wEvent_ListColDragging, lParam))
 
   of NM_RCLICK:
     let isHeader = cast[LPNMHDR](lparam).hwndFrom != self.mHwnd

@@ -1,4 +1,5 @@
 proc createStrength*(a: float; b: float, c: float, w: float = 1.0): float =
+  result = 0.0
   result += max(0.0, min(1000.0, a * w)) * 1000000.0;
   result += max(0.0, min(1000.0, b * w)) * 1000.0;
   result += max(0.0, min(1000.0, c * w));
